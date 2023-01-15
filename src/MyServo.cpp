@@ -1,0 +1,145 @@
+#include <MyServo.h>
+
+#define POT_TRESHOLD 20
+#define POT_MIN 100
+#define POT_MAX 3800
+
+#define SPEED 100
+
+#define MIN_SPEED 100
+#define MAX_SPEED 255
+
+#define TIMEOUT 5000
+
+MyServo::MyServo(){
+}
+
+MyServo::~MyServo() {
+    stop();
+}
+
+MyServo::MyServo(uint8_t motorFirstPin, uint8_t motorSecondPin, uint8_t potPin) {
+    _motorFirstPin = motorFirstPin;
+    _motorSecondPin = motorSecondPin;
+    _potPin = potPin;
+
+    pinMode(_motorFirstPin, OUTPUT);
+    pinMode(_motorSecondPin, OUTPUT);
+}
+
+uint8_t validateSpeed(int16_t speed) {
+    if (speed > MAX_SPEED) {
+        return MAX_SPEED;
+    } else if (speed < MIN_SPEED) {
+        return MIN_SPEED;
+    }
+    return speed;
+}
+
+uint8_t calculateMaxSpeed(uint16_t diff) {
+    return validateSpeed((MAX_SPEED * diff) / POT_MAX);
+}
+
+uint8_t calculateCurrentSpeed(int16_t x, int16_t diff, int16_t maxSpeed) {   
+    return validateSpeed((x * maxSpeed * (2 * diff - x)) / (diff * diff) + MIN_SPEED);
+}
+
+
+void MyServo::setPosition(uint16_t turnToPosition) {
+    if (turnToPosition > POT_MAX) {
+        turnToPosition = POT_MAX;
+    } else if (turnToPosition < POT_MIN) {
+        turnToPosition = POT_MIN;
+    }
+
+    int16_t currentState = analogRead(_potPin);
+    if (turnToPosition == currentState) {
+        return;
+    }
+
+    int16_t diff = currentState - turnToPosition;
+    /*
+        right - positive
+        left - negative
+    */
+    int8_t direction = sign(diff); 
+    if (direction > 0) {
+        // analogWrite(_motorFirstPin, 255 - SPEED);
+        digitalWrite(_motorSecondPin, HIGH);
+    } else {
+        // analogWrite(_motorFirstPin, SPEED);
+        digitalWrite(_motorSecondPin, LOW);
+    }
+
+    diff = direction * diff;
+    uint8_t maxSpeed = calculateMaxSpeed(diff);
+    diff = diff / 2;
+
+    int16_t x = 0;
+    uint8_t speed = 0;
+    int16_t startPosition = currentState;
+
+    uint8_t i = 0;
+
+    long started = millis();
+    while (direction * (currentState - turnToPosition) >  POT_TRESHOLD && millis() - started < TIMEOUT) {
+        currentState = analogRead(_potPin);
+
+        if (direction > 0) {
+            x = startPosition - currentState;
+        } else {
+            x = currentState - startPosition;
+        }
+
+        speed = calculateCurrentSpeed(x, diff, maxSpeed);
+        if (direction > 0) {
+            speed = 255 - speed;
+        }
+
+        if (i >= 200) {
+            i = 0;
+            Serial.print(direction);
+            Serial.print(" :: ");
+            Serial.print(currentState);
+            Serial.print(" | ");
+            Serial.print(x);
+            Serial.print("::");
+            Serial.print(diff);
+            Serial.print("::");
+            Serial.print(maxSpeed);
+            Serial.print("=");
+            Serial.println(speed);
+
+        } else {
+            i++;
+        }
+
+        analogWrite(_motorFirstPin, speed);
+    }
+
+    stop();
+    Serial.println(currentAngle());
+}
+
+void MyServo::setAngle(uint8_t angle) {
+    int16_t turnToPosition = map(angle, 0, 180, POT_MIN, POT_MAX);
+    setPosition(turnToPosition);
+}
+
+uint8_t MyServo::currentAngle() {
+    uint16_t potValue = analogRead(_potPin);
+    return map(potValue, POT_MIN, POT_MAX, 0, 180);
+}
+
+int8_t MyServo::sign(int16_t value) {
+    if (value < 0) {
+        return -1;
+    } else {
+        return 1;
+    }
+}
+
+void MyServo::stop() {
+    analogWrite(_motorFirstPin, LOW);
+    digitalWrite(_motorSecondPin, LOW);
+}

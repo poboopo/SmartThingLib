@@ -7,7 +7,7 @@
 #define SPEED 100
 
 #define MIN_SPEED 100
-#define MAX_SPEED 255
+#define MAX_SPEED 200
 
 #define TIMEOUT 5000
 
@@ -64,10 +64,8 @@ void MyServo::setPosition(uint16_t turnToPosition) {
     */
     int8_t direction = sign(diff); 
     if (direction > 0) {
-        // analogWrite(_motorFirstPin, 255 - SPEED);
         digitalWrite(_motorSecondPin, HIGH);
     } else {
-        // analogWrite(_motorFirstPin, SPEED);
         digitalWrite(_motorSecondPin, LOW);
     }
 
@@ -75,7 +73,6 @@ void MyServo::setPosition(uint16_t turnToPosition) {
     uint8_t maxSpeed = calculateMaxSpeed(diff);
     diff = diff / 2;
 
-    int16_t x = 0;
     uint8_t speed = 0;
     int16_t startPosition = currentState;
 
@@ -86,39 +83,15 @@ void MyServo::setPosition(uint16_t turnToPosition) {
         currentState = analogRead(_potPin);
 
         if (direction > 0) {
-            x = startPosition - currentState;
+            speed = 255 - calculateCurrentSpeed(startPosition - currentState, diff, maxSpeed);
         } else {
-            x = currentState - startPosition;
-        }
-
-        speed = calculateCurrentSpeed(x, diff, maxSpeed);
-        if (direction > 0) {
-            speed = 255 - speed;
-        }
-
-        if (i >= 200) {
-            i = 0;
-            Serial.print(direction);
-            Serial.print(" :: ");
-            Serial.print(currentState);
-            Serial.print(" | ");
-            Serial.print(x);
-            Serial.print("::");
-            Serial.print(diff);
-            Serial.print("::");
-            Serial.print(maxSpeed);
-            Serial.print("=");
-            Serial.println(speed);
-
-        } else {
-            i++;
+            speed = calculateCurrentSpeed(currentState - startPosition, diff, maxSpeed);
         }
 
         analogWrite(_motorFirstPin, speed);
     }
 
     stop();
-    Serial.println(currentAngle());
 }
 
 void MyServo::setAngle(uint8_t angle) {

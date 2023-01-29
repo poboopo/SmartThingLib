@@ -1,6 +1,4 @@
-#include <WebServer.h>
-#include <LouverController.h>
-#include <ArduinoJson.h>
+#include "DictionaryDeclarations.h"
 
 #define WEB_SERVER_TAG "web_server"
 
@@ -13,23 +11,20 @@ enum LOUVER_ACTIONS {
     BRIGHT
 };
 
-StaticJsonDocument<250> jsonDocument;
-char buffer[250];
-
 const char * greetingPage = "Hi there!";
 
 String buildErrorJson(String error) {
     return "{\"error\":\"" + error + "\"}";
 }
 
-
 void handleLouverGet(WebServer * server, LouverController * controller) {
-    jsonDocument.clear();
-    jsonDocument["automode"] = controller->isAutoModeEnabled();
-    jsonDocument["position"] = controller->getMotorPosition();
-    jsonDocument["light"] = controller->getLightValue();
-    serializeJson(jsonDocument, buffer);
-    server->send(200, "application/json", buffer);
+    Dictionary * dict = new Dictionary(3);
+    dict->insert("automode", controller->isAutoModeEnabled());
+    dict->insert("position", controller->getMotorPosition());
+    dict->insert("light", controller->getLightValue());
+
+    server->send(200, "application/json", dict->json());
+    delete dict;
 }
 
 void handleLouverPut(WebServer * server, LouverController * controller) {
@@ -37,9 +32,12 @@ void handleLouverPut(WebServer * server, LouverController * controller) {
         server->send(400);
         return;
     }
-    deserializeJson(jsonDocument, server->arg("plain"));
-    if (jsonDocument.containsKey("action")) {
-        int action = jsonDocument["action"];
+    Dictionary * dict = new Dictionary(1);
+    dict->jload(server->arg("plain"));
+
+    String actionStr = dict->search("action");
+    if (actionStr.length() > 0) {
+        int action = actionStr.toInt();
         // TODO мне кажется есть элегантное решение, но пока только на это
         // хватило познаний c++
         switch(action) {
@@ -65,6 +63,7 @@ void handleLouverPut(WebServer * server, LouverController * controller) {
                 server->send(400, "application/json", buildErrorJson(String("Wrong action ") + action));
                 return;
         }
-        server->send(200);
     }
+    
+    server->send(200);
 }

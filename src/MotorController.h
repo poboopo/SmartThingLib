@@ -14,7 +14,6 @@ private:
     uint8_t _potPin;
 
     int8_t sign(int16_t);
-    void stop();
 public:
     MotorController(uint8_t, uint8_t, uint8_t);
     MotorController();
@@ -26,4 +25,5 @@ public:
     bool setPosition(uint16_t turnToPosition);
     uint8_t currentAngle();
     uint16_t currentPosition();
+    void stop();
 };

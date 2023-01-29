@@ -4,10 +4,11 @@ LouverController::LouverController() {
 }
 
 LouverController::~LouverController() {
+    _motorController.stop();
     deleteMonitorTask();
 }
 
-LouverController::LouverController( uint8_t motorFirstPin,
+void LouverController::init( uint8_t motorFirstPin,
                                     uint8_t motorSecondPin,
                                     uint8_t potPin,
                                     uint8_t lightSensorPin,
@@ -28,7 +29,7 @@ void monitorLight(void * param) {
 
     ESP_LOGI(LIGHT_MONITOR_TAG, "Light monitor task started");
     for(;;) {
-        lightValue = map(analogRead(taskData->lightSensorPin), 0, 4095, POT_MIN, POT_MAX);
+        lightValue = map(analogRead(taskData->sensorPin), 0, 4095, POT_MIN, POT_MAX);
         taskData->controller->setPosition(lightValue);
         vTaskDelay(delayTime);
     }
@@ -36,7 +37,7 @@ void monitorLight(void * param) {
 
 void LouverController::createMonitorTask(){
     _taskdata.controller = &_motorController;
-    _taskdata.lightSensorPin = _lightSensorPin;
+    _taskdata.sensorPin = _lightSensorPin;
     xTaskCreate(
         monitorLight,
         LIGHT_MONITOR_TAG,

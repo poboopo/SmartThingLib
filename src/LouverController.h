@@ -1,9 +1,15 @@
 #include <Arduino.h>
-#include <MotorController.h>
+#include <mech/MotorController.h>
 
 #define LIGHT_MONITOR_TAG "light_monitor"
 
 #define MONITOR_TASK_DELAY 500
+
+#define CLOSE_POSITION 0
+#define MIDDLE_POSITION 1200
+#define OPEN_POSITION 2500
+#define BRIGHT_POSITION 4095
+
 
 struct TaskData {
     MotorController * controller;
@@ -35,4 +41,11 @@ class LouverController {
         void enableAutoMode();
         void disabelAutoMode();
         bool isAutoModeEnabled();
+        uint16_t getLightValue();
+        uint16_t getMotorPosition();
+
+        void open();
+        void close();
+        void middle();
+        void bright();
 };

@@ -80,3 +80,31 @@ void LouverController::disabelAutoMode() {
 bool LouverController::isAutoModeEnabled() {
     return _monitorLightHandle != NULL;
 }
+
+uint16_t LouverController::getLightValue() {
+    return analogRead(_lightSensorPin);
+}
+
+uint16_t LouverController::getMotorPosition() {
+    return _motorController.currentPosition();
+}
+
+void LouverController::open() {
+    disabelAutoMode();
+    _motorController.setPosition(OPEN_POSITION);
+}
+
+void LouverController::close() {
+    disabelAutoMode();
+    _motorController.setPosition(CLOSE_POSITION);
+}
+
+void LouverController::middle() {
+    disabelAutoMode();
+    _motorController.setPosition(MIDDLE_POSITION);
+}
+
+void LouverController::bright() {
+    disabelAutoMode();
+    _motorController.setPosition(BRIGHT_POSITION);
+}

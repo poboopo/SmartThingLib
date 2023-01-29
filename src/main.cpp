@@ -1,8 +1,10 @@
 #include <Arduino.h>
-#include <LouverController.h>
 #include <WiFi.h>
 #include <ArduinoOTA.h>
+#include <WebServer.h>
+
 #include <net/Multicaster.h>
+#include <net/WebUtils.h>
 
 // Pins
 #define MOTOR_FIRST_PIN 26
@@ -20,7 +22,10 @@
 
 LouverController controller;
 Multicaster multicaster;
+WebServer server(80);
 const char * myIp;
+
+void setupServerEndPoints();
 
 void setup() {
     ESP_LOGI("*", "Setup started");
@@ -44,6 +49,10 @@ void setup() {
     multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
     ESP_LOGI("*", "Multicaster created");
 
+    setupServerEndPoints();
+    server.begin();
+    ESP_LOGI("*", "Web server endpoints configured");
+
     myIp = WiFi.localIP().toString().c_str();
 
     ESP_LOGI("*", "Setup finished");
@@ -51,6 +60,7 @@ void setup() {
 
 void loop() {
     ArduinoOTA.handle();
+    server.handleClient();
 
     if (!digitalRead(BUTTON_PIN)) {
         if (controller.isAutoModeEnabled()) {
@@ -63,4 +73,21 @@ void loop() {
 
     multicaster.broadcast(myIp);
     delay(500);
+}
+
+void setupServerEndPoints() {
+    server.on("/", []() {
+        server.send(200, "text/html", greetingPage);
+    });
+    server.on("/louver", HTTP_GET, [](){
+        ESP_LOGI(WEB_SERVER_TAG, "[GET] [/louver]");
+        handleLouverGet(&server, &controller);
+    });
+    server.on("/louver", HTTP_PUT, [](){
+        ESP_LOGI(WEB_SERVER_TAG, "[PUT] [/louver]");
+        handleLouverPut(&server, &controller);
+    });
+    server.onNotFound([](){
+        server.send(404, "application/json", buildErrorJson("Page not found"));
+    });
 }

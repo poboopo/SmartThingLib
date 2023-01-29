@@ -15,9 +15,12 @@
 #define SSID "POEBLO_ROOM"
 #define PASS "donttouch"
 
+#define MULTICAST_GROUP "224.1.1.1"
+#define MULTICAST_PORT 7778
+
 LouverController controller;
 Multicaster multicaster;
-String myIp;
+const char * myIp;
 
 void setup() {
     ESP_LOGI("*", "Setup started");
@@ -38,10 +41,10 @@ void setup() {
     ArduinoOTA.begin();
     ESP_LOGI("*", "Ota started");
 
-    multicaster.init("224.1.1.1", 7778);
+    multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
     ESP_LOGI("*", "Multicaster created");
 
-    myIp = WiFi.localIP().toString();
+    myIp = WiFi.localIP().toString().c_str();
 
     ESP_LOGI("*", "Setup finished");
 }
@@ -58,6 +61,6 @@ void loop() {
         ESP_LOGI("*", "Free heap: %u", ESP.getFreeHeap());
     }
 
-    multicaster.broadcast(myIp.c_str());
+    multicaster.broadcast(myIp);
     delay(500);
 }

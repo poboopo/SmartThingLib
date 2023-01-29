@@ -1,10 +1,7 @@
 #include <Arduino.h>
 #include <net/Multicaster.h>
 
-#include <lwip/err.h>
 #include <lwip/sockets.h>
-#include <lwip/sys.h>
-#include <lwip/netdb.h>
 
 Multicaster::Multicaster() {
 }
@@ -12,7 +9,7 @@ Multicaster::Multicaster() {
 Multicaster::~Multicaster() {
 }
 
-void Multicaster::init(char * group, int port) {
+void Multicaster::init(const char * group, int port) {
     _sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (_sock < 0){
         ESP_LOGE(MULTICASTER_TAG, "Failed to create socket. Error %d", errno);

@@ -13,7 +13,7 @@ class Multicaster{
     public:
         Multicaster();
         ~Multicaster();
-        void init(char * group, int port);
+        void init(const char * group, int port);
         void broadcast(const char * message);
         void stop();
 };

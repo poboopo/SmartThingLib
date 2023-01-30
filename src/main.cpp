@@ -16,6 +16,7 @@
 #define LED_PIN 5
 #define BUTTON_PIN 18
 
+#define WIFI_SETUP_TIMEOUT 10000
 #define MULTICAST_GROUP "224.1.1.1"
 #define MULTICAST_PORT 7778
 
@@ -26,6 +27,7 @@ WebServer server(80);
 const char * myIp;
 
 void setupServerEndPoints();
+bool setupWifi();
 
 void setup() {
     ESP_LOGI("*", "Setup started");
@@ -39,37 +41,36 @@ void setup() {
     settingsManager.loadSettings();
     ESP_LOGI("*", "Settings manager loaded");
 
-    String ssid = settingsManager.getSetting(SSID_SETTING);
-    String password = settingsManager.getSetting(PASSWORD_SETTING);
-    
-    ESP_LOGI("*", "WiFi connecting to %s :: %s", ssid.c_str(), password.c_str());
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid.c_str(), password.c_str());
-    while (!WiFi.isConnected()) {
+    if(setupWifi()) {
+        myIp = WiFi.localIP().toString().c_str();
+        ESP_LOGI("*", "WiFi connected, local ip %s", myIp);
+
+        ArduinoOTA.begin();
+        ESP_LOGI("*", "Ota started");
+
+        multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
+        ESP_LOGI("*", "Multicaster created");
+
+        setupServerEndPoints();
+        server.begin();
+        ESP_LOGI("*", "Web server endpoints configured and started");
+    } else {
+        ESP_LOGI("*", "WiFi not available, skipping all network setup");
     }
-    ESP_LOGI("*", "WiFi connected %s", WiFi.localIP());
 
     controller.init(MOTOR_FIRST_PIN, MOTOR_SECOND_PIN, POT_PIN, LIGHT_SENSOR_PIN, LED_PIN);
     ESP_LOGI("*", "Controller created");
     
-    ArduinoOTA.begin();
-    ESP_LOGI("*", "Ota started");
-
-    multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
-    ESP_LOGI("*", "Multicaster created");
-
-    setupServerEndPoints();
-    server.begin();
-    ESP_LOGI("*", "Web server endpoints configured and started");
-
-    myIp = WiFi.localIP().toString().c_str();
 
     ESP_LOGI("*", "Setup finished");
 }
 
 void loop() {
-    ArduinoOTA.handle();
-    server.handleClient();
+    if (strlen(myIp) > 0) {
+        ArduinoOTA.handle();
+        server.handleClient();
+        multicaster.broadcast(myIp);
+    }
 
     if (!digitalRead(BUTTON_PIN)) {
         if (controller.isAutoModeEnabled()) {
@@ -80,8 +81,30 @@ void loop() {
         ESP_LOGI("*", "Free heap: %u", ESP.getFreeHeap());
     }
 
-    multicaster.broadcast(myIp);
     delay(500);
+}
+
+bool setupWifi() {
+    String ssid = settingsManager.getSetting(SSID_SETTING);
+    String password = settingsManager.getSetting(PASSWORD_SETTING);
+    
+    if (ssid.length() == 0) {
+        ESP_LOGI("*", "Ssid is blank -> skipping connection");
+        return false;
+    } else {
+        ESP_LOGI("*", "WiFi connecting to %s :: %s", ssid.c_str(), password.c_str());
+        WiFi.mode(WIFI_STA);
+        WiFi.begin(ssid.c_str(), password.c_str());
+        long startTime = millis();
+        bool ledState = true;
+        while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {
+            digitalWrite(LED_BUILTIN, ledState);
+            ledState = !ledState;
+            delay(200);
+        }
+        digitalWrite(LED_BUILTIN, LOW);
+        return WiFi.isConnected();
+    }
 }
 
 void setupServerEndPoints() {

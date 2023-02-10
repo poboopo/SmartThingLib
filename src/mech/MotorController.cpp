@@ -21,8 +21,6 @@ MotorController::MotorController(uint8_t motorFirstPin, uint8_t motorSecondPin, 
 
     pinMode(_motorFirstPin, OUTPUT);
     pinMode(_motorSecondPin, OUTPUT);
-
-    ESP_LOGI(MOTOR_CONTROLLER_TAG, "p1: %u | p2: %u | pot: %u", motorFirstPin, motorSecondPin, potPin);
 }
 
 uint8_t validateSpeed(int16_t speed) {

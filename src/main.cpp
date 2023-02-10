@@ -2,10 +2,12 @@
 #include <WiFi.h>
 #include <ArduinoOTA.h>
 #include <WebServer.h>
+#include <ESPmDNS.h>
 
 #include <LouverController.h>
 #include <net/Multicaster.h>
 #include <net/WebUtils.h>
+#include <net/Pages.h>
 #include <utils/SettingsManager.h>
 
 // Pins
@@ -116,6 +118,13 @@ String connectToWifi() {
         WiFi.softAP("LOUVER");
         // WiFi.beginSmartConfig();
         delay(500);
+
+        if (MDNS.begin("louver")) {
+            MDNS.addService("http", "tcp", 80);
+        } else {
+            ESP_LOGI("*", "Failed to setup up MDNS");
+        }
+
         return WiFi.softAPIP().toString();
     } else {
         ESP_LOGI("*", "WiFi connecting to %s :: %s", ssid.c_str(), password.c_str());
@@ -135,9 +144,15 @@ String connectToWifi() {
 }
 
 void setupServerEndPoints() {
-    server.on("/", []() {
-        server.send(200, "text/html", greetingPage);
-    });
+    if (WiFi.getMode() == WIFI_MODE_AP) {
+        server.on("/", []() {
+            server.send(200, "text/html", SETUP_PAGE);
+        });
+    } else {
+        server.on("/", []() {
+            server.send(200, "text/html", GREETING_PAGE);
+        });
+    }
     server.on("/louver", HTTP_GET, [](){
         ESP_LOGI(WEB_SERVER_TAG, "[GET] [/louver]");
         handleLouverGet(&server, &controller);

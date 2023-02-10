@@ -11,8 +11,6 @@ enum LOUVER_ACTIONS {
     BRIGHT
 };
 
-const char * greetingPage = "Hi there!";
-
 String buildErrorJson(String error) {
     return "{\"error\":\"" + error + "\"}";
 }

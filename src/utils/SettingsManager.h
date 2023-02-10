@@ -15,6 +15,7 @@ class SettingsManager {
         
         void loadSettings();
         void removeSetting(String name);
+        void dropWifiCredits();
         void saveSettings();
         void clear();
 

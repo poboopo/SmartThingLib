@@ -1,5 +1,3 @@
-#include <ArduinoOTA.h>
-
 #include "lwip/sockets.h"
 
 #define MULTICASTER_TAG "multicaster"

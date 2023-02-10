@@ -73,9 +73,16 @@ void SettingsManager::saveSettings() {
 
 void SettingsManager::removeSetting(String name) {
     if (name == SSID_SETTING || name == PASSWORD_SETTING) {
+        ESP_LOGI(SETTINGS_MANAGER_TAG, "U can't remove Wifi credits with this function! Use dropWifiCredits insted.");
         return;
     }
     _settings->remove(name.c_str());
+}
+
+void SettingsManager::dropWifiCredits() {
+    _settings->remove(SSID_SETTING);
+    _settings->remove(PASSWORD_SETTING);
+    saveSettings();
 }
 
 String SettingsManager::getSetting(String name) {

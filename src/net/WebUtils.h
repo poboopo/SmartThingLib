@@ -1,4 +1,5 @@
 #include "DictionaryDeclarations.h"
+#include <net/Pages.h>
 
 #define WEB_SERVER_TAG "web_server"
 
@@ -64,4 +65,14 @@ void handleLouverPut(WebServer * server, LouverController * controller) {
     }
     
     server->send(200);
+}
+
+const String buildMainPage(bool apMode) {
+    String page = PAGE_PART_1;
+    if (apMode) {
+        page += SETUP_BLOCK;
+    }
+    page += CONTROLS_BLOCK;
+    page += PAGE_PART_2;
+    return page;
 }

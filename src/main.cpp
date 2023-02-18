@@ -7,7 +7,6 @@
 #include <LouverController.h>
 #include <net/Multicaster.h>
 #include <net/WebUtils.h>
-#include <net/Pages.h>
 #include <utils/SettingsManager.h>
 
 // Pins
@@ -144,15 +143,9 @@ String connectToWifi() {
 }
 
 void setupServerEndPoints() {
-    if (WiFi.getMode() == WIFI_MODE_AP) {
-        server.on("/", []() {
-            server.send(200, "text/html", SETUP_PAGE);
-        });
-    } else {
-        server.on("/", []() {
-            server.send(200, "text/html", GREETING_PAGE);
-        });
-    }
+    server.on("/", []() {
+        server.send(200, "text/html", buildMainPage(WiFi.getMode() == WIFI_MODE_AP));
+    });
     server.on("/louver", HTTP_GET, [](){
         ESP_LOGI(WEB_SERVER_TAG, "[GET] [/louver]");
         handleLouverGet(&server, &controller);
@@ -199,6 +192,11 @@ void setupServerEndPoints() {
         settingsManager.removeSetting(server.arg("name"));
         settingsManager.saveSettings();
         server.send(200);
+    });
+    server.on("/restart", HTTP_PUT, [](){
+        ESP_LOGI(WEB_SERVER_TAG, "[PUT] [/restart]");
+        delay(1000);
+        ESP.restart();
     });
     server.onNotFound([](){
         server.send(404, "application/json", buildErrorJson("Page not found"));

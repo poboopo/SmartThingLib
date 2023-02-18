@@ -20,28 +20,24 @@ void LouverController::addLedIndicator(LedIndicator * led) {
     _led = led;
 }
 
-void monitorLight(void * param) {
-    TaskData * taskData = (TaskData*) param;
-
+void LouverController::monitorLight() {
     int16_t lightValue = 0;
     int16_t delayTime = MONITOR_TASK_DELAY / portTICK_PERIOD_MS;
 
     ESP_LOGI(LIGHT_MONITOR_TAG, "Light monitor task started");
     for(;;) {
-        lightValue = map(analogRead(taskData->sensorPin), 0, 4095, POT_MIN, POT_MAX);
-        taskData->controller->setPosition(lightValue);
+        lightValue = map(analogRead(_lightSensorPin), 0, 4095, POT_MIN, POT_MAX);
+        _motorController.setPosition(lightValue);
         vTaskDelay(delayTime);
     }
 }
 
 void LouverController::createMonitorTask(){
-    _taskdata.controller = &_motorController;
-    _taskdata.sensorPin = _lightSensorPin;
     xTaskCreate(
-        monitorLight,
+        [](void* o){ static_cast<LouverController*>(o)->monitorLight(); },
         LIGHT_MONITOR_TAG,
         2048,
-        (void*) &_taskdata,
+        this,
         1,
         &_monitorLightHandle
     );

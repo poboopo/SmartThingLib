@@ -11,23 +11,17 @@
 #define OPEN_POSITION 2500
 #define BRIGHT_POSITION 4095
 
-
-struct TaskData {
-    MotorController * controller;
-    uint8_t sensorPin;
-};
-
 class LouverController {
     private:
         TaskHandle_t _monitorLightHandle = NULL;
         MotorController _motorController;
-        TaskData _taskdata;
         LedIndicator * _led = NULL;
 
         uint8_t _lightSensorPin;
 
         void createMonitorTask();
         void deleteMonitorTask();
+        void monitorLight();
     public:
         LouverController();
         ~LouverController();

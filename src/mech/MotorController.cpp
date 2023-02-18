@@ -3,7 +3,7 @@
 #define ACCURACY 100
 
 #define MIN_SPEED 100
-#define MAX_SPEED 150
+#define MAX_SPEED 200
 
 #define TIMEOUT 5000
 

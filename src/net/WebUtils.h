@@ -1,5 +1,6 @@
-#include "DictionaryDeclarations.h"
 #include <net/Pages.h>
+#include <ArduinoJson.h>
+#include <utils/SettingsManager.h>
 
 #define WEB_SERVER_TAG "web_server"
 
@@ -17,13 +18,15 @@ String buildErrorJson(String error) {
 }
 
 void handleLouverGet(WebServer * server, LouverController * controller) {
-    Dictionary * dict = new Dictionary(3);
-    dict->insert("automode", controller->isAutoModeEnabled());
-    dict->insert("position", controller->getMotorPosition());
-    dict->insert("light", controller->getLightValue());
+    DynamicJsonDocument jsonDoc(64);
+    jsonDoc["automode"] = controller->isAutoModeEnabled();
+    jsonDoc["position"] = controller->getMotorPosition();
+    jsonDoc["light"] = controller->getLightValue();
 
-    server->send(200, "application/json", dict->json());
-    delete dict;
+    String json;
+    serializeJson(jsonDoc, json);
+
+    server->send(200, "application/json", json);
 }
 
 void handleLouverPut(WebServer * server, LouverController * controller) {
@@ -31,12 +34,11 @@ void handleLouverPut(WebServer * server, LouverController * controller) {
         server->send(400);
         return;
     }
-    Dictionary * dict = new Dictionary(1);
-    dict->jload(server->arg("plain"));
+    DynamicJsonDocument jsonDoc(64);
+    deserializeJson(jsonDoc, server->arg("plain"));
 
-    String actionStr = dict->search("action");
-    if (actionStr.length() > 0) {
-        int action = actionStr.toInt();
+    if (jsonDoc.containsKey("action")) {
+        int action = jsonDoc["action"];
         // TODO мне кажется есть элегантное решение, но пока только на это
         // хватило познаний c++
         switch(action) {
@@ -64,6 +66,50 @@ void handleLouverPut(WebServer * server, LouverController * controller) {
         }
     }
     
+    server->send(200);
+}
+
+void handleSettingsPost(WebServer * server, SettingsManager * settingsManager) {
+    if (!server->hasArg("plain")) {
+        server->send(400, "content/json", buildErrorJson("Body is missing"));
+        return;
+    }
+    String data = server->arg("plain");
+    if (data.length() == 0) {
+        server->send(400, "content/json", buildErrorJson("Body is missing"));
+        return;
+    }
+
+    DynamicJsonDocument jsonDoc(1024);
+    deserializeJson(jsonDoc, data);
+    JsonObject root = jsonDoc.as<JsonObject>();
+
+    for (JsonPair pair: root) {
+        settingsManager->putSettingString(GROUP_OTHER, pair.key().c_str(), pair.value().as<String>());
+    }
+
+    settingsManager->saveSettings();
+
+    server->send(200);
+}
+
+void handleSetup(WebServer * server, SettingsManager * settingsManager) {
+    if (!server->hasArg("plain")) {
+        server->send(400, "content/json", buildErrorJson("Body is missing"));
+        return;
+    }
+    String data = server->arg("plain");
+    if (data.length() == 0) {
+        server->send(400, "content/json", buildErrorJson("Body is missing"));
+        return;
+    }
+
+    DynamicJsonDocument jsonDoc(256);
+    deserializeJson(jsonDoc, data);
+    settingsManager->putSettingString(GROUP_WIFI, SSID_SETTING, jsonDoc["ssid"]);
+    settingsManager->putSettingString(GROUP_WIFI, PASSWORD_SETTING, jsonDoc["password"]);
+    settingsManager->saveSettings();
+
     server->send(200);
 }
 

@@ -3,7 +3,7 @@
 #define POT_MIN 100
 #define POT_MAX 4000
 
-#define SMOOTH_START 1
+#define SMOOTH_START 0
 
 #define MOTOR_CONTROLLER_TAG "motor_controller"
 

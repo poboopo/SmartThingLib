@@ -7,7 +7,6 @@
 #include <LouverController.h>
 #include <net/Multicaster.h>
 #include <net/WebUtils.h>
-#include <utils/SettingsManager.h>
 
 // Pins
 #define MOTOR_FIRST_PIN 26
@@ -109,10 +108,10 @@ void wipeSettings() {
 }
 
 String connectToWifi() {
-    String ssid = settingsManager.getSetting(SSID_SETTING);
-    String password = settingsManager.getSetting(PASSWORD_SETTING);
+    String ssid = settingsManager.getSettingString(GROUP_WIFI, SSID_SETTING);
+    String password = settingsManager.getSettingString(GROUP_WIFI, PASSWORD_SETTING);
     
-    if (ssid.length() == 0) {
+    if (ssid.isEmpty()) {
         ESP_LOGI("*", "Ssid is blank -> creating AP");
         WiFi.softAP("LOUVER");
         // WiFi.beginSmartConfig();
@@ -143,9 +142,17 @@ String connectToWifi() {
 }
 
 void setupServerEndPoints() {
-    server.on("/", []() {
+    server.on("/", HTTP_GET, []() {
         server.send(200, "text/html", buildMainPage(WiFi.getMode() == WIFI_MODE_AP));
     });
+    
+    if (WiFi.getMode() == WIFI_MODE_AP) {
+        server.on("/setup", HTTP_POST, []() {
+            ESP_LOGI(WEB_SERVER_TAG, "[POST] [/setup]");
+            handleSetup(&server, &settingsManager);
+        });
+    }
+
     server.on("/louver", HTTP_GET, [](){
         ESP_LOGI(WEB_SERVER_TAG, "[GET] [/louver]");
         handleLouverGet(&server, &controller);
@@ -161,27 +168,7 @@ void setupServerEndPoints() {
     });
     server.on("/settings", HTTP_POST, [](){
         ESP_LOGI(WEB_SERVER_TAG, "[POST] [/settings]");
-        if (!server.hasArg("plain")) {
-            server.send(400, "content/json", buildErrorJson("Body is missing"));
-            return;
-        }
-        String data = server.arg("plain");
-        if (data.length() == 0) {
-            server.send(400, "content/json", buildErrorJson("Body is missing"));
-            return;
-        }
-
-        Dictionary &dict = *(new Dictionary());
-        dict.jload(data);
-        if (dict.size() == 0) {
-            server.send(400, "content/json", buildErrorJson("Body is missing"));
-            return;
-        }
-
-        settingsManager.mergeSettings(dict);
-        settingsManager.saveSettings();
-
-        server.send(200);
+        handleSettingsPost(&server, &settingsManager);
     });
     server.on("/settings", HTTP_DELETE, [](){
         ESP_LOGI(WEB_SERVER_TAG, "[DELETE] [/settings]");
@@ -195,6 +182,7 @@ void setupServerEndPoints() {
     });
     server.on("/restart", HTTP_PUT, [](){
         ESP_LOGI(WEB_SERVER_TAG, "[PUT] [/restart]");
+        settingsManager.saveSettings();
         delay(1000);
         ESP.restart();
     });

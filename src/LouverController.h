@@ -6,10 +6,12 @@
 
 #define MONITOR_TASK_DELAY 500
 
-#define CLOSE_POSITION 0
-#define MIDDLE_POSITION 1200
-#define OPEN_POSITION 2500
-#define BRIGHT_POSITION 4095
+#define CLOSE_POSITION 4095
+#define MIDDLE_POSITION 2500
+#define OPEN_POSITION 1200
+#define BRIGHT_POSITION 0
+
+#define INVERT 1
 
 class LouverController {
     private:

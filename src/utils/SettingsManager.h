@@ -1,13 +1,18 @@
-#include "DictionaryDeclarations.h"
+#include <ArduinoJson.h>
 
-#define SSID_SETTING "wssid"
-#define PASSWORD_SETTING "wpass"
+#define SSID_SETTING "ssid"
+#define PASSWORD_SETTING "password"
+
+#define GROUP_WIFI "wifi"
+#define GROUP_CONFIG "config"
+#define GROUP_STATE "state"
+#define GROUP_OTHER "other"
 
 #define SETTINGS_MANAGER_TAG "settings_manager"
 
 class SettingsManager {
     private:
-        Dictionary * _settings;
+        StaticJsonDocument<1024> _settings;
         String loadFromEeprom();
     public:
         SettingsManager();
@@ -19,7 +24,14 @@ class SettingsManager {
         void saveSettings();
         void clear();
 
-        String getSetting(String name);
+        void putSettingString(String groupName, String name, String value);
+        void putSettingInteger(String groupName, String name, int value);
+
+        String getSettingString(String name);
+        String getSettingString(String groupName, String name);
+
+        int getSettingInteger(String name);
+        int getSettingInteger(String groupName, String name);
+
         String getJson();
-        void mergeSettings(Dictionary dict);
 };

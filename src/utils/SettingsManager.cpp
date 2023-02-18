@@ -2,22 +2,22 @@
 #include <EEPROM.h>
 
 #define EEPROM_LOAD_SIZE 2048
+
 SettingsManager::SettingsManager() {
 }
 
 SettingsManager::~SettingsManager() {
-    _settings->destroy();
+    _settings.garbageCollect();
 }
 
 void SettingsManager::loadSettings() {
-    _settings = new Dictionary();
     ESP_LOGI(SETTINGS_MANAGER_TAG, "Loading data from eeprom...");
     String loaddedSettings = loadFromEeprom();
     if (loaddedSettings.length() == 0) {
         ESP_LOGI(SETTINGS_MANAGER_TAG, "Settings empty!");
         return;
     }
-    _settings->jload(loaddedSettings);
+    deserializeJson(_settings, loaddedSettings);
 }
 
 void SettingsManager::clear() {
@@ -41,11 +41,12 @@ String SettingsManager::loadFromEeprom() {
         char data[size + 1];
         int val = 0;
         for (int i = 0; i < size; i++) {
-            data[i] = EEPROM.read(i + 1);
+            val = EEPROM.read(i + 1);
+            data[i] = isAscii(val) ? val : ' ';
         }
 
         EEPROM.commit();
-        ESP_LOGI(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s", data);
+        ESP_LOGI(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]", data, size);
         return data;
     } else {
         ESP_LOGI("Failed to open EEPROM");
@@ -55,10 +56,10 @@ String SettingsManager::loadFromEeprom() {
 
 void SettingsManager::saveSettings() {
     if (EEPROM.begin(EEPROM_LOAD_SIZE)) {
-        uint8_t size = _settings->jsize();
-        String data = _settings->json();
-        ESP_LOGI(SETTINGS_MANAGER_TAG, "Saving settings: %s", data.c_str());
-
+        String data;
+        serializeJson(_settings, data);
+        uint16_t size = data.length();
+        ESP_LOGI(SETTINGS_MANAGER_TAG, "Saving settings: %s [%u]", data.c_str(), size);
         EEPROM.write(0, size);
         for (int i = 0; i < size; i++) {
             EEPROM.write(i + 1, data.charAt(i));
@@ -72,28 +73,59 @@ void SettingsManager::saveSettings() {
 }
 
 void SettingsManager::removeSetting(String name) {
-    if (name == SSID_SETTING || name == PASSWORD_SETTING) {
+    if (name == SSID_SETTING || name == PASSWORD_SETTING || name == GROUP_WIFI) {
         ESP_LOGI(SETTINGS_MANAGER_TAG, "U can't remove Wifi credits with this function! Use dropWifiCredits insted.");
         return;
     }
-    _settings->remove(name.c_str());
+    _settings.remove(name.c_str());
 }
 
 void SettingsManager::dropWifiCredits() {
-    _settings->remove(SSID_SETTING);
-    _settings->remove(PASSWORD_SETTING);
+    _settings.remove(GROUP_WIFI);
     saveSettings();
 }
 
-String SettingsManager::getSetting(String name) {
-    ESP_LOGI("*", "%s %s", name, _settings->search(name));
-    return _settings->search(name);
+void SettingsManager::putSettingString(String groupName, String name, String value) {
+    _settings[groupName][name] = value;
 }
 
+void SettingsManager::putSettingInteger(String groupName, String name, int value) {
+    _settings[groupName][name] = value;
+}
+
+String SettingsManager::getSettingString(String name) {
+    ESP_LOGI("*", "%s %s", name, _settings[name]);
+    if (_settings.containsKey(name)) {
+        return _settings[name];
+    }
+    return "";
+}
+
+String SettingsManager::getSettingString(String groupName, String name) {
+    ESP_LOGI("*", "%s %s", name, _settings[groupName][name]);
+    if (_settings.containsKey(groupName)) {
+        return _settings[groupName][name];
+    }
+    return "";
+}
+
+int SettingsManager::getSettingInteger(String name) {
+    ESP_LOGI("*", "%s %s", name, _settings[name]);
+    if (_settings.containsKey(name)) {
+        return _settings[name];
+    }
+    return 0;
+}
+
+int SettingsManager::getSettingInteger(String groupName, String name) {
+    ESP_LOGI("*", "%s %s", name, _settings[groupName][name]);
+    if (_settings.containsKey(groupName)) {
+        return _settings[groupName][name];
+    }
+    return 0;
+}
 String SettingsManager::getJson() {
-    return _settings->json();
-}
-
-void SettingsManager::mergeSettings(Dictionary dict) {
-    _settings->merge(dict);
+    String json;
+    serializeJson(_settings, json);
+    return json;
 }

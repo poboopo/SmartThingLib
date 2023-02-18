@@ -26,8 +26,11 @@ void LouverController::monitorLight() {
 
     ESP_LOGI(LIGHT_MONITOR_TAG, "Light monitor task started");
     for(;;) {
-        lightValue = map(analogRead(_lightSensorPin), 0, 4095, POT_MIN, POT_MAX);
-        _motorController.setPosition(lightValue);
+        lightValue = analogRead(_lightSensorPin);
+        if (INVERT) {
+            lightValue = 4095 - lightValue;
+        }
+        _motorController.setPosition(map(lightValue, 0, 4095, POT_MIN, POT_MAX));
         vTaskDelay(delayTime);
     }
 }

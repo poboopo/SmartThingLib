@@ -131,8 +131,8 @@ const String PAGE_PART_2 = R"=====(
             const pass = document.getElementById("password").value;
             restRequest(
                 "POST",
-                "http://" + getHost() + "/settings",
-                { wssid: ssid, wpass: pass },
+                "http://" + getHost() + "/setup",
+                { ssid: ssid, password: pass },
                 "WiFi info saved!",
                 "Can't save WiFi info :("
             );

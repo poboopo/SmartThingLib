@@ -85,7 +85,7 @@ void handleSettingsPost(WebServer * server, SettingsManager * settingsManager) {
     JsonObject root = jsonDoc.as<JsonObject>();
 
     for (JsonPair pair: root) {
-        settingsManager->putSettingString(GROUP_OTHER, pair.key().c_str(), pair.value().as<String>());
+        settingsManager->putSetting(GROUP_OTHER, pair.key().c_str(), pair.value().as<String>());
     }
 
     settingsManager->saveSettings();
@@ -106,8 +106,8 @@ void handleSetup(WebServer * server, SettingsManager * settingsManager) {
 
     DynamicJsonDocument jsonDoc(256);
     deserializeJson(jsonDoc, data);
-    settingsManager->putSettingString(GROUP_WIFI, SSID_SETTING, jsonDoc["ssid"]);
-    settingsManager->putSettingString(GROUP_WIFI, PASSWORD_SETTING, jsonDoc["password"]);
+    settingsManager->putSetting(GROUP_WIFI, SSID_SETTING, jsonDoc["ssid"].as<String>());
+    settingsManager->putSetting(GROUP_WIFI, PASSWORD_SETTING, jsonDoc["password"].as<String>());
     settingsManager->saveSettings();
 
     server->send(200);

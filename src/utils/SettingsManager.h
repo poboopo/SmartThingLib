@@ -2,6 +2,7 @@
 
 #define SSID_SETTING "ssid"
 #define PASSWORD_SETTING "password"
+#define AUTOMODE_SETTING "automode"
 
 #define GROUP_WIFI "wifi"
 #define GROUP_CONFIG "config"
@@ -24,14 +25,18 @@ class SettingsManager {
         void saveSettings();
         void clear();
 
-        void putSettingString(String groupName, String name, String value);
-        void putSettingInteger(String groupName, String name, int value);
+        void putSetting(String name, String value);
+        void putSetting(String groupName, String name, String value);
+        void putSetting(String name, int value);
+        void putSetting(String groupName, String name, int value);
 
         String getSettingString(String name);
         String getSettingString(String groupName, String name);
 
         int getSettingInteger(String name);
         int getSettingInteger(String groupName, String name);
+
+        JsonObject getSettings();
 
         String getJson();
 };

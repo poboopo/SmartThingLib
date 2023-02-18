@@ -85,12 +85,20 @@ void SettingsManager::dropWifiCredits() {
     saveSettings();
 }
 
-void SettingsManager::putSettingString(String groupName, String name, String value) {
+void SettingsManager::putSetting(String groupName, String name, String value) {
     _settings[groupName][name] = value;
 }
 
-void SettingsManager::putSettingInteger(String groupName, String name, int value) {
+void SettingsManager::putSetting(String name, String value) {
+    _settings[name] = value;
+}
+
+void SettingsManager::putSetting(String groupName, String name, int value) {
     _settings[groupName][name] = value;
+}
+
+void SettingsManager::putSetting(String name, int value) {
+    _settings[name] = value;
 }
 
 String SettingsManager::getSettingString(String name) {
@@ -124,6 +132,11 @@ int SettingsManager::getSettingInteger(String groupName, String name) {
     }
     return 0;
 }
+
+JsonObject SettingsManager::getSettings() {
+    return _settings.to<JsonObject>();
+}
+
 String SettingsManager::getJson() {
     String json;
     serializeJson(_settings, json);

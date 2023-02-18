@@ -70,6 +70,9 @@ void setup() {
 
     controller.init(MOTOR_FIRST_PIN, MOTOR_SECOND_PIN, POT_PIN, LIGHT_SENSOR_PIN);
     controller.addLedIndicator(&ledIndicator);
+    if (settingsManager.getSettingInteger(GROUP_STATE, AUTOMODE_SETTING)) {
+        controller.enableAutoMode();
+    }
     ESP_LOGI("*", "Controller created");
 
     ESP_LOGI("*", "Setup finished");
@@ -182,7 +185,11 @@ void setupServerEndPoints() {
     });
     server.on("/restart", HTTP_PUT, [](){
         ESP_LOGI(WEB_SERVER_TAG, "[PUT] [/restart]");
+
+        settingsManager.putSetting(GROUP_STATE, AUTOMODE_SETTING, controller.isAutoModeEnabled());
+
         settingsManager.saveSettings();
+        server.send(200);
         delay(1000);
         ESP.restart();
     });

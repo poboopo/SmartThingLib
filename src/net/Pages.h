@@ -161,7 +161,7 @@ const String PAGE_PART_2 = R"=====(
                         const data = JSON.parse(response);
                         this.louverState = data;
                         // BRUHHHH
-                        this.automode = this.louverState.automode === "1"
+                        this.automode = this.louverState.automode
                         updateFields();
                     } else {
                         console.log("Empty response");
@@ -216,7 +216,7 @@ const String PAGE_PART_2 = R"=====(
             text-align: center;
             margin-left: auto;
             margin-right: auto;
-            width: 20%;
+            width: 50%;
         }
         .content-block {
             margin-top: 10px;

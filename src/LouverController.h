@@ -11,7 +11,9 @@
 #define OPEN_POSITION 1200
 #define BRIGHT_POSITION 0
 
-#define INVERT 1
+#define LIGHT_CLOSE 2000
+#define LIGHT_OPEN 900
+#define LIGHT_BRIGHT 500
 
 class LouverController {
     private:

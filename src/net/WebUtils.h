@@ -85,9 +85,10 @@ void handleSettingsPost(WebServer * server, SettingsManager * settingsManager) {
     JsonObject root = jsonDoc.as<JsonObject>();
 
     for (JsonPair pair: root) {
-        settingsManager->putSetting(GROUP_OTHER, pair.key().c_str(), pair.value().as<String>());
+        settingsManager->putSetting(GROUP_CONFIG, pair.key().c_str(), pair.value());
     }
 
+    // settingsManager->putSetting(GROUP_CONFIG, jsonDoc.as<JsonObject>());
     settingsManager->saveSettings();
 
     server->send(200);
@@ -118,7 +119,6 @@ const String buildMainPage(bool apMode) {
     if (apMode) {
         page += SETUP_BLOCK;
     }
-    page += CONTROLS_BLOCK;
     page += PAGE_PART_2;
     return page;
 }

@@ -1,69 +1,5 @@
-const String SETUP_PAGE = R"=====(
-    <html>
-    <head>
-        <title>Louver set up page</title>
-    </head>
-    <body class="center">
-        <div>
-            <p>WiFi network name: </p>
-            <input type="text" id="ssid" title="SSID"/>
-        </div>
-        <div>
-            <p>WiFi password: </p>
-            <input type="password" id="password" title="password"/>
-        </div>
-        <div>
-            <button onclick="submit()">submit</button>
-        </div>
-        <p id="info"></p>
-    </body>
-    <script>
-        function submit() {
-            const ssid = document.getElementById("ssid").value
-            if (!ssid || !ssid.length) {
-                alert("SSID is missing!");
-                return;
-            }
-            const pass = document.getElementById("password").value   
-            
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", "http://192.168.4.1/settings");
-            xhr.setRequestHeader("Accept", "application/json");
-            xhr.setRequestHeader("Content-Type", "application/json");
-
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status == 200) {
-                        document.getElementById("info").innerHTML = "WiFi info saved!"
-                    } else {
-                        document.getElementById("info").innerHTML = "Can't save WiFi info :("
-                    }
-                }
-            };
-
-            const data = {
-                wssid: ssid,
-                wpass: pass
-            }
-
-            xhr.send(JSON.stringify(data));
-        }
-    </script>
-    <style>
-        .center {
-            margin: auto;
-            width: fit-content;
-            height: fit-content;
-            border: 3px solid green;
-            padding: 10px;
-            text-align: center;
-        }
-    </style>
-</html>
-)=====";
-
 const String SETUP_BLOCK = R"=====(
-    <h1>Settings</h1>
+    <h1>WiFi setup</h1>
     <div id="settings" class="content-block">
         <div>
             <p>WiFi network name: </p>
@@ -76,25 +12,6 @@ const String SETUP_BLOCK = R"=====(
         <div class="btn-group btn-control" >
             <button onclick="submit()">submit</button>
         </div>
-    </div>
-)=====";
-
-const String CONTROLS_BLOCK = R"=====(
-    <h1>Control panel</h1>
-    <div id="control-buttons-block" class="content-block btn-group btn-control">
-        <div>
-            <p style="display: inline-block; padding-right: 10px;">Auto mode</p>
-            <label class="switch"  style="vertical-align: 13px;">
-                <!-- + true конвертит в int -->
-                <input type="checkbox" id="auto-mode-checkbox" onclick="sendLouverAction(+ this.checked)">
-                <span class="slider round"></span>
-            </label>
-        </div>
-
-        <button onclick="sendLouverAction(3)">Close</button>
-        <button onclick="sendLouverAction(4)">Middle</button>
-        <button onclick="sendLouverAction(2)">Open</button>
-        <button onclick="sendLouverAction(5)">Bright</button>
     </div>
 )=====";
 
@@ -112,16 +29,57 @@ const String PAGE_PART_1 = R"=====(
         <div class="holder">
 )=====";
 
-const String PAGE_PART_2 = R"=====(          
-        </div>
-        <div class="holder">
+const String PAGE_PART_2 = R"=====(
+        <div id="control-buttons-block" class="content-block btn-group btn-control">
+                <h1>Control panel</h1>
+                <div>
+                    <p style="display: inline-block; padding-right: 10px;">Auto mode</p>
+                    <label class="switch"  style="vertical-align: 13px;">
+                        <!-- + true конвертит в int -->
+                        <input type="checkbox" id="auto-mode-checkbox" onclick="sendLouverAction(+ this.checked)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+        
+                <button onclick="sendLouverAction(3)">Close</button>
+                <button onclick="sendLouverAction(4)">Middle</button>
+                <button onclick="sendLouverAction(2)">Open</button>
+                <button onclick="sendLouverAction(5)">Bright</button>
+            </div>
+
+            <div class="content-block">
+                <h1>Config</h1>
+                <div id="config">
+                    <p >Light close value</p>
+                    <input type="number" id="light_close">
+                    <p >Light open value</p>
+                    <input type="number" id="light_open">
+                    <p >Light bright value</p>
+                    <input type="number" id="light_bright">
+                    <p >Automode update delay</p>
+                    <input type="number" id="delay">
+                </div>
+                <div class="btn-group btn-control" >
+                    <button onclick="saveConfig()">save</button>
+                </div>
+            </div>
+
+            <div class="content-block">
+                <h1>State</h1>
+                <p style="display: inline-block; padding-right: 10px;" id="state">Loading...</p>
+                <button onclick="loadLouverState()">Update</button>
+            </div>
             <button class="btn-warning" onclick="restart()">Restart</button>
         </div>
     </body>
     <script>
         window.onload = function() {
             loadLouverState();
+            loadConfig();
         };
+        this.config = {}
+        this.louverState = {}
+
         function submit() {
             const ssid = document.getElementById("ssid").value;
             if (!ssid || !ssid.length) {
@@ -132,9 +90,33 @@ const String PAGE_PART_2 = R"=====(
             restRequest(
                 "POST",
                 "http://" + getHost() + "/setup",
-                { ssid: ssid, password: pass },
+                { ssid: ssid, pass: pass },
                 "WiFi info saved!",
                 "Can't save WiFi info :("
+            );
+        }
+        function saveConfig() {
+            if(!this.config) {
+                this.config = {};
+            }
+            const configElement = document.getElementById("config");
+            for (let i = 0; i < configElement.children.length; i++) {
+                const element = configElement.children[i];
+                if (element.localName === 'input' && element.id) {
+                    if (element.type === 'number') {
+                        this.config[element.id] = parseInt(element.value);
+                    } else {
+                        this.config[element.id] = element.value;
+                    }
+                }
+            }
+            restRequest(
+                "POST",
+                "http://" + getHost() + "/settings",
+                this.config,
+                "Config updated!",
+                "Failed to update config!",
+                null
             );
         }
         function sendLouverAction(action) {
@@ -158,10 +140,7 @@ const String PAGE_PART_2 = R"=====(
                 "Failed to load louver state!",
                 function (response) {
                     if (response) {
-                        const data = JSON.parse(response);
-                        this.louverState = data;
-                        // BRUHHHH
-                        this.automode = this.louverState.automode === "1"
+                        this.louverState = JSON.parse(response);
                         updateFields();
                     } else {
                         console.log("Empty response");
@@ -169,8 +148,33 @@ const String PAGE_PART_2 = R"=====(
                 }
             );
         }
+        function loadConfig() {
+            restRequest(
+                "GET",
+                "http://" + getHost() + "/settings",
+                null,
+                "",
+                "Failed to load louver config!",
+                function (response) {
+                    if (response) {
+                        this.config = JSON.parse(response);
+                        updateConfigFields();
+                    } else {
+                        console.log("Empty response");
+                    }
+                }
+            );
+        }
         function updateFields() {
-            document.getElementById("auto-mode-checkbox").checked = this.automode
+            if (this.louverState) {
+                document.getElementById("auto-mode-checkbox").checked = this.louverState.automode;
+                document.getElementById("state").innerHTML = JSON.stringify(this.louverState, null, 4);
+            }
+        }
+        function updateConfigFields() {
+            if (this.config) {
+                Object.keys(this.config).forEach((key) => document.getElementById(key).value = this.config[key])
+            }
         }
         function restart() {
             restRequest("PUT", "http://" + getHost() + "/restart");
@@ -216,7 +220,7 @@ const String PAGE_PART_2 = R"=====(
             text-align: center;
             margin-left: auto;
             margin-right: auto;
-            width: 20%;
+            width: 50%;
         }
         .content-block {
             margin-top: 10px;

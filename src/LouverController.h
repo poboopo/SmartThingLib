@@ -11,7 +11,9 @@
 #define OPEN_POSITION 1200
 #define BRIGHT_POSITION 0
 
-#define INVERT 1
+#define LIGHT_CLOSE 1000
+#define LIGHT_OPEN 200
+#define LIGHT_BRIGHT 50
 
 class LouverController {
     private:
@@ -19,10 +21,15 @@ class LouverController {
         MotorController _motorController;
         LedIndicator * _led = NULL;
 
+        uint16_t _lightClose = LIGHT_CLOSE;
+        uint16_t _lightOpen = LIGHT_OPEN;
+        uint16_t _lightBright = LIGHT_BRIGHT;
+        uint16_t _taskDelay = MONITOR_TASK_DELAY;
+
         uint8_t _lightSensorPin;
 
         void createMonitorTask();
-        void deleteMonitorTask();
+        bool deleteMonitorTask();
         void monitorLight();
     public:
         LouverController();
@@ -32,10 +39,19 @@ class LouverController {
                          uint8_t motorSecondPin,
                          uint8_t potPin,
                          uint8_t lightSensorPin);
+
         void addLedIndicator(LedIndicator * led);
+        void setLightValues(
+            uint16_t lightClose,
+            uint16_t lightOpen,
+            uint16_t lightBright
+        );
+        void setMonitorTaskDelay(uint16_t delay);
 
         void enableAutoMode();
-        void disabelAutoMode();
+        bool disabelAutoMode();
+        void restartAutoMode();
+
         bool isAutoModeEnabled();
         uint16_t getLightValue();
         uint16_t getMotorPosition();

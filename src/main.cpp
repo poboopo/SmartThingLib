@@ -33,6 +33,7 @@ String myIp;
 void setupServerEndPoints();
 String connectToWifi();
 void wipeSettings();
+void processConfig();
 
 bool wifiConnected() {
     return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
@@ -74,6 +75,9 @@ void setup() {
         controller.enableAutoMode();
     }
     ESP_LOGI("*", "Controller created");
+
+    processConfig();
+    ESP_LOGI("*", "Config proceed");
 
     ESP_LOGI("*", "Setup finished");
 }
@@ -167,11 +171,12 @@ void setupServerEndPoints() {
 
     server.on("/settings", HTTP_GET, [](){
         ESP_LOGI(WEB_SERVER_TAG, "[GET] [/settings]");
-        server.send(200, "application/json", settingsManager.getJson());
+        server.send(200, "application/json", settingsManager.getJson(GROUP_CONFIG));
     });
     server.on("/settings", HTTP_POST, [](){
         ESP_LOGI(WEB_SERVER_TAG, "[POST] [/settings]");
         handleSettingsPost(&server, &settingsManager);
+        processConfig();
     });
     server.on("/settings", HTTP_DELETE, [](){
         ESP_LOGI(WEB_SERVER_TAG, "[DELETE] [/settings]");
@@ -190,10 +195,30 @@ void setupServerEndPoints() {
 
         settingsManager.saveSettings();
         server.send(200);
-        delay(1000);
+
+        delay(2000);
         ESP.restart();
     });
     server.onNotFound([](){
         server.send(404, "application/json", buildErrorJson("Page not found"));
     });
+}
+
+void processConfig() {
+    JsonObject config = settingsManager.getSettings(GROUP_CONFIG);
+
+    int lightClose = config[CLOSE_SETTING];
+    int lightOpen = config[OPEN_SETTING];
+    int lightBright = config[BRIGHT_SETTING];
+
+    if (lightClose != 0 && lightOpen != 0 && lightBright != 0) {
+        controller.setLightValues(lightClose, lightOpen, lightBright);
+    }
+
+    int delay = config[DELAY_SETTING];
+    if (delay > 0) {
+        controller.setMonitorTaskDelay(delay);
+    }
+
+    controller.restartAutoMode();
 }

@@ -85,6 +85,16 @@ void SettingsManager::dropWifiCredits() {
     saveSettings();
 }
 
+void SettingsManager::putSetting(String groupName, JsonObject jsonObject) {
+    for (JsonPair pair: jsonObject) {
+        _settings[groupName][pair.key().c_str()] = pair.value();
+    }
+}
+
+void SettingsManager::putSetting(String groupName, String name, JsonVariant value) {
+    _settings[groupName][name] = value;
+}
+
 void SettingsManager::putSetting(String groupName, String name, String value) {
     _settings[groupName][name] = value;
 }
@@ -102,7 +112,6 @@ void SettingsManager::putSetting(String name, int value) {
 }
 
 String SettingsManager::getSettingString(String name) {
-    ESP_LOGI("*", "%s %s", name, _settings[name]);
     if (_settings.containsKey(name)) {
         return _settings[name];
     }
@@ -110,7 +119,6 @@ String SettingsManager::getSettingString(String name) {
 }
 
 String SettingsManager::getSettingString(String groupName, String name) {
-    ESP_LOGI("*", "%s %s", name, _settings[groupName][name]);
     if (_settings.containsKey(groupName)) {
         return _settings[groupName][name];
     }
@@ -118,7 +126,6 @@ String SettingsManager::getSettingString(String groupName, String name) {
 }
 
 int SettingsManager::getSettingInteger(String name) {
-    ESP_LOGI("*", "%s %s", name, _settings[name]);
     if (_settings.containsKey(name)) {
         return _settings[name];
     }
@@ -126,7 +133,6 @@ int SettingsManager::getSettingInteger(String name) {
 }
 
 int SettingsManager::getSettingInteger(String groupName, String name) {
-    ESP_LOGI("*", "%s %s", name, _settings[groupName][name]);
     if (_settings.containsKey(groupName)) {
         return _settings[groupName][name];
     }
@@ -137,8 +143,19 @@ JsonObject SettingsManager::getSettings() {
     return _settings.to<JsonObject>();
 }
 
+JsonObject SettingsManager::getSettings(String groupName) {
+    JsonObject settings = _settings[groupName];
+    return settings;
+}
+
 String SettingsManager::getJson() {
     String json;
     serializeJson(_settings, json);
+    return json;
+}
+
+String SettingsManager::getJson(String groupName) {
+    String json;
+    serializeJson(getSettings(groupName), json);
     return json;
 }

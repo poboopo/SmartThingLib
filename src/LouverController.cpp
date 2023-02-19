@@ -20,17 +20,39 @@ void LouverController::addLedIndicator(LedIndicator * led) {
     _led = led;
 }
 
+void LouverController::setLightValues(
+                                    uint16_t lightClose,
+                                    uint16_t lightOpen,
+                                    uint16_t lightBright) {
+    if (lightClose == _lightClose && lightOpen == _lightOpen && lightBright == _lightBright) {
+        return;
+    }
+
+    _lightClose = lightClose;
+    _lightOpen = lightOpen;
+    _lightBright = lightBright;
+}
+
+void LouverController::setMonitorTaskDelay(uint16_t delay) {
+    _taskDelay = delay;
+}
+
 void LouverController::monitorLight() {
     int16_t lightValue = 0;
-    int16_t delayTime = MONITOR_TASK_DELAY / portTICK_PERIOD_MS;
+    int16_t delayTime = _taskDelay / portTICK_PERIOD_MS;
 
     ESP_LOGI(LIGHT_MONITOR_TAG, "Light monitor task started");
     for(;;) {
         lightValue = analogRead(_lightSensorPin);
-        if (INVERT) {
-            lightValue = 4095 - lightValue;
+        if (lightValue > _lightClose) {
+            _motorController.setPosition(CLOSE_POSITION);
+        } else if (lightValue < _lightBright) {
+            _motorController.setPosition(BRIGHT_POSITION);
+        } else if (lightValue < _lightOpen && lightValue > _lightBright) {
+            _motorController.setPosition(map(lightValue, _lightBright, _lightOpen, BRIGHT_POSITION, OPEN_POSITION));
+        } else if (lightValue < _lightClose && lightValue > _lightOpen) {
+            _motorController.setPosition(map(lightValue, _lightOpen, _lightClose, OPEN_POSITION, CLOSE_POSITION));
         }
-        _motorController.setPosition(map(lightValue, 0, 4095, POT_MIN, POT_MAX));
         vTaskDelay(delayTime);
     }
 }
@@ -46,13 +68,21 @@ void LouverController::createMonitorTask(){
     );
 }
 
-void LouverController::deleteMonitorTask() {
+bool LouverController::deleteMonitorTask() {
     if (_monitorLightHandle != NULL) {
         vTaskDelete(_monitorLightHandle);
         _monitorLightHandle = NULL;
+        return true;
     }
+    return false;
 }
 
+void LouverController::restartAutoMode() {
+    if (disabelAutoMode()) {
+        delay(100);
+        enableAutoMode();
+    }
+}
 
 void LouverController::enableAutoMode() {
     if (!isAutoModeEnabled()) {
@@ -64,14 +94,16 @@ void LouverController::enableAutoMode() {
     ESP_LOGI(LOUVER_CONTROLLER_TAG, "Automode enabled");
 }
 
-void LouverController::disabelAutoMode() {
+bool LouverController::disabelAutoMode() {
     if (isAutoModeEnabled()) {
         deleteMonitorTask();
         if (_led != NULL) {
             _led->off();
         }
+        ESP_LOGI(LOUVER_CONTROLLER_TAG, "Automode disabled");
+        return true;
     }
-    ESP_LOGI(LOUVER_CONTROLLER_TAG, "Automode disabled");
+    return false;
 }
 
 bool LouverController::isAutoModeEnabled() {

@@ -5,8 +5,8 @@
 #include <ESPmDNS.h>
 
 #include <LouverController.h>
-#include <net/Multicaster.h>
 #include <net/WebUtils.h>
+#include <net/RemoteLogger.h>
 
 // Pins
 #define MOTOR_FIRST_PIN 26
@@ -27,6 +27,7 @@ Multicaster multicaster;
 SettingsManager settingsManager;
 WebServer server(80);
 LedIndicator ledIndicator;
+RemoteLogger logger;
 
 String myIp;
 
@@ -55,6 +56,9 @@ void setup() {
 
     if (wifiConnected()) {
         ESP_LOGI("*", "WiFi connected, local ip %s", myIp);
+        
+        logger.init();
+        logger.test();
 
         ArduinoOTA.begin();
         ESP_LOGI("*", "Ota started");

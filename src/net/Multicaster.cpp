@@ -7,6 +7,7 @@ Multicaster::Multicaster() {
 }
 
 Multicaster::~Multicaster() {
+    stop();
 }
 
 void Multicaster::init(const char * group, int port) {
@@ -39,4 +40,8 @@ void Multicaster::broadcast(const char * message) {
     if (nbytes < 0) {
         ESP_LOGE(V4TAG, "Failed to send");
     }
+}
+
+void Multicaster::stop() {
+    close(_sock);
 }

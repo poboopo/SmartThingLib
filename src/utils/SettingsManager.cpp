@@ -10,11 +10,15 @@ SettingsManager::~SettingsManager() {
     _settings.garbageCollect();
 }
 
+void SettingsManager::addLogger(BetterLogger * logger) {
+    _logger = logger;
+}
+
 void SettingsManager::loadSettings() {
-    ESP_LOGI(SETTINGS_MANAGER_TAG, "Loading data from eeprom...");
+    if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Loading data from eeprom...");
     String loaddedSettings = loadFromEeprom();
     if (loaddedSettings.length() == 0) {
-        ESP_LOGI(SETTINGS_MANAGER_TAG, "Settings empty!");
+        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Settings empty!");
         return;
     }
     deserializeJson(_settings, loaddedSettings);
@@ -25,9 +29,9 @@ void SettingsManager::clear() {
         for (int i = 0; i < EEPROM_LOAD_SIZE; i++) {
             EEPROM.write(i, 0);
         }
-        ESP_LOGI("EEprom clear");
+        if (_logger != NULL) _logger->log("EEprom clear");
     } else {
-        ESP_LOGI("Failed to open EEPROM");
+        if (_logger != NULL) _logger->log("Failed to open EEPROM");
     }
 }
 
@@ -46,10 +50,10 @@ String SettingsManager::loadFromEeprom() {
         }
 
         EEPROM.commit();
-        ESP_LOGI(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]", data, size);
+        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]", data, size);
         return data;
     } else {
-        ESP_LOGI("Failed to open EEPROM");
+        if (_logger != NULL) _logger->log("Failed to open EEPROM");
         return "";
     }
 }
@@ -59,22 +63,22 @@ void SettingsManager::saveSettings() {
         String data;
         serializeJson(_settings, data);
         uint16_t size = data.length();
-        ESP_LOGI(SETTINGS_MANAGER_TAG, "Saving settings: %s [%u]", data.c_str(), size);
+        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Saving settings: %s [%u]", data.c_str(), size);
         EEPROM.write(0, size);
         for (int i = 0; i < size; i++) {
             EEPROM.write(i + 1, data.charAt(i));
         }
 
         EEPROM.commit();
-        ESP_LOGI(SETTINGS_MANAGER_TAG, "Settings saved");
+        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Settings saved");
     } else {
-        ESP_LOGI("Failed to open EEPROM");
+        if (_logger != NULL) _logger->log("Failed to open EEPROM");
     }
 }
 
 void SettingsManager::removeSetting(String name) {
     if (name == SSID_SETTING || name == PASSWORD_SETTING || name == GROUP_WIFI) {
-        ESP_LOGI(SETTINGS_MANAGER_TAG, "U can't remove Wifi credits with this function! Use dropWifiCredits insted.");
+        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "U can't remove Wifi credits with this function! Use dropWifiCredits insted.");
         return;
     }
     _settings.remove(name.c_str());

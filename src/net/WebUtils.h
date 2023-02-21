@@ -46,7 +46,7 @@ void handleLouverPut(WebServer * server, LouverController * controller) {
                 controller->enableAutoMode();
                 break;
             case DISABLE_AUTO_MODE:
-                controller->disabelAutoMode();
+                controller->disableAutoMode();
                 break;
             case OPEN:
                 controller->open();

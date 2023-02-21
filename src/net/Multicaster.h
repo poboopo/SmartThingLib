@@ -1,9 +1,12 @@
 #include "lwip/sockets.h"
 
+#ifndef Multicaster_H
+#define Multicaster_H
+
 #define MULTICASTER_TAG "multicaster"
 #define DEFAULT_BROADCAST_DELAY 5000
 
-class Multicaster{
+class Multicaster {
     private:
         int _sock = -1;
         struct sockaddr_in _saddr = { 0 }; 
@@ -15,3 +18,5 @@ class Multicaster{
         void broadcast(const char * message);
         void stop();
 };
+
+#endif

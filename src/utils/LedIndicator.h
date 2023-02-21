@@ -1,5 +1,8 @@
 #include <Arduino.h>
 
+#ifndef LedIndicator_H
+#define LedIndicator_H
+
 #define LED_INDICATOR_TAG "led_indicator"
 #define BLINK_DELAY 200
 
@@ -18,3 +21,5 @@ class LedIndicator {
         void on();
         void off();
 };
+
+#endif

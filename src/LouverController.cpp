@@ -1,4 +1,4 @@
-#include <LouverController.h>
+#include "LouverController.h"
 
 LouverController::LouverController() {
 }
@@ -14,6 +14,10 @@ void LouverController::init( uint8_t motorFirstPin,
                                     uint8_t lightSensorPin) {
     _motorController = MotorController(motorFirstPin, motorSecondPin, potPin);
     _lightSensorPin = lightSensorPin;
+}
+
+void LouverController::addLogger(BetterLogger * logger) {
+    _logger = logger;
 }
 
 void LouverController::addLedIndicator(LedIndicator * led) {
@@ -41,7 +45,7 @@ void LouverController::monitorLight() {
     int16_t lightValue = 0;
     int16_t delayTime = _taskDelay / portTICK_PERIOD_MS;
 
-    ESP_LOGI(LIGHT_MONITOR_TAG, "Light monitor task started");
+    if (_logger != NULL) _logger->log(LIGHT_MONITOR_TAG, "Light monitor task started");
     for(;;) {
         lightValue = analogRead(_lightSensorPin);
         if (lightValue > _lightClose) {
@@ -78,7 +82,7 @@ bool LouverController::deleteMonitorTask() {
 }
 
 void LouverController::restartAutoMode() {
-    if (disabelAutoMode()) {
+    if (disableAutoMode()) {
         delay(100);
         enableAutoMode();
     }
@@ -91,16 +95,17 @@ void LouverController::enableAutoMode() {
             _led->on();
         }
     }
-    ESP_LOGI(LOUVER_CONTROLLER_TAG, "Automode enabled");
+    if (_logger != NULL) _logger->log(LOUVER_CONTROLLER_TAG, "Automode enabled");
 }
 
-bool LouverController::disabelAutoMode() {
+bool LouverController::disableAutoMode() {
     if (isAutoModeEnabled()) {
         deleteMonitorTask();
         if (_led != NULL) {
             _led->off();
         }
-        ESP_LOGI(LOUVER_CONTROLLER_TAG, "Automode disabled");
+
+        if (_logger != NULL) _logger->log(LOUVER_CONTROLLER_TAG, "Automode disabled");
         return true;
     }
     return false;
@@ -119,21 +124,21 @@ uint16_t LouverController::getMotorPosition() {
 }
 
 void LouverController::open() {
-    disabelAutoMode();
+    disableAutoMode();
     _motorController.setPosition(OPEN_POSITION);
 }
 
 void LouverController::close() {
-    disabelAutoMode();
+    disableAutoMode();
     _motorController.setPosition(CLOSE_POSITION);
 }
 
 void LouverController::middle() {
-    disabelAutoMode();
+    disableAutoMode();
     _motorController.setPosition(MIDDLE_POSITION);
 }
 
 void LouverController::bright() {
-    disabelAutoMode();
+    disableAutoMode();
     _motorController.setPosition(BRIGHT_POSITION);
 }

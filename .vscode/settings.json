@@ -3,6 +3,19 @@
         "algorithm": "cpp",
         "*.tcc": "cpp",
         "cmath": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "arduino_freertos.h": "c",
+        "system_error": "cpp",
+        "optional": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "array": "cpp",
+        "functional": "cpp",
+        "regex": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "string": "cpp",
+        "string_view": "cpp"
     }
 }

@@ -7,12 +7,12 @@ Multicaster::Multicaster() {
 }
 
 Multicaster::~Multicaster() {
+    stop();
 }
 
 void Multicaster::init(const char * group, int port) {
     _sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (_sock < 0){
-        ESP_LOGE(MULTICASTER_TAG, "Failed to create socket. Error %d", errno);
         close(_sock);
         return;
     }
@@ -24,7 +24,6 @@ void Multicaster::init(const char * group, int port) {
 
 void Multicaster::broadcast(const char * message) {
     if (_sock < 0 || strlen(message) == 0) {
-        ESP_LOGW(MULTICASTER_TAG, "Socket not initialized or message is empty. Skipping.");
         return;
     }
 
@@ -37,6 +36,10 @@ void Multicaster::broadcast(const char * message) {
         sizeof(_saddr)
     );
     if (nbytes < 0) {
-        ESP_LOGE(V4TAG, "Failed to send");
+        // TODO
     }
+}
+
+void Multicaster::stop() {
+    close(_sock);
 }

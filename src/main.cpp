@@ -4,9 +4,12 @@
 #include <WebServer.h>
 #include <ESPmDNS.h>
 
-#include <LouverController.h>
-#include <net/WebUtils.h>
-#include <net/RemoteLogger.h>
+#include "LouverController.h"
+#include "net/WebUtils.h"
+#include "net/BetterLogger.h"
+#include "net/Multicaster.h"
+#include "utils/SettingsManager.h"
+#include "utils/LedIndicator.h"
 
 // Pins
 #define MOTOR_FIRST_PIN 26
@@ -27,7 +30,7 @@ Multicaster multicaster;
 SettingsManager settingsManager;
 WebServer server(80);
 LedIndicator ledIndicator;
-RemoteLogger logger;
+BetterLogger logger;
 
 String myIp;
 
@@ -41,12 +44,12 @@ bool wifiConnected() {
 }
 
 void setup() {
-    ESP_LOGI("*", "Setup started");
+    logger.log("*", "Setup started");
     pinMode(BUTTON_PIN, INPUT_PULLUP);
 
     ledIndicator.init(LED_PIN);
     settingsManager.loadSettings();
-    ESP_LOGI("*", "Settings manager loaded");
+    logger.log("*", "Settings manager loaded");
     
     if (!digitalRead(BUTTON_PIN)) {
         wipeSettings();
@@ -55,35 +58,34 @@ void setup() {
     myIp = connectToWifi();
 
     if (wifiConnected()) {
-        ESP_LOGI("*", "WiFi connected, local ip %s", myIp);
-        
-        logger.init();
-        logger.test();
+        logger.connect(myIp.c_str());
+        logger.log("*", "WiFi connected, local ip %s", myIp);
 
         ArduinoOTA.begin();
-        ESP_LOGI("*", "Ota started");
+        logger.log("*", "Ota started");
 
         multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
-        ESP_LOGI("*", "Multicaster created");
+        logger.log("*", "Multicaster created");
 
         setupServerEndPoints();
         server.begin();
-        ESP_LOGI("*", "Web server endpoints configured and started");
+        logger.log("*", "Web server endpoints configured and started");
     } else {
-        ESP_LOGI("*", "WiFi not available, skipping all network setup");
+        logger.log("*", "WiFi not available, skipping all network setup");
     }
 
     controller.init(MOTOR_FIRST_PIN, MOTOR_SECOND_PIN, POT_PIN, LIGHT_SENSOR_PIN);
     controller.addLedIndicator(&ledIndicator);
+    controller.addLogger(&logger);
     if (settingsManager.getSettingInteger(GROUP_STATE, AUTOMODE_SETTING)) {
         controller.enableAutoMode();
     }
-    ESP_LOGI("*", "Controller created");
+    logger.log("*", "Controller created");
 
     processConfig();
-    ESP_LOGI("*", "Config proceed");
+    logger.log("*", "Config proceed");
 
-    ESP_LOGI("*", "Setup finished");
+    logger.log("*", "Setup finished");
 }
 
 void loop() {
@@ -95,11 +97,11 @@ void loop() {
 
     if (!digitalRead(BUTTON_PIN)) {
         if (controller.isAutoModeEnabled()) {
-            controller.disabelAutoMode();
+            controller.disableAutoMode();
         } else {
             controller.enableAutoMode();
         }
-        ESP_LOGI("*", "Free heap: %u", ESP.getFreeHeap());
+        logger.log("*", "Free heap: %u", ESP.getFreeHeap());
     }
 
     delay(500);
@@ -114,7 +116,7 @@ void wipeSettings() {
 
     if (!digitalRead(BUTTON_PIN)) {
         settingsManager.dropWifiCredits();
-        ESP_LOGI("*", "WiFi credits were removed!");
+        logger.log("*", "WiFi credits were removed!");
     }
 }
 
@@ -123,7 +125,7 @@ String connectToWifi() {
     String password = settingsManager.getSettingString(GROUP_WIFI, PASSWORD_SETTING);
     
     if (ssid.isEmpty()) {
-        ESP_LOGI("*", "Ssid is blank -> creating AP");
+        logger.log("*", "Ssid is blank -> creating AP");
         WiFi.softAP("LOUVER");
         // WiFi.beginSmartConfig();
         delay(500);
@@ -131,12 +133,12 @@ String connectToWifi() {
         if (MDNS.begin("louver")) {
             MDNS.addService("http", "tcp", 80);
         } else {
-            ESP_LOGI("*", "Failed to setup up MDNS");
+            logger.log("*", "Failed to setup up MDNS");
         }
 
         return WiFi.softAPIP().toString();
     } else {
-        ESP_LOGI("*", "WiFi connecting to %s :: %s", ssid.c_str(), password.c_str());
+        logger.log("*", "WiFi connecting to %s :: %s", ssid.c_str(), password.c_str());
         WiFi.mode(WIFI_STA);
         WiFi.begin(ssid.c_str(), password.c_str());
         long startTime = millis();
@@ -159,31 +161,31 @@ void setupServerEndPoints() {
     
     if (WiFi.getMode() == WIFI_MODE_AP) {
         server.on("/setup", HTTP_POST, []() {
-            ESP_LOGI(WEB_SERVER_TAG, "[POST] [/setup]");
+            logger.log(WEB_SERVER_TAG, "[POST] [/setup]");
             handleSetup(&server, &settingsManager);
         });
     }
 
     server.on("/louver", HTTP_GET, [](){
-        ESP_LOGI(WEB_SERVER_TAG, "[GET] [/louver]");
+        logger.log(WEB_SERVER_TAG, "[GET] [/louver]");
         handleLouverGet(&server, &controller);
     });
     server.on("/louver", HTTP_PUT, [](){
-        ESP_LOGI(WEB_SERVER_TAG, "[PUT] [/louver]");
+        logger.log(WEB_SERVER_TAG, "[PUT] [/louver]");
         handleLouverPut(&server, &controller);
     });
 
     server.on("/settings", HTTP_GET, [](){
-        ESP_LOGI(WEB_SERVER_TAG, "[GET] [/settings]");
+        logger.log(WEB_SERVER_TAG, "[GET] [/settings]");
         server.send(200, "application/json", settingsManager.getJson(GROUP_CONFIG));
     });
     server.on("/settings", HTTP_POST, [](){
-        ESP_LOGI(WEB_SERVER_TAG, "[POST] [/settings]");
+        logger.log(WEB_SERVER_TAG, "[POST] [/settings]");
         handleSettingsPost(&server, &settingsManager);
         processConfig();
     });
     server.on("/settings", HTTP_DELETE, [](){
-        ESP_LOGI(WEB_SERVER_TAG, "[DELETE] [/settings]");
+        logger.log(WEB_SERVER_TAG, "[DELETE] [/settings]");
         if (!server.hasArg("name")) {
             server.send(400, "content/json", buildErrorJson("Setting name is missing"));
         }
@@ -193,7 +195,7 @@ void setupServerEndPoints() {
         server.send(200);
     });
     server.on("/restart", HTTP_PUT, [](){
-        ESP_LOGI(WEB_SERVER_TAG, "[PUT] [/restart]");
+        logger.log(WEB_SERVER_TAG, "[PUT] [/restart]");
 
         settingsManager.putSetting(GROUP_STATE, AUTOMODE_SETTING, controller.isAutoModeEnabled());
 

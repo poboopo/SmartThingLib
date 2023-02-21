@@ -1,4 +1,8 @@
 #include <ArduinoJson.h>
+#include "net/BetterLogger.h"
+
+#ifndef SettingsManager_H
+#define SettingsManager_H
 
 #define SSID_SETTING "ssid"
 #define PASSWORD_SETTING "password"
@@ -19,10 +23,12 @@ class SettingsManager {
     private:
         StaticJsonDocument<1024> _settings;
         String loadFromEeprom();
+        BetterLogger * _logger = NULL;
     public:
         SettingsManager();
         ~SettingsManager();
         
+        void addLogger(BetterLogger * logger);
         void loadSettings();
         void removeSetting(String name);
         void dropWifiCredits();
@@ -49,3 +55,5 @@ class SettingsManager {
         String getJson();
         String getJson(String groupName);
 };
+
+#endif

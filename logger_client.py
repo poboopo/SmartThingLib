@@ -11,7 +11,7 @@ mainSocket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
 
 try:
     while True:
-        print(mainSocket.recv(4096))
+        print(mainSocket.recv(4096).decode())
 except KeyboardInterrupt:
     print("leaving...")
 finally:

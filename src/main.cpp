@@ -48,6 +48,7 @@ void setup() {
     pinMode(BUTTON_PIN, INPUT_PULLUP);
 
     ledIndicator.init(LED_PIN);
+    settingsManager.addLogger(&logger);
     settingsManager.loadSettings();
     logger.log("*", "Settings manager loaded");
     
@@ -210,13 +211,13 @@ void setupServerEndPoints() {
     });
 }
 
+// TODO вынести нафиг отседова
 void processConfig() {
     JsonObject config = settingsManager.getSettings(GROUP_CONFIG);
 
     int lightClose = config[CLOSE_SETTING];
     int lightOpen = config[OPEN_SETTING];
     int lightBright = config[BRIGHT_SETTING];
-
     if (lightClose != 0 && lightOpen != 0 && lightBright != 0) {
         controller.setLightValues(lightClose, lightOpen, lightBright);
     }
@@ -224,6 +225,11 @@ void processConfig() {
     int delay = config[DELAY_SETTING];
     if (delay > 0) {
         controller.setMonitorTaskDelay(delay);
+    }
+
+    uint8_t accuracy = config[ACCURACY_SETTING];
+    if (accuracy > 0) {
+        controller.setMotorAccuracy(accuracy);
     }
 
     controller.restartAutoMode();

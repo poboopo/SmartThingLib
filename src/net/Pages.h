@@ -50,14 +50,16 @@ const String PAGE_PART_2 = R"=====(
             <div class="content-block">
                 <h1>Config</h1>
                 <div id="config">
-                    <p >Light close value</p>
+                    <p>Light close value</p>
                     <input type="number" id="light_close">
-                    <p >Light open value</p>
+                    <p>Light open value</p>
                     <input type="number" id="light_open">
-                    <p >Light bright value</p>
+                    <p>Light bright value</p>
                     <input type="number" id="light_bright">
-                    <p >Automode update delay</p>
+                    <p>Automode update delay</p>
                     <input type="number" id="delay">
+                    <p>Motor accuracy</p>
+                    <input type="number" id="accuracy">
                 </div>
                 <div class="btn-group btn-control" >
                     <button onclick="saveConfig()">save</button>

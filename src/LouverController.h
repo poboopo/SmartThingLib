@@ -16,9 +16,9 @@
 #define OPEN_POSITION 1200
 #define BRIGHT_POSITION 0
 
-#define LIGHT_CLOSE 1000
-#define LIGHT_OPEN 200
-#define LIGHT_BRIGHT 50
+#define LIGHT_CLOSE 200
+#define LIGHT_OPEN 500
+#define LIGHT_BRIGHT 600
 
 class LouverController {
     private:
@@ -46,6 +46,7 @@ class LouverController {
                          uint8_t potPin,
                          uint8_t lightSensorPin);
 
+        void setMotorAccuracy(uint16_t accuracy);
         void addLogger(BetterLogger * logger);
         void addLedIndicator(LedIndicator * led);
         void setLightValues(

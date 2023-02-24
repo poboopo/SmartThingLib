@@ -16,6 +16,10 @@ void LouverController::init( uint8_t motorFirstPin,
     _lightSensorPin = lightSensorPin;
 }
 
+void LouverController::setMotorAccuracy(uint16_t accuracy) {
+    _motorController.setAccuracy(accuracy);
+}
+
 void LouverController::addLogger(BetterLogger * logger) {
     _logger = logger;
 }
@@ -45,16 +49,17 @@ void LouverController::monitorLight() {
     int16_t lightValue = 0;
     int16_t delayTime = _taskDelay / portTICK_PERIOD_MS;
 
-    if (_logger != NULL) _logger->log(LIGHT_MONITOR_TAG, "Light monitor task started");
+    // TODO реализовать некую функцию, которая заменит это все
+    // Кривая фурье?
     for(;;) {
         lightValue = analogRead(_lightSensorPin);
-        if (lightValue > _lightClose) {
+        if (lightValue < _lightClose) {
             _motorController.setPosition(CLOSE_POSITION);
-        } else if (lightValue < _lightBright) {
+        } else if (lightValue > _lightBright) {
             _motorController.setPosition(BRIGHT_POSITION);
-        } else if (lightValue < _lightOpen && lightValue > _lightBright) {
+        } else if (lightValue > _lightOpen && lightValue < _lightBright) {
             _motorController.setPosition(map(lightValue, _lightBright, _lightOpen, BRIGHT_POSITION, OPEN_POSITION));
-        } else if (lightValue < _lightClose && lightValue > _lightOpen) {
+        } else if (lightValue > _lightClose && lightValue < _lightOpen) {
             _motorController.setPosition(map(lightValue, _lightOpen, _lightClose, OPEN_POSITION, CLOSE_POSITION));
         }
         vTaskDelay(delayTime);

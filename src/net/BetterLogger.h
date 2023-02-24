@@ -34,7 +34,7 @@ class BetterLogger {
         Multicaster _multicaster;
         SemaphoreHandle_t _mutex = xSemaphoreCreateMutex();
 
-        const char * _ip = ""; // ????
+        const char * _ip = "NOT_CONNECTED"; // ????
 
         bool _connected = false;
 };

@@ -1,7 +1,5 @@
 #include <mech/MotorController.h>
 
-#define ACCURACY 100
-
 #define MIN_SPEED 100
 #define MAX_SPEED 200
 
@@ -21,6 +19,10 @@ MotorController::MotorController(uint8_t motorFirstPin, uint8_t motorSecondPin, 
 
     pinMode(_motorFirstPin, OUTPUT);
     pinMode(_motorSecondPin, OUTPUT);
+}
+
+void MotorController::setAccuracy(uint16_t accuracy) {
+    _accuracy = accuracy;
 }
 
 uint8_t validateSpeed(int16_t speed) {
@@ -62,7 +64,7 @@ bool MotorController::setPosition(uint16_t turnToPosition) {
         left - negative
     */
     int8_t direction = sign(diff); 
-    if (direction * (currentState - turnToPosition) <  ACCURACY) {
+    if (direction * (currentState - turnToPosition) <  _accuracy) {
         return true;
     }
     
@@ -80,7 +82,7 @@ bool MotorController::setPosition(uint16_t turnToPosition) {
     int16_t startPosition = currentState;
 
     long started = millis();
-    while (direction * (currentState - turnToPosition) >  ACCURACY && millis() - started < TIMEOUT) {
+    while (direction * (currentState - turnToPosition) >  _accuracy && millis() - started < TIMEOUT) {
         currentState = analogRead(_potPin);
 
         if (direction > 0) {
@@ -92,7 +94,7 @@ bool MotorController::setPosition(uint16_t turnToPosition) {
         analogWrite(_motorFirstPin, speed);
     } 
     stop();
-    return direction * (currentState - turnToPosition) <  ACCURACY;
+    return direction * (currentState - turnToPosition) <  _accuracy;
 }
 
 void MotorController::setAngle(uint8_t angle) {

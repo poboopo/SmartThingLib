@@ -116,8 +116,9 @@ void wipeSettings() {
     ledIndicator.off();
 
     if (!digitalRead(BUTTON_PIN)) {
-        settingsManager.dropWifiCredits();
-        logger.log("*", "WiFi credits were removed!");
+        settingsManager.dropAll();
+        settingsManager.saveSettings();
+        logger.log("*", "Settings were droped!");
     }
 }
 
@@ -162,7 +163,7 @@ void setupServerEndPoints() {
     
     if (WiFi.getMode() == WIFI_MODE_AP) {
         server.on("/setup", HTTP_POST, []() {
-            logger.log(WEB_SERVER_TAG, "[POST] [/setup]");
+            logger.log(WEB_SERVER_TAG, "[POST] [/setup] %s", getRequestBody(&server).c_str());
             handleSetup(&server, &settingsManager);
         });
     }
@@ -172,7 +173,7 @@ void setupServerEndPoints() {
         handleLouverGet(&server, &controller);
     });
     server.on("/louver", HTTP_PUT, [](){
-        logger.log(WEB_SERVER_TAG, "[PUT] [/louver]");
+        logger.log(WEB_SERVER_TAG, "[PUT] [/louver] %s", getRequestBody(&server).c_str());
         handleLouverPut(&server, &controller);
     });
 
@@ -181,7 +182,7 @@ void setupServerEndPoints() {
         server.send(200, "application/json", settingsManager.getJson(GROUP_CONFIG));
     });
     server.on("/settings", HTTP_POST, [](){
-        logger.log(WEB_SERVER_TAG, "[POST] [/settings]");
+        logger.log(WEB_SERVER_TAG, "[POST] [/settings] %s", getRequestBody(&server).c_str());
         handleSettingsPost(&server, &settingsManager);
         processConfig();
     });
@@ -196,7 +197,7 @@ void setupServerEndPoints() {
         server.send(200);
     });
     server.on("/restart", HTTP_PUT, [](){
-        logger.log(WEB_SERVER_TAG, "[PUT] [/restart]");
+        logger.log(WEB_SERVER_TAG, "[PUT] [/restart] %s", getRequestBody(&server).c_str());
 
         settingsManager.putSetting(GROUP_STATE, AUTOMODE_SETTING, controller.isAutoModeEnabled());
 

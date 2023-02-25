@@ -93,7 +93,7 @@ void LouverController::restartAutoMode() {
     }
 }
 
-void LouverController::enableAutoMode() {
+bool LouverController::enableAutoMode() {
     if (!isAutoModeEnabled()) {
         createMonitorTask();
         if (_led != NULL) {
@@ -101,6 +101,7 @@ void LouverController::enableAutoMode() {
         }
     }
     if (_logger != NULL) _logger->log(LOUVER_CONTROLLER_TAG, "Automode enabled");
+    return true;
 }
 
 bool LouverController::disableAutoMode() {
@@ -128,22 +129,22 @@ uint16_t LouverController::getMotorPosition() {
     return _motorController.currentPosition();
 }
 
-void LouverController::open() {
+bool LouverController::open() {
     disableAutoMode();
-    _motorController.setPosition(OPEN_POSITION);
+    return _motorController.setPosition(OPEN_POSITION);
 }
 
-void LouverController::close() {
+bool LouverController::close() {
     disableAutoMode();
-    _motorController.setPosition(CLOSE_POSITION);
+    return _motorController.setPosition(CLOSE_POSITION);
 }
 
-void LouverController::middle() {
+bool LouverController::middle() {
     disableAutoMode();
-    _motorController.setPosition(MIDDLE_POSITION);
+    return _motorController.setPosition(MIDDLE_POSITION);
 }
 
-void LouverController::bright() {
+bool LouverController::bright() {
     disableAutoMode();
-    _motorController.setPosition(BRIGHT_POSITION);
+    return _motorController.setPosition(BRIGHT_POSITION);
 }

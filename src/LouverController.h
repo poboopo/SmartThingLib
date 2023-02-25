@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "mech/MotorController.h"
+#include "motor/MotorController.h"
 #include "utils/LedIndicator.h"
 #include "net/BetterLogger.h"
 
@@ -56,7 +56,7 @@ class LouverController {
         );
         void setMonitorTaskDelay(uint16_t delay);
 
-        void enableAutoMode();
+        bool enableAutoMode();
         bool disableAutoMode();
         void restartAutoMode();
 
@@ -64,9 +64,9 @@ class LouverController {
         uint16_t getLightValue();
         uint16_t getMotorPosition();
 
-        void open();
-        void close();
-        void middle();
-        void bright();
+        bool open();
+        bool close();
+        bool middle();
+        bool bright();
 };
 #endif

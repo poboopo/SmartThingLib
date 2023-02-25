@@ -13,6 +13,11 @@ enum LOUVER_ACTIONS {
     BRIGHT
 };
 
+
+String getRequestBody(WebServer * server) {
+    return server->hasArg("plain") ? server->arg("plain").c_str() : "";
+}
+
 String buildErrorJson(String error) {
     return "{\"error\":\"" + error + "\"}";
 }
@@ -25,7 +30,6 @@ void handleLouverGet(WebServer * server, LouverController * controller) {
 
     String json;
     serializeJson(jsonDoc, json);
-
     server->send(200, "application/json", json);
 }
 
@@ -41,40 +45,38 @@ void handleLouverPut(WebServer * server, LouverController * controller) {
         int action = jsonDoc["action"];
         // TODO мне кажется есть элегантное решение, но пока только на это
         // хватило познаний c++
+        bool result = false;
         switch(action) {
             case ENABLE_AUTO_MODE:
-                controller->enableAutoMode();
+                result = controller->enableAutoMode();
                 break;
             case DISABLE_AUTO_MODE:
-                controller->disableAutoMode();
+                result = controller->disableAutoMode();
                 break;
             case OPEN:
-                controller->open();
+                result =  controller->open();
                 break;
             case CLOSE:
-                controller->close();
+                result = controller->close();
                 break;
             case MIDDLE:
-                controller->middle();
+                result = controller->middle();
                 break;
             case BRIGHT:
-                controller->bright();
+                result = controller->bright();
                 break;
             default:
                 server->send(400, "application/json", buildErrorJson(String("Wrong action ") + action));
                 return;
         }
+        server->send(result ? 200 : 500);
+    } else {
+        server->send(400, "application/json", buildErrorJson("Action is missing!"));
     }
-    
-    server->send(200);
 }
 
 void handleSettingsPost(WebServer * server, SettingsManager * settingsManager) {
-    if (!server->hasArg("plain")) {
-        server->send(400, "content/json", buildErrorJson("Body is missing"));
-        return;
-    }
-    String data = server->arg("plain");
+    String data = getRequestBody(server);
     if (data.length() == 0) {
         server->send(400, "content/json", buildErrorJson("Body is missing"));
         return;
@@ -95,11 +97,7 @@ void handleSettingsPost(WebServer * server, SettingsManager * settingsManager) {
 }
 
 void handleSetup(WebServer * server, SettingsManager * settingsManager) {
-    if (!server->hasArg("plain")) {
-        server->send(400, "content/json", buildErrorJson("Body is missing"));
-        return;
-    }
-    String data = server->arg("plain");
+    String data = getRequestBody(server);
     if (data.length() == 0) {
         server->send(400, "content/json", buildErrorJson("Body is missing"));
         return;

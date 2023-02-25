@@ -37,20 +37,32 @@ void SettingsManager::clear() {
 
 String SettingsManager::loadFromEeprom() {
     if (EEPROM.begin(EEPROM_LOAD_SIZE)) {
-        uint8_t size = EEPROM.read(0);
-        if (size == 0) {
+        String data = "{";
+        uint8_t val;
+        bool completed = false;
+        for (int i = 0; i < EEPROM_LOAD_SIZE; i++){
+            val = EEPROM.read(i);
+            if (isAscii(val)) {
+                if (val == '\n') {
+                    completed = true;
+                    break;
+                }
+                data += (char) val;
+            }
+        }
+        EEPROM.commit();
+
+        if (!completed) {
+            if (_logger != NULL) {
+                _logger->log("Settings string not completed. Missing \\n ?");
+                _logger->log("%s", data.c_str());
+            } 
             return "";
         }
 
-        char data[size + 1];
-        int val = 0;
-        for (int i = 0; i < size; i++) {
-            val = EEPROM.read(i + 1);
-            data[i] = isAscii(val) ? val : ' ';
-        }
+        data += "}";
 
-        EEPROM.commit();
-        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]", data, size);
+        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]", data.c_str(), data.length());
         return data;
     } else {
         if (_logger != NULL) _logger->log("Failed to open EEPROM");
@@ -59,14 +71,24 @@ String SettingsManager::loadFromEeprom() {
 }
 
 void SettingsManager::saveSettings() {
+    String data;
+    serializeJson(_settings, data);
+    if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Parsed json: %s", data.c_str());
+
+    // Убираем скобки, что не тратить драгоценное место EEPROM
+    data.remove(0, 1);
+    data.remove(data.length() - 1);
+    data += "\n";
+
+    if (data.length() > EEPROM_LOAD_SIZE) {
+        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Settings are too long! Expected less then %d, got %d", EEPROM_LOAD_SIZE, data.length());
+        return;
+    }
+
     if (EEPROM.begin(EEPROM_LOAD_SIZE)) {
-        String data;
-        serializeJson(_settings, data);
-        uint16_t size = data.length();
-        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Saving settings: %s [%u]", data.c_str(), size);
-        EEPROM.write(0, size);
-        for (int i = 0; i < size; i++) {
-            EEPROM.write(i + 1, data.charAt(i));
+        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Saving settings (length [%u]): %s", data.length(), data.c_str());
+        for (int i = 0; i < data.length(); i++) {
+            EEPROM.write(i, data.charAt(i));
         }
 
         EEPROM.commit();
@@ -84,9 +106,12 @@ void SettingsManager::removeSetting(String name) {
     _settings.remove(name.c_str());
 }
 
+void SettingsManager::dropAll() {
+    _settings.clear();
+}
+
 void SettingsManager::dropWifiCredits() {
     _settings.remove(GROUP_WIFI);
-    saveSettings();
 }
 
 void SettingsManager::putSetting(String groupName, JsonObject jsonObject) {

@@ -33,6 +33,7 @@ class SettingsManager {
         void loadSettings();
         void removeSetting(String name);
         void dropWifiCredits();
+        void dropAll();
         void saveSettings();
         void clear();
 

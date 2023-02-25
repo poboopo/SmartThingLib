@@ -1,9 +1,9 @@
-#include <mech/MotorController.h>
+#include <motor/MotorController.h>
 
 #define MIN_SPEED 100
 #define MAX_SPEED 200
 
-#define TIMEOUT 5000
+#define TIMEOUT 3000
 
 MotorController::MotorController(){
 }

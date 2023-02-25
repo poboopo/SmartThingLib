@@ -22,9 +22,7 @@ const String PAGE_PART_1 = R"=====(
     </head>
     <body>
         <div class="holder">
-            <!-- yikes -->    
-            <h2 id="info-failure" style="color: red" class="center"></h2>
-            <h2 id="info-success" style="color: green" class="center"></h2>
+            <h2 id="info" class="center"></h2>
         </div>
         <div class="holder">
 )=====";
@@ -75,24 +73,29 @@ const String PAGE_PART_2 = R"=====(
         </div>
     </body>
     <script>
+        this.config = {};
+        this.louverState = {};
+        this.infoStyles = {
+            error: 'color: red',
+            success: 'color: green' 
+        }
+
         window.onload = function() {
-            loadLouverState();
             loadConfig();
+            loadLouverState();
         };
-        this.config = {}
-        this.louverState = {}
 
         function submit() {
             const ssid = document.getElementById("ssid").value;
             if (!ssid || !ssid.length) {
-                displayFailure("SSID is missing!");
+                info("SSID is missing!", 'error');
                 return;
             }
             const pass = document.getElementById("password").value;
             restRequest(
                 "POST",
                 "http://" + getHost() + "/setup",
-                { ssid: ssid, pass: pass },
+                { ssid: ssid, password: pass },
                 "WiFi info saved!",
                 "Can't save WiFi info :("
             );
@@ -122,15 +125,20 @@ const String PAGE_PART_2 = R"=====(
             );
         }
         function sendLouverAction(action) {
+            if (action > 1) {
+                this.louverState.automode = false;
+                const checkbox = document.getElementById('auto-mode-checkbox');
+                if (checkbox) {
+                    checkbox.checked = false;
+                }
+            }
             restRequest(
                 "PUT",
                 "http://" + getHost() + "/louver",
                 { action },
                 "Done",
                 "Failed to perform action",
-                function () {
-                    loadLouverState();
-                }
+                null
             );
         }
         function loadLouverState() {
@@ -138,7 +146,7 @@ const String PAGE_PART_2 = R"=====(
                 "GET",
                 "http://" + getHost() + "/louver",
                 null,
-                "",
+                "Louver state loaded",
                 "Failed to load louver state!",
                 function (response) {
                     if (response) {
@@ -155,7 +163,7 @@ const String PAGE_PART_2 = R"=====(
                 "GET",
                 "http://" + getHost() + "/settings",
                 null,
-                "",
+                "Config loaded",
                 "Failed to load louver config!",
                 function (response) {
                     if (response) {
@@ -175,7 +183,7 @@ const String PAGE_PART_2 = R"=====(
         }
         function updateConfigFields() {
             if (this.config) {
-                Object.keys(this.config).forEach((key) => document.getElementById(key).value = this.config[key])
+                Object.keys(this.config).forEach((key) => document.getElementById(key).value = this.config[key]);
             }
         }
         function restart() {
@@ -189,6 +197,7 @@ const String PAGE_PART_2 = R"=====(
             return host;
         }
         function restRequest(method, path, data, successText, failureText, callback) {
+            info("Processing...");
             let xhr = new XMLHttpRequest();
             xhr.open(method, path);
             xhr.setRequestHeader("Accept", "application/json");
@@ -196,20 +205,21 @@ const String PAGE_PART_2 = R"=====(
             xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
-                            if (successText) displaySuccess(successText);
+                            if (successText) info(successText);
                             if (callback) callback(xhr.response);
                         } else {
-                            if (failureText) displayFailure(failureText);
+                            if (failureText) info(failureText, 'error');
                         }
                     }
                 };
             xhr.send(data ? JSON.stringify(data) : null);
         }
-        function displayFailure(text) {
-            document.getElementById("info-failure").innerHTML = text;
-        }
-        function displaySuccess(text) {
-            document.getElementById("info-success").innerHTML = text;
+        function info(text, type = 'success') {
+            const infoElement = document.getElementById("info");
+            if (infoElement) {
+                infoElement.innerHTML = text;
+                infoElement.style = this.infoStyles[type];
+            }
         }
     </script>
     <style>

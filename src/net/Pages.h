@@ -117,7 +117,7 @@ const String PAGE_PART_2 = R"=====(
             }
             restRequest(
                 "POST",
-                "http://" + getHost() + "/settings",
+                "http://" + getHost() + "/config",
                 this.config,
                 "Config updated!",
                 "Failed to update config!",
@@ -134,7 +134,7 @@ const String PAGE_PART_2 = R"=====(
             }
             restRequest(
                 "PUT",
-                "http://" + getHost() + "/louver",
+                "http://" + getHost() + "/state",
                 { action },
                 "Done",
                 "Failed to perform action",
@@ -144,12 +144,13 @@ const String PAGE_PART_2 = R"=====(
         function loadLouverState() {
             restRequest(
                 "GET",
-                "http://" + getHost() + "/louver",
+                "http://" + getHost() + "/state",
                 null,
                 "Louver state loaded",
                 "Failed to load louver state!",
                 function (response) {
                     if (response) {
+                        response.trim();
                         this.louverState = JSON.parse(response);
                         updateFields();
                     } else {
@@ -161,7 +162,7 @@ const String PAGE_PART_2 = R"=====(
         function loadConfig() {
             restRequest(
                 "GET",
-                "http://" + getHost() + "/settings",
+                "http://" + getHost() + "/config",
                 null,
                 "Config loaded",
                 "Failed to load louver config!",

@@ -1,8 +1,13 @@
+#ifndef WEB_UTILS_H
+#define WEB_UTILS_H
+
 #include <net/Pages.h>
 #include <ArduinoJson.h>
 #include <utils/SettingsManager.h>
+#include <net/RestController.h>
+#include <LouverController.h>
 
-#define WEB_SERVER_TAG "web_server"
+//TODO MOVE THIS FILE TO /utils
 
 enum LOUVER_ACTIONS {
     DISABLE_AUTO_MODE,
@@ -13,103 +18,62 @@ enum LOUVER_ACTIONS {
     BRIGHT
 };
 
-
-String getRequestBody(WebServer * server) {
-    return server->hasArg("plain") ? server->arg("plain").c_str() : "";
-}
-
-String buildErrorJson(String error) {
-    return "{\"error\":\"" + error + "\"}";
-}
-
-void handleLouverGet(WebServer * server, LouverController * controller) {
+HandlerResult getLouverStateJson(LouverController * controller) {
     DynamicJsonDocument jsonDoc(64);
     jsonDoc["automode"] = controller->isAutoModeEnabled();
     jsonDoc["position"] = controller->getMotorPosition();
     jsonDoc["light"] = controller->getLightValue();
 
-    String json;
-    serializeJson(jsonDoc, json);
-    server->send(200, "application/json", json);
+    HandlerResult result;
+    result.code = 200;
+    result.contentType = JSON_CONTENT_TYPE;
+    serializeJson(jsonDoc, result.body);
+    return result;
 }
 
-void handleLouverPut(WebServer * server, LouverController * controller) {
-    if (!server->hasArg("plain")) {
-        server->send(400);
-        return;
-    }
+HandlerResult changeLouverState(String body, LouverController * controller) {
+    HandlerResult result;
+
     DynamicJsonDocument jsonDoc(64);
-    deserializeJson(jsonDoc, server->arg("plain"));
+    deserializeJson(jsonDoc, body);
+
+    bool actionResult = false;
 
     if (jsonDoc.containsKey("action")) {
         int action = jsonDoc["action"];
-        // TODO мне кажется есть элегантное решение, но пока только на это
-        // хватило познаний c++
-        bool result = false;
         switch(action) {
             case ENABLE_AUTO_MODE:
-                result = controller->enableAutoMode();
+                actionResult = controller->enableAutoMode();
                 break;
             case DISABLE_AUTO_MODE:
-                result = controller->disableAutoMode();
+                actionResult = controller->disableAutoMode();
                 break;
             case OPEN:
-                result =  controller->open();
+                actionResult =  controller->open();
                 break;
             case CLOSE:
-                result = controller->close();
+                actionResult = controller->close();
                 break;
             case MIDDLE:
-                result = controller->middle();
+                actionResult = controller->middle();
                 break;
             case BRIGHT:
-                result = controller->bright();
+                actionResult = controller->bright();
                 break;
             default:
-                server->send(400, "application/json", buildErrorJson(String("Wrong action ") + action));
-                return;
+                result.body = String("Wrong action ") + action;
         }
-        server->send(result ? 200 : 500);
+        if (!actionResult) {
+            if (result.body.length() == 0) {
+                result.body = "Failed to perform action";
+            }
+            result.code = 500;
+        }
     } else {
-        server->send(400, "application/json", buildErrorJson("Action is missing!"));
+        result.code = 400;
+        result.body = "Action is missing!";
     }
-}
-
-void handleSettingsPost(WebServer * server, SettingsManager * settingsManager) {
-    String data = getRequestBody(server);
-    if (data.length() == 0) {
-        server->send(400, "content/json", buildErrorJson("Body is missing"));
-        return;
-    }
-
-    DynamicJsonDocument jsonDoc(1024);
-    deserializeJson(jsonDoc, data);
-    JsonObject root = jsonDoc.as<JsonObject>();
-
-    for (JsonPair pair: root) {
-        settingsManager->putSetting(GROUP_CONFIG, pair.key().c_str(), pair.value());
-    }
-
-    // settingsManager->putSetting(GROUP_CONFIG, jsonDoc.as<JsonObject>());
-    settingsManager->saveSettings();
-
-    server->send(200);
-}
-
-void handleSetup(WebServer * server, SettingsManager * settingsManager) {
-    String data = getRequestBody(server);
-    if (data.length() == 0) {
-        server->send(400, "content/json", buildErrorJson("Body is missing"));
-        return;
-    }
-
-    DynamicJsonDocument jsonDoc(256);
-    deserializeJson(jsonDoc, data);
-    settingsManager->putSetting(GROUP_WIFI, SSID_SETTING, jsonDoc["ssid"].as<String>());
-    settingsManager->putSetting(GROUP_WIFI, PASSWORD_SETTING, jsonDoc["password"].as<String>());
-    settingsManager->saveSettings();
-
-    server->send(200);
+    return result;
 }
 
 const String buildMainPage(bool apMode) {
@@ -120,3 +84,5 @@ const String buildMainPage(bool apMode) {
     page += PAGE_PART_2;
     return page;
 }
+
+#endif

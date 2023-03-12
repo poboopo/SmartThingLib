@@ -31,3 +31,12 @@ void BetterLogger::log(const char * tag, const char * message) {
     }
     xSemaphoreGive(_mutex);
 }
+
+void BetterLogger::statistics() {
+#ifdef ENABLE_STATISTICS
+    log(STAT_LOG_TAG, "----------STATISTIC----------");
+    log(STAT_LOG_TAG, "Free/size heap: %u/%u", ESP.getFreeHeap(), ESP.getHeapSize());
+    log(STAT_LOG_TAG, "Min free/max alloc heap: %u/%u", ESP.getMinFreeHeap(), ESP.getMaxAllocHeap());
+    log(STAT_LOG_TAG, "--------STATISTIC-END--------");
+#endif
+}

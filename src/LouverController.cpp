@@ -47,7 +47,7 @@ void LouverController::setMonitorTaskDelay(uint16_t delay) {
 
 void LouverController::monitorLight() {
     int16_t lightValue = 0;
-    int16_t delayTime = _taskDelay / portTICK_PERIOD_MS;
+    const TickType_t xDelay = _taskDelay / portTICK_PERIOD_MS;
 
     // TODO реализовать некую функцию, которая заменит это все
     // Кривая фурье?
@@ -62,7 +62,7 @@ void LouverController::monitorLight() {
         } else if (lightValue > _lightClose && lightValue < _lightOpen) {
             _motorController.setPosition(map(lightValue, _lightOpen, _lightClose, OPEN_POSITION, CLOSE_POSITION));
         }
-        vTaskDelay(delayTime);
+        vTaskDelay(xDelay);
     }
 }
 

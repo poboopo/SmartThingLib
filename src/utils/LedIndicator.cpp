@@ -30,9 +30,11 @@ void LedIndicator::on() {
 
 void LedIndicator::blinkTask() {
     bool state = true;
+    const TickType_t xDelay = BLINK_DELAY / portTICK_PERIOD_MS;
+
     while (_count == -1 || _count > 0) {
         digitalWrite(_ledPin, state);
-        vTaskDelay(BLINK_DELAY);
+        vTaskDelay(xDelay);
         state = !state;
         if (_count != -1) {
             _count--;

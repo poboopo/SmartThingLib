@@ -1,15 +1,15 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <ArduinoOTA.h>
-#include <WebServer.h>
 #include <ESPmDNS.h>
 
 #include "LouverController.h"
-#include "net/WebUtils.h"
 #include "net/BetterLogger.h"
 #include "net/Multicaster.h"
+#include "net/RestController.h"
 #include "utils/SettingsManager.h"
 #include "utils/LedIndicator.h"
+#include "net/WebUtils.h"
 
 // Pins
 #define MOTOR_FIRST_PIN 26
@@ -28,13 +28,13 @@
 LouverController controller;
 Multicaster multicaster;
 SettingsManager settingsManager;
-WebServer server(80);
 LedIndicator ledIndicator;
 BetterLogger logger;
+RestController rest;
 
 String myIp;
 
-void setupServerEndPoints();
+void setupRestHandlers();
 String connectToWifi();
 void wipeSettings();
 void processConfig();
@@ -68,9 +68,9 @@ void setup() {
         multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
         logger.log("*", "Multicaster created");
 
-        setupServerEndPoints();
-        server.begin();
-        logger.log("*", "Web server endpoints configured and started");
+        setupRestHandlers();
+        rest.begin(&logger, &settingsManager);
+        logger.log("*", "RestController started");
     } else {
         logger.log("*", "WiFi not available, skipping all network setup");
     }
@@ -92,7 +92,7 @@ void setup() {
 void loop() {
     if (wifiConnected()) {
         ArduinoOTA.handle();
-        server.handleClient();
+        rest.handle();
         multicaster.broadcast(myIp.c_str());
     }
 
@@ -102,7 +102,7 @@ void loop() {
         } else {
             controller.enableAutoMode();
         }
-        logger.log("*", "Free heap: %u", ESP.getFreeHeap());
+        logger.statistics();
     }
 
     delay(500);
@@ -156,60 +156,29 @@ String connectToWifi() {
     }
 }
 
-void setupServerEndPoints() {
-    server.on("/", HTTP_GET, []() {
-        server.send(200, "text/html", buildMainPage(WiFi.getMode() == WIFI_MODE_AP));
+void setupRestHandlers() {
+    rest.addGetStateHandler([]() {
+        HandlerResult result = getLouverStateJson(&controller);
+        return result;
     });
-    
-    if (WiFi.getMode() == WIFI_MODE_AP) {
-        server.on("/setup", HTTP_POST, []() {
-            logger.log(WEB_SERVER_TAG, "[POST] [/setup] %s", getRequestBody(&server).c_str());
-            handleSetup(&server, &settingsManager);
-        });
-    }
-
-    server.on("/louver", HTTP_GET, [](){
-        logger.log(WEB_SERVER_TAG, "[GET] [/louver]");
-        handleLouverGet(&server, &controller);
-    });
-    server.on("/louver", HTTP_PUT, [](){
-        logger.log(WEB_SERVER_TAG, "[PUT] [/louver] %s", getRequestBody(&server).c_str());
-        handleLouverPut(&server, &controller);
+    rest.addStateChangeHandler([]() {
+        return changeLouverState(rest.getRequestBody() ,&controller);
     });
 
-    server.on("/settings", HTTP_GET, [](){
-        logger.log(WEB_SERVER_TAG, "[GET] [/settings]");
-        server.send(200, "application/json", settingsManager.getJson(GROUP_CONFIG));
-    });
-    server.on("/settings", HTTP_POST, [](){
-        logger.log(WEB_SERVER_TAG, "[POST] [/settings] %s", getRequestBody(&server).c_str());
-        handleSettingsPost(&server, &settingsManager);
+    rest.addConfigUpdatedHandler([]() {
         processConfig();
     });
-    server.on("/settings", HTTP_DELETE, [](){
-        logger.log(WEB_SERVER_TAG, "[DELETE] [/settings]");
-        if (!server.hasArg("name")) {
-            server.send(400, "content/json", buildErrorJson("Setting name is missing"));
-        }
 
-        settingsManager.removeSetting(server.arg("name"));
-        settingsManager.saveSettings();
-        server.send(200);
+    rest.addWebPageBuilder([](){
+        HandlerResult result;
+        result.body = buildMainPage(WiFi.getMode() == WIFI_AP);
+        result.contentType = "text/html";
+        return result;
     });
-    server.on("/restart", HTTP_PUT, [](){
-        logger.log(WEB_SERVER_TAG, "[PUT] [/restart] %s", getRequestBody(&server).c_str());
 
-        settingsManager.putSetting(GROUP_STATE, AUTOMODE_SETTING, controller.isAutoModeEnabled());
-
-        settingsManager.saveSettings();
-        server.send(200);
-
-        delay(2000);
-        ESP.restart();
-    });
-    server.onNotFound([](){
-        server.send(404, "application/json", buildErrorJson("Page not found"));
-    });
+    if (WiFi.getMode() == WIFI_MODE_AP) {
+        rest.addSetupEndpoint();    
+    }
 }
 
 // TODO вынести нафиг отседова

@@ -24,12 +24,10 @@ class SettingsManager {
     private:
         StaticJsonDocument<1024> _settings;
         String loadFromEeprom();
-        BetterLogger * _logger = NULL;
     public:
         SettingsManager();
         ~SettingsManager();
         
-        void addLogger(BetterLogger * logger);
         void loadSettings();
         void removeSetting(String name);
         void dropWifiCredits();

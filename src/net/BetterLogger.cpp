@@ -2,21 +2,23 @@
 
 #define LOGGER_MESSAGE_TEMPLATE "{%s}[%ld][%s]::%s"
 
-BetterLogger::BetterLogger(){
-    Serial.begin(115200);
-}
-BetterLogger::~BetterLogger() {
-    _multicaster.stop();
+Multicaster BetterLogger::_multicaster = Multicaster();
+bool BetterLogger::_connected = false;
+bool BetterLogger::_serialStarted = false;
+SemaphoreHandle_t BetterLogger::_mutex = xSemaphoreCreateMutex();
+const char * BetterLogger::_ip = "NOT_CONNECTED";
+
+BetterLogger::BetterLogger() {
 }
 
-void BetterLogger::connect(const char * myIp) {
-    connect(myIp, LOGGER_DEFAULT_GROUP, LOGGER_DEFAULT_PORT);
+BetterLogger::~BetterLogger() {
+    BetterLogger::_multicaster.stop();
 }
 
 void BetterLogger::connect(const char * myIp, const char * group, int port) {
-    _multicaster.init(group, port);
-    _ip = myIp;
-    _connected = true;
+    BetterLogger::_multicaster.init(group, port);
+    BetterLogger::_ip = myIp;
+    BetterLogger::_connected = true;
 }
 
 void BetterLogger::log(const char * tag, const char * message) {

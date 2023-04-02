@@ -25,7 +25,7 @@ class RestController{
 
         typedef std::function<HandlerResult(void)> HandlerWithResultFunction;
         typedef std::function<void(void)> HandlerFunction;
-        void begin(BetterLogger * logger, SettingsManager * manager);
+        void begin(SettingsManager * manager);
         
         void addStateChangeHandler(RestController::HandlerWithResultFunction hf) {
             _changeStateHandler = hf;
@@ -49,7 +49,6 @@ class RestController{
     private:
         bool _setupFinished = false;
         WebServer _server;
-        BetterLogger * _logger;
         SettingsManager * _settingsManager;
 
         void setupEndpoints();

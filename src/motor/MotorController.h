@@ -19,7 +19,7 @@ private:
     uint8_t _potPin;
     uint16_t _accuracy = POT_ACCURACY;
 
-    int8_t sign(int16_t);
+    void setPWM(int16_t value);
 public:
     MotorController(uint8_t motorFirstPin, uint8_t motorSecondPin, uint8_t potPin);
     MotorController();
@@ -30,8 +30,7 @@ public:
 
     // returns true if position was achived
     bool setPosition(uint16_t turnToPosition);
-    uint8_t currentAngle();
-    uint16_t currentPosition();
+    uint16_t getPosition();
     void stop();
 };
 

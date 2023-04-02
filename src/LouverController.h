@@ -25,7 +25,6 @@ class LouverController {
         TaskHandle_t _monitorLightHandle = NULL;
         MotorController _motorController;
         LedIndicator * _led = NULL;
-        BetterLogger * _logger = NULL;
 
         uint16_t _lightClose = LIGHT_CLOSE;
         uint16_t _lightOpen = LIGHT_OPEN;
@@ -47,7 +46,6 @@ class LouverController {
                          uint8_t lightSensorPin);
 
         void setMotorAccuracy(uint16_t accuracy);
-        void addLogger(BetterLogger * logger);
         void addLedIndicator(LedIndicator * led);
         void setLightValues(
             uint16_t lightClose,

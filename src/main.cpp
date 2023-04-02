@@ -29,7 +29,6 @@ LouverController controller;
 Multicaster multicaster;
 SettingsManager settingsManager;
 LedIndicator ledIndicator;
-BetterLogger logger;
 RestController rest;
 
 String myIp;
@@ -44,13 +43,15 @@ bool wifiConnected() {
 }
 
 void setup() {
-    logger.log("*", "Setup started");
+    Serial.begin(115200);
+
+    BetterLogger::log("*", "Setup started");
     pinMode(BUTTON_PIN, INPUT_PULLUP);
 
     ledIndicator.init(LED_PIN);
-    settingsManager.addLogger(&logger);
+    // settingsManager.addLogger(&logger);
     settingsManager.loadSettings();
-    logger.log("*", "Settings manager loaded");
+    BetterLogger::log("*", "Settings manager loaded");
     
     if (!digitalRead(BUTTON_PIN)) {
         wipeSettings();
@@ -59,34 +60,33 @@ void setup() {
     myIp = connectToWifi();
 
     if (wifiConnected()) {
-        logger.connect(myIp.c_str());
-        logger.log("*", "WiFi connected, local ip %s", myIp);
+        BetterLogger::connect(myIp.c_str());
+        BetterLogger::log("*", "WiFi connected, local ip %s", myIp);
 
         ArduinoOTA.begin();
-        logger.log("*", "Ota started");
+        BetterLogger::log("*", "Ota started");
 
         multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
-        logger.log("*", "Multicaster created");
+        BetterLogger::log("*", "Multicaster created");
 
         setupRestHandlers();
-        rest.begin(&logger, &settingsManager);
-        logger.log("*", "RestController started");
+        rest.begin(&settingsManager);
+        BetterLogger::log("*", "RestController started");
     } else {
-        logger.log("*", "WiFi not available, skipping all network setup");
+        BetterLogger::log("*", "WiFi not available, skipping all network setup");
     }
 
     controller.init(MOTOR_FIRST_PIN, MOTOR_SECOND_PIN, POT_PIN, LIGHT_SENSOR_PIN);
     controller.addLedIndicator(&ledIndicator);
-    controller.addLogger(&logger);
     if (settingsManager.getSettingInteger(GROUP_STATE, AUTOMODE_SETTING)) {
         controller.enableAutoMode();
     }
-    logger.log("*", "Controller created");
+    BetterLogger::log("*", "Controller created");
 
     processConfig();
-    logger.log("*", "Config proceed");
+    BetterLogger::log("*", "Config proceed");
 
-    logger.log("*", "Setup finished");
+    BetterLogger::log("*", "Setup finished");
 }
 
 void loop() {
@@ -102,7 +102,7 @@ void loop() {
         } else {
             controller.enableAutoMode();
         }
-        logger.statistics();
+        BetterLogger::statistics();
     }
 
     delay(500);
@@ -118,7 +118,7 @@ void wipeSettings() {
     if (!digitalRead(BUTTON_PIN)) {
         settingsManager.dropAll();
         settingsManager.saveSettings();
-        logger.log("*", "Settings were droped!");
+        BetterLogger::log("*", "Settings were droped!");
     }
 }
 
@@ -127,7 +127,7 @@ String connectToWifi() {
     String password = settingsManager.getSettingString(GROUP_WIFI, PASSWORD_SETTING);
     
     if (ssid.isEmpty()) {
-        logger.log("*", "Ssid is blank -> creating AP");
+        BetterLogger::log("*", "Ssid is blank -> creating AP");
         WiFi.softAP("LOUVER");
         // WiFi.beginSmartConfig();
         delay(500);
@@ -135,12 +135,12 @@ String connectToWifi() {
         if (MDNS.begin("louver")) {
             MDNS.addService("http", "tcp", 80);
         } else {
-            logger.log("*", "Failed to setup up MDNS");
+            BetterLogger::log("*", "Failed to setup up MDNS");
         }
 
         return WiFi.softAPIP().toString();
     } else {
-        logger.log("*", "WiFi connecting to %s :: %s", ssid.c_str(), password.c_str());
+        BetterLogger::log("*", "WiFi connecting to %s :: %s", ssid.c_str(), password.c_str());
         WiFi.mode(WIFI_STA);
         WiFi.begin(ssid.c_str(), password.c_str());
         long startTime = millis();

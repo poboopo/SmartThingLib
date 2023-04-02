@@ -19,32 +19,34 @@
 
 class BetterLogger {
     public:
-        BetterLogger();
         ~BetterLogger();
 
-        void connect(const char * myIp);
-        void connect(const char * myIp, const char * group, int port);
+        static void connect(const char * myIp){
+            connect(myIp, LOGGER_DEFAULT_GROUP, LOGGER_DEFAULT_PORT);
+        };
+        static void connect(const char * myIp, const char * group, int port);
 
-        void log(const char * tag, const char * message);
-        void log(const char * message) {
+        static void log(const char * tag, const char * message);
+        static void log(const char * message) {
             log(DEFAULT_LOG_TAG, message);
         };
         template<typename... Args>
-        void log(const char * tag, const char * format, Args... args) {
+        static void log(const char * tag, const char * format, Args... args) {
             // TODO fix long args will cause core panic
             char message[MAX_MESSAGE_LENGTH];
             sprintf(message, format, args...);
             log(tag, message);
         };
 
-        void statistics(); 
+        static void statistics(); 
     private:
-        Multicaster _multicaster;
-        SemaphoreHandle_t _mutex = xSemaphoreCreateMutex();
+        BetterLogger();
 
-        const char * _ip = "NOT_CONNECTED"; // ????
-
-        bool _connected = false;
+        static Multicaster _multicaster;
+        static SemaphoreHandle_t _mutex;
+        static const char * _ip; // ????
+        static bool _connected;
+        static bool _serialStarted;
 };
 
 #endif

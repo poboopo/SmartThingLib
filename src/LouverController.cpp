@@ -20,10 +20,6 @@ void LouverController::setMotorAccuracy(uint16_t accuracy) {
     _motorController.setAccuracy(accuracy);
 }
 
-void LouverController::addLogger(BetterLogger * logger) {
-    _logger = logger;
-}
-
 void LouverController::addLedIndicator(LedIndicator * led) {
     _led = led;
 }
@@ -70,7 +66,7 @@ void LouverController::createMonitorTask(){
     xTaskCreate(
         [](void* o){ static_cast<LouverController*>(o)->monitorLight(); },
         LIGHT_MONITOR_TAG,
-        2048,
+        3072,
         this,
         1,
         &_monitorLightHandle
@@ -100,7 +96,7 @@ bool LouverController::enableAutoMode() {
             _led->on();
         }
     }
-    if (_logger != NULL) _logger->log(LOUVER_CONTROLLER_TAG, "Automode enabled");
+    BetterLogger::log(LOUVER_CONTROLLER_TAG, "Automode enabled");
     return true;
 }
 
@@ -111,7 +107,7 @@ bool LouverController::disableAutoMode() {
             _led->off();
         }
 
-        if (_logger != NULL) _logger->log(LOUVER_CONTROLLER_TAG, "Automode disabled");
+        BetterLogger::log(LOUVER_CONTROLLER_TAG, "Automode disabled");
         return true;
     }
     return false;
@@ -126,7 +122,7 @@ uint16_t LouverController::getLightValue() {
 }
 
 uint16_t LouverController::getMotorPosition() {
-    return _motorController.currentPosition();
+    return _motorController.getPosition();
 }
 
 bool LouverController::open() {

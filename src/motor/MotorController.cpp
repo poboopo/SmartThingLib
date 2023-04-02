@@ -1,4 +1,5 @@
 #include <motor/MotorController.h>
+#include <motor/utils.h>
 
 #define MIN_SPEED 100
 #define MAX_SPEED 200
@@ -47,54 +48,39 @@ uint8_t calculateCurrentSpeed(int16_t x, int16_t diff, int16_t maxSpeed) {
 }
 
 bool MotorController::setPosition(uint16_t turnToPosition) {
-    int16_t currentState = analogRead(_potPin);
+    int16_t currentState = getPosition();
     if ((currentState > POT_MAX && turnToPosition > POT_MAX ) || (currentState < POT_MIN && turnToPosition < POT_MIN)) {
         return true;
     }
-
-    if (turnToPosition > POT_MAX) {
-        turnToPosition = POT_MAX;
-    } else if (turnToPosition < POT_MIN) {
-        turnToPosition = POT_MIN;
-    }
-
-    int16_t diff = currentState - turnToPosition;
-    /*
-        right - positive
-        left - negative
-    */
-    int8_t direction = sign(diff); 
-    if (direction * (currentState - turnToPosition) <  _accuracy) {
+    turnToPosition = constrain(turnToPosition, POT_MIN, POT_MAX);
+    if (abs(currentState - turnToPosition) <  _accuracy) {
         return true;
     }
-    
-    if (direction > 0) {
-        digitalWrite(_motorSecondPin, HIGH);
-    } else {
-        digitalWrite(_motorSecondPin, LOW);
-    }
-
-    diff = direction * diff;
-    uint8_t maxSpeed = calculateMaxSpeed(diff);
-    diff = diff / 2;
-
-    uint8_t speed = 0;
-    int16_t startPosition = currentState;
 
     long started = millis();
-    while (direction * (currentState - turnToPosition) >  _accuracy && millis() - started < TIMEOUT) {
-        currentState = analogRead(_potPin);
+    int pwm = 0;
+    while (abs(currentState - turnToPosition) > _accuracy && millis() - started < TIMEOUT) {
+        currentState = getPosition();
+        float temp_ki = kI;
+        if(abs(pwm) == 255) 
+            temp_ki = 0.f;
 
-        if (direction > 0) {
-            speed = 255 - calculateCurrentSpeed(startPosition - currentState, diff, maxSpeed);
-        } else {
-            speed = calculateCurrentSpeed(currentState - startPosition, diff, maxSpeed);
-        }
-
-        analogWrite(_motorFirstPin, speed);
+        pwm = pid(currentState, turnToPosition, kP, temp_ki, kD, (millis()-started)/1000.f);
+        pwm = constrain(pwm, -255, 255);
+        setPWM(pwm);
     } 
     stop();
-    return direction * (currentState - turnToPosition) <  _accuracy;
+    return abs(currentState - turnToPosition) <  _accuracy;
+}
+
+void MotorController::setPWM(int16_t pwm) {
+    if (pwm >= 0) {
+        analogWrite(_motorFirstPin, abs(pwm));
+        analogWrite(_motorSecondPin, LOW);
+    } else {
+        analogWrite(_motorFirstPin, LOW);
+        analogWrite(_motorSecondPin, abs(pwm));
+    }
 }
 
 void MotorController::setAngle(uint8_t angle) {
@@ -102,24 +88,15 @@ void MotorController::setAngle(uint8_t angle) {
     setPosition(turnToPosition);
 }
 
-uint8_t MotorController::currentAngle() {
-    uint16_t potValue = analogRead(_potPin);
-    return map(potValue, POT_MIN, POT_MAX, 0, 180);
-}
-
-uint16_t MotorController::currentPosition() {
-    return analogRead(_potPin);
-}
-
-int8_t MotorController::sign(int16_t value) {
-    if (value < 0) {
-        return -1;
-    } else {
-        return 1;
-    }
+uint16_t MotorController::getPosition() {
+    static uint16_t oldState = 0;
+    int16_t currentState = analogRead(_potPin);
+    currentState = lpFilter(oldState, currentState, ALPHA);
+    oldState = currentState;
+    return currentState;
 }
 
 void MotorController::stop() {
     analogWrite(_motorFirstPin, LOW);
-    digitalWrite(_motorSecondPin, LOW);
+    analogWrite(_motorSecondPin, LOW);
 }

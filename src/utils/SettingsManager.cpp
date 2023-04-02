@@ -10,15 +10,12 @@ SettingsManager::~SettingsManager() {
     _settings.garbageCollect();
 }
 
-void SettingsManager::addLogger(BetterLogger * logger) {
-    _logger = logger;
-}
 
 void SettingsManager::loadSettings() {
-    if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Loading data from eeprom...");
+   BetterLogger::log(SETTINGS_MANAGER_TAG, "Loading data from eeprom...");
     String loaddedSettings = loadFromEeprom();
     if (loaddedSettings.length() == 0) {
-        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Settings empty!");
+       BetterLogger::log(SETTINGS_MANAGER_TAG, "Settings empty!");
         return;
     }
     deserializeJson(_settings, loaddedSettings);
@@ -29,9 +26,9 @@ void SettingsManager::clear() {
         for (int i = 0; i < EEPROM_LOAD_SIZE; i++) {
             EEPROM.write(i, 0);
         }
-        if (_logger != NULL) _logger->log("EEprom clear");
+       BetterLogger::log("EEprom clear");
     } else {
-        if (_logger != NULL) _logger->log("Failed to open EEPROM");
+       BetterLogger::log("Failed to open EEPROM");
     }
 }
 
@@ -53,19 +50,17 @@ String SettingsManager::loadFromEeprom() {
         EEPROM.commit();
 
         if (!completed) {
-            if (_logger != NULL) {
-                _logger->log("Settings string not completed. Missing \\n ?");
-                _logger->log("%s", data.c_str());
-            } 
+            BetterLogger::log("Settings string not completed. Missing \\n ?");
+            BetterLogger::log("%s", data.c_str());
             return "";
         }
 
         data += "}";
 
-        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]", data.c_str(), data.length());
+       BetterLogger::log(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]", data.c_str(), data.length());
         return data;
     } else {
-        if (_logger != NULL) _logger->log("Failed to open EEPROM");
+       BetterLogger::log("Failed to open EEPROM");
         return "";
     }
 }
@@ -73,7 +68,7 @@ String SettingsManager::loadFromEeprom() {
 void SettingsManager::saveSettings() {
     String data;
     serializeJson(_settings, data);
-    if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Parsed json: %s", data.c_str());
+   BetterLogger::log(SETTINGS_MANAGER_TAG, "Parsed json: %s", data.c_str());
 
     // Убираем скобки, что не тратить драгоценное место EEPROM
     data.remove(0, 1);
@@ -81,26 +76,26 @@ void SettingsManager::saveSettings() {
     data += "\n";
 
     if (data.length() > EEPROM_LOAD_SIZE) {
-        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Settings are too long! Expected less then %d, got %d", EEPROM_LOAD_SIZE, data.length());
+       BetterLogger::log(SETTINGS_MANAGER_TAG, "Settings are too long! Expected less then %d, got %d", EEPROM_LOAD_SIZE, data.length());
         return;
     }
 
     if (EEPROM.begin(EEPROM_LOAD_SIZE)) {
-        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Saving settings (length [%u]): %s", data.length(), data.c_str());
+       BetterLogger::log(SETTINGS_MANAGER_TAG, "Saving settings (length [%u]): %s", data.length(), data.c_str());
         for (int i = 0; i < data.length(); i++) {
             EEPROM.write(i, data.charAt(i));
         }
 
         EEPROM.commit();
-        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "Settings saved");
+       BetterLogger::log(SETTINGS_MANAGER_TAG, "Settings saved");
     } else {
-        if (_logger != NULL) _logger->log("Failed to open EEPROM");
+       BetterLogger::log("Failed to open EEPROM");
     }
 }
 
 void SettingsManager::removeSetting(String name) {
     if (name == SSID_SETTING || name == PASSWORD_SETTING || name == GROUP_WIFI) {
-        if (_logger != NULL) _logger->log(SETTINGS_MANAGER_TAG, "U can't remove Wifi credits with this function! Use dropWifiCredits insted.");
+       BetterLogger::log(SETTINGS_MANAGER_TAG, "U can't remove Wifi credits with this function! Use dropWifiCredits insted.");
         return;
     }
     _settings.remove(name.c_str());

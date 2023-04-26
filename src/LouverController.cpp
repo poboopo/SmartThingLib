@@ -1,5 +1,7 @@
 #include "LouverController.h"
 
+#define LIGHT_AVERAGE_OF 20
+
 LouverController::LouverController() {
 }
 
@@ -48,7 +50,7 @@ void LouverController::monitorLight() {
     // TODO реализовать некую функцию, которая заменит это все
     // Кривая фурье?
     for(;;) {
-        lightValue = analogRead(_lightSensorPin);
+        lightValue = getLightValue();
         if (lightValue < _lightClose) {
             _motorController.setPosition(CLOSE_POSITION);
         } else if (lightValue > _lightBright) {
@@ -118,7 +120,11 @@ bool LouverController::isAutoModeEnabled() {
 }
 
 uint16_t LouverController::getLightValue() {
-    return analogRead(_lightSensorPin);
+    uint16_t sum = 0;
+    for (uint8_t i = 0; i < LIGHT_AVERAGE_OF; i++) {
+        sum += analogRead(_lightSensorPin);
+    }
+    return sum / LIGHT_AVERAGE_OF;
 }
 
 uint16_t LouverController::getMotorPosition() {

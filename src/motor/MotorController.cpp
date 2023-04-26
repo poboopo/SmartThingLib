@@ -91,7 +91,7 @@ void MotorController::setAngle(uint8_t angle) {
 uint16_t MotorController::getPosition() {
     static uint16_t oldState = 0;
     int16_t currentState = analogRead(_potPin);
-    currentState = lpFilter(oldState, currentState, ALPHA);
+    currentState = lpFilter(currentState, oldState, ALPHA);
     oldState = currentState;
     return currentState;
 }

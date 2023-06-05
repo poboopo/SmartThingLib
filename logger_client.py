@@ -1,3 +1,5 @@
+#!/bin/python3.10
+
 import socket
 import struct
 from datetime import datetime

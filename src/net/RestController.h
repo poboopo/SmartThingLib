@@ -15,7 +15,7 @@
 struct HandlerResult{
     int code = 200;
     String contentType = JSON_CONTENT_TYPE;
-    String body;
+    String body = "";
 };
 
 class RestController{

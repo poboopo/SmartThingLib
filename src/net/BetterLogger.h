@@ -21,6 +21,8 @@ class BetterLogger {
     public:
         ~BetterLogger();
 
+        static void init();
+
         static void connect(const char * myIp){
             connect(myIp, LOGGER_DEFAULT_GROUP, LOGGER_DEFAULT_PORT);
         };

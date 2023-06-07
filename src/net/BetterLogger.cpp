@@ -15,6 +15,10 @@ BetterLogger::~BetterLogger() {
     BetterLogger::_multicaster.stop();
 }
 
+void BetterLogger::init() {
+    Serial.begin(115200);
+}
+
 void BetterLogger::connect(const char * myIp, const char * group, int port) {
     BetterLogger::_multicaster.init(group, port);
     BetterLogger::_ip = myIp;

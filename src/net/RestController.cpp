@@ -71,6 +71,10 @@ void RestController::setupEndpoints() {
         processHandlerResult(_webPageBuilder());
     });
 
+    _server.on("/health", HTTP_GET, [&]() {
+        _server.send(200, "text/html", "I am alive!!! :)");
+    });
+
     _server.on("/state", HTTP_GET, [&](){
         BetterLogger::log(WEB_SERVER_TAG, "[GET] [/state]");
         processHandlerResult(_getStateHandler());

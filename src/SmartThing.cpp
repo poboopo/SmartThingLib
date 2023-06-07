@@ -7,7 +7,9 @@ bool wifiConnected() {
     return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
 }
 
-bool SmartThing::init() {
+bool SmartThing::init(String name) {
+    _name = name;
+
     BetterLogger::init();
     BetterLogger::log(SMART_THING_TAG, "Smart thing initialization started");
 
@@ -32,9 +34,18 @@ bool SmartThing::init() {
         BetterLogger::log(SMART_THING_TAG, "Ota started");
 
         _multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
+        _broadcastMessage = _ip + ":" + _name;
         BetterLogger::log(SMART_THING_TAG, "Multicaster created");
 
         _rest.begin(&_settingsManager);
+        _rest.addGetInfoHandler([&](){
+            HandlerResult result;
+            result.code = 200;
+            result.contentType = JSON_CONTENT_TYPE;
+            result.body = buildInfoJson();
+            return result;
+        });
+
         if (WiFi.getMode() == WIFI_MODE_AP) {
             _rest.addSetupEndpoint();    
         }
@@ -51,7 +62,7 @@ void SmartThing::loopRoutine() {
     if (wifiConnected()) {
         ArduinoOTA.handle();
         _rest.handle();
-        _multicaster.broadcast(_ip.c_str());
+        _multicaster.broadcast(_broadcastMessage.c_str());
     }
 }
 
@@ -90,6 +101,17 @@ void SmartThing::wipeSettings() {
         BetterLogger::log(SMART_THING_TAG, "Settings were wiped!");
     }
     _led.off();
+}
+
+
+String SmartThing::buildInfoJson() {
+    DynamicJsonDocument jsonDoc(64);
+    jsonDoc["version"] = SMART_THING_VERSION;
+    jsonDoc["name"] = _name;
+
+    String result;
+    serializeJson(jsonDoc, result);
+    return result;
 }
 
 RestController* SmartThing::getRestController() {

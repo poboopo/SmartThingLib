@@ -10,6 +10,8 @@
 #include "net/RestController.h"
 #include "utils/LedIndicator.h"
 
+#define SMART_THING_VERSION 1
+
 #define SMART_THING_TAG "SMART_THING"
 // Pins
 #define MOTOR_FIRST_PIN 26
@@ -30,7 +32,10 @@ class SmartThing {
         SmartThing();
         ~SmartThing();
 
-        bool init();
+        bool init() {
+            return init(ESP.getChipModel());
+        };
+        bool init(String name);
         void loopRoutine();
 
         RestController* getRestController();
@@ -43,8 +48,11 @@ class SmartThing {
         RestController _rest;
 
         String _ip = "";
+        String _name;
+        String _broadcastMessage = "";
 
         void wipeSettings();
+        String buildInfoJson();
         String connectToWifi(String ssid, String password);
 };
 

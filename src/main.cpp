@@ -21,7 +21,7 @@ void setupRestHandlers();
 void processConfig();
 
 void setup() {
-    if (smartThing.init()) {
+    if (smartThing.init("pobopo")) {
         if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
             setupRestHandlers();
         }
@@ -62,7 +62,10 @@ void setupRestHandlers() {
     rest->addStateChangeHandler([rest]() {
         return changeLouverState(rest->getRequestBody() ,&controller);
     });
-
+    rest->addGetSensorsHandler([](){
+        HandlerResult result = getSensorsJson(&controller);
+        return result;
+    });
     rest->addConfigUpdatedHandler([]() {
         processConfig();
     });

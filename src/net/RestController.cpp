@@ -71,39 +71,50 @@ void RestController::setupEndpoints() {
         processHandlerResult(_webPageBuilder());
     });
 
+    _server.on("/info", HTTP_GET, [&]() {
+        BetterLogger::log(WEB_SERVER_TAG, "[GET] [/info]");
+        processHandlerResult(_getInfoHandler());
+    });
+
     _server.on("/health", HTTP_GET, [&]() {
         _server.send(200, "text/html", "I am alive!!! :)");
+    });
+
+    _server.on("/dictionary", HTTP_GET, [&](){
+        //todo
+        _server.send(400, "text/html", "nothing here yet");
     });
 
     _server.on("/state", HTTP_GET, [&](){
         BetterLogger::log(WEB_SERVER_TAG, "[GET] [/state]");
         processHandlerResult(_getStateHandler());
-        BetterLogger::statistics();
     });
     _server.on("/state", HTTP_PUT, [&](){
         BetterLogger::log(WEB_SERVER_TAG, "[PUT] [/state] %s", getRequestBody().c_str());
         processHandlerResult(_changeStateHandler());
         // TODO save state
-        BetterLogger::statistics();
+    });
+
+    _server.on("/sensors", HTTP_GET, [&]() {
+        BetterLogger::log(WEB_SERVER_TAG, "[GET] [/sensors]");
+        processHandlerResult(_getSensorsHandler());
     });
 
     _server.on("/config", HTTP_GET, [&](){
         BetterLogger::log(WEB_SERVER_TAG, "[GET] [/config]");
         _server.send(200, "application/json", _settingsManager->getJson(GROUP_CONFIG));
-        BetterLogger::statistics();
     });
     _server.on("/config", HTTP_POST, [&](){
         BetterLogger::log(WEB_SERVER_TAG, "[POST] [/config] %s", getRequestBody().c_str());
         handleConfigPost();
         _configUpdatedHandler();
-        BetterLogger::statistics();
     });
     _server.on("/config", HTTP_DELETE, [&](){
         BetterLogger::log(WEB_SERVER_TAG, "[DELETE] [/config]");
         handleConfigDelete();
         _configUpdatedHandler();
-        BetterLogger::statistics();
     });
+
     _server.on("/restart", HTTP_PUT, [&](){
         BetterLogger::log(WEB_SERVER_TAG, "[PUT] [/restart] %s", getRequestBody().c_str());
 
@@ -112,7 +123,6 @@ void RestController::setupEndpoints() {
 
         _settingsManager->saveSettings();
         _server.send(200);
-        BetterLogger::statistics();
 
         BetterLogger::log(WEB_SERVER_TAG, "---------RESTART---------");
 
@@ -121,7 +131,6 @@ void RestController::setupEndpoints() {
     });
     _server.onNotFound([&](){
         _server.send(404, "text/plain", "Page not found");
-        BetterLogger::statistics();
     });
 }
 

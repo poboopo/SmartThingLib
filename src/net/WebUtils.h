@@ -31,6 +31,18 @@ HandlerResult getLouverStateJson(LouverController * controller) {
     return result;
 }
 
+HandlerResult getSensorsJson(LouverController * controller) {
+    DynamicJsonDocument jsonDoc(64);
+    jsonDoc["light"] = controller->getLightValue();
+    jsonDoc["temp"] = 10;
+
+    HandlerResult result;
+    result.code = 200;
+    result.contentType = JSON_CONTENT_TYPE;
+    serializeJson(jsonDoc, result.body);
+    return result;
+}
+
 HandlerResult changeLouverState(String body, LouverController * controller) {
     HandlerResult result;
 

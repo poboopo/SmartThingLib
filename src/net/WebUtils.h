@@ -100,16 +100,13 @@ HandlerResult getDictionaries() {
     return result;
 }
 
-HandlerResult handleAction(String body, LouverController * controller) {
+HandlerResult handleAction(String actionArg, LouverController * controller) {
     HandlerResult result;
-
-    DynamicJsonDocument jsonDoc(64);
-    deserializeJson(jsonDoc, body);
 
     bool actionResult = false;
 
-    if (jsonDoc.containsKey("action")) {
-        int action = jsonDoc["action"];
+    if (!actionArg.isEmpty()) {
+        int action = actionArg.toInt();
         switch(action) {
             case ENABLE_AUTO_MODE:
                 actionResult = controller->enableAutoMode();
@@ -142,6 +139,7 @@ HandlerResult handleAction(String body, LouverController * controller) {
         result.code = 400;
         result.body = "Action is missing!";
     }
+    result.contentType = "text/html";
     return result;
 }
 

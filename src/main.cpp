@@ -59,7 +59,7 @@ void setupRestHandlers() {
         return result;
     });
     rest->addActionHandler([rest]() {
-        return handleAction(rest->getRequestBody() ,&controller);
+        return handleAction(rest->getRequestArg("action") ,&controller);
     });
     rest->addGetSensorsHandler([](){
         HandlerResult result = getSensorsJson(&controller);

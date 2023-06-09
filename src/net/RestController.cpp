@@ -32,6 +32,13 @@ String RestController::getRequestBody() {
     return _server.arg("plain");
 }
 
+String RestController::getRequestArg(String name) {
+    if (!_server.hasArg(name)) {
+        return "";
+    }
+    return _server.arg(name);
+}
+
 String RestController::buildErrorJson(String error) {
     return "{\"error\": \"" + error + "\"}";
 }
@@ -98,7 +105,7 @@ void RestController::setupEndpoints() {
         processHandlerResult(_getStateHandler());
     });
     _server.on("/action", HTTP_PUT, [&](){
-        BetterLogger::log(WEB_SERVER_TAG, "[PUT] [/state] %s", getRequestBody().c_str());
+        BetterLogger::log(WEB_SERVER_TAG, "[PUT] [/action] %s", getRequestArg("action").c_str());
         processHandlerResult(_actionHandler());
     });
     _server.on("/sensors", HTTP_GET, [&]() {

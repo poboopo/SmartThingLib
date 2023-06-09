@@ -52,6 +52,7 @@ class RestController{
         void addSetupEndpoint();
 
         String getRequestBody();
+        String getRequestArg(String name);
         WebServer * getWebServer() { return &_server; };
 
         void handle();

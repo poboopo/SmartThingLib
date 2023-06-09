@@ -10,7 +10,7 @@
 #include "net/RestController.h"
 #include "utils/LedIndicator.h"
 
-#define SMART_THING_VERSION 1
+#define SMART_THING_VERSION 0.1
 
 #define SMART_THING_TAG "SMART_THING"
 // Pins

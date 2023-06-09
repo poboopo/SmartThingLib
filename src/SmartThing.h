@@ -14,10 +14,6 @@
 
 #define SMART_THING_TAG "SMART_THING"
 // Pins
-#define MOTOR_FIRST_PIN 26
-#define MOTOR_SECOND_PIN 25
-#define POT_PIN 36
-#define LIGHT_SENSOR_PIN 35
 #define LED_PIN 5
 #define BUTTON_PIN 18
 

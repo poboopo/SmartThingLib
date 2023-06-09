@@ -133,11 +133,9 @@ bool LouverController::disableAutoMode() {
         if (_led != NULL) {
             _led->off();
         }
-
-        BetterLogger::log(LOUVER_CONTROLLER_TAG, "Automode disabled");
-        return true;
     }
-    return false;
+    BetterLogger::log(LOUVER_CONTROLLER_TAG, "Automode disabled");
+    return true;
 }
 
 bool LouverController::isAutoModeEnabled() {

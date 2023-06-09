@@ -25,7 +25,7 @@ bool SmartThing::init() {
     _ip = connectToWifi(ssid, password);
 
     if (wifiConnected()) {
-        BetterLogger::connect(_ip.c_str());
+        BetterLogger::connect(_ip.c_str(), _name.c_str());
         BetterLogger::log(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
 
         ArduinoOTA.begin();

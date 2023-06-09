@@ -26,14 +26,14 @@ void setup() {
         }
         controller.init(MOTOR_FIRST_PIN, MOTOR_SECOND_PIN, POT_PIN, LIGHT_SENSOR_PIN);
         controller.addLedIndicator(smartThing.getLed());
-        BetterLogger::log("*", "Controller created");
+        BetterLogger::log("main", "Controller created");
 
         processConfig();
-        BetterLogger::log("*", "Config proceed");
+        BetterLogger::log("main", "Config proceed");
     } else {
-        BetterLogger::log("*", "Failed to init smart thing");
+        BetterLogger::log("main", "Failed to init smart thing");
     }
-    BetterLogger::log("*", "Setup finished");
+    BetterLogger::log("main", "Setup finished");
 }
 
 void loop() {
@@ -108,8 +108,10 @@ void processConfig() {
     }
 
     String name = config[NAME_SETTING];
-    if (!name.isEmpty()) {
+    if (!name.isEmpty() && name != "null") {
         smartThing.setName(name);
+    } else {
+        smartThing.setName(ESP.getChipModel());
     }
 
     controller.restartAutoMode();

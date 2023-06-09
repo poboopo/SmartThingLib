@@ -1,12 +1,13 @@
 #include "net/BetterLogger.h"
 
-#define LOGGER_MESSAGE_TEMPLATE "{%s}[%ld][%s]::%s"
+#define LOGGER_MESSAGE_TEMPLATE "{%s}[%s][%s]::%s"
 
 Multicaster BetterLogger::_multicaster = Multicaster();
 bool BetterLogger::_connected = false;
 bool BetterLogger::_serialStarted = false;
 SemaphoreHandle_t BetterLogger::_mutex = xSemaphoreCreateMutex();
 const char * BetterLogger::_ip = "NOT_CONNECTED";
+const char * BetterLogger::_name = "no_name";
 
 BetterLogger::BetterLogger() {
 }
@@ -19,8 +20,9 @@ void BetterLogger::init() {
     Serial.begin(115200);
 }
 
-void BetterLogger::connect(const char * myIp, const char * group, int port) {
+void BetterLogger::connect(const char * myIp, const char * name, const char * group, int port) {
     BetterLogger::_multicaster.init(group, port);
+    BetterLogger::_name = name;
     BetterLogger::_ip = myIp;
     BetterLogger::_connected = true;
 }
@@ -28,7 +30,7 @@ void BetterLogger::connect(const char * myIp, const char * group, int port) {
 void BetterLogger::log(const char * tag, const char * message) {
     char formattedMessage[MAX_MESSAGE_LENGTH];
 
-    sprintf(formattedMessage, LOGGER_MESSAGE_TEMPLATE, _ip, millis(), tag, message);
+    sprintf(formattedMessage, LOGGER_MESSAGE_TEMPLATE, _ip, _name, tag, message);
 
     xSemaphoreTake(_mutex, portMAX_DELAY);
     Serial.println(formattedMessage);

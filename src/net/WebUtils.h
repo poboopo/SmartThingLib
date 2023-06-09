@@ -41,7 +41,6 @@ HandlerResult getLouverStateJson(LouverController * controller) {
 HandlerResult getSensorsJson(LouverController * controller) {
     DynamicJsonDocument jsonDoc(64);
     jsonDoc["light"] = controller->getLightValue();
-    jsonDoc["temp"] = 10;
 
     HandlerResult result;
     result.code = 200;
@@ -56,40 +55,46 @@ HandlerResult getDictionaries() {
     JsonArray actions = jsonDoc.createNestedArray("actions");
     JsonObject disableAuto = actions.createNestedObject();
     disableAuto["caption"] = "Disable automode";
-    disableAuto["id"] = DISABLE_AUTO_MODE;
+    disableAuto["action"] = DISABLE_AUTO_MODE;
     JsonObject enableAuto = actions.createNestedObject();
     enableAuto["caption"] = "Enable automode";
-    enableAuto["id"] = ENABLE_AUTO_MODE;
+    enableAuto["action"] = ENABLE_AUTO_MODE;
     JsonObject openAction = actions.createNestedObject();
     openAction["caption"] = "Set louver open position";
-    openAction["id"] = OPEN;
+    openAction["action"] = OPEN;
     JsonObject closeAction = actions.createNestedObject();
     closeAction["caption"] = "Set louver close position";
-    closeAction["id"] = CLOSE;
+    closeAction["action"] = CLOSE;
     JsonObject middleAction = actions.createNestedObject();
     middleAction["caption"] = "Set louver middle position";
-    middleAction["id"] = MIDDLE;
+    middleAction["action"] = MIDDLE;
     JsonObject brightAction = actions.createNestedObject();
     brightAction["caption"] = "Set louver bright position";
-    brightAction["id"] = BRIGHT;
+    brightAction["action"] = BRIGHT;
 
     JsonArray config = jsonDoc.createNestedArray("config");
     JsonObject config_0 = config.createNestedObject();
+    config_0["caption"] = "Light close value";
     config_0["name"] = CLOSE_SETTING;
     config_0["type"] = "number";
     JsonObject config_1 = config.createNestedObject();
+    config_1["caption"] = "Light open value";
     config_1["name"] = OPEN_SETTING;
     config_1["type"] = "number";
     JsonObject config_2 = config.createNestedObject();
+    config_2["caption"] = "Light bright value";
     config_2["name"] = BRIGHT_SETTING;
     config_2["type"] = "number";
     JsonObject config_3 = config.createNestedObject();
+    config_3["caption"] = "Automode update delay";
     config_3["name"] = DELAY_SETTING;
     config_3["type"] = "number";
     JsonObject config_4 = config.createNestedObject();
+    config_4["caption"] = "Motor accuracy";
     config_4["name"] = ACCURACY_SETTING;
     config_4["type"] = "number";
     JsonObject config_5 = config.createNestedObject();
+    config_5["caption"] = "Device name";
     config_5["name"] = NAME_SETTING;
     config_5["type"] = "text";
 

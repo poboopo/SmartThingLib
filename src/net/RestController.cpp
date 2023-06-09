@@ -60,8 +60,16 @@ void RestController::handleConfigDelete() {
     if (!_server.hasArg("name")) {
         _server.send(400, "content/json", buildErrorJson("Setting name is missing"));
     }
-    _settingsManager->removeSetting(_server.arg("name"));
-    _settingsManager->saveSettings();
+    String name = _server.arg("name");
+
+    JsonObject config = _settingsManager->getSettings(GROUP_CONFIG);
+    if (config.containsKey(name)) {
+        BetterLogger::log(WEB_SERVER_TAG, "Removing config value %s", name);
+        config.remove(name);
+        _settingsManager->saveSettings();
+    } else {
+        BetterLogger::log(WEB_SERVER_TAG, "Failed to remove config %s - no such key", name);
+    }
     _server.send(200);
 }
 
@@ -77,29 +85,26 @@ void RestController::setupEndpoints() {
     });
 
     _server.on("/health", HTTP_GET, [&]() {
+        BetterLogger::log(WEB_SERVER_TAG, "[GET] [/health]");
         _server.send(200, "text/html", "I am alive!!! :)");
     });
 
     _server.on("/dictionary", HTTP_GET, [&](){
-        //todo
-        _server.send(400, "text/html", "nothing here yet");
+        BetterLogger::log(WEB_SERVER_TAG, "[GET] [/dictionary]");
+        processHandlerResult(_getDictsHandler());
     });
-
     _server.on("/state", HTTP_GET, [&](){
         BetterLogger::log(WEB_SERVER_TAG, "[GET] [/state]");
         processHandlerResult(_getStateHandler());
     });
-    _server.on("/state", HTTP_PUT, [&](){
+    _server.on("/action", HTTP_PUT, [&](){
         BetterLogger::log(WEB_SERVER_TAG, "[PUT] [/state] %s", getRequestBody().c_str());
-        processHandlerResult(_changeStateHandler());
-        // TODO save state
+        processHandlerResult(_actionHandler());
     });
-
     _server.on("/sensors", HTTP_GET, [&]() {
         BetterLogger::log(WEB_SERVER_TAG, "[GET] [/sensors]");
         processHandlerResult(_getSensorsHandler());
     });
-
     _server.on("/config", HTTP_GET, [&](){
         BetterLogger::log(WEB_SERVER_TAG, "[GET] [/config]");
         _server.send(200, "application/json", _settingsManager->getJson(GROUP_CONFIG));

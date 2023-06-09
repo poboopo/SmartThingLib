@@ -32,11 +32,9 @@ class SmartThing {
         SmartThing();
         ~SmartThing();
 
-        bool init() {
-            return init(ESP.getChipModel());
-        };
-        bool init(String name);
+        bool init();
         void loopRoutine();
+        void setName(String name);
 
         RestController* getRestController();
         SettingsManager* getSettingsManager();

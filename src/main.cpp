@@ -5,7 +5,6 @@
 
 #include "LouverController.h"
 #include "net/WebUtils.h"
-
 #include "SmartThing.h"
 
 // Pins
@@ -21,7 +20,7 @@ void setupRestHandlers();
 void processConfig();
 
 void setup() {
-    if (smartThing.init("pobopo")) {
+    if (smartThing.init()) {
         if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
             setupRestHandlers();
         }
@@ -59,8 +58,8 @@ void setupRestHandlers() {
         HandlerResult result = getLouverStateJson(&controller);
         return result;
     });
-    rest->addStateChangeHandler([rest]() {
-        return changeLouverState(rest->getRequestBody() ,&controller);
+    rest->addActionHandler([rest]() {
+        return handleAction(rest->getRequestBody() ,&controller);
     });
     rest->addGetSensorsHandler([](){
         HandlerResult result = getSensorsJson(&controller);
@@ -68,6 +67,10 @@ void setupRestHandlers() {
     });
     rest->addConfigUpdatedHandler([]() {
         processConfig();
+    });
+    rest->addGetDictsHandler([](){
+        HandlerResult result = getDictionaries();
+        return result;
     });
 
     rest->addWebPageBuilder([](){
@@ -102,6 +105,11 @@ void processConfig() {
     uint8_t accuracy = config[ACCURACY_SETTING];
     if (accuracy > 0) {
         controller.setMotorAccuracy(accuracy);
+    }
+
+    String name = config[NAME_SETTING];
+    if (!name.isEmpty()) {
+        smartThing.setName(name);
     }
 
     controller.restartAutoMode();

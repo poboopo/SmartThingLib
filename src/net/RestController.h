@@ -27,8 +27,8 @@ class RestController{
         typedef std::function<void(void)> HandlerFunction;
         void begin(SettingsManager * manager);
         
-        void addStateChangeHandler(RestController::HandlerWithResultFunction hf) {
-            _changeStateHandler = hf;
+        void addActionHandler(RestController::HandlerWithResultFunction hf) {
+            _actionHandler = hf;
         };
         void addGetStateHandler(RestController::HandlerWithResultFunction hf) {
             _getStateHandler = hf;
@@ -38,6 +38,9 @@ class RestController{
         };
         void addGetInfoHandler(RestController::HandlerWithResultFunction hf) {
             _getInfoHandler = hf;
+        };
+        void addGetDictsHandler(RestController::HandlerWithResultFunction hf) {
+            _getDictsHandler = hf;
         };
         void addWebPageBuilder(RestController::HandlerWithResultFunction hf) {
             _webPageBuilder = hf;
@@ -66,10 +69,11 @@ class RestController{
         };
 
         HandlerWithResultFunction _getStateHandler = _defaultHandler;
-        HandlerWithResultFunction _changeStateHandler = _defaultHandler;
+        HandlerWithResultFunction _actionHandler = _defaultHandler;
         HandlerWithResultFunction _webPageBuilder = _defaultHandler;
         HandlerWithResultFunction _getSensorsHandler = _defaultHandler;
         HandlerWithResultFunction _getInfoHandler = _defaultHandler;
+        HandlerWithResultFunction _getDictsHandler = _defaultHandler;
 
         HandlerFunction _configUpdatedHandler = [](){};
 

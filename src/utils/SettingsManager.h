@@ -8,12 +8,6 @@
 #define PASSWORD_SETTING "password"
 #define AUTOMODE_SETTING "automode"
 
-#define CLOSE_SETTING "light_close"
-#define OPEN_SETTING "light_open"
-#define BRIGHT_SETTING "light_bright"
-#define DELAY_SETTING "delay"
-#define ACCURACY_SETTING "accuracy"
-
 #define GROUP_WIFI "wifi"
 #define GROUP_CONFIG "config"
 #define GROUP_STATE "state"

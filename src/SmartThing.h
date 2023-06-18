@@ -28,7 +28,7 @@ class SmartThing {
         SmartThing();
         ~SmartThing();
 
-        bool init();
+        bool init(String type);
         void loopRoutine();
         void setName(String name);
 
@@ -43,6 +43,7 @@ class SmartThing {
 
         String _ip = "";
         String _name;
+        String _type;
         String _broadcastMessage = "";
 
         void wipeSettings();

@@ -7,7 +7,12 @@ bool wifiConnected() {
     return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
 }
 
-bool SmartThing::init() {
+String buildBroadCastMessage(String ip, String name) {
+    return ip + ":" + name;
+}
+
+bool SmartThing::init(String type) {
+    _type = type;
     BetterLogger::init();
     BetterLogger::log(SMART_THING_TAG, "Smart thing initialization started");
 
@@ -32,7 +37,7 @@ bool SmartThing::init() {
         BetterLogger::log(SMART_THING_TAG, "Ota started");
 
         _multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
-        _broadcastMessage = _ip + ESP.getChipModel();
+        _broadcastMessage = buildBroadCastMessage(_ip, ESP.getChipModel());
         BetterLogger::log(SMART_THING_TAG, "Multicaster created");
 
         _rest.begin(&_settingsManager);
@@ -103,9 +108,10 @@ void SmartThing::wipeSettings() {
 
 
 String SmartThing::buildInfoJson() {
-    DynamicJsonDocument jsonDoc(64);
+    DynamicJsonDocument jsonDoc(256);
     jsonDoc["version"] = SMART_THING_VERSION;
     jsonDoc["name"] = _name;
+    jsonDoc["type"] = _type;
     jsonDoc["chip_model"] = ESP.getChipModel();
     jsonDoc["chip_revision"] = ESP.getChipRevision();
 
@@ -116,7 +122,7 @@ String SmartThing::buildInfoJson() {
 
 void SmartThing::setName(String name) {
     _name = name;
-    _broadcastMessage = _ip + ":" + _name;
+    _broadcastMessage = buildBroadCastMessage(_ip, _name);
 }
 
 RestController* SmartThing::getRestController() {

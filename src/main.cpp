@@ -19,7 +19,7 @@ void setupRestHandlers();
 void processConfig();
 
 void setup() {
-    if (smartThing.init()) {
+    if (smartThing.init("louver")) {
         if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
             setupRestHandlers();
         }

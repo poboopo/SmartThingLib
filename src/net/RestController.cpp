@@ -88,7 +88,16 @@ void RestController::setupEndpoints() {
 
     _server.on("/info", HTTP_GET, [&]() {
         BetterLogger::log(WEB_SERVER_TAG, "[GET] [/info]");
+        // todo add cors for all
+        _server.sendHeader("Access-Control-Allow-Origin", "*");
         processHandlerResult(_getInfoHandler());
+    });
+    _server.on("/info", HTTP_OPTIONS, [&]() {
+        BetterLogger::log(WEB_SERVER_TAG, "[OPTIONS] [/info]");
+        _server.sendHeader("Access-Control-Allow-Origin", "*");
+        _server.sendHeader("Access-Control-Allow-Methods", "GET");
+        _server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
+        _server.send(200);
     });
 
     _server.on("/health", HTTP_GET, [&]() {

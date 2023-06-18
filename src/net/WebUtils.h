@@ -1,10 +1,9 @@
 #ifndef WEB_UTILS_H
 #define WEB_UTILS_H
 
-#include <net/Pages.h>
 #include <ArduinoJson.h>
 #include <utils/SettingsManager.h>
-#include <net/RestController.h>
+#include <net/rest/RestController.h>
 #include <LouverController.h>
 
 //TODO MOVE THIS FILE TO /utils
@@ -146,15 +145,6 @@ HandlerResult handleAction(String actionArg, LouverController * controller) {
     }
     result.contentType = "text/html";
     return result;
-}
-
-const String buildMainPage(bool apMode) {
-    String page = PAGE_PART_1;
-    if (apMode) {
-        page += SETUP_BLOCK;
-    }
-    page += PAGE_PART_2;
-    return page;
 }
 
 #endif

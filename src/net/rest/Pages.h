@@ -1,21 +1,4 @@
-const String SETUP_BLOCK = R"=====(
-    <h1>WiFi setup</h1>
-    <div id="settings" class="content-block">
-        <div>
-            <p>WiFi network name: </p>
-            <input type="text" id="ssid" title="SSID"/>
-        </div>
-        <div>
-            <p>WiFi password: </p>
-            <input type="password" id="password" title="password"/>
-        </div>
-        <div class="btn-group btn-control" >
-            <button onclick="submit()">submit</button>
-        </div>
-    </div>
-)=====";
-
-const String PAGE_PART_1 = R"=====(
+const String WEB_PAGE_MAIN = R"=====(
 <html>
     <head>
         <title>SmartThing control page</title>
@@ -26,10 +9,21 @@ const String PAGE_PART_1 = R"=====(
             <lu id="info"></lu>
         </div>
         <div id="main-panel" class="holder">
-)=====";
-
-const String PAGE_PART_2 = R"=====(
-        <div id="actions" class="content-block btn-group btn-control">
+            <h1>WiFi setup</h1>
+            <div id="settings" class="content-block">
+                <div>
+                    <p>WiFi network name: </p>
+                    <input type="text" id="ssid" title="SSID"/>
+                </div>
+                <div>
+                    <p>WiFi password: </p>
+                    <input type="password" id="password" title="password"/>
+                </div>
+                <div class="btn-group btn-control" >
+                    <button onclick="submit()">submit</button>
+                </div>
+            </div>
+            <div id="actions" class="content-block btn-group btn-control">
                 <h1>Control panel</h1>
                 <div id="control-buttons-block"></div>
             </div>

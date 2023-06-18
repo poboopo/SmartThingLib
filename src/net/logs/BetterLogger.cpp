@@ -1,4 +1,4 @@
-#include "net/BetterLogger.h"
+#include "net/logs/BetterLogger.h"
 
 #define LOGGER_MESSAGE_TEMPLATE "{%s}[%s][%s]::%s"
 

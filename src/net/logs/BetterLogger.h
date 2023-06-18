@@ -1,10 +1,10 @@
+#ifndef BetterLogger_H
+#define BetterLogger_H
+
 #include <Arduino.h>
 #include <freertos/semphr.h>
 
-#include "net/Multicaster.h"
-
-#ifndef BetterLogger_H
-#define BetterLogger_H
+#include "net/socket/Multicaster.h"
 
 #define ENABLE_STATISTICS
 

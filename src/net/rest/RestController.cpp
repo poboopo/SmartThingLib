@@ -1,4 +1,6 @@
-#include <net/RestController.h>
+#include <net/rest/RestController.h>
+#include <net/rest/Pages.h>
+#include <net/rest/OptionsRequestHandler.h>
 
 #define WEB_SERVER_TAG "web_server"
 
@@ -8,9 +10,8 @@ RestController::~RestController(){};
 void RestController::begin(SettingsManager * manager) {
     _settingsManager = manager;
 
+    setupHandler();
     _server.begin(SERVER_PORT);
-
-    setupEndpoints();
     _setupFinished = true;
 }
 
@@ -80,64 +81,81 @@ void RestController::handleConfigDelete() {
     _server.send(200);
 }
 
-void RestController::setupEndpoints() {
-    _server.on("/", HTTP_GET, [&]() {
-        BetterLogger::log(WEB_SERVER_TAG, "[GET] [/]");
-        processHandlerResult(_webPageBuilder());
-    });
+void RestController::preHandleRequest() {
+    BetterLogger::log(
+        WEB_SERVER_TAG, 
+        "[%s] [%s] %s", 
+        http_method_str(_server.method()),
+        _server.uri(),
+        getRequestBody().c_str()
+    );
+    _server.sendHeader("Access-Control-Allow-Origin", "*");
+}
 
-    _server.on("/info", HTTP_GET, [&]() {
-        BetterLogger::log(WEB_SERVER_TAG, "[GET] [/info]");
-        // todo add cors for all
-        _server.sendHeader("Access-Control-Allow-Origin", "*");
-        processHandlerResult(_getInfoHandler());
-    });
-    _server.on("/info", HTTP_OPTIONS, [&]() {
-        BetterLogger::log(WEB_SERVER_TAG, "[OPTIONS] [/info]");
-        _server.sendHeader("Access-Control-Allow-Origin", "*");
-        _server.sendHeader("Access-Control-Allow-Methods", "GET");
-        _server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
-        _server.send(200);
-    });
+// add authorization?
+// TODO MOVE ALL HANDLERS TO DIFFERENT CLASSES!!!
+void RestController::setupHandler() {
+    _server.addHandler(new OptionsRequestHandler());
 
-    _server.on("/health", HTTP_GET, [&]() {
-        BetterLogger::log(WEB_SERVER_TAG, "[GET] [/health]");
+    _server.on("/health", HTTP_GET, [this]() {
+        preHandleRequest();
         _server.send(200, "text/html", "I am alive!!! :)");
     });
 
-    _server.on("/dictionary", HTTP_GET, [&](){
-        BetterLogger::log(WEB_SERVER_TAG, "[GET] [/dictionary]");
+    _server.on("/", HTTP_GET, [this]() {
+        preHandleRequest();
+        _server.send(200, "text/html", WEB_PAGE_MAIN);
+    });
+
+    _server.on("/info", HTTP_GET, [this]() {
+        preHandleRequest();
+        processHandlerResult(_getInfoHandler());
+    });
+
+    _server.on("/dictionary", HTTP_GET, [this](){
+        preHandleRequest();
         processHandlerResult(_getDictsHandler());
     });
-    _server.on("/state", HTTP_GET, [&](){
-        BetterLogger::log(WEB_SERVER_TAG, "[GET] [/state]");
+    _server.on("/state", HTTP_GET, [this](){
+        preHandleRequest();
         processHandlerResult(_getStateHandler());
     });
-    _server.on("/action", HTTP_PUT, [&](){
+    _server.on("/action", HTTP_PUT, [this](){
         BetterLogger::log(WEB_SERVER_TAG, "[PUT] [/action] %s", getRequestArg("action").c_str());
+        _server.sendHeader("Access-Control-Allow-Origin", "*");
         processHandlerResult(_actionHandler());
     });
-    _server.on("/sensors", HTTP_GET, [&]() {
-        BetterLogger::log(WEB_SERVER_TAG, "[GET] [/sensors]");
+    _server.on("/sensors", HTTP_GET, [this]() {
+        preHandleRequest();
         processHandlerResult(_getSensorsHandler());
     });
-    _server.on("/config", HTTP_GET, [&](){
-        BetterLogger::log(WEB_SERVER_TAG, "[GET] [/config]");
+    _server.on("/config", HTTP_GET, [this](){
+        preHandleRequest();
         _server.send(200, "application/json", _settingsManager->getJson(GROUP_CONFIG));
     });
-    _server.on("/config", HTTP_POST, [&](){
-        BetterLogger::log(WEB_SERVER_TAG, "[POST] [/config] %s", getRequestBody().c_str());
+    _server.on("/config", HTTP_POST, [this](){
+        preHandleRequest();
         handleConfigPost();
         _configUpdatedHandler();
     });
-    _server.on("/config", HTTP_DELETE, [&](){
-        BetterLogger::log(WEB_SERVER_TAG, "[DELETE] [/config]");
+    _server.on("/config", HTTP_DELETE, [this](){
+        preHandleRequest();
         handleConfigDelete();
         _configUpdatedHandler();
     });
 
+    _server.on("/wifi", HTTP_POST, [this]() {
+        preHandleRequest();
+        handleWiFiPost();
+    });
+
+    _server.on("/wifi", HTTP_GET, [this]() {
+        preHandleRequest();
+        handleWiFiGet();
+    });
+
     _server.on("/restart", HTTP_PUT, [&](){
-        BetterLogger::log(WEB_SERVER_TAG, "[PUT] [/restart] %s", getRequestBody().c_str());
+        preHandleRequest();
 
         HandlerResult result = _getStateHandler();
         _settingsManager->putSetting(GROUP_STATE, result.body);
@@ -155,7 +173,13 @@ void RestController::setupEndpoints() {
     });
 }
 
-void RestController::handleSetupPost() {
+void RestController::handleWiFiGet() {
+    String ssid = _settingsManager->getSettingString(GROUP_WIFI, SSID_SETTING);
+    String password = _settingsManager->getSettingString(GROUP_WIFI, PASSWORD_SETTING);
+    _server.send(200, JSON_CONTENT_TYPE,"{\"ssid\": \"" + ssid + "\", \"password\": \"" + (password.length() > 0 ? "********" : "") + "\"}");
+}
+
+void RestController::handleWiFiPost() {
     String data = getRequestBody();
     if (data.length() == 0) {
         _server.send(400, "content/json", buildErrorJson("Body is missing"));
@@ -168,11 +192,4 @@ void RestController::handleSetupPost() {
     _settingsManager->putSetting(GROUP_WIFI, PASSWORD_SETTING, jsonDoc["password"].as<String>());
     _settingsManager->saveSettings();
     _server.send(200);
-}
-
-void RestController::addSetupEndpoint() {
-    _server.on("/setup", HTTP_POST, [&]() {
-        BetterLogger::log(WEB_SERVER_TAG, "[POST] [/setup] %s", getRequestBody().c_str());
-        handleSetupPost();
-    });
 }

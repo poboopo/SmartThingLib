@@ -5,9 +5,9 @@
 #include <ArduinoOTA.h>
 
 #include "utils/SettingsManager.h"
-#include "net/BetterLogger.h"
-#include "net/Multicaster.h"
-#include "net/RestController.h"
+#include "net/logs/BetterLogger.h"
+#include "net/socket/Multicaster.h"
+#include "net/rest/RestController.h"
 #include "utils/LedIndicator.h"
 
 #define SMART_THING_VERSION 0.1
@@ -31,6 +31,7 @@ class SmartThing {
         bool init(String type);
         void loopRoutine();
         void setName(String name);
+        bool wifiConnected();
 
         RestController* getRestController();
         SettingsManager* getSettingsManager();

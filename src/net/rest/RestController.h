@@ -2,15 +2,12 @@
 #define REST_CONTROLLER_H
 
 #include <WebServer.h>
-#include <net/BetterLogger.h>
+#include <net/logs/BetterLogger.h>
 #include <utils/SettingsManager.h>
 
 #define SERVER_PORT 80
-#define ADD_WEB_PAGE 1
 
 #define JSON_CONTENT_TYPE "application/json"
-
-#define SYSTEM_STATISTICS 1
 
 struct HandlerResult{
     int code = 200;
@@ -49,8 +46,6 @@ class RestController{
             _configUpdatedHandler = hf;
         }
 
-        void addSetupEndpoint();
-
         String getRequestBody();
         String getRequestArg(String name);
         WebServer * getWebServer() { return &_server; };
@@ -61,7 +56,8 @@ class RestController{
         WebServer _server;
         SettingsManager * _settingsManager;
 
-        void setupEndpoints();
+        void setupHandler();
+        void preHandleRequest();
 
         void processHandlerResult(HandlerResult result);
         HandlerWithResultFunction _defaultHandler = []() {
@@ -80,7 +76,8 @@ class RestController{
 
         void handleConfigPost();
         void handleConfigDelete();
-        void handleSetupPost();
+        void handleWiFiPost();
+        void handleWiFiGet();
 
         String buildErrorJson(String error);
 };

@@ -3,7 +3,7 @@
 SmartThing::SmartThing() {};
 SmartThing::~SmartThing() {};
 
-bool wifiConnected() {
+bool SmartThing::wifiConnected() {
     return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
 }
 
@@ -48,10 +48,6 @@ bool SmartThing::init(String type) {
             result.body = buildInfoJson();
             return result;
         });
-
-        if (WiFi.getMode() == WIFI_MODE_AP) {
-            _rest.addSetupEndpoint();    
-        }
         BetterLogger::log(SMART_THING_TAG, "RestController started");
     } else {
         BetterLogger::log(SMART_THING_TAG, "WiFi not available, skipping all network setup");

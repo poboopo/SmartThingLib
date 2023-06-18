@@ -1,8 +1,8 @@
-#include <ArduinoJson.h>
-#include "net/BetterLogger.h"
-
 #ifndef SettingsManager_H
 #define SettingsManager_H
+
+#include <ArduinoJson.h>
+#include "net/logs/BetterLogger.h"
 
 #define SSID_SETTING "ssid"
 #define PASSWORD_SETTING "password"

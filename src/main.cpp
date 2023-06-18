@@ -20,7 +20,7 @@ void processConfig();
 
 void setup() {
     if (smartThing.init("louver")) {
-        if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
+        if (smartThing.wifiConnected()) {
             setupRestHandlers();
         }
         controller.init(MOTOR_FIRST_PIN, MOTOR_SECOND_PIN, POT_PIN, LIGHT_SENSOR_PIN);
@@ -69,13 +69,6 @@ void setupRestHandlers() {
     });
     rest->addGetDictsHandler([](){
         HandlerResult result = getDictionaries();
-        return result;
-    });
-
-    rest->addWebPageBuilder([](){
-        HandlerResult result;
-        result.body = buildMainPage(WiFi.getMode() == WIFI_AP);
-        result.contentType = "text/html";
         return result;
     });
 }

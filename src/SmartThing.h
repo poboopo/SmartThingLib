@@ -42,6 +42,7 @@ class SmartThing {
         LedIndicator _led;
         RestController _rest;
 
+        // change to const char *?
         String _ip = "";
         String _name;
         String _type;
@@ -49,7 +50,7 @@ class SmartThing {
 
         void wipeSettings();
         String buildInfoJson();
-        String connectToWifi(String ssid, String password);
+        String connectToWifi(String, String, int);
 };
 
 #endif

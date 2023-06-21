@@ -54,21 +54,21 @@ void setupRestHandlers() {
     RestController* rest = smartThing.getRestController();
 
     rest->addGetStateHandler([]() {
-        HandlerResult result = getLouverStateJson(&controller);
+        RestHandlerResult result = getLouverStateJson(&controller);
         return result;
     });
     rest->addActionHandler([rest]() {
         return handleAction(rest->getRequestArg("action") ,&controller);
     });
     rest->addGetSensorsHandler([](){
-        HandlerResult result = getSensorsJson(&controller);
+        RestHandlerResult result = getSensorsJson(&controller);
         return result;
     });
     rest->addConfigUpdatedHandler([]() {
         processConfig();
     });
     rest->addGetDictsHandler([](){
-        HandlerResult result = getDictionaries();
+        RestHandlerResult result = getDictionaries();
         return result;
     });
 }

@@ -3,6 +3,8 @@
 
 #define EEPROM_LOAD_SIZE 2048
 
+//todo make static
+
 SettingsManager::SettingsManager() {
 }
 

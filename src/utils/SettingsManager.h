@@ -4,13 +4,15 @@
 #include <ArduinoJson.h>
 #include "net/logs/BetterLogger.h"
 
-#define SSID_SETTING "ssid"
-#define PASSWORD_SETTING "password"
-#define AUTOMODE_SETTING "automode"
+#define SSID_SETTING "ss"
+#define PASSWORD_SETTING "ps"
+#define WIFI_MODE_SETTING "md"
 
-#define GROUP_WIFI "wifi"
-#define GROUP_CONFIG "config"
-#define GROUP_STATE "state"
+// TODO move to main, not lib const
+#define GROUP_WIFI "wf"
+#define GROUP_CONFIG "cg"
+#define GROUP_STATE "st"
+#define AUTOMODE_SETTING "am"
 
 #define SETTINGS_MANAGER_TAG "settings_manager"
 

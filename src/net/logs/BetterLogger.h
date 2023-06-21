@@ -28,6 +28,9 @@ class BetterLogger {
         };
         static void connect(const char * myIp, const char * name, const char * group, int port);
 
+        static void logRequest(const char * tag, const char *  method, const char *  uri, const char *  body) {
+            log(tag, "[%s] %s - %s", method, uri, body);
+        };
         static void log(const char * tag, const char * message);
         static void log(const char * message) {
             log(DEFAULT_LOG_TAG, message);

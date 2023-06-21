@@ -24,31 +24,31 @@ enum LOUVER_ACTIONS {
     BRIGHT
 };
 
-HandlerResult getLouverStateJson(LouverController * controller) {
+RestHandlerResult getLouverStateJson(LouverController * controller) {
     DynamicJsonDocument jsonDoc(64);
     jsonDoc["automode"] = controller->isAutoModeEnabled();
     jsonDoc["position"] = controller->getMotorPosition();
     jsonDoc["light"] = controller->getLightValue();
 
-    HandlerResult result;
+    RestHandlerResult result;
     result.code = 200;
     result.contentType = JSON_CONTENT_TYPE;
     serializeJson(jsonDoc, result.body);
     return result;
 }
 
-HandlerResult getSensorsJson(LouverController * controller) {
+RestHandlerResult getSensorsJson(LouverController * controller) {
     DynamicJsonDocument jsonDoc(64);
     jsonDoc["light"] = controller->getLightValue();
 
-    HandlerResult result;
+    RestHandlerResult result;
     result.code = 200;
     result.contentType = JSON_CONTENT_TYPE;
     serializeJson(jsonDoc, result.body);
     return result;
 }
 
-HandlerResult getDictionaries() {
+RestHandlerResult getDictionaries() {
     DynamicJsonDocument jsonDoc(1024);
 
     JsonArray actions = jsonDoc.createNestedArray("actions");
@@ -97,15 +97,15 @@ HandlerResult getDictionaries() {
     config_5["name"] = NAME_SETTING;
     config_5["type"] = "text";
 
-    HandlerResult result;
+    RestHandlerResult result;
     result.code = 200;
     result.contentType = JSON_CONTENT_TYPE;
     serializeJson(jsonDoc, result.body);
     return result;
 }
 
-HandlerResult handleAction(String actionArg, LouverController * controller) {
-    HandlerResult result;
+RestHandlerResult handleAction(String actionArg, LouverController * controller) {
+    RestHandlerResult result;
 
     bool actionResult = false;
 

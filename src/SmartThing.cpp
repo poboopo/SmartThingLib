@@ -27,7 +27,8 @@ bool SmartThing::init(String type) {
 
     String ssid = _settingsManager.getSettingString(GROUP_WIFI, SSID_SETTING);
     String password = _settingsManager.getSettingString(GROUP_WIFI, PASSWORD_SETTING);
-    _ip = connectToWifi(ssid, password);
+    int mode = _settingsManager.getSettingInteger(GROUP_WIFI, WIFI_MODE_SETTING);
+    _ip = connectToWifi(ssid, password, mode);
 
     if (wifiConnected()) {
         BetterLogger::connect(_ip.c_str(), _name.c_str());
@@ -40,14 +41,25 @@ bool SmartThing::init(String type) {
         _broadcastMessage = buildBroadCastMessage(_ip, ESP.getChipModel());
         BetterLogger::log(SMART_THING_TAG, "Multicaster created");
 
-        _rest.begin(&_settingsManager);
-        _rest.addGetInfoHandler([&](){
-            HandlerResult result;
+        _rest.addGetInfoHandler([this](){
+            RestHandlerResult result;
             result.code = 200;
             result.contentType = JSON_CONTENT_TYPE;
             result.body = buildInfoJson();
             return result;
         });
+        _rest.addWifiupdatedHandler([this](){
+            BetterLogger::log(SMART_THING_TAG, "WiFi updated, reloading wifi!");
+            WiFi.disconnect();
+            WiFi.mode(WIFI_MODE_NULL);
+            delay(500);
+            String ssid = _settingsManager.getSettingString(GROUP_WIFI, SSID_SETTING);
+            String password = _settingsManager.getSettingString(GROUP_WIFI, PASSWORD_SETTING);
+            int mode = _settingsManager.getSettingInteger(GROUP_WIFI, WIFI_MODE_SETTING);
+            _ip = connectToWifi(ssid, password, mode);
+            BetterLogger::log(SMART_THING_TAG, "WiFi reloaded");
+        });
+        _rest.begin(&_settingsManager);
         BetterLogger::log(SMART_THING_TAG, "RestController started");
     } else {
         BetterLogger::log(SMART_THING_TAG, "WiFi not available, skipping all network setup");
@@ -65,24 +77,44 @@ void SmartThing::loopRoutine() {
     }
 }
 
-String SmartThing::connectToWifi(String ssid, String password) {
+String SmartThing::connectToWifi(String ssid, String password, int mode) {
+    if (wifiConnected()) {
+        BetterLogger::log(SMART_THING_TAG, "WiFi already connected");
+        return WiFi.localIP().toString();
+    }
+
     if (ssid.isEmpty()) {
-        BetterLogger::log(SMART_THING_TAG, "Ssid is blank -> creating AP");
+        BetterLogger::log(SMART_THING_TAG, "Ssid is blank -> creating setup AP with name %s", ESP.getChipModel());
         WiFi.softAP(ESP.getChipModel());
         delay(500);
         return WiFi.softAPIP().toString();
     } else {
-        BetterLogger::log(SMART_THING_TAG, "WiFi connecting to %s :: %s", ssid.c_str(), password.c_str());
-        WiFi.mode(WIFI_STA);
-        WiFi.begin(ssid.c_str(), password.c_str());
-        long startTime = millis();
-        _led.blink();
-        while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {}
-        _led.off();
-        if (WiFi.isConnected()) {
-            return WiFi.localIP().toString();
+        if (mode == WIFI_MODE_AP) {
+            BetterLogger::log(SMART_THING_TAG, "Creating AP point %s :: %s", ssid, password);
+            if (password.isEmpty()) {
+                WiFi.softAP(ssid.c_str(), password.c_str());
+            } else {
+                WiFi.softAP(ssid.c_str());
+            }
+            delay(500);
+            BetterLogger::log(SMART_THING_TAG, "WiFi started in AP mode");
+            return WiFi.softAPIP().toString();
+        } else if (mode == WIFI_MODE_STA) {
+            BetterLogger::log(SMART_THING_TAG, "WiFi connecting to %s :: %s", ssid, password);
+            WiFi.begin(ssid.c_str(), password.c_str());
+            long startTime = millis();
+            _led.blink();
+            while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {}
+            _led.off();
+            if (WiFi.isConnected()) {
+                BetterLogger::log(SMART_THING_TAG, "WiFi started in STA mode");
+                return WiFi.localIP().toString();
+            } else {
+                WiFi.disconnect();
+                return "";
+            }
         } else {
-            WiFi.disconnect();
+            BetterLogger::log(SMART_THING_TAG, "Mode %d not sipported!", mode);
             return "";
         }
     }

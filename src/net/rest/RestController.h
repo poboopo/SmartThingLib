@@ -6,10 +6,9 @@
 #include <utils/SettingsManager.h>
 
 #define SERVER_PORT 80
-
 #define JSON_CONTENT_TYPE "application/json"
 
-struct HandlerResult{
+struct RestHandlerResult{
     int code = 200;
     String contentType = JSON_CONTENT_TYPE;
     String body = "";
@@ -20,7 +19,7 @@ class RestController{
         RestController();
         ~RestController();
 
-        typedef std::function<HandlerResult(void)> HandlerWithResultFunction;
+        typedef std::function<RestHandlerResult(void)> HandlerWithResultFunction;
         typedef std::function<void(void)> HandlerFunction;
         void begin(SettingsManager * manager);
         
@@ -45,6 +44,9 @@ class RestController{
         void addConfigUpdatedHandler(RestController::HandlerFunction hf) {
             _configUpdatedHandler = hf;
         }
+        void addWifiupdatedHandler(RestController::HandlerFunction hf) {
+            _wifiUpdatedHandler = hf;
+        }
 
         String getRequestBody();
         String getRequestArg(String name);
@@ -59,9 +61,9 @@ class RestController{
         void setupHandler();
         void preHandleRequest();
 
-        void processHandlerResult(HandlerResult result);
+        void processRestHandlerResult(RestHandlerResult result);
         HandlerWithResultFunction _defaultHandler = []() {
-            HandlerResult result;
+            RestHandlerResult result;
             return result;
         };
 
@@ -73,13 +75,12 @@ class RestController{
         HandlerWithResultFunction _getDictsHandler = _defaultHandler;
 
         HandlerFunction _configUpdatedHandler = [](){};
+        HandlerFunction _wifiUpdatedHandler = [](){};
 
         void handleConfigPost();
         void handleConfigDelete();
         void handleWiFiPost();
         void handleWiFiGet();
-
-        String buildErrorJson(String error);
 };
 
 #endif

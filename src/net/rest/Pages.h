@@ -9,8 +9,8 @@ const String WEB_PAGE_MAIN = R"=====(
             <lu id="info"></lu>
         </div>
         <div id="main-panel" class="holder">
-            <h1>WiFi setup</h1>
             <div id="settings" class="content-block">
+                <h1>WiFi settings</h1>
                 <div>
                     <p>WiFi network name: </p>
                     <input type="text" id="ssid" title="SSID"/>
@@ -19,8 +19,12 @@ const String WEB_PAGE_MAIN = R"=====(
                     <p>WiFi password: </p>
                     <input type="password" id="password" title="password"/>
                 </div>
+                <div>
+                    <p>WiFi mode (1-2): </p>
+                    <input type="number" id="wifi-mode" title="mode" value="1"/>
+                </div>
                 <div class="btn-group btn-control" >
-                    <button onclick="submit()">submit</button>
+                    <button onclick="saveWifiSettings()">Save and reconnect</button>
                 </div>
             </div>
             <div id="actions" class="content-block btn-group btn-control">
@@ -58,25 +62,47 @@ const String WEB_PAGE_MAIN = R"=====(
         }
 
         window.onload = function() {
+            loadWiFiSettings();
             processDictionaries();
             loadDictionaries();
             loadState();
             loadSensors();
         };
 
-        function submit() {
+        function saveWifiSettings() {
             const ssid = document.getElementById("ssid").value;
             if (!ssid || !ssid.length) {
                 info({text: "SSID is missing!", type: 'error', id: 'wifi'});
                 return;
             }
             const pass = document.getElementById("password").value;
+            const mode = document.getElementById("wifi-mode").value;
             restRequest(
                 "POST",
-                "http://" + getHost() + "/setup",
-                { ssid: ssid, password: pass },
+                "http://" + getHost() + "/wifi",
+                { ssid: ssid, password: pass, mode: mode },
                 "WiFi info saved!",
                 "Can't save WiFi info :("
+            );
+        }
+        function loadWiFiSettings() {
+            restRequest(
+                "GET",
+                "http://" + getHost() + "/wifi",
+                null,
+                "WiFi info loaded",
+                "Failed to load WiFi info!",
+                function (response) {
+                    if (response) {
+                        response.trim();
+                        const data = JSON.parse(response);
+                        if (data["settings"]) {
+                            document.getElementById("ssid").value = data["settings"]["ss"];
+                            document.getElementById("password").value = data["settings"]["ps"];
+                            document.getElementById("wifi-mode").value = data["settings"]["md"];
+                        }
+                    }
+                }
             );
         }
         function saveConfig() {

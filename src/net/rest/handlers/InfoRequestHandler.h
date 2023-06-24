@@ -5,6 +5,7 @@
 #include "net/rest/RestController.h"
 #include "net/logs/BetterLogger.h"
 #include "utils/SettingsManager.h"
+#include "net/rest/handlers/HandlerUtils.h"
 #include "SmartThing.h"
 
 #define INFO_RQ_PATH "/info"
@@ -12,7 +13,7 @@
 
 class InfoRequestHandler: public RequestHandler {
     public:
-        InfoRequestHandler(SettingsManager * settingsManager): _settingsManager(settingsManager) {};
+        InfoRequestHandler() {};
         bool canHandle(HTTPMethod method, String uri) {
             return uri.startsWith(INFO_RQ_PATH) && 
                 (method == HTTP_GET || HTTP_PUT || HTTP_OPTIONS);
@@ -42,21 +43,22 @@ class InfoRequestHandler: public RequestHandler {
                 server.send(200, JSON_CONTENT_TYPE, result);
                 return true;
             } else if (requestMethod == HTTP_PUT) {
-                DynamicJsonDocument jsDoc(128);
+                DynamicJsonDocument jsDoc(64);
                 deserializeJson(jsDoc, body);
-                String newName = jsDoc["name"];
-                if (newName.length() > 0) {
-                    BetterLogger::log(INFO_RQ_TAG, "Got new name %s", newName);
-                    // todo after making smartthing class static do setname here
+                const char * newName = jsDoc["name"];
+                if (strlen(newName) == 0 || strlen(newName) > DEVICE_NAME_LENGTH_MAX) {
+                    server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Name is missing or too long (max 10 symbols)"));
+                    return true;
                 }
+
+                BetterLogger::log(INFO_RQ_TAG, "Got new name %s", newName);
+                SmartThing::setName(newName);
                 server.send(200);
                 return true;
             }
 
             return false;
         }
-    private:
-        SettingsManager * _settingsManager;
 };
 
 #endif

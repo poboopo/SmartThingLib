@@ -12,8 +12,8 @@
 
 class ConfigRequestHandler: public RequestHandler {
     public:
-        ConfigRequestHandler(SettingsManager * settingsManager, RestController::HandlerFunction * configUpdatedHandler): 
-            _settingsManager(settingsManager), _configUpdatedHandler(configUpdatedHandler) {};
+        ConfigRequestHandler(RestController::HandlerFunction * configUpdatedHandler): 
+            _configUpdatedHandler(configUpdatedHandler) {};
 
         bool canHandle(HTTPMethod method, String uri) {
             return uri.startsWith(CONFIG_PATH) && 
@@ -31,7 +31,7 @@ class ConfigRequestHandler: public RequestHandler {
                 server.send(200);
                 return true; 
             } else if (requestMethod == HTTP_GET) {
-                server.send(200, "application/json", _settingsManager->getJson(GROUP_CONFIG));
+                server.send(200, "application/json", SettingsManager::getJson(GROUP_CONFIG));
                 return true; 
             } else if (requestMethod == HTTP_POST) {
                 if (body.length() == 0) {
@@ -44,11 +44,11 @@ class ConfigRequestHandler: public RequestHandler {
                 JsonObject root = jsonDoc.as<JsonObject>();
 
                 for (JsonPair pair: root) {
-                    _settingsManager->putSetting(GROUP_CONFIG, pair.key().c_str(), pair.value());
+                    SettingsManager::putSetting(GROUP_CONFIG, pair.key().c_str(), pair.value());
                 }
 
                 // settingsManager->putSetting(GROUP_CONFIG, jsonDoc.as<JsonObject>());
-                _settingsManager->saveSettings();
+                SettingsManager::saveSettings();
                 server.send(200);
                 callHandler();
                 return true; 
@@ -58,11 +58,11 @@ class ConfigRequestHandler: public RequestHandler {
                 }
                 String name = server.arg("name");
 
-                JsonObject config = _settingsManager->getSettings(GROUP_CONFIG);
+                JsonObject config = SettingsManager::getSettings(GROUP_CONFIG);
                 if (config.containsKey(name)) {
                     BetterLogger::log(CONFIG_LOG_TAG, "Removing config value %s", name);
                     config.remove(name);
-                    _settingsManager->saveSettings();
+                    SettingsManager::saveSettings();
                     server.send(200);
                     callHandler();
                 } else {
@@ -74,7 +74,6 @@ class ConfigRequestHandler: public RequestHandler {
             return false;
         }
     private:
-        SettingsManager * _settingsManager;
         RestController::HandlerFunction * _configUpdatedHandler;
 
         void callHandler() {

@@ -81,6 +81,7 @@ const String WEB_PAGE_MAIN = R"=====(
         function processDeviceInfo() {
             const block = document.getElementById("device-info");
             if (this.deviceInfo && block) {
+                block.innerHTML = "";
                 Object.entries(this.deviceInfo).forEach(([key, value]) => {
                     const p = document.createElement("p");
                     p.innerHTML = key;
@@ -115,7 +116,7 @@ const String WEB_PAGE_MAIN = R"=====(
                     "PUT",
                     "http://" + getHost() + "/info",
                     {name: newName.value},
-                    (response) => (loadDeviceInfo()),
+                    null,
                     "info"
                 );
             }
@@ -385,7 +386,7 @@ const String WEB_PAGE_MAIN = R"=====(
             flex-direction: column;
             gap: 1rem;
         }
-        @media only screen and (min-width: 800px) {
+        @media only screen and (min-width: 1000px) {
             .main-panel {
                 display: flex;
                 flex-wrap: wrap;

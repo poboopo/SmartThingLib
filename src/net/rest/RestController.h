@@ -21,7 +21,7 @@ class RestController{
 
         typedef std::function<RestHandlerResult(void)> HandlerWithResultFunction;
         typedef std::function<void(void)> HandlerFunction;
-        void begin(SettingsManager * manager);
+        void begin();
         
         void addActionHandler(RestController::HandlerWithResultFunction hf) {
             _actionHandler = hf;
@@ -50,7 +50,6 @@ class RestController{
     private:
         bool _setupFinished = false;
         WebServer _server;
-        SettingsManager * _settingsManager;
 
         void setupHandler();
         void preHandleRequest();

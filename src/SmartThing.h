@@ -11,7 +11,6 @@
 #include "utils/LedIndicator.h"
 
 #define SMART_THING_VERSION 0.1
-
 #define SMART_THING_TAG "SMART_THING"
 // Pins
 #define LED_PIN 5
@@ -23,6 +22,8 @@
 #define MULTICAST_GROUP "224.1.1.1"
 #define MULTICAST_PORT 7778
 
+#define DEVICE_NAME_LENGTH_MAX 15
+
 
 // todo refactore to static!
 class SmartThing {
@@ -32,21 +33,19 @@ class SmartThing {
 
         bool init(String type);
         void loopRoutine();
-        void setName(String name); // should save name to config
+        static void setName(String name); // should save name to config
         static const String getType();
         static const String getName();
         bool wifiConnected();
 
         RestController* getRestController();
-        SettingsManager* getSettingsManager();
         LedIndicator* getLed(); // are u sure u need this?
     private:
-        SettingsManager _settingsManager;
         Multicaster _multicaster;
         LedIndicator _led;
         RestController _rest;
 
-        // change to const char *?
+        // todo change to const * char?
         String _ip = "";
         static String _name;
         static String _type;

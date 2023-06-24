@@ -14,22 +14,26 @@ String buildBroadCastMessage(String ip, String name) {
 }
 
 bool SmartThing::init(String type) {
-    SmartThing::_type = type;
     BetterLogger::init();
     BetterLogger::log(SMART_THING_TAG, "Smart thing initialization started");
+
+    SettingsManager::loadSettings();
+    BetterLogger::log(SMART_THING_TAG, "Settings manager loaded");
+
+    SmartThing::_type = type;
+    SmartThing::_name = SettingsManager::getSettingString(DEVICE_NAME);
+    BetterLogger::log(SMART_THING_TAG, "Device type/name: %s/%s", SmartThing::_type, SmartThing::_name);
 
     pinMode(BUTTON_PIN, INPUT_PULLUP);
     _led.init(LED_PIN);
     
-    _settingsManager.loadSettings();
-    BetterLogger::log(SMART_THING_TAG, "Settings manager loaded");
     if (!digitalRead(BUTTON_PIN)) {
         wipeSettings();
     }
 
-    String ssid = _settingsManager.getSettingString(GROUP_WIFI, SSID_SETTING);
-    String password = _settingsManager.getSettingString(GROUP_WIFI, PASSWORD_SETTING);
-    int mode = _settingsManager.getSettingInteger(GROUP_WIFI, WIFI_MODE_SETTING);
+    String ssid = SettingsManager::getSettingString(GROUP_WIFI, SSID_SETTING);
+    String password = SettingsManager::getSettingString(GROUP_WIFI, PASSWORD_SETTING);
+    int mode = SettingsManager::getSettingInteger(GROUP_WIFI, WIFI_MODE_SETTING);
     _ip = connectToWifi(ssid, password, mode);
 
     if (wifiConnected()) {
@@ -48,13 +52,13 @@ bool SmartThing::init(String type) {
             WiFi.disconnect();
             WiFi.mode(WIFI_MODE_NULL);
             delay(500);
-            String ssid = _settingsManager.getSettingString(GROUP_WIFI, SSID_SETTING);
-            String password = _settingsManager.getSettingString(GROUP_WIFI, PASSWORD_SETTING);
-            int mode = _settingsManager.getSettingInteger(GROUP_WIFI, WIFI_MODE_SETTING);
+            String ssid = SettingsManager::getSettingString(GROUP_WIFI, SSID_SETTING);
+            String password = SettingsManager::getSettingString(GROUP_WIFI, PASSWORD_SETTING);
+            int mode = SettingsManager::getSettingInteger(GROUP_WIFI, WIFI_MODE_SETTING);
             _ip = connectToWifi(ssid, password, mode);
             BetterLogger::log(SMART_THING_TAG, "WiFi reloaded");
         });
-        _rest.begin(&_settingsManager);
+        _rest.begin();
         BetterLogger::log(SMART_THING_TAG, "RestController started");
     } else {
         BetterLogger::log(SMART_THING_TAG, "WiFi not available, skipping all network setup");
@@ -122,8 +126,8 @@ void SmartThing::wipeSettings() {
     _led.on();
     while (!digitalRead(BUTTON_PIN) && millis() - started < WIPE_BUTTON_TIME) {}
     if (!digitalRead(BUTTON_PIN)) {
-        _settingsManager.dropAll();
-        _settingsManager.saveSettings();
+        SettingsManager::dropAll();
+        SettingsManager::saveSettings();
         BetterLogger::log(SMART_THING_TAG, "Settings were wiped!");
     }
     _led.off();
@@ -138,17 +142,15 @@ const String SmartThing::getName() {
 }
 
 void SmartThing::setName(String name) {
-    SmartThing::_name = name;
-    _settingsManager.putSetting(DEVICE_NAME, name);
-    _broadcastMessage = buildBroadCastMessage(_ip, _name);
+    _name = name;
+    SettingsManager::putSetting(DEVICE_NAME, name);
+    SettingsManager::saveSettings();
+    // todo
+    // _broadcastMessage = buildBroadCastMessage(_ip, _name);
 }
 
 RestController* SmartThing::getRestController() {
     return &_rest;
-}
-
-SettingsManager* SmartThing::getSettingsManager() {
-    return &_settingsManager;
 }
 
 LedIndicator* SmartThing::getLed() {

@@ -13,7 +13,6 @@
 #define BRIGHT_SETTING "light_bright"
 #define DELAY_SETTING "delay"
 #define ACCURACY_SETTING "accuracy"
-#define NAME_SETTING "name"
 
 enum LOUVER_ACTIONS {
     DISABLE_AUTO_MODE,
@@ -92,10 +91,6 @@ RestHandlerResult getDictionaries() {
     config_4["caption"] = "Motor accuracy";
     config_4["name"] = ACCURACY_SETTING;
     config_4["type"] = "number";
-    JsonObject config_5 = config.createNestedObject();
-    config_5["caption"] = "Device name";
-    config_5["name"] = NAME_SETTING;
-    config_5["type"] = "text";
 
     RestHandlerResult result;
     result.code = 200;

@@ -17,41 +17,43 @@
 #define AUTOMODE_SETTING "am"
 
 #define SETTINGS_MANAGER_TAG "settings_manager"
+#define JSON_DOC_SIZE 2048
 
 class SettingsManager {
     private:
-        StaticJsonDocument<1024> _settings;
-        String loadFromEeprom();
+        static StaticJsonDocument<JSON_DOC_SIZE> _settings;
+        static const char * loadFromEeprom();
+        static bool _loaded;
     public:
         SettingsManager();
         ~SettingsManager();
         
-        void loadSettings();
-        void removeSetting(String name);
-        void dropWifiCredits();
-        void dropAll();
-        void saveSettings();
-        void clear();
+        static void loadSettings();
+        static void removeSetting(String name);
+        static void dropWifiCredits();
+        static void dropAll();
+        static void saveSettings();
+        static void clear();
 
-        void putSetting(String name, String value);
-        void putSetting(String groupName, String name, String value);
-        void putSetting(String name, int value);
-        void putSetting(String groupName, String name, int value);
+        static void putSetting(String name, String value);
+        static void putSetting(String groupName, String name, String value);
+        static void putSetting(String name, int value);
+        static void putSetting(String groupName, String name, int value);
 
-        void putSetting(String groupName, String name, JsonVariant var);
-        void putSetting(String groupName, JsonObject jsonObject);
+        static void putSetting(String groupName, String name, JsonVariant var);
+        static void putSetting(String groupName, JsonObject jsonObject);
 
-        String getSettingString(String name);
-        String getSettingString(String groupName, String name);
+        static const String getSettingString(String name);
+        static const String getSettingString(String groupName, String name);
 
-        int getSettingInteger(String name);
-        int getSettingInteger(String groupName, String name);
+        static const int getSettingInteger(String name);
+        static const int getSettingInteger(String groupName, String name);
 
-        JsonObject getSettings();
-        JsonObject getSettings(String groupName);
+        static const JsonObject getSettings();
+        static const JsonObject getSettings(String groupName);
 
-        String getJson();
-        String getJson(String groupName);
+        static const String getJson();
+        static const String getJson(String groupName);
 };
 
 #endif

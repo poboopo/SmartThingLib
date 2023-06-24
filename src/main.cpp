@@ -74,13 +74,11 @@ void setupRestHandlers() {
 }
 
 void processConfig() {
-    SettingsManager* settingsManager = smartThing.getSettingsManager();
-
-    if (settingsManager->getSettingInteger(GROUP_STATE, AUTOMODE_SETTING)) {
+    if (SettingsManager::getSettingInteger(GROUP_STATE, AUTOMODE_SETTING)) {
         controller.enableAutoMode();
     }
 
-    JsonObject config = settingsManager->getSettings(GROUP_CONFIG);
+    JsonObject config = SettingsManager::getSettings(GROUP_CONFIG);
     int lightClose = config[CLOSE_SETTING];
     int lightOpen = config[OPEN_SETTING];
     int lightBright = config[BRIGHT_SETTING];

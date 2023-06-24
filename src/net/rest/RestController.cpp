@@ -10,9 +10,7 @@
 RestController::RestController(){};
 RestController::~RestController(){};
 
-void RestController::begin(SettingsManager * manager) {
-    _settingsManager = manager;
-
+void RestController::begin() {
     setupHandler();
     _server.begin(SERVER_PORT);
     _setupFinished = true;
@@ -49,9 +47,9 @@ void RestController::preHandleRequest() {
 
 // add authorization?
 void RestController::setupHandler() {
-    _server.addHandler(new ConfigRequestHandler(_settingsManager, &_configUpdatedHandler));
-    _server.addHandler(new WiFiRequesthandler(_settingsManager, &_wifiUpdatedHandler));
-    _server.addHandler(new InfoRequestHandler(_settingsManager));
+    _server.addHandler(new ConfigRequestHandler(&_configUpdatedHandler));
+    _server.addHandler(new WiFiRequesthandler(&_wifiUpdatedHandler));
+    _server.addHandler(new InfoRequestHandler());
 
     _server.on("/health", HTTP_GET, [this]() {
         preHandleRequest();
@@ -85,9 +83,9 @@ void RestController::setupHandler() {
         preHandleRequest();
 
         RestHandlerResult result = _getStateHandler();
-        _settingsManager->putSetting(GROUP_STATE, result.body);
+        SettingsManager::putSetting(GROUP_STATE, result.body);
 
-        _settingsManager->saveSettings();
+        SettingsManager::saveSettings();
         _server.send(200);
 
         BetterLogger::log(WEB_SERVER_TAG, "---------RESTART---------");

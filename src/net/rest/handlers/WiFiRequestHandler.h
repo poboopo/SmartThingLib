@@ -12,8 +12,7 @@
 
 class WiFiRequesthandler: public RequestHandler {
     public:
-        WiFiRequesthandler(SettingsManager * settingsManager, RestController::HandlerFunction * wifiUpdatedHandler): 
-            _settingsManager(settingsManager), _wifiUpdatedHandler(wifiUpdatedHandler) {};
+        WiFiRequesthandler(RestController::HandlerFunction * wifiUpdatedHandler): _wifiUpdatedHandler(wifiUpdatedHandler) {};
 
         bool canHandle(HTTPMethod method, String uri) {
             return uri.startsWith(WIFI_RQ_PATH) && 
@@ -35,7 +34,7 @@ class WiFiRequesthandler: public RequestHandler {
             server.sendHeader("Access-Control-Allow-Origin", "*");
             if (requestMethod == HTTP_GET) {
                 //todo hide password smh
-                JsonObject wifiSettings = _settingsManager->getSettings(GROUP_WIFI);
+                JsonObject wifiSettings = SettingsManager::getSettings(GROUP_WIFI);
 
                 DynamicJsonDocument jsonDoc(1028);
                 jsonDoc["settings"] = wifiSettings;
@@ -82,10 +81,10 @@ class WiFiRequesthandler: public RequestHandler {
                     mode = WIFI_MODE_STA;
                 }
 
-                _settingsManager->putSetting(GROUP_WIFI, SSID_SETTING, ssid);
-                _settingsManager->putSetting(GROUP_WIFI, PASSWORD_SETTING, password);
-                _settingsManager->putSetting(GROUP_WIFI, WIFI_MODE_SETTING, mode);
-                _settingsManager->saveSettings();
+                SettingsManager::putSetting(GROUP_WIFI, SSID_SETTING, ssid);
+                SettingsManager::putSetting(GROUP_WIFI, PASSWORD_SETTING, password);
+                SettingsManager::putSetting(GROUP_WIFI, WIFI_MODE_SETTING, mode);
+                SettingsManager::saveSettings();
                 server.send(200);
                 if (_wifiUpdatedHandler != nullptr) {
                     (*_wifiUpdatedHandler)();
@@ -95,7 +94,6 @@ class WiFiRequesthandler: public RequestHandler {
             return false;
         }
     private:
-        SettingsManager * _settingsManager;
         RestController::HandlerFunction * _wifiUpdatedHandler;
 };
 

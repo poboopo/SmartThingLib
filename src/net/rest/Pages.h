@@ -4,94 +4,124 @@ const String WEB_PAGE_MAIN = R"=====(
         <title>SmartThing control page</title>
     </head>
     <body>
-        <div class="info-list">
-            <label for="info">Logs:</label>
-            <lu id="info"></lu>
-        </div>
-        <div id="main-panel" class="holder">
-            <div id="settings" class="content-block">
+        <div class="main-panel">
+            <div id="info" class="content-block">
+                <div class="loading-info">Loading</div>
+                <h1>Device info</h1>
+                <div id="device-info" class="grid-view"></div>
+                <button title="Restart device" class="btn-restart" onclick="restart()">Restart</button>
+            </div>
+            <div id="wifi" class="content-block">
+                <div class="loading-info">Loading</div>
                 <h1>WiFi settings</h1>
-                <div>
-                    <p>WiFi network name: </p>
+                <div class="grid-view">
+                    <p>WiFi network name</p>
                     <input type="text" id="ssid" title="SSID"/>
+                    <p>WiFi password</p>
+                    <input type="password" id="password" title="password">
+                    <p>WiFi mode (1-2)</p>
+                    <input type="number" id="wifi-mode" title="mode">
                 </div>
-                <div>
-                    <p>WiFi password: </p>
-                    <input type="password" id="password" title="password"/>
-                </div>
-                <div>
-                    <p>WiFi mode (1-2): </p>
-                    <input type="number" id="wifi-mode" title="mode" value="1"/>
-                </div>
-                <div class="btn-group btn-control" >
+                <div class="btn-group">
                     <button onclick="saveWifiSettings()">Save and reconnect</button>
                 </div>
             </div>
-            <div id="actions" class="content-block btn-group btn-control">
-                <h1>Control panel</h1>
+            <div id="actions"class="content-block btn-group hidable">
+                <h1>Actions</h1>
                 <div id="control-buttons-block"></div>
             </div>
-            <div id="config" class="content-block">
+            <div id="config" class="content-block hidable">
+                <div class="loading-info">Loading</div>
                 <h1>Config</h1>
-                <div id="config-fields-block"></div>
-                <div class="btn-group btn-control" >
+                <div id="config-fields-block" class="grid-view"></div>
+                <div class="btn-group" >
                     <button title="Save config values" onclick="saveConfig()">save</button>
                 </div>
                 <button class="update-button" onclick="loadConfig()">Update</button>
             </div>
-            <div id="state" class="content-block values-block">
+            <div id="state" class="content-block hidable">
+                <div class="loading-info">Loading</div>
                 <h1>State</h1>
                 <button class="update-button" onclick="loadState()">Update</button>
-                <div id="state-fields-block"></div>
+                <div id="state-fields-block" style="text-align: start;"></div>
             </div>
-            <div id="sensors" class="content-block values-block">
+            <div id="sensors" class="content-block hidable">
+                <div class="loading-info">Loading</div>
                 <h1>Sensors values</h1>
                 <button class="update-button" onclick="loadSensors()">Update</button>
-                <div id="sensors-fields-block"></div>
+                <div id="sensors-fields-block" style="text-align: start;"></div>
             </div>
-            <button title="Restart device" class="btn-warning" onclick="restart()">Restart</button>
         </div>
     </body>
     <script>
         this.config = {};
         this.dictionaries = {};
-        this.infoStyles = {
-            error: 'color: red',
-            success: 'color: green',
-            warning: 'color: orange'
-        }
 
         window.onload = function() {
+            loadDeviceInfo();
             loadWiFiSettings();
-            processDictionaries();
             loadDictionaries();
             loadState();
             loadSensors();
         };
-
-        function saveWifiSettings() {
-            const ssid = document.getElementById("ssid").value;
-            if (!ssid || !ssid.length) {
-                info({text: "SSID is missing!", type: 'error', id: 'wifi'});
-                return;
-            }
-            const pass = document.getElementById("password").value;
-            const mode = document.getElementById("wifi-mode").value;
-            restRequest(
-                "POST",
-                "http://" + getHost() + "/wifi",
-                { ssid: ssid, password: pass, mode: mode },
-                "WiFi info saved!",
-                "Can't save WiFi info :("
-            );
-        }
-        function loadWiFiSettings() {
+        function loadDeviceInfo() {
             restRequest(
                 "GET",
-                "http://" + getHost() + "/wifi",
+                "http://" + getHost() + "/info",
                 null,
-                "WiFi info loaded",
-                "Failed to load WiFi info!",
+                function (response) {
+                    if (response) {
+                        this.deviceInfo = JSON.parse(response);
+                        processDeviceInfo();
+                    }
+                },
+                "info"
+            );
+        }
+        function processDeviceInfo() {
+            const block = document.getElementById("device-info");
+            if (this.deviceInfo && block) {
+                Object.entries(this.deviceInfo).forEach(([key, value]) => {
+                    const p = document.createElement("p");
+                    p.innerHTML = key;
+                    block.appendChild(p);
+                    const input = document.createElement("input");
+                    input.value = value;
+                    input.id = block.id + "-" + key;
+                    if (key === "name") {
+                        input.title = "Insert new name";
+                        input.disabled = false;
+                        const button = document.createElement("button");
+                        button.style.backgroundColor = "#04AA6D";
+                        button.innerHTML = "Save new name";
+                        button.onclick = () => saveNewName();
+                        const div = document.createElement("div");
+                        div.className = "config-block";
+                        div.appendChild(input);
+                        div.appendChild(button);
+                        block.appendChild(div);
+                    } else {
+                        input.disabled = true;
+                        block.appendChild(input);
+                    }
+                    
+                });
+            }
+        }
+        function saveNewName() {
+            const newName = document.getElementById("device-info-name");
+            if (newName && newName.value) {
+                restRequest(
+                    "PUT",
+                    "http://" + getHost() + "/info",
+                    {name: newName.value},
+                    (response) => (loadDeviceInfo()),
+                    "info"
+                );
+            }
+        }
+        function loadWiFiSettings() {
+            restRequest("GET", "http://" + getHost() + "/wifi", null,
                 function (response) {
                     if (response) {
                         response.trim();
@@ -102,7 +132,42 @@ const String WEB_PAGE_MAIN = R"=====(
                             document.getElementById("wifi-mode").value = data["settings"]["md"];
                         }
                     }
-                }
+                },
+                "wifi"
+            );
+        }
+        function saveWifiSettings() {
+            const ssid = document.getElementById("ssid").value;
+            if (!ssid || !ssid.length) {
+                document.getElementById("ssid").style.backgroundColor = red;
+                return;
+            }
+            document.getElementById("ssid").style.backgroundColor = null;
+            const pass = document.getElementById("password").value;
+            const mode = document.getElementById("wifi-mode").value;
+            restRequest(
+                "POST",
+                "http://" + getHost() + "/wifi",
+                { ssid: ssid, password: pass, mode: mode },
+                null,
+                "wifi"
+            );
+        }
+        function loadConfig() {
+            restRequest(
+                "GET",
+                "http://" + getHost() + "/config",
+                null,
+                function (response) {
+                    if (response) {
+                        const loadedConfig = JSON.parse(response);
+                        if (loadedConfig) {
+                            Object.entries(loadedConfig).forEach(([key, value]) => this.config[key] = value);
+                        }
+                        updateConfigFields();
+                    }
+                },
+                "config"
             );
         }
         function saveConfig() {
@@ -128,24 +193,41 @@ const String WEB_PAGE_MAIN = R"=====(
                 "POST",
                 "http://" + getHost() + "/config",
                 Object.fromEntries(Object.entries(this.config).filter(([_, v]) => v)),
-                "Config updated!",
-                "Failed to update config!",
-                null
+                null,
+                "config"
             );
+        }
+        function deleteConfigValue(name) {
+            if (name) {
+                restRequest(
+                    "DELETE",
+                    "http://" + getHost() + "/config?name=" + name,
+                    null,
+                    function(response) {
+                        document.getElementById(name).value = null;
+                    },
+                    "config"
+                )
+            }
+        }
+        function updateConfigFields() {
+            if (this.config) {
+                Object.keys(this.config).forEach((key) => document.getElementById(key).value = this.config[key]);
+            }
         }
         function loadState() {
             restRequest(
                 "GET",
                 "http://" + getHost() + "/state",
                 null,
-                "State loaded",
-                "Failed to load state!",
                 function (response) {
                     if (response) {
                         response.trim();
+                        document.getElementById("state").style.display = "block";
                         updateBlockValues("state-fields-block", JSON.parse(response));
                     }
-                }
+                },
+                "state"
             );
         }
         function loadSensors() {
@@ -153,14 +235,14 @@ const String WEB_PAGE_MAIN = R"=====(
                 "GET",
                 "http://" + getHost() + "/sensors",
                 null,
-                "Sensors values loaded",
-                "Failed to load sensors values!",
                 function (response) {
                     if (response) {
                         response.trim();
+                        document.getElementById("sensors").style.display = "block";
                         updateBlockValues("sensors-fields-block", JSON.parse(response));
                     }
-                }
+                },
+                "sensors"
             );
         }
         function updateBlockValues(blockId, elements) {
@@ -176,53 +258,30 @@ const String WEB_PAGE_MAIN = R"=====(
                 stateBlock.appendChild(p);
             });
         }
-        function loadConfig() {
+        function loadDictionaries() {
             restRequest(
                 "GET",
-                "http://" + getHost() + "/config",
+                "http://" + getHost() + "/dictionary",
                 null,
-                "Config loaded",
-                "Failed to config!",
-                function (response) {
+                function(response) {
                     if (response) {
-                        const loadedConfig = JSON.parse(response);
-                        if (loadedConfig) {
-                            Object.entries(loadedConfig).forEach(([key, value]) => this.config[key] = value);
-                        }
-                        updateConfigFields();
+                        this.dictionaries = JSON.parse(response);
+                        processDictionaries();
+                        loadConfig();
                     }
                 }
-            );
-        }
-        function deleteConfigValue(name) {
-            if (name) {
-                restRequest(
-                    "DELETE",
-                    "http://" + getHost() + "/config?name=" + name,
-                    null,
-                    "Value deleted",
-                    "Failed to delete config value",
-                    function(response) {
-                        document.getElementById(name).value = null;
-                    }
-                )
-            }
-        }
-        function updateConfigFields() {
-            if (this.config) {
-                Object.keys(this.config).forEach((key) => document.getElementById(key).value = this.config[key]);
-            }
+            )
         }
         function processDictionaries() {
             const actions = this.dictionaries.actions;
             if (actions) {
+                document.getElementById("actions").style.display = "block";
                 const actionsBlock = document.getElementById("control-buttons-block");
                 actions.forEach((action) => {
                     const button = document.createElement("button");
                     button.onclick = function() {
                         if (action.action || action.action == 0) {
-                            restRequest("PUT", "http://" + getHost() + "/action?action=" + action.action,
-                                null, "Done", "Failed to perform action '" + action.caption + "'", null);
+                            restRequest("PUT", "http://" + getHost() + "/action?action=" + action.action);
                         } else {
                             console.error("Action is missing!");
                         }
@@ -230,10 +289,11 @@ const String WEB_PAGE_MAIN = R"=====(
                     button.innerHTML = action.caption;
                     actionsBlock.appendChild(button);
                 });
-            } 
+            }
 
             const configFields = this.dictionaries.config;
             if (configFields) {
+                document.getElementById("config").style.display = "block";
                 const configFieldsBlock = document.getElementById("config-fields-block");
                 configFields.forEach((configField) => {
                     this.config[configField.name] = null;
@@ -246,6 +306,7 @@ const String WEB_PAGE_MAIN = R"=====(
                     const button = document.createElement("button");
                     button.innerHTML = "X";
                     button.title = "Clear config value";
+                    button.style.backgroundColor = "rgb(175, 53, 53)";
                     button.onclick = function () {
                         deleteConfigValue(configField.name);
                     };
@@ -261,91 +322,101 @@ const String WEB_PAGE_MAIN = R"=====(
         function restart() {
             restRequest("PUT", "http://" + getHost() + "/restart");
         }
+        function displayBlockInfo(blockId, visible=true, text="loading", color="#04AA6D") {
+            const block = document.getElementById(blockId);
+            if (block) {
+                const loadingInfos = block.getElementsByClassName("loading-info");
+                if (loadingInfos) {
+                    Array.from(loadingInfos).forEach(l => {
+                        l.style.display = visible ? "block" : "none";
+                        l.innerHTML = text;
+                        l.style.backgroundColor = color;
+                    });
+                }
+            }
+        }
         function getHost() {
             const { host } = window.location;
             return host;
+            // return "192.168.1.104";
         }
-        function loadDictionaries() {
-            restRequest(
-                "GET",
-                "http://" + getHost() + "/dictionary",
-                null,
-                "Dictionaries loaded",
-                "Failed to load dictionaries!",
-                function(response) {
-                    if (response) {
-                        this.dictionaries = JSON.parse(response);
-                        processDictionaries();
-                        loadConfig();
-                    }
-                }
-            )
-        }
-        function restRequest(method, path, data, successText, failureText, callback) {
-            info({text: "Processing...", id: path});
+        function restRequest(method, path, data, callback, blockId) {
+            if (blockId) displayBlockInfo(blockId);
             let xhr = new XMLHttpRequest();
             xhr.open(method, path);
             xhr.setRequestHeader("Accept", "application/json");
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
-                            if (successText) info({text: successText, id: path});
+                    if (xhr.readyState === 4 ){
+                        if (xhr.status >= 200 && xhr.status <= 299) {
                             if (callback) callback(xhr.response);
+                            if (blockId) displayBlockInfo(blockId, false);
                         } else {
-                            if (failureText) info({text: failureText, type: 'error', id: path});
+                            console.error("Request " + path + " failed with code " + xhr.status);
+                            if (blockId) displayBlockInfo(blockId, true, "Failed", "rgb(175, 53, 53)");
                         }
                     }
                 };
             xhr.send(data ? JSON.stringify(data) : null);
         }
-        function info({text, type = 'success', id = '1'}) {
-            const infoElement = document.getElementById("info");
-            if (infoElement) {
-                let newElement = false;
-                let element = document.getElementById(id);
-                if (!element) {
-                    element = document.createElement("li")
-                    newElement = true;
-                }
-                element.innerHTML = text;
-                element.style = this.infoStyles[type];
-                element.id = id;
-                if (newElement) {
-                    infoElement.appendChild(element);
-                }
-            }
-        }
     </script>
     <style>
-        .holder {
+        .header {
+            font-size: 50px;
+        }
+        .loading-info {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            padding: 5px;
+            background-color: #04AA6D;
             text-align: center;
-            margin-left: auto;
-            margin-right: auto;
-            width: 50%;
+            display: none;
+        }
+        body {
+            background-color: aliceblue;
+        }
+        * {
+            border-radius: 8px;
+        }
+        .main-panel {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        @media only screen and (min-width: 800px) {
+            .main-panel {
+                display: flex;
+                flex-wrap: wrap;
+                flex-direction: row;
+                gap: 1rem;
+            }
         }
         .content-block {
-            margin-top: 10px;
-            margin-bottom: 10px;
-            padding: 10px;
-            width: 100%;
+            background-color: azure;
+            flex-basis: 400px;
             height: fit-content;
+            padding: 10px;
             border: 2px solid grey;
             text-align: center;
-            border-radius: 8px;
             position: relative;
         }
-        .content-block input, p {
+        .content-block input {
             font-size: 18px;
+            border:2px solid grey;
+        }
+        .content-block p {
+            font-size: 20px;
+        }
+        .hidable {
+            display: none;
         }
         .update-button {
             position: absolute;
             top: 5px;
             right: 5px;
             background:rgb(107, 107, 240);
-            border-radius: 8px;
-            width: fit-content;
-            height: fit-content;
         }
         .btn-group button {
             background-color: #04AA6D; 
@@ -354,46 +425,48 @@ const String WEB_PAGE_MAIN = R"=====(
             cursor: pointer;
             width: 100%;
             display: block;
-            border-radius: 8px;
             margin-top: 10px;
             font-size: 18px;
         }
         .btn-group button:not(:last-child) {
-            border-bottom: none; /* Prevent double borders */
+            border-bottom: none;
         }
-        .btn-warning {
+        .btn-restart {
             background-color: rgb(175, 53, 53); 
-            border: 1px solid red;
+            border: 1px solid rgb(175, 53, 53);
             margin-top: 10px;
+            width: 100%;
         }
         .config-block {
             display:flex;
             flex-direction:row;
             border:2px solid grey;
-            border-radius: 8px;
-            padding:1px;
         }
         .config-block input {
             flex-grow:2;
-            border:none;
-            width: 100%;
-            height: 25px;
+            border: none;
         }
         .config-block input:focus {
             outline: none;
         }
         .config-block button {
             border:1px solid black;
-            background:red;
-            color:white;
-            border-radius: 8px;
         }
-        .info-list {
-            position: absolute;
-            left: 10px;
-            top: 10px;
-            width: 20%;
-            font-size: 25px;
+        .grid-view {
+            display: grid;
+            align-items: center;
+        }
+        .grid-view p {
+            grid-column: 1;
+            height: fit-content;
+        }
+        .grid-view input {
+            grid-column: 2;
+            height: fit-content;
+        }
+        .grid-view div {
+            grid-column: 2;
+            height: fit-content;
         }
     </style>
 </html>

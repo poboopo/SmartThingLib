@@ -23,6 +23,8 @@
 #define MULTICAST_GROUP "224.1.1.1"
 #define MULTICAST_PORT 7778
 
+
+// todo refactore to static!
 class SmartThing {
     public:
         SmartThing();
@@ -30,12 +32,14 @@ class SmartThing {
 
         bool init(String type);
         void loopRoutine();
-        void setName(String name);
+        void setName(String name); // should save name to config
+        static const String getType();
+        static const String getName();
         bool wifiConnected();
 
         RestController* getRestController();
         SettingsManager* getSettingsManager();
-        LedIndicator* getLed();
+        LedIndicator* getLed(); // are u sure u need this?
     private:
         SettingsManager _settingsManager;
         Multicaster _multicaster;
@@ -44,12 +48,11 @@ class SmartThing {
 
         // change to const char *?
         String _ip = "";
-        String _name;
-        String _type;
+        static String _name;
+        static String _type;
         String _broadcastMessage = "";
 
         void wipeSettings();
-        String buildInfoJson();
         String connectToWifi(String, String, int);
 };
 

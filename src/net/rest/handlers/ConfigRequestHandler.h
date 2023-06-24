@@ -24,8 +24,8 @@ class ConfigRequestHandler: public RequestHandler {
             String body = server.arg("plain");
             BetterLogger::logRequest(CONFIG_LOG_TAG, http_method_str(requestMethod), requestUri.c_str(), body.c_str());
 
+            server.sendHeader("Access-Control-Allow-Origin", "*");
             if (requestMethod == HTTP_OPTIONS) {
-                server.sendHeader("Access-Control-Allow-Origin", "*");
                 server.sendHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
                 server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
                 server.send(200);

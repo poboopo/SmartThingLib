@@ -32,14 +32,8 @@ class RestController{
         void addGetSensorsHandler(RestController::HandlerWithResultFunction hf) {
             _getSensorsHandler = hf;
         };
-        void addGetInfoHandler(RestController::HandlerWithResultFunction hf) {
-            _getInfoHandler = hf;
-        };
         void addGetDictsHandler(RestController::HandlerWithResultFunction hf) {
             _getDictsHandler = hf;
-        };
-        void addWebPageBuilder(RestController::HandlerWithResultFunction hf) {
-            _webPageBuilder = hf;
         };
         void addConfigUpdatedHandler(RestController::HandlerFunction hf) {
             _configUpdatedHandler = hf;
@@ -69,9 +63,7 @@ class RestController{
 
         HandlerWithResultFunction _getStateHandler = _defaultHandler;
         HandlerWithResultFunction _actionHandler = _defaultHandler;
-        HandlerWithResultFunction _webPageBuilder = _defaultHandler;
         HandlerWithResultFunction _getSensorsHandler = _defaultHandler;
-        HandlerWithResultFunction _getInfoHandler = _defaultHandler;
         HandlerWithResultFunction _getDictsHandler = _defaultHandler;
 
         HandlerFunction _configUpdatedHandler = [](){};

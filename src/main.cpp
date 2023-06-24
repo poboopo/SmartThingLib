@@ -73,7 +73,6 @@ void setupRestHandlers() {
     });
 }
 
-// TODO вынести нафиг отседова
 void processConfig() {
     SettingsManager* settingsManager = smartThing.getSettingsManager();
 
@@ -97,13 +96,6 @@ void processConfig() {
     uint8_t accuracy = config[ACCURACY_SETTING];
     if (accuracy > 0) {
         controller.setMotorAccuracy(accuracy);
-    }
-
-    String name = config[NAME_SETTING];
-    if (!name.isEmpty() && name != "null") {
-        smartThing.setName(name);
-    } else {
-        smartThing.setName(ESP.getChipModel());
     }
 
     controller.restartAutoMode();

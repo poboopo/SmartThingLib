@@ -2,6 +2,8 @@
 
 SmartThing::SmartThing() {};
 SmartThing::~SmartThing() {};
+String SmartThing::_type = "no_type";
+String SmartThing::_name = "no_name";
 
 bool SmartThing::wifiConnected() {
     return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
@@ -12,7 +14,7 @@ String buildBroadCastMessage(String ip, String name) {
 }
 
 bool SmartThing::init(String type) {
-    _type = type;
+    SmartThing::_type = type;
     BetterLogger::init();
     BetterLogger::log(SMART_THING_TAG, "Smart thing initialization started");
 
@@ -31,7 +33,7 @@ bool SmartThing::init(String type) {
     _ip = connectToWifi(ssid, password, mode);
 
     if (wifiConnected()) {
-        BetterLogger::connect(_ip.c_str(), _name.c_str());
+        BetterLogger::connect(_ip.c_str(), SmartThing::_name.c_str());
         BetterLogger::log(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
 
         ArduinoOTA.begin();
@@ -41,13 +43,6 @@ bool SmartThing::init(String type) {
         _broadcastMessage = buildBroadCastMessage(_ip, ESP.getChipModel());
         BetterLogger::log(SMART_THING_TAG, "Multicaster created");
 
-        _rest.addGetInfoHandler([this](){
-            RestHandlerResult result;
-            result.code = 200;
-            result.contentType = JSON_CONTENT_TYPE;
-            result.body = buildInfoJson();
-            return result;
-        });
         _rest.addWifiupdatedHandler([this](){
             BetterLogger::log(SMART_THING_TAG, "WiFi updated, reloading wifi!");
             WiFi.disconnect();
@@ -134,22 +129,17 @@ void SmartThing::wipeSettings() {
     _led.off();
 }
 
+const String SmartThing::getType() {
+    return SmartThing::_type;
+}
 
-String SmartThing::buildInfoJson() {
-    DynamicJsonDocument jsonDoc(256);
-    jsonDoc["version"] = SMART_THING_VERSION;
-    jsonDoc["name"] = _name;
-    jsonDoc["type"] = _type;
-    jsonDoc["chip_model"] = ESP.getChipModel();
-    jsonDoc["chip_revision"] = ESP.getChipRevision();
-
-    String result;
-    serializeJson(jsonDoc, result);
-    return result;
+const String SmartThing::getName() {
+    return SmartThing::_name;
 }
 
 void SmartThing::setName(String name) {
-    _name = name;
+    SmartThing::_name = name;
+    _settingsManager.putSetting(DEVICE_NAME, name);
     _broadcastMessage = buildBroadCastMessage(_ip, _name);
 }
 

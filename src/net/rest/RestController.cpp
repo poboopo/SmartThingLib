@@ -3,6 +3,7 @@
 #include <net/rest/handlers/OptionsRequestHandler.h>
 #include <net/rest/handlers/ConfigRequestHandler.h>
 #include <net/rest/handlers/WiFiRequestHandler.h>
+#include <net/rest/handlers/InfoRequestHandler.h>
 
 #define WEB_SERVER_TAG "web_server"
 
@@ -50,7 +51,7 @@ void RestController::preHandleRequest() {
 void RestController::setupHandler() {
     _server.addHandler(new ConfigRequestHandler(_settingsManager, &_configUpdatedHandler));
     _server.addHandler(new WiFiRequesthandler(_settingsManager, &_wifiUpdatedHandler));
-    _server.addHandler(new OptionsRequestHandler());
+    _server.addHandler(new InfoRequestHandler(_settingsManager));
 
     _server.on("/health", HTTP_GET, [this]() {
         preHandleRequest();
@@ -60,11 +61,6 @@ void RestController::setupHandler() {
     _server.on("/", HTTP_GET, [this]() {
         preHandleRequest();
         _server.send(200, "text/html", WEB_PAGE_MAIN);
-    });
-
-    _server.on("/info", HTTP_GET, [this]() {
-        preHandleRequest();
-        processRestHandlerResult(_getInfoHandler());
     });
 
     _server.on("/dictionary", HTTP_GET, [this](){

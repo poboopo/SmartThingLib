@@ -17,13 +17,22 @@ class WiFiRequesthandler: public RequestHandler {
 
         bool canHandle(HTTPMethod method, String uri) {
             return uri.startsWith(WIFI_RQ_PATH) && 
-                (method == HTTP_GET || HTTP_POST);
+                (method == HTTP_GET || HTTP_POST || HTTP_OPTIONS);
         }
 
         bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {
+            if (requestMethod == HTTP_OPTIONS) {
+                server.sendHeader("Access-Control-Allow-Origin", "*");
+                server.sendHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
+                server.send(200);
+                return true; 
+            }
+
             String body = server.arg("plain");
             BetterLogger::logRequest(WIFI_LOG_TAG, http_method_str(requestMethod), requestUri.c_str(), body.c_str());
-
+            
+            server.sendHeader("Access-Control-Allow-Origin", "*");
             if (requestMethod == HTTP_GET) {
                 //todo hide password smh
                 JsonObject wifiSettings = _settingsManager->getSettings(GROUP_WIFI);

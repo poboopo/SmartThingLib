@@ -4,6 +4,8 @@
 #include <ArduinoJson.h>
 #include "net/logs/BetterLogger.h"
 
+#define DEVICE_NAME "dn"
+
 #define SSID_SETTING "ss"
 #define PASSWORD_SETTING "ps"
 #define WIFI_MODE_SETTING "md"

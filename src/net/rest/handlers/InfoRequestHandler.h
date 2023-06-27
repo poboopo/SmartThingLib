@@ -19,22 +19,21 @@ class InfoRequestHandler: public RequestHandler {
                 (method == HTTP_GET || HTTP_PUT || HTTP_OPTIONS);
         }
         bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {
+            String body = server.arg("plain");
+            LOGGER.logRequest(INFO_RQ_TAG, http_method_str(requestMethod), requestUri.c_str(), body.c_str());
+            server.sendHeader("Access-Control-Allow-Origin", "*");
+            
             if (requestMethod == HTTP_OPTIONS) {
-                server.sendHeader("Access-Control-Allow-Origin", "*");
                 server.sendHeader("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
                 server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
                 server.send(200);
                 return true; 
             }
-
-            String body = server.arg("plain");
-            BetterLogger::logRequest(INFO_RQ_TAG, http_method_str(requestMethod), requestUri.c_str(), body.c_str());
-            
             if (requestMethod == HTTP_GET) {
                 DynamicJsonDocument jsonDoc(256);
                 jsonDoc["version"] = SMART_THING_VERSION;
-                jsonDoc["name"] = SmartThing::getName();
-                jsonDoc["type"] = SmartThing::getType();
+                jsonDoc["name"] = SmartThing.getName();
+                jsonDoc["type"] = SmartThing.getType();
                 jsonDoc["chip_model"] = ESP.getChipModel();
                 jsonDoc["chip_revision"] = ESP.getChipRevision();
 
@@ -42,7 +41,8 @@ class InfoRequestHandler: public RequestHandler {
                 serializeJson(jsonDoc, result);
                 server.send(200, JSON_CONTENT_TYPE, result);
                 return true;
-            } else if (requestMethod == HTTP_PUT) {
+            }
+            if (requestMethod == HTTP_PUT) {
                 DynamicJsonDocument jsDoc(64);
                 deserializeJson(jsDoc, body);
                 const char * newName = jsDoc["name"];
@@ -51,8 +51,8 @@ class InfoRequestHandler: public RequestHandler {
                     return true;
                 }
 
-                BetterLogger::log(INFO_RQ_TAG, "Got new name %s", newName);
-                SmartThing::setName(newName);
+                LOGGER.log(INFO_RQ_TAG, "Got new name %s", newName);
+                SmartThing.setName(newName);
                 server.send(200);
                 return true;
             }

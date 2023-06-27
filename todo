@@ -1,5 +1,8 @@
-- make smart thing static
-- add callback scenarios
+-> v0.1
+- make smart thing static +
+- refactor static classes to extern
 - add logging levels
-- add pages to main page
+- settings manager make methods like arduinoJson
+-> v0.2
+- add callback scenarios
 - add authorization???

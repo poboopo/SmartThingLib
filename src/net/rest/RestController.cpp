@@ -1,6 +1,5 @@
 #include <net/rest/RestController.h>
 #include <net/rest/Pages.h>
-#include <net/rest/handlers/OptionsRequestHandler.h>
 #include <net/rest/handlers/ConfigRequestHandler.h>
 #include <net/rest/handlers/WiFiRequestHandler.h>
 #include <net/rest/handlers/InfoRequestHandler.h>
@@ -23,7 +22,7 @@ void RestController::handle() {
 }
 
 void RestController::processRestHandlerResult(RestHandlerResult result) {
-    BetterLogger::log(WEB_SERVER_TAG, "Response code = %d", result.code);
+    LOGGER.log(WEB_SERVER_TAG, "Response code = %d", result.code);
     _server.send(result.code, result.contentType, result.body);
 }
 
@@ -36,7 +35,7 @@ String RestController::getRequestArg(String name) {
 }
 
 void RestController::preHandleRequest() {
-    BetterLogger::logRequest(
+    LOGGER.logRequest(
         WEB_SERVER_TAG, 
         http_method_str(_server.method()),
         _server.uri().c_str(),
@@ -70,7 +69,7 @@ void RestController::setupHandler() {
         processRestHandlerResult(_getStateHandler());
     });
     _server.on("/action", HTTP_PUT, [this](){
-        BetterLogger::log(WEB_SERVER_TAG, "[PUT] [/action] %s", getRequestArg("action").c_str());
+        LOGGER.log(WEB_SERVER_TAG, "[PUT] [/action] %s", getRequestArg("action").c_str());
         _server.sendHeader("Access-Control-Allow-Origin", "*");
         processRestHandlerResult(_actionHandler());
     });
@@ -88,7 +87,7 @@ void RestController::setupHandler() {
         SettingsManager::saveSettings();
         _server.send(200);
 
-        BetterLogger::log(WEB_SERVER_TAG, "---------RESTART---------");
+        LOGGER.log(WEB_SERVER_TAG, "---------RESTART---------");
 
         delay(2000);
         ESP.restart();

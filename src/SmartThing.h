@@ -25,34 +25,35 @@
 #define DEVICE_NAME_LENGTH_MAX 15
 
 
-// todo refactore to static!
-class SmartThing {
+class SmartThingClass {
     public:
-        SmartThing();
-        ~SmartThing();
+        ~SmartThingClass();
+        SmartThingClass();
 
         bool init(String type);
         void loopRoutine();
-        static void setName(String name); // should save name to config
-        static const String getType();
-        static const String getName();
+        void setName(String name); // should save name to config
+        const String getType();
+        const String getName();
         bool wifiConnected();
 
         RestController* getRestController();
         LedIndicator* getLed(); // are u sure u need this?
     private:
         Multicaster _multicaster;
-        LedIndicator _led;
         RestController _rest;
+        LedIndicator _led;
 
         // todo change to const * char?
-        String _ip = "";
-        static String _name;
-        static String _type;
-        String _broadcastMessage = "";
+        String _ip;
+        String _name;
+        String _type;
+        String _broadcastMessage;
 
         void wipeSettings();
         String connectToWifi(String, String, int);
 };
+
+extern SmartThingClass SmartThing;
 
 #endif

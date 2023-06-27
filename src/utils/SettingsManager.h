@@ -19,6 +19,7 @@
 #define SETTINGS_MANAGER_TAG "settings_manager"
 #define JSON_DOC_SIZE 2048
 
+//rework to extern
 class SettingsManager {
     private:
         static StaticJsonDocument<JSON_DOC_SIZE> _settings;

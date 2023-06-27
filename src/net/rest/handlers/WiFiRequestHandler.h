@@ -29,7 +29,7 @@ class WiFiRequesthandler: public RequestHandler {
             }
 
             String body = server.arg("plain");
-            BetterLogger::logRequest(WIFI_LOG_TAG, http_method_str(requestMethod), requestUri.c_str(), body.c_str());
+            LOGGER.logRequest(WIFI_LOG_TAG, http_method_str(requestMethod), requestUri.c_str(), body.c_str());
             
             server.sendHeader("Access-Control-Allow-Origin", "*");
             if (requestMethod == HTTP_GET) {

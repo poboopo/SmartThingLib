@@ -1,19 +1,15 @@
 #include "net/logs/BetterLogger.h"
 
+// {ip}[name][tag]::message
 #define LOGGER_MESSAGE_TEMPLATE "{%s}[%s][%s]::%s"
 
-Multicaster BetterLogger::_multicaster = Multicaster();
-bool BetterLogger::_connected = false;
-bool BetterLogger::_serialStarted = false;
-SemaphoreHandle_t BetterLogger::_mutex = xSemaphoreCreateMutex();
-const char * BetterLogger::_ip = "NOT_CONNECTED";
-const char * BetterLogger::_name = "no_name";
+BetterLogger LOGGER;
 
 BetterLogger::BetterLogger() {
 }
 
 BetterLogger::~BetterLogger() {
-    BetterLogger::_multicaster.stop();
+    _multicaster.stop();
 }
 
 void BetterLogger::init() {
@@ -21,10 +17,10 @@ void BetterLogger::init() {
 }
 
 void BetterLogger::connect(const char * myIp, const char * name, const char * group, int port) {
-    BetterLogger::_multicaster.init(group, port);
-    BetterLogger::_name = name;
-    BetterLogger::_ip = myIp;
-    BetterLogger::_connected = true;
+    _multicaster.init(group, port);
+    _name = name;
+    _ip = myIp;
+    _connected = true;
 }
 
 void BetterLogger::log(const char * tag, const char * message) {

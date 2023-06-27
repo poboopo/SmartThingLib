@@ -22,7 +22,7 @@ class ConfigRequestHandler: public RequestHandler {
 
         bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {
             String body = server.arg("plain");
-            BetterLogger::logRequest(CONFIG_LOG_TAG, http_method_str(requestMethod), requestUri.c_str(), body.c_str());
+            LOGGER.logRequest(CONFIG_LOG_TAG, http_method_str(requestMethod), requestUri.c_str(), body.c_str());
 
             server.sendHeader("Access-Control-Allow-Origin", "*");
             if (requestMethod == HTTP_OPTIONS) {
@@ -60,13 +60,13 @@ class ConfigRequestHandler: public RequestHandler {
 
                 JsonObject config = SettingsManager::getSettings(GROUP_CONFIG);
                 if (config.containsKey(name)) {
-                    BetterLogger::log(CONFIG_LOG_TAG, "Removing config value %s", name);
+                    LOGGER.log(CONFIG_LOG_TAG, "Removing config value %s", name);
                     config.remove(name);
                     SettingsManager::saveSettings();
                     server.send(200);
                     callHandler();
                 } else {
-                    BetterLogger::log(CONFIG_LOG_TAG, "Failed to remove config %s - no such key", name);
+                    LOGGER.log(CONFIG_LOG_TAG, "Failed to remove config %s - no such key", name);
                     server.send(404, "content/json", buildErrorJson("No such key"));
                 }
                 return true;

@@ -13,30 +13,29 @@
 #define LIGHT_SENSOR_PIN 35
 
 LouverController controller;
-SmartThing smartThing;
 
 void setupRestHandlers();
 void processConfig();
 
 void setup() {
-    if (smartThing.init("louver")) {
-        if (smartThing.wifiConnected()) {
+    if (SmartThing.init("louver")) {
+        if (SmartThing.wifiConnected()) {
             setupRestHandlers();
         }
         controller.init(MOTOR_FIRST_PIN, MOTOR_SECOND_PIN, POT_PIN, LIGHT_SENSOR_PIN);
-        controller.addLedIndicator(smartThing.getLed());
-        BetterLogger::log("main", "Controller created");
+        controller.addLedIndicator(SmartThing.getLed());
+        LOGGER.log("main", "Controller created");
 
         processConfig();
-        BetterLogger::log("main", "Config proceed");
+        LOGGER.log("main", "Config proceed");
     } else {
-        BetterLogger::log("main", "Failed to init smart thing");
+        LOGGER.log("main", "Failed to init smart thing");
     }
-    BetterLogger::log("main", "Setup finished");
+    LOGGER.log("main", "Setup finished");
 }
 
 void loop() {
-    smartThing.loopRoutine();
+    SmartThing.loopRoutine();
 
     if (!digitalRead(BUTTON_PIN)) {
         if (controller.isAutoModeEnabled()) {
@@ -44,14 +43,14 @@ void loop() {
         } else {
             controller.enableAutoMode();
         }
-        BetterLogger::statistics();
+        LOGGER.statistics();
     }
 
     delay(500);
 }
 
 void setupRestHandlers() {
-    RestController* rest = smartThing.getRestController();
+    RestController* rest = SmartThing.getRestController();
 
     rest->addGetStateHandler([]() {
         RestHandlerResult result = getLouverStateJson(&controller);

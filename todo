@@ -1,8 +1,9 @@
 -> v0.1
 - make smart thing static +
-- refactor static classes to extern
-- add logging levels
+- refactor static classes to extern + 
+- add logging levels +
 - settings manager make methods like arduinoJson
 -> v0.2
+- fix logger message lenght
 - add callback scenarios
 - add authorization???

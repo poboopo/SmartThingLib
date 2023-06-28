@@ -14,10 +14,11 @@ SettingsManager::~SettingsManager() {
 }
 
 void SettingsManager::loadSettings() {
-    LOGGER.log(SETTINGS_MANAGER_TAG, "Loading data from eeprom...");
+    LOGGER.info(SETTINGS_MANAGER_TAG, "Loading data from eeprom...");
     const char * loaddedSettings = loadFromEeprom();
     if (strlen(loaddedSettings) == 0) {
-        LOGGER.log(SETTINGS_MANAGER_TAG, "Settings empty!");
+        LOGGER.warning(SETTINGS_MANAGER_TAG, "Settings empty!");
+        // todo fill with default settings
         return;
     }
     deserializeJson(_settings, loaddedSettings);
@@ -29,9 +30,9 @@ void SettingsManager::clear() {
         for (int i = 0; i < EEPROM_LOAD_SIZE; i++) {
             EEPROM.write(i, 0);
         }
-        LOGGER.log("EEprom clear");
+        LOGGER.warning(SETTINGS_MANAGER_TAG, "EEprom clear");
     } else {
-        LOGGER.log("Failed to open EEPROM");
+        LOGGER.error(SETTINGS_MANAGER_TAG, "Failed to open EEPROM");
     }
 }
 
@@ -53,17 +54,17 @@ const char * SettingsManager::loadFromEeprom() {
         EEPROM.commit();
 
         if (!completed) {
-            LOGGER.log("Settings string not completed. Missing \\n ?");
-            LOGGER.log("%s", data.c_str());
+            LOGGER.error(SETTINGS_MANAGER_TAG, "Settings string not completed. Missing \\n ?");
+            LOGGER.error(SETTINGS_MANAGER_TAG, "%s", data.c_str());
             return "";
         }
 
         data += "}";
 
-        LOGGER.log(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]", data.c_str(), data.length());
+        LOGGER.info(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]", data.c_str(), data.length());
         return data.c_str();
     } else {
-        LOGGER.log("Failed to open EEPROM");
+        LOGGER.error(SETTINGS_MANAGER_TAG, "Failed to open EEPROM");
         return "";
     }
 }
@@ -71,7 +72,7 @@ const char * SettingsManager::loadFromEeprom() {
 void SettingsManager::saveSettings() {
     String data;
     serializeJson(_settings, data);
-    LOGGER.log(SETTINGS_MANAGER_TAG, "Parsed json: %s", data.c_str());
+    LOGGER.info(SETTINGS_MANAGER_TAG, "Parsed json: %s", data.c_str());
 
     // Убираем скобки, что не тратить драгоценное место EEPROM
     data.remove(0, 1);
@@ -79,26 +80,26 @@ void SettingsManager::saveSettings() {
     data += "\n";
 
     if (data.length() > EEPROM_LOAD_SIZE) {
-       LOGGER.log(SETTINGS_MANAGER_TAG, "Settings are too long! Expected less then %d, got %d", EEPROM_LOAD_SIZE, data.length());
+        LOGGER.info(SETTINGS_MANAGER_TAG, "Settings are too long! Expected less then %d, got %d", EEPROM_LOAD_SIZE, data.length());
         return;
     }
 
     if (EEPROM.begin(EEPROM_LOAD_SIZE)) {
-       LOGGER.log(SETTINGS_MANAGER_TAG, "Saving settings (length [%u]): %s", data.length(), data.c_str());
+        LOGGER.info(SETTINGS_MANAGER_TAG, "Saving settings (length [%u]): %s", data.length(), data.c_str());
         for (int i = 0; i < data.length(); i++) {
             EEPROM.write(i, data.charAt(i));
         }
 
         EEPROM.commit();
-       LOGGER.log(SETTINGS_MANAGER_TAG, "Settings saved");
+        LOGGER.info(SETTINGS_MANAGER_TAG, "Settings saved");
     } else {
-       LOGGER.log("Failed to open EEPROM");
+       LOGGER.error(SETTINGS_MANAGER_TAG, "Failed to open EEPROM");
     }
 }
 
 void SettingsManager::removeSetting(String name) {
     if (name == SSID_SETTING || name == PASSWORD_SETTING || name == GROUP_WIFI) {
-       LOGGER.log(SETTINGS_MANAGER_TAG, "U can't remove Wifi credits with this function! Use dropWifiCredits insted.");
+        LOGGER.warning(SETTINGS_MANAGER_TAG, "U can't remove Wifi credits with this function! Use dropWifiCredits insted.");
         return;
     }
     _settings.remove(name.c_str());

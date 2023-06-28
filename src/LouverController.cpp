@@ -123,7 +123,7 @@ bool LouverController::enableAutoMode() {
             _led->on();
         }
     }
-    LOGGER.log(LOUVER_CONTROLLER_TAG, "Automode enabled");
+    LOGGER.info(LOUVER_CONTROLLER_TAG, "Automode enabled");
     return true;
 }
 
@@ -134,7 +134,7 @@ bool LouverController::disableAutoMode() {
             _led->off();
         }
     }
-    LOGGER.log(LOUVER_CONTROLLER_TAG, "Automode disabled");
+    LOGGER.info(LOUVER_CONTROLLER_TAG, "Automode disabled");
     return true;
 }
 

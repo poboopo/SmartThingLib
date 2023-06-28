@@ -15,14 +15,14 @@ String buildBroadCastMessage(String ip, String name) {
 
 bool SmartThingClass::init(String type) {
     LOGGER.init();
-    LOGGER.log(SMART_THING_TAG, "Smart thing initialization started");
+    LOGGER.debug(SMART_THING_TAG, "Smart thing initialization started");
 
     SettingsManager::loadSettings();
-    LOGGER.log(SMART_THING_TAG, "Settings manager loaded");
+    LOGGER.debug(SMART_THING_TAG, "Settings manager loaded");
 
     _type = type;
     _name = SettingsManager::getSettingString(DEVICE_NAME);
-    LOGGER.log(SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
+    LOGGER.debug(SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
 
     pinMode(BUTTON_PIN, INPUT_PULLUP);
     _led.init(LED_PIN);
@@ -38,17 +38,17 @@ bool SmartThingClass::init(String type) {
 
     if (wifiConnected()) {
         LOGGER.connect(_ip.c_str(), _name.c_str());
-        LOGGER.log(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
+        LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
 
         ArduinoOTA.begin();
-        LOGGER.log(SMART_THING_TAG, "Ota started");
+        LOGGER.debug(SMART_THING_TAG, "Ota started");
 
         _multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
         _broadcastMessage = buildBroadCastMessage(_ip, _name.c_str());
-        LOGGER.log(SMART_THING_TAG, "Multicaster created");
+        LOGGER.debug(SMART_THING_TAG, "Multicaster created");
 
         _rest.addWifiupdatedHandler([&](){
-            LOGGER.log(SMART_THING_TAG, "WiFi updated, reloading wifi!");
+            LOGGER.warning(SMART_THING_TAG, "WiFi updated, reloading wifi!");
             WiFi.disconnect();
             WiFi.mode(WIFI_MODE_NULL);
             delay(500);
@@ -56,15 +56,15 @@ bool SmartThingClass::init(String type) {
             String password = SettingsManager::getSettingString(GROUP_WIFI, PASSWORD_SETTING);
             int mode = SettingsManager::getSettingInteger(GROUP_WIFI, WIFI_MODE_SETTING);
             _ip = connectToWifi(ssid, password, mode);
-            LOGGER.log(SMART_THING_TAG, "WiFi reloaded");
+            LOGGER.info(SMART_THING_TAG, "WiFi reloaded");
         });
         _rest.begin();
-        LOGGER.log(SMART_THING_TAG, "RestController started");
+        LOGGER.debug(SMART_THING_TAG, "RestController started");
     } else {
-        LOGGER.log(SMART_THING_TAG, "WiFi not available, skipping all network setup");
+        LOGGER.warning(SMART_THING_TAG, "WiFi not available, skipping all network setup");
     }
 
-    LOGGER.log(SMART_THING_TAG, "Setup finished");
+    LOGGER.debug(SMART_THING_TAG, "Setup finished");
     return true;
 }
 
@@ -78,42 +78,43 @@ void SmartThingClass::loopRoutine() {
 
 String SmartThingClass::connectToWifi(String ssid, String password, int mode) {
     if (wifiConnected()) {
-        LOGGER.log(SMART_THING_TAG, "WiFi already connected");
+        LOGGER.info(SMART_THING_TAG, "WiFi already connected");
         return WiFi.localIP().toString();
     }
 
     if (ssid.isEmpty()) {
-        LOGGER.log(SMART_THING_TAG, "Ssid is blank -> creating setup AP with name %s", ESP.getChipModel());
+        LOGGER.warning(SMART_THING_TAG, "Ssid is blank -> creating setup AP with name %s", ESP.getChipModel());
         WiFi.softAP(ESP.getChipModel());
         delay(500);
+        LOGGER.info(SMART_THING_TAG, "WiFi started in soft AP mode");
         return WiFi.softAPIP().toString();
     } else {
         if (mode == WIFI_MODE_AP) {
-            LOGGER.log(SMART_THING_TAG, "Creating AP point %s :: %s", ssid, password);
+            LOGGER.debug(SMART_THING_TAG, "Creating AP point %s :: %s", ssid, password);
             if (password.isEmpty()) {
                 WiFi.softAP(ssid.c_str(), password.c_str());
             } else {
                 WiFi.softAP(ssid.c_str());
             }
             delay(500);
-            LOGGER.log(SMART_THING_TAG, "WiFi started in AP mode");
+            LOGGER.info(SMART_THING_TAG, "WiFi started in AP mode");
             return WiFi.softAPIP().toString();
         } else if (mode == WIFI_MODE_STA) {
-            LOGGER.log(SMART_THING_TAG, "WiFi connecting to %s :: %s", ssid, password);
+            LOGGER.debug(SMART_THING_TAG, "WiFi connecting to %s :: %s", ssid, password);
             WiFi.begin(ssid.c_str(), password.c_str());
             long startTime = millis();
             _led.blink();
             while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {}
             _led.off();
             if (WiFi.isConnected()) {
-                LOGGER.log(SMART_THING_TAG, "WiFi started in STA mode");
+                LOGGER.info(SMART_THING_TAG, "WiFi started in STA mode");
                 return WiFi.localIP().toString();
             } else {
                 WiFi.disconnect();
                 return "";
             }
         } else {
-            LOGGER.log(SMART_THING_TAG, "Mode %d not sipported!", mode);
+            LOGGER.error(SMART_THING_TAG, "Mode %d not supported!", mode);
             return "";
         }
     }
@@ -121,14 +122,14 @@ String SmartThingClass::connectToWifi(String ssid, String password, int mode) {
 
 void SmartThingClass::wipeSettings() {
     long started = millis();
-    LOGGER.log(SMART_THING_TAG, "ALL SETTINGS WILL BE WIPED IN %d ms!!!", WIPE_BUTTON_TIME);
+    LOGGER.warning(SMART_THING_TAG, "ALL SETTINGS WILL BE WIPED IN %d ms!!!", WIPE_BUTTON_TIME);
 
     _led.on();
     while (!digitalRead(BUTTON_PIN) && millis() - started < WIPE_BUTTON_TIME) {}
     if (!digitalRead(BUTTON_PIN)) {
         SettingsManager::dropAll();
         SettingsManager::saveSettings();
-        LOGGER.log(SMART_THING_TAG, "Settings were wiped!");
+        LOGGER.warning(SMART_THING_TAG, "Settings were wiped!");
     }
     _led.off();
 }

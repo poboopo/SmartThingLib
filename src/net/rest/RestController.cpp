@@ -22,7 +22,7 @@ void RestController::handle() {
 }
 
 void RestController::processRestHandlerResult(RestHandlerResult result) {
-    LOGGER.log(WEB_SERVER_TAG, "Response code = %d", result.code);
+    LOGGER.info(WEB_SERVER_TAG, "Response code = %d", result.code);
     _server.send(result.code, result.contentType, result.body);
 }
 
@@ -69,7 +69,7 @@ void RestController::setupHandler() {
         processRestHandlerResult(_getStateHandler());
     });
     _server.on("/action", HTTP_PUT, [this](){
-        LOGGER.log(WEB_SERVER_TAG, "[PUT] [/action] %s", getRequestArg("action").c_str());
+        LOGGER.info(WEB_SERVER_TAG, "[PUT] [/action] %s", getRequestArg("action").c_str());
         _server.sendHeader("Access-Control-Allow-Origin", "*");
         processRestHandlerResult(_actionHandler());
     });
@@ -87,7 +87,7 @@ void RestController::setupHandler() {
         SettingsManager::saveSettings();
         _server.send(200);
 
-        LOGGER.log(WEB_SERVER_TAG, "---------RESTART---------");
+        LOGGER.info(WEB_SERVER_TAG, "---------RESTART---------");
 
         delay(2000);
         ESP.restart();

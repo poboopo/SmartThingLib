@@ -1,7 +1,8 @@
 #include "net/logs/BetterLogger.h"
 
-// {ip}[name][tag]::message
-#define LOGGER_MESSAGE_TEMPLATE "{%s}[%s][%s]::%s"
+// {ip:name}[level][tag]::message
+#define LOGGER_MESSAGE_TEMPLATE "{%s:%s}[%s][%s]::%s"
+#define STAT_LOG_TAG "STATISTICS"
 
 BetterLogger LOGGER;
 
@@ -23,10 +24,16 @@ void BetterLogger::connect(const char * myIp, const char * name, const char * gr
     _connected = true;
 }
 
-void BetterLogger::log(const char * tag, const char * message) {
+void BetterLogger::log(const char * level, const char * tag, const char * message) {
     char formattedMessage[MAX_MESSAGE_LENGTH];
-
-    sprintf(formattedMessage, LOGGER_MESSAGE_TEMPLATE, _ip, _name, tag, message);
+    sprintf(formattedMessage,
+        LOGGER_MESSAGE_TEMPLATE,
+        _ip, 
+        _name,
+        level,
+        tag, 
+        message
+    );
 
     xSemaphoreTake(_mutex, portMAX_DELAY);
     Serial.println(formattedMessage);
@@ -38,9 +45,9 @@ void BetterLogger::log(const char * tag, const char * message) {
 
 void BetterLogger::statistics() {
 #ifdef ENABLE_STATISTICS
-    log(STAT_LOG_TAG, "----------STATISTIC----------");
-    log(STAT_LOG_TAG, "Free/size heap: %u/%u", ESP.getFreeHeap(), ESP.getHeapSize());
-    log(STAT_LOG_TAG, "Min free/max alloc heap: %u/%u", ESP.getMinFreeHeap(), ESP.getMaxAllocHeap());
-    log(STAT_LOG_TAG, "--------STATISTIC-END--------");
+    info(STAT_LOG_TAG, "----------STATISTIC----------");
+    info(STAT_LOG_TAG, "Free/size heap: %u/%u", ESP.getFreeHeap(), ESP.getHeapSize());
+    info(STAT_LOG_TAG, "Min free/max alloc heap: %u/%u", ESP.getMinFreeHeap(), ESP.getMaxAllocHeap());
+    info(STAT_LOG_TAG, "--------STATISTIC-END--------");
 #endif
 }

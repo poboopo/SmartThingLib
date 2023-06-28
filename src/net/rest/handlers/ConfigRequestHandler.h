@@ -60,13 +60,13 @@ class ConfigRequestHandler: public RequestHandler {
 
                 JsonObject config = SettingsManager::getSettings(GROUP_CONFIG);
                 if (config.containsKey(name)) {
-                    LOGGER.log(CONFIG_LOG_TAG, "Removing config value %s", name);
+                    LOGGER.info(CONFIG_LOG_TAG, "Removing config value %s", name);
                     config.remove(name);
                     SettingsManager::saveSettings();
                     server.send(200);
                     callHandler();
                 } else {
-                    LOGGER.log(CONFIG_LOG_TAG, "Failed to remove config %s - no such key", name);
+                    LOGGER.info(CONFIG_LOG_TAG, "Failed to remove config %s - no such key", name);
                     server.send(404, "content/json", buildErrorJson("No such key"));
                 }
                 return true;

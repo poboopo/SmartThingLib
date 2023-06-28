@@ -51,7 +51,7 @@ class InfoRequestHandler: public RequestHandler {
                     return true;
                 }
 
-                LOGGER.log(INFO_RQ_TAG, "Got new name %s", newName);
+                LOGGER.info(INFO_RQ_TAG, "Got new name %s", newName);
                 SmartThing.setName(newName);
                 server.send(200);
                 return true;

@@ -21,7 +21,7 @@ logFile = open(LOGGER_FILE, "a")
 try:
     while True:
         message = mainSocket.recv(4096).decode()
-        ip = message[1:message.index('}')]
+        ip = message[message.index('{'):message.index('}')]
 
         if (ip not in ipColor.keys()):
             ipColor.update({ip: f"\033[9{lastColorIndex}m"})

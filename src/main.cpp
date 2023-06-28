@@ -24,14 +24,14 @@ void setup() {
         }
         controller.init(MOTOR_FIRST_PIN, MOTOR_SECOND_PIN, POT_PIN, LIGHT_SENSOR_PIN);
         controller.addLedIndicator(SmartThing.getLed());
-        LOGGER.log("main", "Controller created");
+        LOGGER.info("main", "Controller created");
 
         processConfig();
-        LOGGER.log("main", "Config proceed");
+        LOGGER.info("main", "Config proceed");
     } else {
-        LOGGER.log("main", "Failed to init smart thing");
+        LOGGER.info("main", "Failed to init smart thing");
     }
-    LOGGER.log("main", "Setup finished");
+    LOGGER.info("main", "Setup finished");
 }
 
 void loop() {

@@ -6,7 +6,7 @@ const String WEB_PAGE_MAIN = R"=====(
     <body>
         <div class="main-panel">
             <div id="info" class="content-block">
-                <div class="loading-info">Loading</div>
+                <div class="loading-info"><p>Loading</p></div>
                 <h1>Device info</h1>
                 <div id="device-info" class="grid-view"></div>
                 <button title="Restart device" class="btn-restart" onclick="restart()">Restart</button>
@@ -19,8 +19,8 @@ const String WEB_PAGE_MAIN = R"=====(
                     <input type="text" id="ssid" title="SSID"/>
                     <p>WiFi password</p>
                     <input type="password" id="password" title="password">
-                    <p>WiFi mode (1-2)</p>
-                    <input type="number" id="wifi-mode" title="mode">
+                    <p>WiFi mode</p>
+                    <select id="wifi-mode" title="mode"></select>
                 </div>
                 <div class="btn-group">
                     <button onclick="saveWifiSettings()">Save and reconnect</button>
@@ -94,7 +94,8 @@ const String WEB_PAGE_MAIN = R"=====(
                         input.disabled = false;
                         const button = document.createElement("button");
                         button.style.backgroundColor = "#04AA6D";
-                        button.innerHTML = "Save new name";
+                        button.innerHTML = "Save";
+                        button.title = "Save new device name";
                         button.onclick = () => saveNewName();
                         const div = document.createElement("div");
                         div.className = "config-block";
@@ -130,12 +131,31 @@ const String WEB_PAGE_MAIN = R"=====(
                         if (data["settings"]) {
                             document.getElementById("ssid").value = data["settings"]["ss"];
                             document.getElementById("password").value = data["settings"]["ps"];
-                            document.getElementById("wifi-mode").value = data["settings"]["md"];
+                            fillComboBox("wifi-mode", data["modes"], data["settings"]["md"]);
                         }
                     }
                 },
                 "wifi"
             );
+        }
+        function fillComboBox(comboboxId, values, selectedValue) {
+            console.log(values);
+            if (!values) {
+                return;
+            }
+            const combobox = document.getElementById(comboboxId);
+            if (combobox) {
+                combobox.innerHTML = "";
+                values.forEach((data) => {
+                    const option = document.createElement("option");
+                    option.innerHTML = data["caption"];
+                    option.value = data["value"];
+                    combobox.appendChild(option);
+                });
+                if (selectedValue) {
+                    combobox.value = selectedValue;
+                }
+            }
         }
         function saveWifiSettings() {
             const ssid = document.getElementById("ssid").value;
@@ -362,6 +382,18 @@ const String WEB_PAGE_MAIN = R"=====(
         }
     </script>
     <style>
+        body {
+            background-color: aliceblue;
+        }
+        * {
+            border-radius: 20px;
+        }
+        p, input, button, select, .loading-info {
+            font-size: 50px;
+        }
+        h1 {
+            font-size: 60px;
+        }
         .header {
             font-size: 50px;
         }
@@ -374,12 +406,6 @@ const String WEB_PAGE_MAIN = R"=====(
             text-align: center;
             display: none;
         }
-        body {
-            background-color: aliceblue;
-        }
-        * {
-            border-radius: 8px;
-        }
         .main-panel {
             display: flex;
             flex-wrap: wrap;
@@ -387,6 +413,15 @@ const String WEB_PAGE_MAIN = R"=====(
             gap: 1rem;
         }
         @media only screen and (min-width: 1000px) {
+            * {
+                border-radius: 10px;
+            }
+            p, input, button, select, .loading-info {
+                font-size: 20px;
+            }
+            h1 {
+                font-size: 30px;
+            }
             .main-panel {
                 display: flex;
                 flex-wrap: wrap;
@@ -404,11 +439,7 @@ const String WEB_PAGE_MAIN = R"=====(
             position: relative;
         }
         .content-block input {
-            font-size: 18px;
             border:2px solid grey;
-        }
-        .content-block p {
-            font-size: 20px;
         }
         .hidable {
             display: none;
@@ -427,7 +458,6 @@ const String WEB_PAGE_MAIN = R"=====(
             width: 100%;
             display: block;
             margin-top: 10px;
-            font-size: 18px;
         }
         .btn-group button:not(:last-child) {
             border-bottom: none;
@@ -459,15 +489,10 @@ const String WEB_PAGE_MAIN = R"=====(
         }
         .grid-view p {
             grid-column: 1;
-            height: fit-content;
         }
-        .grid-view input {
+        .grid-view input, div {
             grid-column: 2;
-            height: fit-content;
-        }
-        .grid-view div {
-            grid-column: 2;
-            height: fit-content;
+            margin: 5px;
         }
     </style>
 </html>

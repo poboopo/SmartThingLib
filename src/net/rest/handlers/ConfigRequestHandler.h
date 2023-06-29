@@ -31,7 +31,10 @@ class ConfigRequestHandler: public RequestHandler {
                 server.send(200);
                 return true; 
             } else if (requestMethod == HTTP_GET) {
-                server.send(200, "application/json", SettingsManager::getJson(GROUP_CONFIG));
+                JsonObject config = STSettings.getConfig();
+                String response;
+                serializeJson(config, response);
+                server.send(200, "application/json", response);
                 return true; 
             } else if (requestMethod == HTTP_POST) {
                 if (body.length() == 0) {
@@ -42,13 +45,15 @@ class ConfigRequestHandler: public RequestHandler {
                 DynamicJsonDocument jsonDoc(1024);
                 deserializeJson(jsonDoc, body);
                 JsonObject root = jsonDoc.as<JsonObject>();
+                JsonObject config = STSettings.getConfig();
 
+                //  bad realisation
+                //  why i made it????
                 for (JsonPair pair: root) {
-                    SettingsManager::putSetting(GROUP_CONFIG, pair.key().c_str(), pair.value());
+                    config[pair.key().c_str()] = pair.value();
                 }
 
-                // settingsManager->putSetting(GROUP_CONFIG, jsonDoc.as<JsonObject>());
-                SettingsManager::saveSettings();
+                STSettings.saveSettings();
                 server.send(200);
                 callHandler();
                 return true; 
@@ -58,15 +63,15 @@ class ConfigRequestHandler: public RequestHandler {
                 }
                 String name = server.arg("name");
 
-                JsonObject config = SettingsManager::getSettings(GROUP_CONFIG);
+                JsonObject config = STSettings.getConfig();
                 if (config.containsKey(name)) {
-                    LOGGER.info(CONFIG_LOG_TAG, "Removing config value %s", name);
+                    LOGGER.warning(CONFIG_LOG_TAG, "Removing config value %s", name);
                     config.remove(name);
-                    SettingsManager::saveSettings();
+                    STSettings.saveSettings();
                     server.send(200);
                     callHandler();
                 } else {
-                    LOGGER.info(CONFIG_LOG_TAG, "Failed to remove config %s - no such key", name);
+                    LOGGER.error(CONFIG_LOG_TAG, "Failed to remove config %s - no such key", name);
                     server.send(404, "content/json", buildErrorJson("No such key"));
                 }
                 return true;

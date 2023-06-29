@@ -34,10 +34,8 @@ class WiFiRequesthandler: public RequestHandler {
             server.sendHeader("Access-Control-Allow-Origin", "*");
             if (requestMethod == HTTP_GET) {
                 //todo hide password smh
-                JsonObject wifiSettings = SettingsManager::getSettings(GROUP_WIFI);
-
                 DynamicJsonDocument jsonDoc(1028);
-                jsonDoc["settings"] = wifiSettings;
+                jsonDoc["settings"] = STSettings.getWiFi();
                 JsonArray modes = jsonDoc.createNestedArray("modes");
                 JsonObject mode1 = modes.createNestedObject();
                 mode1["caption"] = "WIFI_MODE_STA";
@@ -81,10 +79,11 @@ class WiFiRequesthandler: public RequestHandler {
                     mode = WIFI_MODE_STA;
                 }
 
-                SettingsManager::putSetting(GROUP_WIFI, SSID_SETTING, ssid);
-                SettingsManager::putSetting(GROUP_WIFI, PASSWORD_SETTING, password);
-                SettingsManager::putSetting(GROUP_WIFI, WIFI_MODE_SETTING, mode);
-                SettingsManager::saveSettings();
+                JsonObject wifiSettings = STSettings.getWiFi();
+                wifiSettings[SSID_SETTING] = ssid;
+                wifiSettings[PASSWORD_SETTING] = password;
+                wifiSettings[WIFI_MODE_SETTING] = mode;
+                STSettings.saveSettings();
                 server.send(200);
                 if (_wifiUpdatedHandler != nullptr) {
                     (*_wifiUpdatedHandler)();

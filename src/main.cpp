@@ -12,13 +12,16 @@
 #define POT_PIN 36
 #define LIGHT_SENSOR_PIN 35
 
+#define AUTOMODE_SETTING "am"
+
 LouverController controller;
 
 void setupRestHandlers();
 void processConfig();
 
 void setup() {
-    if (SmartThing.init("louver")) {
+    bool started = SmartThing.init("louver");
+    if (started) {
         if (SmartThing.wifiConnected()) {
             setupRestHandlers();
         }
@@ -30,6 +33,11 @@ void setup() {
         LOGGER.info("main", "Config proceed");
     } else {
         LOGGER.info("main", "Failed to init smart thing");
+    }
+
+    JsonObject state = STSettings.getState();
+    if (state.containsKey(AUTOMODE_SETTING) && state[AUTOMODE_SETTING].as<int>()) {
+        controller.enableAutoMode();
     }
     LOGGER.info("main", "Setup finished");
 }
@@ -73,11 +81,7 @@ void setupRestHandlers() {
 }
 
 void processConfig() {
-    if (SettingsManager::getSettingInteger(GROUP_STATE, AUTOMODE_SETTING)) {
-        controller.enableAutoMode();
-    }
-
-    JsonObject config = SettingsManager::getSettings(GROUP_CONFIG);
+    JsonObject config = STSettings.getConfig();
     int lightClose = config[CLOSE_SETTING];
     int lightOpen = config[OPEN_SETTING];
     int lightBright = config[BRIGHT_SETTING];

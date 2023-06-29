@@ -51,7 +51,7 @@ class SmartThingClass {
         String _broadcastMessage;
 
         void wipeSettings();
-        String connectToWifi(String, String, int);
+        String connectToWifi();
 };
 
 extern SmartThingClass SmartThing;

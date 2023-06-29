@@ -12,6 +12,7 @@
 #define LOGGER_DEFAULT_PORT 7779
 #define MAX_MESSAGE_LENGTH 2048
 
+// move to config?
 // #define LOGGING_LEVEL_ERROR
 // #define LOGGING_LEVEL_WARN
 // #define LOGGING_LEVEL_INFO

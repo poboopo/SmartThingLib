@@ -81,10 +81,10 @@ void RestController::setupHandler() {
     _server.on("/restart", HTTP_PUT, [&](){
         preHandleRequest();
 
-        RestHandlerResult result = _getStateHandler();
-        SettingsManager::putSetting(GROUP_STATE, result.body);
-
-        SettingsManager::saveSettings();
+        // add restart handler
+        // RestHandlerResult result = _getStateHandler();
+        // STSettings.putSetting(GROUP_STATE, result.body);
+        // STSettings.saveSettings();
         _server.send(200);
 
         LOGGER.info(WEB_SERVER_TAG, "---------RESTART---------");

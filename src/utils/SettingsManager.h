@@ -4,57 +4,43 @@
 #include <ArduinoJson.h>
 #include "net/logs/BetterLogger.h"
 
-#define DEVICE_NAME "dn"
-
 #define SSID_SETTING "ss"
 #define PASSWORD_SETTING "ps"
 #define WIFI_MODE_SETTING "md"
 
-// TODO move to main, not lib const
-#define GROUP_WIFI "wf"
-#define GROUP_CONFIG "cg"
-#define GROUP_STATE "st"
-#define AUTOMODE_SETTING "am"
-
 #define SETTINGS_MANAGER_TAG "settings_manager"
 #define JSON_DOC_SIZE 2048
+#define EEPROM_LOAD_SIZE 2048
 
-//rework to extern
 class SettingsManager {
     private:
-        static StaticJsonDocument<JSON_DOC_SIZE> _settings;
-        static const char * loadFromEeprom();
-        static bool _loaded;
+        StaticJsonDocument<JSON_DOC_SIZE> _settings;
+        const char * loadFromEeprom();
+        bool _loaded = false;
+
+        JsonObject getOrCreateObject(const char * name);
+        void removeIfEmpty(const char * group);
+        void addDefaultSettings();
     public:
         SettingsManager();
         ~SettingsManager();
         
-        static void loadSettings();
-        static void removeSetting(String name);
-        static void dropWifiCredits();
-        static void dropAll();
-        static void saveSettings();
-        static void clear();
+        void loadSettings();
+        void removeSetting(const char * name);
+        void dropWifiCredits();
+        void dropAll();
+        void saveSettings();
+        void clear();
 
-        static void putSetting(String name, String value);
-        static void putSetting(String groupName, String name, String value);
-        static void putSetting(String name, int value);
-        static void putSetting(String groupName, String name, int value);
+        JsonObject getConfig();
+        JsonObject getState();
+        JsonObject getWiFi();
+        const char * getDeviceName();
+        void setDeviceName(const char * name);
 
-        static void putSetting(String groupName, String name, JsonVariant var);
-        static void putSetting(String groupName, JsonObject jsonObject);
-
-        static const String getSettingString(String name);
-        static const String getSettingString(String groupName, String name);
-
-        static const int getSettingInteger(String name);
-        static const int getSettingInteger(String groupName, String name);
-
-        static const JsonObject getSettings();
-        static const JsonObject getSettings(String groupName);
-
-        static const String getJson();
-        static const String getJson(String groupName);
+        const JsonObject getAllSettings();
 };
+
+extern SettingsManager STSettings;
 
 #endif

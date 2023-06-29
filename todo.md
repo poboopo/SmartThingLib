@@ -3,7 +3,7 @@
 - refactor static classes to extern + 
 - add logging levels +
 - settings manager refactor +
-- fix mobile web page view
+- fix mobile web page view +
 
 -> v0.2
 - fix directories

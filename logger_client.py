@@ -8,7 +8,7 @@ LOGGER_FILE = "logger.log"
 
 ipColor = {}
 group = ("224.1.1.1", 7779)
-lastColorIndex = 1
+lastColorIndex = 2
 
 mainSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 mainSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -21,7 +21,7 @@ logFile = open(LOGGER_FILE, "a")
 try:
     while True:
         message = mainSocket.recv(4096).decode()
-        ip = message[1:message.index('}')]
+        ip = message[message.index('{'):message.index('}')]
 
         if (ip not in ipColor.keys()):
             ipColor.update({ip: f"\033[9{lastColorIndex}m"})

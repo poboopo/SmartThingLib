@@ -2,17 +2,13 @@
 #define REST_CONTROLLER_H
 
 #include <WebServer.h>
-#include <net/BetterLogger.h>
+#include <net/logs/BetterLogger.h>
 #include <utils/SettingsManager.h>
 
 #define SERVER_PORT 80
-#define ADD_WEB_PAGE 1
-
 #define JSON_CONTENT_TYPE "application/json"
 
-#define SYSTEM_STATISTICS 1
-
-struct HandlerResult{
+struct RestHandlerResult{
     int code = 200;
     String contentType = JSON_CONTENT_TYPE;
     String body = "";
@@ -23,12 +19,12 @@ class RestController{
         RestController();
         ~RestController();
 
-        typedef std::function<HandlerResult(void)> HandlerWithResultFunction;
+        typedef std::function<RestHandlerResult(void)> HandlerWithResultFunction;
         typedef std::function<void(void)> HandlerFunction;
-        void begin(SettingsManager * manager);
+        void begin();
         
-        void addStateChangeHandler(RestController::HandlerWithResultFunction hf) {
-            _changeStateHandler = hf;
+        void addActionHandler(RestController::HandlerWithResultFunction hf) {
+            _actionHandler = hf;
         };
         void addGetStateHandler(RestController::HandlerWithResultFunction hf) {
             _getStateHandler = hf;
@@ -36,48 +32,46 @@ class RestController{
         void addGetSensorsHandler(RestController::HandlerWithResultFunction hf) {
             _getSensorsHandler = hf;
         };
-        void addGetInfoHandler(RestController::HandlerWithResultFunction hf) {
-            _getInfoHandler = hf;
-        };
-        void addWebPageBuilder(RestController::HandlerWithResultFunction hf) {
-            _webPageBuilder = hf;
+        void addGetDictsHandler(RestController::HandlerWithResultFunction hf) {
+            _getDictsHandler = hf;
         };
         void addConfigUpdatedHandler(RestController::HandlerFunction hf) {
             _configUpdatedHandler = hf;
         }
-
-        void addSetupEndpoint();
+        void addWifiupdatedHandler(RestController::HandlerFunction hf) {
+            _wifiUpdatedHandler = hf;
+        }
 
         String getRequestBody();
+        String getRequestArg(String name);
         WebServer * getWebServer() { return &_server; };
 
         void handle();
     private:
         bool _setupFinished = false;
         WebServer _server;
-        SettingsManager * _settingsManager;
 
-        void setupEndpoints();
+        void setupHandler();
+        void preHandleRequest();
 
-        void processHandlerResult(HandlerResult result);
+        void processRestHandlerResult(RestHandlerResult result);
         HandlerWithResultFunction _defaultHandler = []() {
-            HandlerResult result;
+            RestHandlerResult result;
             return result;
         };
 
         HandlerWithResultFunction _getStateHandler = _defaultHandler;
-        HandlerWithResultFunction _changeStateHandler = _defaultHandler;
-        HandlerWithResultFunction _webPageBuilder = _defaultHandler;
+        HandlerWithResultFunction _actionHandler = _defaultHandler;
         HandlerWithResultFunction _getSensorsHandler = _defaultHandler;
-        HandlerWithResultFunction _getInfoHandler = _defaultHandler;
+        HandlerWithResultFunction _getDictsHandler = _defaultHandler;
 
         HandlerFunction _configUpdatedHandler = [](){};
+        HandlerFunction _wifiUpdatedHandler = [](){};
 
         void handleConfigPost();
         void handleConfigDelete();
-        void handleSetupPost();
-
-        String buildErrorJson(String error);
+        void handleWiFiPost();
+        void handleWiFiGet();
 };
 
 #endif

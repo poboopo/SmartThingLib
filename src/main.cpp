@@ -1,11 +1,9 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <ArduinoOTA.h>
-#include <ESPmDNS.h>
 
 #include "LouverController.h"
 #include "net/WebUtils.h"
-
 #include "SmartThing.h"
 
 // Pins
@@ -14,31 +12,38 @@
 #define POT_PIN 36
 #define LIGHT_SENSOR_PIN 35
 
+#define AUTOMODE_SETTING "am"
+
 LouverController controller;
-SmartThing smartThing;
 
 void setupRestHandlers();
 void processConfig();
 
 void setup() {
-    if (smartThing.init("pobopo")) {
-        if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
+    bool started = SmartThing.init("louver");
+    if (started) {
+        if (SmartThing.wifiConnected()) {
             setupRestHandlers();
         }
         controller.init(MOTOR_FIRST_PIN, MOTOR_SECOND_PIN, POT_PIN, LIGHT_SENSOR_PIN);
-        controller.addLedIndicator(smartThing.getLed());
-        BetterLogger::log("*", "Controller created");
+        controller.addLedIndicator(SmartThing.getLed());
+        LOGGER.info("main", "Controller created");
 
         processConfig();
-        BetterLogger::log("*", "Config proceed");
+        LOGGER.info("main", "Config proceed");
     } else {
-        BetterLogger::log("*", "Failed to init smart thing");
+        LOGGER.info("main", "Failed to init smart thing");
     }
-    BetterLogger::log("*", "Setup finished");
+
+    JsonObject state = STSettings.getState();
+    if (state.containsKey(AUTOMODE_SETTING) && state[AUTOMODE_SETTING].as<int>()) {
+        controller.enableAutoMode();
+    }
+    LOGGER.info("main", "Setup finished");
 }
 
 void loop() {
-    smartThing.loopRoutine();
+    SmartThing.loopRoutine();
 
     if (!digitalRead(BUTTON_PIN)) {
         if (controller.isAutoModeEnabled()) {
@@ -46,47 +51,37 @@ void loop() {
         } else {
             controller.enableAutoMode();
         }
-        BetterLogger::statistics();
+        LOGGER.statistics();
     }
 
     delay(500);
 }
 
 void setupRestHandlers() {
-    RestController* rest = smartThing.getRestController();
+    RestController* rest = SmartThing.getRestController();
 
     rest->addGetStateHandler([]() {
-        HandlerResult result = getLouverStateJson(&controller);
+        RestHandlerResult result = getLouverStateJson(&controller);
         return result;
     });
-    rest->addStateChangeHandler([rest]() {
-        return changeLouverState(rest->getRequestBody() ,&controller);
+    rest->addActionHandler([rest]() {
+        return handleAction(rest->getRequestArg("action") ,&controller);
     });
     rest->addGetSensorsHandler([](){
-        HandlerResult result = getSensorsJson(&controller);
+        RestHandlerResult result = getSensorsJson(&controller);
         return result;
     });
     rest->addConfigUpdatedHandler([]() {
         processConfig();
     });
-
-    rest->addWebPageBuilder([](){
-        HandlerResult result;
-        result.body = buildMainPage(WiFi.getMode() == WIFI_AP);
-        result.contentType = "text/html";
+    rest->addGetDictsHandler([](){
+        RestHandlerResult result = getDictionaries();
         return result;
     });
 }
 
-// TODO вынести нафиг отседова
 void processConfig() {
-    SettingsManager* settingsManager = smartThing.getSettingsManager();
-
-    if (settingsManager->getSettingInteger(GROUP_STATE, AUTOMODE_SETTING)) {
-        controller.enableAutoMode();
-    }
-
-    JsonObject config = settingsManager->getSettings(GROUP_CONFIG);
+    JsonObject config = STSettings.getConfig();
     int lightClose = config[CLOSE_SETTING];
     int lightOpen = config[OPEN_SETTING];
     int lightBright = config[BRIGHT_SETTING];

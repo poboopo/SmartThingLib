@@ -1,64 +1,73 @@
 #include "SmartThing.h"
 
-SmartThing::SmartThing() {};
-SmartThing::~SmartThing() {};
+SmartThingClass SmartThing;
 
-bool wifiConnected() {
+SmartThingClass::SmartThingClass() {};
+SmartThingClass::~SmartThingClass() {};
+
+bool SmartThingClass::wifiConnected() {
     return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
 }
 
-bool SmartThing::init(String name) {
-    _name = name;
+String buildBroadCastMessage(String ip, String name) {
+    return ip + ":" + name;
+}
 
-    BetterLogger::init();
-    BetterLogger::log(SMART_THING_TAG, "Smart thing initialization started");
+bool SmartThingClass::init(String type) {
+    LOGGER.init();
+    LOGGER.debug(SMART_THING_TAG, "Smart thing initialization started");
+
+    STSettings.loadSettings();
+    LOGGER.debug(SMART_THING_TAG, "Settings manager loaded");
+
+    _type = type;
+    _name = STSettings.getDeviceName();
+    if (_name.isEmpty()) {
+        _name = ESP.getChipModel();
+        STSettings.setDeviceName(_name.c_str());
+    }
+    LOGGER.debug(SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
 
     pinMode(BUTTON_PIN, INPUT_PULLUP);
     _led.init(LED_PIN);
     
-    _settingsManager.loadSettings();
-    BetterLogger::log(SMART_THING_TAG, "Settings manager loaded");
     if (!digitalRead(BUTTON_PIN)) {
         wipeSettings();
     }
 
-    String ssid = _settingsManager.getSettingString(GROUP_WIFI, SSID_SETTING);
-    String password = _settingsManager.getSettingString(GROUP_WIFI, PASSWORD_SETTING);
-    _ip = connectToWifi(ssid, password);
+    _ip = connectToWifi();
 
     if (wifiConnected()) {
-        BetterLogger::connect(_ip.c_str());
-        BetterLogger::log(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
+        LOGGER.connect(_ip.c_str(), _name.c_str());
+        LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
 
         ArduinoOTA.begin();
-        BetterLogger::log(SMART_THING_TAG, "Ota started");
+        LOGGER.debug(SMART_THING_TAG, "Ota started");
 
         _multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
-        _broadcastMessage = _ip + ":" + _name;
-        BetterLogger::log(SMART_THING_TAG, "Multicaster created");
+        _broadcastMessage = buildBroadCastMessage(_ip, _name.c_str());
+        LOGGER.debug(SMART_THING_TAG, "Multicaster created");
 
-        _rest.begin(&_settingsManager);
-        _rest.addGetInfoHandler([&](){
-            HandlerResult result;
-            result.code = 200;
-            result.contentType = JSON_CONTENT_TYPE;
-            result.body = buildInfoJson();
-            return result;
+        _rest.addWifiupdatedHandler([&](){
+            LOGGER.warning(SMART_THING_TAG, "WiFi updated, reloading wifi!");
+            WiFi.disconnect();
+            WiFi.mode(WIFI_MODE_NULL);
+            delay(500);
+            _ip = connectToWifi();\
+            // todo reload rest
+            LOGGER.info(SMART_THING_TAG, "WiFi reloaded");
         });
-
-        if (WiFi.getMode() == WIFI_MODE_AP) {
-            _rest.addSetupEndpoint();    
-        }
-        BetterLogger::log(SMART_THING_TAG, "RestController started");
+        _rest.begin();
+        LOGGER.debug(SMART_THING_TAG, "RestController started");
     } else {
-        BetterLogger::log(SMART_THING_TAG, "WiFi not available, skipping all network setup");
+        LOGGER.warning(SMART_THING_TAG, "WiFi not available, skipping all network setup");
     }
 
-    BetterLogger::log(SMART_THING_TAG, "Setup finished");
+    LOGGER.debug(SMART_THING_TAG, "Setup finished");
     return true;
 }
 
-void SmartThing::loopRoutine() {
+void SmartThingClass::loopRoutine() {
     if (wifiConnected()) {
         ArduinoOTA.handle();
         _rest.handle();
@@ -66,62 +75,88 @@ void SmartThing::loopRoutine() {
     }
 }
 
-String SmartThing::connectToWifi(String ssid, String password) {
-    if (ssid.isEmpty()) {
-        BetterLogger::log(SMART_THING_TAG, "Ssid is blank -> creating AP");
+String SmartThingClass::connectToWifi() {
+    if (wifiConnected()) {
+        LOGGER.info(SMART_THING_TAG, "WiFi already connected");
+        return WiFi.localIP().toString();
+    }
+    JsonObject wifiConfig = STSettings.getWiFi();
+    const char * ssid = wifiConfig[SSID_SETTING];
+    const char * password = wifiConfig[PASSWORD_SETTING];
+    int mode = wifiConfig[WIFI_MODE_SETTING];
+
+    if (mode == WIFI_MODE_NULL || ssid == nullptr || strlen(ssid) == 0) {
+        LOGGER.warning(SMART_THING_TAG, "Ssid is blank or mode null -> creating setup AP with name %s", ESP.getChipModel());
         WiFi.softAP(ESP.getChipModel());
         delay(500);
+        LOGGER.info(SMART_THING_TAG, "WiFi started in soft AP mode");
         return WiFi.softAPIP().toString();
     } else {
-        BetterLogger::log(SMART_THING_TAG, "WiFi connecting to %s :: %s", ssid.c_str(), password.c_str());
-        WiFi.mode(WIFI_STA);
-        WiFi.begin(ssid.c_str(), password.c_str());
-        long startTime = millis();
-        _led.blink();
-        while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {}
-        _led.off();
-        if (WiFi.isConnected()) {
-            return WiFi.localIP().toString();
+        if (mode == WIFI_MODE_AP) {
+            if (password != nullptr && strlen(password) >= 0) {
+                LOGGER.info(SMART_THING_TAG, "Creating AP point %s :: %s", ssid, password);
+                WiFi.softAP(ssid, password);
+            } else {
+                LOGGER.info(SMART_THING_TAG, "Creating AP point %s", ssid);
+                WiFi.softAP(ssid);
+            }
+            delay(500);
+            LOGGER.info(SMART_THING_TAG, "WiFi started in AP mode");
+            return WiFi.softAPIP().toString();
+        } else if (mode == WIFI_MODE_STA) {
+            LOGGER.debug(SMART_THING_TAG, "WiFi connecting to %s :: %s", ssid, password);
+            WiFi.begin(ssid, password);
+            long startTime = millis();
+            _led.blink();
+            while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {}
+            _led.off();
+            if (WiFi.isConnected()) {
+                LOGGER.info(SMART_THING_TAG, "WiFi started in STA mode");
+                return WiFi.localIP().toString();
+            } else {
+                WiFi.disconnect();
+                return "";
+            }
         } else {
-            WiFi.disconnect();
+            LOGGER.error(SMART_THING_TAG, "Mode %d not supported!", mode);
             return "";
         }
     }
 }
 
-void SmartThing::wipeSettings() {
+void SmartThingClass::wipeSettings() {
     long started = millis();
-    BetterLogger::log(SMART_THING_TAG, "ALL SETTINGS WILL BE WIPED IN %d ms!!!", WIPE_BUTTON_TIME);
+    LOGGER.warning(SMART_THING_TAG, "ALL SETTINGS WILL BE WIPED IN %d ms!!!", WIPE_BUTTON_TIME);
 
     _led.on();
     while (!digitalRead(BUTTON_PIN) && millis() - started < WIPE_BUTTON_TIME) {}
     if (!digitalRead(BUTTON_PIN)) {
-        _settingsManager.dropAll();
-        _settingsManager.saveSettings();
-        BetterLogger::log(SMART_THING_TAG, "Settings were wiped!");
+        STSettings.dropAll();
+        LOGGER.warning(SMART_THING_TAG, "Settings were wiped!");
     }
     _led.off();
 }
 
-
-String SmartThing::buildInfoJson() {
-    DynamicJsonDocument jsonDoc(64);
-    jsonDoc["version"] = SMART_THING_VERSION;
-    jsonDoc["name"] = _name;
-
-    String result;
-    serializeJson(jsonDoc, result);
-    return result;
+const String SmartThingClass::getType() {
+    return SmartThingClass::_type;
 }
 
-RestController* SmartThing::getRestController() {
+const String SmartThingClass::getName() {
+    return SmartThingClass::_name;
+}
+
+void SmartThingClass::setName(String name) {
+    _name = name;
+    // todo move from there
+    STSettings.setDeviceName(name.c_str());
+    STSettings.saveSettings();
+    _broadcastMessage = buildBroadCastMessage(_ip, _name);
+}
+
+RestController* SmartThingClass::getRestController() {
     return &_rest;
 }
 
-SettingsManager* SmartThing::getSettingsManager() {
-    return &_settingsManager;
-}
-
-LedIndicator* SmartThing::getLed() {
+LedIndicator* SmartThingClass::getLed() {
     return &_led;
 }

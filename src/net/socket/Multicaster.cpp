@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <net/Multicaster.h>
+#include <net/socket/Multicaster.h>
 
 #include <lwip/sockets.h>
 

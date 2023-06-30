@@ -2,10 +2,10 @@
 #define WIFI_RQ_H
 
 #include <WebServer.h>
-#include "utils/SettingsManager.h"
-#include "net/logs/BetterLogger.h"
-#include "net/rest/handlers/HandlerUtils.h"
-#include "net/rest/RestController.h"
+#include "smartthing/settings/SettingsManager.h"
+#include "smartthing/logs/BetterLogger.h"
+#include "smartthing/net/rest/handlers/HandlerUtils.h"
+#include "smartthing/net/rest/RestController.h"
 
 #define WIFI_LOG_TAG "wifi_handler"
 #define WIFI_RQ_PATH "/wifi"

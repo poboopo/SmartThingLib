@@ -4,11 +4,11 @@
 #include <Arduino.h>
 #include <ArduinoOTA.h>
 
-#include "utils/SettingsManager.h"
-#include "net/logs/BetterLogger.h"
-#include "net/socket/Multicaster.h"
-#include "net/rest/RestController.h"
-#include "utils/LedIndicator.h"
+#include "smartthing/settings/SettingsManager.h"
+#include "smartthing/logs/BetterLogger.h"
+#include "smartthing/net/socket/Multicaster.h"
+#include "smartthing/net/rest/RestController.h"
+#include "smartthing/utils/LedIndicator.h"
 
 #define SMART_THING_VERSION 0.1
 #define SMART_THING_TAG "SMART_THING"

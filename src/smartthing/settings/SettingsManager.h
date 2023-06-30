@@ -2,7 +2,7 @@
 #define SettingsManager_H
 
 #include <ArduinoJson.h>
-#include "net/logs/BetterLogger.h"
+#include "smartthing/logs/BetterLogger.h"
 
 #define SSID_SETTING "ss"
 #define PASSWORD_SETTING "ps"

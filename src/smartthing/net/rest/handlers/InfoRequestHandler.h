@@ -2,11 +2,11 @@
 #define INFO_RQ_H
 
 #include <WebServer.h>
-#include "net/rest/RestController.h"
-#include "net/logs/BetterLogger.h"
-#include "utils/SettingsManager.h"
-#include "net/rest/handlers/HandlerUtils.h"
-#include "SmartThing.h"
+#include "smartthing/net/rest/RestController.h"
+#include "smartthing/logs/BetterLogger.h"
+#include "smartthing/settings/SettingsManager.h"
+#include "smartthing/net/rest/handlers/HandlerUtils.h"
+#include "smartthing/SmartThing.h"
 
 #define INFO_RQ_PATH "/info"
 #define INFO_RQ_TAG "wifi_handler"

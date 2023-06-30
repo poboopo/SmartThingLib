@@ -2,8 +2,8 @@
 #define REST_CONTROLLER_H
 
 #include <WebServer.h>
-#include <net/logs/BetterLogger.h>
-#include <utils/SettingsManager.h>
+#include "smartthing/logs/BetterLogger.h"
+#include "smartthing/settings/SettingsManager.h"
 
 #define SERVER_PORT 80
 #define JSON_CONTENT_TYPE "application/json"

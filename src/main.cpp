@@ -3,8 +3,8 @@
 #include <ArduinoOTA.h>
 
 #include "LouverController.h"
-#include "net/WebUtils.h"
-#include "SmartThing.h"
+#include "WebUtils.h"
+#include "smartthing/SmartThing.h"
 
 // Pins
 #define MOTOR_FIRST_PIN 26

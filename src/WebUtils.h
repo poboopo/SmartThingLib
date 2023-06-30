@@ -2,8 +2,7 @@
 #define WEB_UTILS_H
 
 #include <ArduinoJson.h>
-#include <utils/SettingsManager.h>
-#include <net/rest/RestController.h>
+#include "smartthing/SmartThing.h"
 #include <LouverController.h>
 
 //TODO MOVE THIS FILE TO /utils

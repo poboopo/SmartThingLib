@@ -1,4 +1,4 @@
-#include "SmartThing.h"
+#include "smartthing/SmartThing.h"
 
 SmartThingClass SmartThing;
 
@@ -146,6 +146,9 @@ const String SmartThingClass::getName() {
 }
 
 void SmartThingClass::setName(String name) {
+    if (name == _name) {
+        return;
+    }
     _name = name;
     // todo move from there
     STSettings.setDeviceName(name.c_str());

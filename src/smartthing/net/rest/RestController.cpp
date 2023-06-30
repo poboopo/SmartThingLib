@@ -1,8 +1,8 @@
-#include <net/rest/RestController.h>
-#include <net/rest/Pages.h>
-#include <net/rest/handlers/ConfigRequestHandler.h>
-#include <net/rest/handlers/WiFiRequestHandler.h>
-#include <net/rest/handlers/InfoRequestHandler.h>
+#include "smartthing/net/rest/RestController.h"
+#include "smartthing/net/rest/Pages.h"
+#include "smartthing/net/rest/handlers/ConfigRequestHandler.h"
+#include "smartthing/net/rest/handlers/WiFiRequestHandler.h"
+#include "smartthing/net/rest/handlers/InfoRequestHandler.h"
 
 #define WEB_SERVER_TAG "web_server"
 

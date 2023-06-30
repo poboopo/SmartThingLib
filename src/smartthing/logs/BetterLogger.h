@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <freertos/semphr.h>
 
-#include "net/socket/Multicaster.h"
+#include "smartthing/net/socket/Multicaster.h"
 
 #define ENABLE_STATISTICS
 

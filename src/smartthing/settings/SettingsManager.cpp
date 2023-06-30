@@ -1,4 +1,4 @@
-#include <utils/SettingsManager.h>
+#include "smartthing/settings/SettingsManager.h"
 #include <EEPROM.h>
 
 #define GROUP_CONFIG "cg"

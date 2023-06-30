@@ -9,9 +9,11 @@
 #include "smartthing/net/socket/Multicaster.h"
 #include "smartthing/net/rest/RestController.h"
 #include "smartthing/utils/LedIndicator.h"
+
 #include "smartthing/sensors/Sensor.h"
 #include "smartthing/sensors/DigitalSensor.h"
 #include "smartthing/sensors/AnalogSensor.h"
+#include "smartthing/state/DeviceState.h"
 
 #define SMART_THING_VERSION 0.1
 #define SMART_THING_TAG "SMART_THING"
@@ -40,11 +42,14 @@ class SmartThingClass {
         const String getName();
         bool wifiConnected();
 
-        void addSensor(const char * name, Sensor::ValueGeneratorFunction function);
+        void addSensor(const char * name, Sensor::ValueGeneratorFunction valueGenerator);
         void addDigitalSensor(const char * name, int pin);
         void addAnalogSensor(const char * name, int pin);
+        
+        void addDeviceState(const char * name, DeviceState::ValueGeneratorFunction valueGenerator);
 
         JsonArray getSensorsValues();
+        JsonArray getDeviceStates();
 
         RestController* getRestController();
         LedIndicator* getLed(); // are u sure u need this?
@@ -62,9 +67,13 @@ class SmartThingClass {
         void wipeSettings();
         String connectToWifi();
 
-        Sensor * sensorsHead = nullptr;
+        Sensor * _sensorsHead = nullptr;
         int _sensorsCount = 0;
         void appendSensor(Sensor * sensor);
+
+        DeviceState * _statesHead = nullptr;
+        int _statesCount = 0;
+        void appendDeviceState(DeviceState * state);
 };
 
 extern SmartThingClass SmartThing;

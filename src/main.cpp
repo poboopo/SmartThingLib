@@ -36,6 +36,13 @@ void setup() {
         LOGGER.info("main", "Failed to init smart thing");
     }
 
+    SmartThing.addDeviceState("automode", [&](){
+        if (controller.isAutoModeEnabled()) {
+            return "true";
+        }
+        return "false";
+    });
+
     SmartThing.addAnalogSensor("light", LIGHT_SENSOR_PIN);
     SmartThing.addAnalogSensor("position", POT_PIN);
     SmartThing.addSensor("light_controller", [&]() {return controller.getLightValue();});
@@ -66,10 +73,6 @@ void loop() {
 void setupRestHandlers() {
     RestController* rest = SmartThing.getRestController();
 
-    rest->addGetStateHandler([]() {
-        RestHandlerResult result = getLouverStateJson(&controller);
-        return result;
-    });
     rest->addActionHandler([rest]() {
         return handleAction(rest->getRequestArg("action"));
     });

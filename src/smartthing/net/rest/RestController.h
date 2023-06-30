@@ -26,9 +26,6 @@ class RestController{
         void addActionHandler(RestController::HandlerWithResultFunction hf) {
             _actionHandler = hf;
         };
-        void addGetStateHandler(RestController::HandlerWithResultFunction hf) {
-            _getStateHandler = hf;
-        };
         void addGetDictsHandler(RestController::HandlerWithResultFunction hf) {
             _getDictsHandler = hf;
         };
@@ -57,7 +54,6 @@ class RestController{
             return result;
         };
 
-        HandlerWithResultFunction _getStateHandler = _defaultHandler;
         HandlerWithResultFunction _actionHandler = _defaultHandler;
         HandlerWithResultFunction _getDictsHandler = _defaultHandler;
 

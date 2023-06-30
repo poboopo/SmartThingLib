@@ -1,23 +1,23 @@
-#ifndef SENSORS_RQ_H
-#define SENSORS_RQ_H
+#ifndef STATE_RQ_H
+#define STATE_RQ_H
 
 #include <WebServer.h>
 #include "smartthing/logs/BetterLogger.h"
 #include "smartthing/SmartThing.h"
 
-#define SENSORS_RQ_PATH "/sensors"
-#define SENSORS_RQ_TAG "sensors_handler"
+#define STATE_RQ_PATH "/state"
+#define STATE_RQ_TAG "state_handler"
 
-class SensorsRequestHandler: public RequestHandler {
+class StateRequestHandler: public RequestHandler {
     public:
-        SensorsRequestHandler() {};
+        StateRequestHandler() {};
         bool canHandle(HTTPMethod method, String uri) {
-            return uri.startsWith(SENSORS_RQ_PATH) && 
+            return uri.startsWith(STATE_RQ_PATH) && 
                 (method == HTTP_GET || HTTP_PUT || HTTP_OPTIONS);
         };
 
         bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {
-            LOGGER.logRequest(SENSORS_RQ_TAG, http_method_str(requestMethod), requestUri.c_str(), "");
+            LOGGER.logRequest(STATE_RQ_TAG, http_method_str(requestMethod), requestUri.c_str(), "");
             server.sendHeader("Access-Control-Allow-Origin", "*");
 
             if (requestMethod == HTTP_OPTIONS) {
@@ -27,9 +27,9 @@ class SensorsRequestHandler: public RequestHandler {
                 return true; 
             }
             if (requestMethod == HTTP_GET) {
-                JsonArray sensors = SmartThing.getSensorsValues();
+                JsonArray state = SmartThing.getDeviceStates();
                 String response;
-                serializeJson(sensors, response);
+                serializeJson(state, response);
                 server.send(200, JSON_CONTENT_TYPE, response);
                 return true;
             }

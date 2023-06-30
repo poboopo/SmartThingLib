@@ -272,10 +272,10 @@ const String WEB_PAGE_MAIN = R"=====(
             }
             const stateBlock = document.getElementById(blockId);
             stateBlock.innerHTML = "";
-            Object.entries(elements).forEach(([key, value]) => {
+            elements.forEach(({name, value}) => {
                 const p = document.createElement("p");
-                p.id = key;
-                p.innerHTML = key + ": " + value;
+                p.id = name;
+                p.innerHTML = name + ": " + value;
                 stateBlock.appendChild(p);
             });
         }
@@ -370,7 +370,13 @@ const String WEB_PAGE_MAIN = R"=====(
             xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4 ){
                         if (xhr.status >= 200 && xhr.status <= 299) {
-                            if (callback) callback(xhr.response);
+                            if (callback) {
+                                try {
+                                    callback(xhr.response);
+                                } catch (exception) {
+                                    console.error("Callback failed for " + path, exception);
+                                }
+                            }
                             if (blockId) displayBlockInfo(blockId, false);
                         } else {
                             console.error("Request " + path + " failed with code " + xhr.status);

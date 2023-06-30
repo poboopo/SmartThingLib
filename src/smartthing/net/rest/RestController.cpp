@@ -4,6 +4,7 @@
 #include "smartthing/net/rest/handlers/WiFiRequestHandler.h"
 #include "smartthing/net/rest/handlers/InfoRequestHandler.h"
 #include "smartthing/net/rest/handlers/SensorsRequestHandler.h"
+#include "smartthing/net/rest/handlers/StateRequestHandler.h"
 
 #define WEB_SERVER_TAG "web_server"
 
@@ -51,6 +52,7 @@ void RestController::setupHandler() {
     _server.addHandler(new WiFiRequesthandler(&_wifiUpdatedHandler));
     _server.addHandler(new InfoRequestHandler());
     _server.addHandler(new SensorsRequestHandler());
+    _server.addHandler(new StateRequestHandler());
 
     _server.on("/health", HTTP_GET, [this]() {
         preHandleRequest();
@@ -65,10 +67,6 @@ void RestController::setupHandler() {
     _server.on("/dictionary", HTTP_GET, [this](){
         preHandleRequest();
         processRestHandlerResult(_getDictsHandler());
-    });
-    _server.on("/state", HTTP_GET, [this](){
-        preHandleRequest();
-        processRestHandlerResult(_getStateHandler());
     });
     _server.on("/action", HTTP_PUT, [this](){
         LOGGER.info(WEB_SERVER_TAG, "[PUT] [/action] %s", getRequestArg("action").c_str());

@@ -15,6 +15,7 @@
         - add callback scenarios
 
     - v0.3
+        - refactor handlers - make base handler with all routine(log, headers)
         - add restart handler
         - add settings compression
         - remove white spaces in mobile version of web page

@@ -16,7 +16,7 @@ class Sensor {
         int getValue() {
             return _valueGenerator();
         };
-        const char * getName() {return _name;};
+        const char * getName() const {return _name;};
 
         Sensor * next;
         Sensor * previous;

@@ -148,19 +148,45 @@ void SmartThingClass::setName(String name) {
     _broadcastMessage = buildBroadCastMessage(_ip, _name);
 }
 
+JsonArray SmartThingClass::getDeviceStates() {
+    DynamicJsonDocument doc(_statesCount * 64);
+    JsonArray array = doc.createNestedArray();
+
+    DeviceState * current = _statesHead;
+    while (current != nullptr) {
+        JsonObject sensorObj = array.createNestedObject();
+        sensorObj["name"] = current->getName();
+        sensorObj["value"] = current->getValue();
+        current = current->next;
+    }
+    return array;
+}
+
 JsonArray SmartThingClass::getSensorsValues() {
     DynamicJsonDocument doc(_sensorsCount * 64);
     JsonArray array = doc.createNestedArray();
 
-    Sensor * currentSensor = sensorsHead;
+    Sensor * currentSensor = _sensorsHead;
     while (currentSensor != nullptr) {
         JsonObject sensorObj = array.createNestedObject();
         sensorObj["name"] = currentSensor->getName();
         sensorObj["value"] = currentSensor->getValue();
         currentSensor = currentSensor->next;
     }
-
     return array;
+}
+
+void SmartThingClass::addDeviceState(const char * name, DeviceState::ValueGeneratorFunction function) {
+    appendDeviceState(new DeviceState(name, function));
+}
+
+void SmartThingClass::appendDeviceState(DeviceState * state) {
+    state->next = _statesHead;
+    if (_statesHead != nullptr) {
+        _statesHead->previous = state;
+    }
+    _statesHead = state;
+    _statesCount++;
 }
 
 void SmartThingClass::addSensor(const char * name, Sensor::ValueGeneratorFunction function) {
@@ -175,11 +201,11 @@ void SmartThingClass::addAnalogSensor(const char * name, int pin) {
 }
 
 void SmartThingClass::appendSensor(Sensor * sensor) {
-    sensor->next = sensorsHead;
-    if (sensorsHead != nullptr) {
-        sensorsHead->previous = sensor;
+    sensor->next = _sensorsHead;
+    if (_sensorsHead != nullptr) {
+        _sensorsHead->previous = sensor;
     }
-    sensorsHead = sensor;
+    _sensorsHead = sensor;
     _sensorsCount++;
 }
 

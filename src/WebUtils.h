@@ -22,19 +22,6 @@ enum LOUVER_ACTIONS {
     BRIGHT
 };
 
-RestHandlerResult getLouverStateJson(LouverController * controller) {
-    DynamicJsonDocument jsonDoc(64);
-    jsonDoc["automode"] = controller->isAutoModeEnabled();
-    jsonDoc["position"] = controller->getMotorPosition();
-    jsonDoc["light"] = controller->getLightValue();
-
-    RestHandlerResult result;
-    result.code = 200;
-    result.contentType = JSON_CONTENT_TYPE;
-    serializeJson(jsonDoc, result.body);
-    return result;
-}
-
 RestHandlerResult getDictionaries() {
     DynamicJsonDocument jsonDoc(1024);
 

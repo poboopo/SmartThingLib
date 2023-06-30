@@ -36,7 +36,7 @@ void setup() {
         LOGGER.info("main", "Failed to init smart thing");
     }
 
-    SmartThing.addDeviceState("automode", [&](){
+    SmartThing.addDeviceState("automode", [](){
         if (controller.isAutoModeEnabled()) {
             return "true";
         }

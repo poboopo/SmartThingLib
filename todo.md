@@ -8,7 +8,7 @@
 
     - v0.2
         - fix directories +
-        - add sensors setters
+        - add sensors, state, config setters
         - save state
         - replace string with const char *
         - fix logger message lenght

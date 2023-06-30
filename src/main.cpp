@@ -18,6 +18,7 @@ LouverController controller;
 
 void setupRestHandlers();
 void processConfig();
+RestHandlerResult handleAction(String actionArg);
 
 void setup() {
     bool started = SmartThing.init("louver");
@@ -34,6 +35,11 @@ void setup() {
     } else {
         LOGGER.info("main", "Failed to init smart thing");
     }
+
+    SmartThing.addAnalogSensor("light", LIGHT_SENSOR_PIN);
+    SmartThing.addAnalogSensor("position", POT_PIN);
+    SmartThing.addSensor("light_controller", [&]() {return controller.getLightValue();});
+    SmartThing.addSensor("position_controller", [&]() {return controller.getMotorPosition();});
 
     JsonObject state = STSettings.getState();
     if (state.containsKey(AUTOMODE_SETTING) && state[AUTOMODE_SETTING].as<int>()) {
@@ -65,11 +71,7 @@ void setupRestHandlers() {
         return result;
     });
     rest->addActionHandler([rest]() {
-        return handleAction(rest->getRequestArg("action") ,&controller);
-    });
-    rest->addGetSensorsHandler([](){
-        RestHandlerResult result = getSensorsJson(&controller);
-        return result;
+        return handleAction(rest->getRequestArg("action"));
     });
     rest->addConfigUpdatedHandler([]() {
         processConfig();
@@ -100,4 +102,48 @@ void processConfig() {
     }
 
     controller.restartAutoMode();
+}
+
+
+RestHandlerResult handleAction(String actionArg) {
+    RestHandlerResult result;
+
+    bool actionResult = false;
+
+    if (!actionArg.isEmpty()) {
+        int action = actionArg.toInt();
+        switch(action) {
+            case ENABLE_AUTO_MODE:
+                actionResult = controller.enableAutoMode();
+                break;
+            case DISABLE_AUTO_MODE:
+                actionResult = controller.disableAutoMode();
+                break;
+            case OPEN:
+                actionResult = controller.open();
+                break;
+            case CLOSE:
+                actionResult = controller.close();
+                break;
+            case MIDDLE:
+                actionResult = controller.middle();
+                break;
+            case BRIGHT:
+                actionResult = controller.bright();
+                break;
+            default:
+                result.body = String("Wrong action ") + action;
+        }
+        if (!actionResult) {
+            if (result.body.length() == 0) {
+                result.body = "Failed to perform action";
+            }
+            result.code = 500;
+        }
+    } else {
+        result.code = 400;
+        result.body = "Action is missing!";
+    }
+    result.contentType = "text/html";
+    return result;
 }

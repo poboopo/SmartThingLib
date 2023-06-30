@@ -29,9 +29,6 @@ class RestController{
         void addGetStateHandler(RestController::HandlerWithResultFunction hf) {
             _getStateHandler = hf;
         };
-        void addGetSensorsHandler(RestController::HandlerWithResultFunction hf) {
-            _getSensorsHandler = hf;
-        };
         void addGetDictsHandler(RestController::HandlerWithResultFunction hf) {
             _getDictsHandler = hf;
         };
@@ -62,7 +59,6 @@ class RestController{
 
         HandlerWithResultFunction _getStateHandler = _defaultHandler;
         HandlerWithResultFunction _actionHandler = _defaultHandler;
-        HandlerWithResultFunction _getSensorsHandler = _defaultHandler;
         HandlerWithResultFunction _getDictsHandler = _defaultHandler;
 
         HandlerFunction _configUpdatedHandler = [](){};

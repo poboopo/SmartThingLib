@@ -3,6 +3,7 @@
 #include "smartthing/net/rest/handlers/ConfigRequestHandler.h"
 #include "smartthing/net/rest/handlers/WiFiRequestHandler.h"
 #include "smartthing/net/rest/handlers/InfoRequestHandler.h"
+#include "smartthing/net/rest/handlers/SensorsRequestHandler.h"
 
 #define WEB_SERVER_TAG "web_server"
 
@@ -49,6 +50,7 @@ void RestController::setupHandler() {
     _server.addHandler(new ConfigRequestHandler(&_configUpdatedHandler));
     _server.addHandler(new WiFiRequesthandler(&_wifiUpdatedHandler));
     _server.addHandler(new InfoRequestHandler());
+    _server.addHandler(new SensorsRequestHandler());
 
     _server.on("/health", HTTP_GET, [this]() {
         preHandleRequest();
@@ -72,10 +74,6 @@ void RestController::setupHandler() {
         LOGGER.info(WEB_SERVER_TAG, "[PUT] [/action] %s", getRequestArg("action").c_str());
         _server.sendHeader("Access-Control-Allow-Origin", "*");
         processRestHandlerResult(_actionHandler());
-    });
-    _server.on("/sensors", HTTP_GET, [this]() {
-        preHandleRequest();
-        processRestHandlerResult(_getSensorsHandler());
     });
 
     _server.on("/restart", HTTP_PUT, [&](){

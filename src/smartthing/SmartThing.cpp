@@ -137,14 +137,6 @@ void SmartThingClass::wipeSettings() {
     _led.off();
 }
 
-const String SmartThingClass::getType() {
-    return SmartThingClass::_type;
-}
-
-const String SmartThingClass::getName() {
-    return SmartThingClass::_name;
-}
-
 void SmartThingClass::setName(String name) {
     if (name == _name) {
         return;
@@ -154,6 +146,49 @@ void SmartThingClass::setName(String name) {
     STSettings.setDeviceName(name.c_str());
     STSettings.saveSettings();
     _broadcastMessage = buildBroadCastMessage(_ip, _name);
+}
+
+JsonArray SmartThingClass::getSensorsValues() {
+    DynamicJsonDocument doc(_sensorsCount * 64);
+    JsonArray array = doc.createNestedArray();
+
+    Sensor * currentSensor = sensorsHead;
+    while (currentSensor != nullptr) {
+        JsonObject sensorObj = array.createNestedObject();
+        sensorObj["name"] = currentSensor->getName();
+        sensorObj["value"] = currentSensor->getValue();
+        currentSensor = currentSensor->next;
+    }
+
+    return array;
+}
+
+void SmartThingClass::addSensor(const char * name, Sensor::ValueGeneratorFunction function) {
+    appendSensor(new Sensor(name, function));
+}
+void SmartThingClass::addDigitalSensor(const char * name, int pin) {
+    pinMode(pin, INPUT);
+    appendSensor(new DigitalSensor(name, pin));
+}
+void SmartThingClass::addAnalogSensor(const char * name, int pin) {
+    appendSensor(new AnalogSensor(name, pin));
+}
+
+void SmartThingClass::appendSensor(Sensor * sensor) {
+    sensor->next = sensorsHead;
+    if (sensorsHead != nullptr) {
+        sensorsHead->previous = sensor;
+    }
+    sensorsHead = sensor;
+    _sensorsCount++;
+}
+
+const String SmartThingClass::getType() {
+    return SmartThingClass::_type;
+}
+
+const String SmartThingClass::getName() {
+    return SmartThingClass::_name;
 }
 
 RestController* SmartThingClass::getRestController() {

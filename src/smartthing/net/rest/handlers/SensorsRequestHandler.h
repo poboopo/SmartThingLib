@@ -21,13 +21,13 @@ class SensorsRequestHandler: public RequestHandler {
             server.sendHeader("Access-Control-Allow-Origin", "*");
 
             if (requestMethod == HTTP_OPTIONS) {
-                server.sendHeader("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
+                server.sendHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
                 server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
                 server.send(200);
                 return true; 
             }
             if (requestMethod == HTTP_GET) {
-                JsonArray sensors = SmartThing.getSensorsValues();
+                DynamicJsonDocument sensors = SmartThing.getSensorsValues();
                 String response;
                 serializeJson(sensors, response);
                 server.send(200, JSON_CONTENT_TYPE, response);

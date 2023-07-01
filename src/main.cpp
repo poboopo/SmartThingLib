@@ -3,7 +3,6 @@
 #include <ArduinoOTA.h>
 
 #include "LouverController.h"
-#include "WebUtils.h"
 #include "smartthing/SmartThing.h"
 
 // Pins
@@ -14,11 +13,29 @@
 
 #define AUTOMODE_SETTING "am"
 
+#define DISABLE_AUTO_MODE "disable_auto"
+#define ENABLE_AUTO_MODE "enable_auto"
+#define OPEN "open"
+#define CLOSE "close"
+#define MIDDLE "middle"
+#define BRIGHT "bright"
+
+#define CLOSE_SETTING "light_close"
+#define OPEN_SETTING "light_open"
+#define BRIGHT_SETTING "light_bright"
+#define DELAY_SETTING "delay"
+#define ACCURACY_SETTING "accuracy"
+
+using namespace Configurable::Action;
+
 LouverController controller;
 
 void setupRestHandlers();
 void processConfig();
-RestHandlerResult handleAction(String actionArg);
+void addDeviceStates();
+void addActionsHandlers();
+void registerSensors();
+void addConfigEntries();
 
 void setup() {
     bool started = SmartThing.init("louver");
@@ -30,27 +47,20 @@ void setup() {
         controller.addLedIndicator(SmartThing.getLed());
         LOGGER.info("main", "Controller created");
 
+        addDeviceStates();
+        registerSensors();
+        addActionsHandlers();
+        addConfigEntries();
+
         processConfig();
         LOGGER.info("main", "Config proceed");
+
+        JsonObject state = STSettings.getState();
+        if (state.containsKey(AUTOMODE_SETTING) && state[AUTOMODE_SETTING].as<int>()) {
+            controller.enableAutoMode();
+        }
     } else {
         LOGGER.info("main", "Failed to init smart thing");
-    }
-
-    SmartThing.addDeviceState("automode", [](){
-        if (controller.isAutoModeEnabled()) {
-            return "true";
-        }
-        return "false";
-    });
-
-    SmartThing.addAnalogSensor("light", LIGHT_SENSOR_PIN);
-    SmartThing.addAnalogSensor("position", POT_PIN);
-    SmartThing.addSensor("light_controller", [&]() {return controller.getLightValue();});
-    SmartThing.addSensor("position_controller", [&]() {return controller.getMotorPosition();});
-
-    JsonObject state = STSettings.getState();
-    if (state.containsKey(AUTOMODE_SETTING) && state[AUTOMODE_SETTING].as<int>()) {
-        controller.enableAutoMode();
     }
     LOGGER.info("main", "Setup finished");
 }
@@ -73,15 +83,8 @@ void loop() {
 void setupRestHandlers() {
     RestController* rest = SmartThing.getRestController();
 
-    rest->addActionHandler([rest]() {
-        return handleAction(rest->getRequestArg("action"));
-    });
     rest->addConfigUpdatedHandler([]() {
         processConfig();
-    });
-    rest->addGetDictsHandler([](){
-        RestHandlerResult result = getDictionaries();
-        return result;
     });
 }
 
@@ -107,46 +110,47 @@ void processConfig() {
     controller.restartAutoMode();
 }
 
+void addConfigEntries() {
+    SmartThing.addConfigEntry(DELAY_SETTING, "Automode update delay", "number");
+    SmartThing.addConfigEntry(ACCURACY_SETTING, "Motor accuracy", "number");
+    SmartThing.addConfigEntry(CLOSE_SETTING, "Light close value", "number");
+    SmartThing.addConfigEntry(OPEN_SETTING, "Light open value", "number");
+    SmartThing.addConfigEntry(BRIGHT_SETTING, "Light bright value", "number");
+}
 
-RestHandlerResult handleAction(String actionArg) {
-    RestHandlerResult result;
-
-    bool actionResult = false;
-
-    if (!actionArg.isEmpty()) {
-        int action = actionArg.toInt();
-        switch(action) {
-            case ENABLE_AUTO_MODE:
-                actionResult = controller.enableAutoMode();
-                break;
-            case DISABLE_AUTO_MODE:
-                actionResult = controller.disableAutoMode();
-                break;
-            case OPEN:
-                actionResult = controller.open();
-                break;
-            case CLOSE:
-                actionResult = controller.close();
-                break;
-            case MIDDLE:
-                actionResult = controller.middle();
-                break;
-            case BRIGHT:
-                actionResult = controller.bright();
-                break;
-            default:
-                result.body = String("Wrong action ") + action;
+void addDeviceStates() {
+    SmartThing.addDeviceState("automode", [](){
+        if (controller.isAutoModeEnabled()) {
+            return "true";
         }
-        if (!actionResult) {
-            if (result.body.length() == 0) {
-                result.body = "Failed to perform action";
-            }
-            result.code = 500;
-        }
-    } else {
-        result.code = 400;
-        result.body = "Action is missing!";
-    }
-    result.contentType = "text/html";
-    return result;
+        return "false";
+    });
+}
+
+void registerSensors() {
+    SmartThing.registerAnalogSensor("light", LIGHT_SENSOR_PIN);
+    SmartThing.registerAnalogSensor("position", POT_PIN);
+    SmartThing.registerSensor("light_controller", []() {return controller.getLightValue();});
+    SmartThing.registerSensor("position_controller", []() {return controller.getMotorPosition();});
+}
+
+void addActionsHandlers() {
+    SmartThing.addActionHandler(ENABLE_AUTO_MODE, "Enable automode", [](){
+        return ActionResult(controller.enableAutoMode());
+    });
+    SmartThing.addActionHandler(DISABLE_AUTO_MODE, "Disable automode", [](){
+        return ActionResult(controller.disableAutoMode());
+    });
+    SmartThing.addActionHandler(OPEN, "Set louver open position", [](){
+        return ActionResult(controller.open());
+    });
+    SmartThing.addActionHandler(CLOSE, "Set louver close position", [](){
+        return ActionResult(controller.close());
+    });
+    SmartThing.addActionHandler(MIDDLE, "Set louver middle position", [](){
+        return ActionResult(controller.middle());
+    });
+    SmartThing.addActionHandler(BRIGHT, "Set louver bright position", [](){
+        return ActionResult(controller.bright());
+    });
 }

@@ -19,16 +19,9 @@ class RestController{
         RestController();
         ~RestController();
 
-        typedef std::function<RestHandlerResult(void)> HandlerWithResultFunction;
         typedef std::function<void(void)> HandlerFunction;
         void begin();
         
-        void addActionHandler(RestController::HandlerWithResultFunction hf) {
-            _actionHandler = hf;
-        };
-        void addGetDictsHandler(RestController::HandlerWithResultFunction hf) {
-            _getDictsHandler = hf;
-        };
         void addConfigUpdatedHandler(RestController::HandlerFunction hf) {
             _configUpdatedHandler = hf;
         }
@@ -48,14 +41,7 @@ class RestController{
         void setupHandler();
         void preHandleRequest();
 
-        void processRestHandlerResult(RestHandlerResult result);
-        HandlerWithResultFunction _defaultHandler = []() {
-            RestHandlerResult result;
-            return result;
-        };
-
-        HandlerWithResultFunction _actionHandler = _defaultHandler;
-        HandlerWithResultFunction _getDictsHandler = _defaultHandler;
+        void processRestHandlerResult(RestHandlerResult result);\
 
         HandlerFunction _configUpdatedHandler = [](){};
         HandlerFunction _wifiUpdatedHandler = [](){};

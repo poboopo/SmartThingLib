@@ -1,5 +1,7 @@
 #include "smartthing/SmartThing.h"
 
+using namespace Configurable;
+
 SmartThingClass SmartThing;
 
 SmartThingClass::SmartThingClass() {};
@@ -148,65 +150,56 @@ void SmartThingClass::setName(String name) {
     _broadcastMessage = buildBroadCastMessage(_ip, _name);
 }
 
-JsonArray SmartThingClass::getDeviceStates() {
-    DynamicJsonDocument doc(_statesCount * 64);
-    JsonArray array = doc.createNestedArray();
+DynamicJsonDocument SmartThingClass::getDictionaries() {
+    int size = _actionsList.size() + _configEntriesList.size();
 
-    DeviceState * current = _statesHead;
-    while (current != nullptr) {
-        JsonObject sensorObj = array.createNestedObject();
-        sensorObj["name"] = current->getName();
-        sensorObj["value"] = current->getValue();
-        current = current->next;
-    }
-    return array;
+    DynamicJsonDocument doc(size * 64);
+    doc["actions"] = _actionsList.getDict();
+    doc["config"] = _configEntriesList.getDict();
+    return doc;
 }
 
-JsonArray SmartThingClass::getSensorsValues() {
-    DynamicJsonDocument doc(_sensorsCount * 64);
-    JsonArray array = doc.createNestedArray();
+DynamicJsonDocument SmartThingClass::getDeviceStates() {
+    return _deviceStatesList.getValues();
+}
 
-    Sensor * currentSensor = _sensorsHead;
-    while (currentSensor != nullptr) {
-        JsonObject sensorObj = array.createNestedObject();
-        sensorObj["name"] = currentSensor->getName();
-        sensorObj["value"] = currentSensor->getValue();
-        currentSensor = currentSensor->next;
-    }
-    return array;
+DynamicJsonDocument SmartThingClass::getSensorsValues() {
+    return _sensorsList.getValues();
+}
+
+DynamicJsonDocument SmartThingClass::getActionsDict() {
+    return _actionsList.getDict();
+}
+
+DynamicJsonDocument SmartThingClass::getConfigEntriesDict() {
+    return _configEntriesList.getDict();
 }
 
 void SmartThingClass::addDeviceState(const char * name, DeviceState::ValueGeneratorFunction function) {
-    appendDeviceState(new DeviceState(name, function));
+    _deviceStatesList.add(name, function);
 }
 
-void SmartThingClass::appendDeviceState(DeviceState * state) {
-    state->next = _statesHead;
-    if (_statesHead != nullptr) {
-        _statesHead->previous = state;
-    }
-    _statesHead = state;
-    _statesCount++;
+void SmartThingClass::registerSensor(const char * name, Sensor::ValueGeneratorFunction function) {
+    _sensorsList.add(name, function);
 }
-
-void SmartThingClass::addSensor(const char * name, Sensor::ValueGeneratorFunction function) {
-    appendSensor(new Sensor(name, function));
-}
-void SmartThingClass::addDigitalSensor(const char * name, int pin) {
+void SmartThingClass::registerDigitalSensor(const char * name, int pin) {
     pinMode(pin, INPUT);
-    appendSensor(new DigitalSensor(name, pin));
+    _sensorsList.addDigital(name, pin);
 }
-void SmartThingClass::addAnalogSensor(const char * name, int pin) {
-    appendSensor(new AnalogSensor(name, pin));
+void SmartThingClass::registerAnalogSensor(const char * name, int pin) {
+    _sensorsList.addAnalog(name, pin);
 }
 
-void SmartThingClass::appendSensor(Sensor * sensor) {
-    sensor->next = _sensorsHead;
-    if (_sensorsHead != nullptr) {
-        _sensorsHead->previous = sensor;
-    }
-    _sensorsHead = sensor;
-    _sensorsCount++;
+bool SmartThingClass::addActionHandler(const char * action, const char * caption, Action::ActionHandler handler) {
+    return _actionsList.add(action, caption, handler);
+}
+
+Action::ActionResult SmartThingClass::callAction(const char * action) {
+    return _actionsList.callAction(action);
+}
+
+bool SmartThingClass::addConfigEntry(const char * name, const char * caption, const char * type) {
+    return _configEntriesList.add(name, caption, type);
 }
 
 const String SmartThingClass::getType() {

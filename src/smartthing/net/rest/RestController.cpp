@@ -5,6 +5,8 @@
 #include "smartthing/net/rest/handlers/InfoRequestHandler.h"
 #include "smartthing/net/rest/handlers/SensorsRequestHandler.h"
 #include "smartthing/net/rest/handlers/StateRequestHandler.h"
+#include "smartthing/net/rest/handlers/DictionaryRequestHandler.h"
+#include "smartthing/net/rest/handlers/ActionRequestHandler.h"
 
 #define WEB_SERVER_TAG "web_server"
 
@@ -53,6 +55,8 @@ void RestController::setupHandler() {
     _server.addHandler(new InfoRequestHandler());
     _server.addHandler(new SensorsRequestHandler());
     _server.addHandler(new StateRequestHandler());
+    _server.addHandler(new DictionaryRequestHandler());
+    _server.addHandler(new ActionRequestHandler());
 
     _server.on("/health", HTTP_GET, [this]() {
         preHandleRequest();
@@ -63,17 +67,7 @@ void RestController::setupHandler() {
         preHandleRequest();
         _server.send(200, "text/html", WEB_PAGE_MAIN);
     });
-
-    _server.on("/dictionary", HTTP_GET, [this](){
-        preHandleRequest();
-        processRestHandlerResult(_getDictsHandler());
-    });
-    _server.on("/action", HTTP_PUT, [this](){
-        LOGGER.info(WEB_SERVER_TAG, "[PUT] [/action] %s", getRequestArg("action").c_str());
-        _server.sendHeader("Access-Control-Allow-Origin", "*");
-        processRestHandlerResult(_actionHandler());
-    });
-
+    
     _server.on("/restart", HTTP_PUT, [&](){
         preHandleRequest();
 

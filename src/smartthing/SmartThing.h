@@ -10,10 +10,10 @@
 #include "smartthing/net/rest/RestController.h"
 #include "smartthing/utils/LedIndicator.h"
 
-#include "smartthing/sensors/Sensor.h"
-#include "smartthing/sensors/DigitalSensor.h"
-#include "smartthing/sensors/AnalogSensor.h"
-#include "smartthing/state/DeviceState.h"
+#include "smartthing/configurable/SensorsList.h"
+#include "smartthing/configurable/DeviceStatesList.h"
+#include "smartthing/configurable/ActionsList.h"
+#include "smartthing/configurable/ConfigEntriesList.h"
 
 #define SMART_THING_VERSION 0.1
 #define SMART_THING_TAG "SMART_THING"
@@ -29,7 +29,6 @@
 
 #define DEVICE_NAME_LENGTH_MAX 15
 
-
 class SmartThingClass {
     public:
         ~SmartThingClass();
@@ -37,19 +36,27 @@ class SmartThingClass {
 
         bool init(String type);
         void loopRoutine();
-        void setName(String name); // should save name to config
+        void setName(String name);
         const String getType();
         const String getName();
         bool wifiConnected();
 
-        void addSensor(const char * name, Sensor::ValueGeneratorFunction valueGenerator);
-        void addDigitalSensor(const char * name, int pin);
-        void addAnalogSensor(const char * name, int pin);
-        
-        void addDeviceState(const char * name, DeviceState::ValueGeneratorFunction valueGenerator);
+        void registerSensor(const char * name, Configurable::Sensor::ValueGeneratorFunction valueGenerator);
+        void registerDigitalSensor(const char * name, int pin);
+        void registerAnalogSensor(const char * name, int pin);
+        void addDeviceState(const char * name, Configurable::DeviceState::ValueGeneratorFunction valueGenerator);
+        bool addActionHandler(const char * action, const char * caption, Configurable::Action::ActionHandler handler);
+        bool addActionHandler(const char * action, Configurable::Action::ActionHandler handler) {
+            return addActionHandler(action, action, handler);
+        };
+        Configurable::Action::ActionResult callAction(const char * action);
+        bool addConfigEntry(const char * name, const char * caption, const char * type);
 
-        JsonArray getSensorsValues();
-        JsonArray getDeviceStates();
+        DynamicJsonDocument getDictionaries();
+        DynamicJsonDocument getSensorsValues();
+        DynamicJsonDocument getDeviceStates();
+        DynamicJsonDocument getActionsDict();
+        DynamicJsonDocument getConfigEntriesDict();
 
         RestController* getRestController();
         LedIndicator* getLed(); // are u sure u need this?
@@ -57,6 +64,10 @@ class SmartThingClass {
         Multicaster _multicaster;
         RestController _rest;
         LedIndicator _led;
+        Configurable::Sensor::SensorsList _sensorsList;
+        Configurable::DeviceState::DeviceStatesList _deviceStatesList;
+        Configurable::Action::ActionsList _actionsList;
+        Configurable::Config::ConfigEntriesList _configEntriesList;
 
         // todo change to const * char?
         String _ip;
@@ -66,14 +77,6 @@ class SmartThingClass {
 
         void wipeSettings();
         String connectToWifi();
-
-        Sensor * _sensorsHead = nullptr;
-        int _sensorsCount = 0;
-        void appendSensor(Sensor * sensor);
-
-        DeviceState * _statesHead = nullptr;
-        int _statesCount = 0;
-        void appendDeviceState(DeviceState * state);
 };
 
 extern SmartThingClass SmartThing;

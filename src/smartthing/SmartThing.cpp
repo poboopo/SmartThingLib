@@ -175,19 +175,19 @@ DynamicJsonDocument SmartThingClass::getConfigEntriesDict() {
     return _configEntriesList.getDict();
 }
 
-void SmartThingClass::addDeviceState(const char * name, DeviceState::ValueGeneratorFunction function) {
-    _deviceStatesList.add(name, function);
+bool SmartThingClass::addDeviceState(const char * name, DeviceState::ValueGeneratorFunction function) {
+    return _deviceStatesList.add(name, function);
 }
 
-void SmartThingClass::registerSensor(const char * name, Sensor::ValueGeneratorFunction function) {
-    _sensorsList.add(name, function);
+bool SmartThingClass::registerSensor(const char * name, Sensor::ValueGeneratorFunction function) {
+    return _sensorsList.add(name, function);
 }
-void SmartThingClass::registerDigitalSensor(const char * name, int pin) {
+bool SmartThingClass::registerDigitalSensor(const char * name, int pin) {
     pinMode(pin, INPUT);
-    _sensorsList.addDigital(name, pin);
+    return _sensorsList.addDigital(name, pin);
 }
-void SmartThingClass::registerAnalogSensor(const char * name, int pin) {
-    _sensorsList.addAnalog(name, pin);
+bool SmartThingClass::registerAnalogSensor(const char * name, int pin) {
+    return _sensorsList.addAnalog(name, pin);
 }
 
 bool SmartThingClass::addActionHandler(const char * action, const char * caption, Action::ActionHandler handler) {

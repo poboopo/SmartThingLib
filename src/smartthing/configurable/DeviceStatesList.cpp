@@ -18,20 +18,23 @@ DynamicJsonDocument DeviceStatesList::getValues() {
     DynamicJsonDocument doc(_count * 64);
     DeviceState * currentDeviceState = _head;
     while (currentDeviceState != nullptr) {
-        JsonObject sensorObj = doc.createNestedObject();
-        sensorObj["name"] = currentDeviceState->name;
-        sensorObj["value"] = currentDeviceState->valueGenerator();
+        doc[currentDeviceState->name] = currentDeviceState->valueGenerator();
         currentDeviceState = currentDeviceState->next;
     }
     return doc;
 }
 
-void DeviceStatesList::add(const char * name, ValueGeneratorFunction function) {
+bool DeviceStatesList::add(const char * name, ValueGeneratorFunction function) {
+    if (findState(name) != nullptr) {
+        LOGGER.warning(DEVICE_STATES_LIST_TAG, "State with name %s already exist! Skipping...", name);
+        return false;
+    }
     DeviceState * sensor = new DeviceState();
     sensor->name = name;
     sensor->valueGenerator = function;
     append(sensor);
     LOGGER.debug(DEVICE_STATES_LIST_TAG, "Added new device state %s", name);
+    return true;
 }
 
 void DeviceStatesList::append(DeviceState * sensor) {
@@ -41,4 +44,15 @@ void DeviceStatesList::append(DeviceState * sensor) {
     }
     _head = sensor;
     _count++;
+}
+
+const DeviceState * DeviceStatesList::findState(const char * name) const {
+    DeviceState * current = _head;
+    while (current != nullptr) {
+        if (strcmp(current->name, name) == 0) {
+            return current;
+        }
+        current = current->next;
+    }
+    return nullptr;
 }

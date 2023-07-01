@@ -22,7 +22,7 @@ namespace Configurable {
             public:
                 DeviceStatesList(): _head(nullptr){};
                 ~DeviceStatesList();
-                void add(const char * name, ValueGeneratorFunction valueGenerator);
+                bool add(const char * name, ValueGeneratorFunction valueGenerator);
                 DynamicJsonDocument getValues();
                 int size() {
                     return _count;
@@ -31,6 +31,7 @@ namespace Configurable {
                 DeviceState * _head;
                 int _count;
                 void append(DeviceState * sensor);
+                const DeviceState * findState(const char * name) const;
         };
     }
 }

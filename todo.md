@@ -9,6 +9,9 @@
     - v0.2
         - fix directories +
         - add sensors, state, config setters +
+        - change sensors and state response to dict +
+        - make sensors and states unique by name (as actions and config) +
+        - fix we page
         - add watchers
         - add callback scenarios
         

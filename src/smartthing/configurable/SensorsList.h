@@ -7,12 +7,19 @@
 
 namespace Configurable {
     namespace Sensor {
+        enum SensorType {
+            TYPE_CUSTOM,
+            TYPE_DIGITAL,
+            TYPE_ANALOG
+        };
+
         typedef std::function<int(void)> ValueGeneratorFunction;
 
         // add units?
         struct Sensor {
             int pin;
             const char * name;
+            SensorType type;
             ValueGeneratorFunction valueGenerator = [](){return -1;};
 
             Sensor * next;
@@ -24,9 +31,9 @@ namespace Configurable {
                 SensorsList(): _head(nullptr){};
                 ~SensorsList();
 
-                void add(const char * name, ValueGeneratorFunction valueGenerator);
-                void addDigital(const char * name, int pin);
-                void addAnalog(const char * name, int pin);
+                bool add(const char * name, ValueGeneratorFunction valueGenerator);
+                bool addDigital(const char * name, int pin);
+                bool addAnalog(const char * name, int pin);
 
                 DynamicJsonDocument getValues();
                 int size() {
@@ -36,7 +43,10 @@ namespace Configurable {
                 Sensor * _head;
                 int _count;
 
+
+                bool add(const char * name, SensorType type, ValueGeneratorFunction valueGenerator);
                 void append(Sensor * sensor);
+                const Sensor * findSensor(const char * name) const;
         };
     }
 }

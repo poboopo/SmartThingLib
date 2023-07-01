@@ -15,7 +15,7 @@
 #include "smartthing/configurable/ActionsList.h"
 #include "smartthing/configurable/ConfigEntriesList.h"
 
-#define SMART_THING_VERSION 0.1
+#define SMART_THING_VERSION 0.2
 #define SMART_THING_TAG "SMART_THING"
 // Pins
 #define LED_PIN 5
@@ -41,10 +41,10 @@ class SmartThingClass {
         const String getName();
         bool wifiConnected();
 
-        void registerSensor(const char * name, Configurable::Sensor::ValueGeneratorFunction valueGenerator);
-        void registerDigitalSensor(const char * name, int pin);
-        void registerAnalogSensor(const char * name, int pin);
-        void addDeviceState(const char * name, Configurable::DeviceState::ValueGeneratorFunction valueGenerator);
+        bool registerSensor(const char * name, Configurable::Sensor::ValueGeneratorFunction valueGenerator);
+        bool registerDigitalSensor(const char * name, int pin);
+        bool registerAnalogSensor(const char * name, int pin);
+        bool addDeviceState(const char * name, Configurable::DeviceState::ValueGeneratorFunction valueGenerator);
         bool addActionHandler(const char * action, const char * caption, Configurable::Action::ActionHandler handler);
         bool addActionHandler(const char * action, Configurable::Action::ActionHandler handler) {
             return addActionHandler(action, action, handler);

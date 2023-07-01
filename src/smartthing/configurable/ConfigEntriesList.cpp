@@ -18,8 +18,7 @@ DynamicJsonDocument ConfigEntriesList::getDict() {
     DynamicJsonDocument doc(_count * 64);
     ConfigEntry * current = _head;
     while (current != nullptr) {
-        JsonObject obj = doc.createNestedObject();
-        obj["name"] = current->name;
+        JsonObject obj = doc.createNestedObject(current->name);
         obj["caption"] = current->caption;
         obj["type"] = current->type;
 

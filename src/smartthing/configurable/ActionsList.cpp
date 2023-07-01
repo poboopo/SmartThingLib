@@ -18,10 +18,7 @@ DynamicJsonDocument ActionsList::getDict() {
     DynamicJsonDocument doc(_count * 64);
     Action * current = _head;
     while (current != nullptr) {
-        JsonObject obj = doc.createNestedObject();
-        obj["action"] = current->name;
-        obj["caption"] = current->caption;
-
+        doc[current->name] = current->caption;
         current = current->next;
     }
     return doc;
@@ -29,7 +26,7 @@ DynamicJsonDocument ActionsList::getDict() {
 
 bool ActionsList::add(const char * actionName, const char * caption, ActionHandler handler) {
     if (findAction(actionName) != nullptr) {
-        LOGGER.warning(ACTIONS_LIST_TAG, "Handler for action %s already exists!", actionName);
+        LOGGER.warning(ACTIONS_LIST_TAG, "Handler for action %s already exists! Skipping...", actionName);
         return false;
     }
     Action * action = new Action;

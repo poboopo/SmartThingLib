@@ -27,7 +27,6 @@ class StateRequestHandler: public RequestHandler {
                 return true; 
             }
             if (requestMethod == HTTP_GET) {
-                // todo fix
                 DynamicJsonDocument state = SmartThing.getDeviceStates();
                 String response;
                 serializeJson(state, response);

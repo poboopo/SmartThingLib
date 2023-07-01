@@ -8,14 +8,16 @@
 
     - v0.2
         - fix directories +
-        - add sensors, state, config setters
+        - add sensors, state, config setters +
         - add watchers
-        - fix logger message lenght
         - add callback scenarios
+        
+    - v0.3
         - save state
         - replace string with const char *
+        - fix logger message lenght
 
-    - v0.3
+    - v0.4
         - refactor handlers - make base handler with all routine(log, headers)
         - add restart handler
         - add settings compression

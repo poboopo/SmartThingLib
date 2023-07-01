@@ -27,6 +27,7 @@ const String WEB_PAGE_MAIN = R"=====(
                 </div>
             </div>
             <div id="actions"class="content-block btn-group hidable">
+                <div class="loading-info">Loading</div>
                 <h1>Actions</h1>
                 <div id="control-buttons-block"></div>
             </div>
@@ -302,7 +303,7 @@ const String WEB_PAGE_MAIN = R"=====(
                     const button = document.createElement("button");
                     button.onclick = function() {
                         if (action.action || action.action == 0) {
-                            restRequest("PUT", "http://" + getHost() + "/action?action=" + action.action);
+                            restRequest("PUT", "http://" + getHost() + "/action?action=" + action.action, null, null, "actions");
                         } else {
                             console.error("Action is missing!");
                         }

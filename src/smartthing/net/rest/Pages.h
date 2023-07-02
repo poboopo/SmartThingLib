@@ -417,7 +417,7 @@ const String WEB_PAGE_MAIN = R"=====(
         * {
             border-radius: 20px;
         }
-        p, input, button, select, .loading-info {
+        p, input, button, select, li, label, .loading-info {
             font-size: 50px;
         }
         h1 {
@@ -445,7 +445,7 @@ const String WEB_PAGE_MAIN = R"=====(
             * {
                 border-radius: 10px;
             }
-            p, input, button, select, .loading-info {
+            p, input, button, select, li, label, .loading-info {
                 font-size: 20px;
             }
             h1 {
@@ -469,6 +469,7 @@ const String WEB_PAGE_MAIN = R"=====(
         }
         .content-block input {
             border:2px solid grey;
+            background-color: azure;
         }
         .hidable {
             display: none;

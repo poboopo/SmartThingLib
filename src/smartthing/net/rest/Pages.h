@@ -140,7 +140,6 @@ const String WEB_PAGE_MAIN = R"=====(
             );
         }
         function fillComboBox(comboboxId, values, selectedValue) {
-            console.log(values);
             if (!values) {
                 return;
             }
@@ -184,9 +183,11 @@ const String WEB_PAGE_MAIN = R"=====(
                     if (response) {
                         const loadedConfig = JSON.parse(response);
                         if (loadedConfig) {
-                            Object.entries(loadedConfig).forEach(([key, value]) => this.config[key] = value);
+                            Object.entries(loadedConfig).forEach(([key, value]) => {
+                                this.config[key] = value;
+                                document.getElementById(key).value = value;
+                            });
                         }
-                        updateConfigFields();
                     }
                 },
                 "config"
@@ -232,11 +233,6 @@ const String WEB_PAGE_MAIN = R"=====(
                 )
             }
         }
-        function updateConfigFields() {
-            if (this.config) {
-                Object.keys(this.config).forEach((key) => document.getElementById(key).value = this.config[key]);
-            }
-        }
         function loadState() {
             restRequest(
                 "GET",
@@ -246,7 +242,17 @@ const String WEB_PAGE_MAIN = R"=====(
                     if (response) {
                         response.trim();
                         document.getElementById("state").style.display = "block";
-                        updateBlockValues("state-fields-block", JSON.parse(response));
+                        const block = document.getElementById("state-fields-block");
+                        const states =  JSON.parse(response);
+                        if (block && states) {
+                            block.innerHTML = "";
+                            Object.entries(states).forEach(([key, value]) => {
+                                const p = document.createElement("p");
+                                p.id = "state_" + key;
+                                p.innerHTML = key + ": " + value;
+                                block.appendChild(p);
+                            });
+                        }
                     }
                 },
                 "state"
@@ -261,24 +267,40 @@ const String WEB_PAGE_MAIN = R"=====(
                     if (response) {
                         response.trim();
                         document.getElementById("sensors").style.display = "block";
-                        updateBlockValues("sensors-fields-block", JSON.parse(response));
+                        const block = document.getElementById("sensors-fields-block");
+                        const sensors = JSON.parse(response);
+                        if (block && sensors) {
+                            block.innerHTML = "";
+                            const sensorsByType = {};
+
+                            Object.entries(sensors).forEach(([name, {value, type}]) => {
+                                const li = document.createElement("li");
+                                li.id = "sensor_" + name;
+                                li.innerHTML = name + ": " + value;
+                                if (!sensorsByType[type]) {
+                                    sensorsByType[type] = [];
+                                }
+                                sensorsByType[type].push(li);
+                            });
+
+                            Object.entries(sensorsByType).forEach(([type, sensors]) => {
+                                if (sensors) {
+                                    const typeList = document.createElement("ul");
+                                    typeList.id = "sensors_" + type;
+                                    const label = document.createElement("label");
+                                    label.for = typeList.id;
+                                    label.innerHTML = type;
+
+                                    typeList.append(...sensors);
+                                    block.appendChild(label);
+                                    block.appendChild(typeList);
+                                }
+                            });
+                        }
                     }
                 },
                 "sensors"
             );
-        }
-        function updateBlockValues(blockId, elements) {
-            if (!elements) {
-                return;
-            }
-            const stateBlock = document.getElementById(blockId);
-            stateBlock.innerHTML = "";
-            elements.forEach(({name, value}) => {
-                const p = document.createElement("p");
-                p.id = name;
-                p.innerHTML = name + ": " + value;
-                stateBlock.appendChild(p);
-            });
         }
         function loadDictionaries() {
             restRequest(
@@ -299,16 +321,16 @@ const String WEB_PAGE_MAIN = R"=====(
             if (actions) {
                 document.getElementById("actions").style.display = "block";
                 const actionsBlock = document.getElementById("control-buttons-block");
-                actions.forEach((action) => {
+                Object.entries(actions).forEach(([action, caption]) => {
                     const button = document.createElement("button");
                     button.onclick = function() {
-                        if (action.action || action.action == 0) {
-                            restRequest("PUT", "http://" + getHost() + "/action?action=" + action.action, null, null, "actions");
+                        if (action || action == 0) {
+                            restRequest("PUT", "http://" + getHost() + "/action?action=" + action, null, null, "actions");
                         } else {
                             console.error("Action is missing!");
                         }
                     };
-                    button.innerHTML = action.caption;
+                    button.innerHTML = caption;
                     actionsBlock.appendChild(button);
                 });
             }
@@ -317,20 +339,20 @@ const String WEB_PAGE_MAIN = R"=====(
             if (configFields) {
                 document.getElementById("config").style.display = "block";
                 const configFieldsBlock = document.getElementById("config-fields-block");
-                configFields.forEach((configField) => {
-                    this.config[configField.name] = null;
+                Object.entries(configFields).forEach(([name, {caption, type}]) => {
+                    this.config[name] = null;
                     const p = document.createElement("p");
-                    p.innerHTML = configField.caption;
-                    p.for = configField.name;
+                    p.innerHTML = caption;
+                    p.for = name;
                     const input = document.createElement("input");
-                    input.type = configField.type;
-                    input.id = configField.name;
+                    input.type = type;
+                    input.id = name;
                     const button = document.createElement("button");
                     button.innerHTML = "X";
                     button.title = "Clear config value";
                     button.style.backgroundColor = "rgb(175, 53, 53)";
                     button.onclick = function () {
-                        deleteConfigValue(configField.name);
+                        deleteConfigValue(name);
                     };
                     const div = document.createElement("div");
                     div.className = "config-block";

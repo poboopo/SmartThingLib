@@ -125,11 +125,15 @@ void addDeviceStates() {
         }
         return "false";
     });
+    SmartThing.addDeviceState("test_state", []() {
+        return "test_state_value";
+    });
 }
 
 void registerSensors() {
     SmartThing.registerAnalogSensor("light", LIGHT_SENSOR_PIN);
     SmartThing.registerAnalogSensor("position", POT_PIN);
+    SmartThing.registerDigitalSensor("test_digital", 90);
     SmartThing.registerSensor("light_controller", []() {return controller.getLightValue();});
     SmartThing.registerSensor("position_controller", []() {return controller.getMotorPosition();});
 }

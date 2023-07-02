@@ -11,7 +11,7 @@
         - add sensors, state, config setters +
         - change sensors and state response to dict +
         - make sensors and states unique by name (as actions and config) +
-        - fix we page
+        - fix web page + 
         - add watchers
         - add callback scenarios
         

@@ -10,8 +10,8 @@ namespace Watcher {
             WatchersList(): _head(nullptr){};
             ~WatchersList();
 
-            bool registerSensorWatcher(const Configurable::Sensor::Sensor * sensor, Callback callback);
-            bool registerDeviceStateWatcher(const Configurable::DeviceState::DeviceState * state, Callback callback);
+            bool registerSensorWatcher(const Configurable::Sensor::Sensor * sensor, Callback::Sensor::Callback callback);
+            bool registerDeviceStateWatcher(const Configurable::DeviceState::DeviceState * state, Callback::DeviceState::Callback callback);
 
             void check();
         private:

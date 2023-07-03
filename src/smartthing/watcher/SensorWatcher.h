@@ -9,7 +9,7 @@ namespace Watcher {
     class SensorWatcher: public Watcher {
         public:
         // todo add treshold for analog sensor
-            SensorWatcher(const Configurable::Sensor::Sensor * sensor, Callback callback): 
+            SensorWatcher(const Configurable::Sensor::Sensor * sensor, Callback::Sensor::Callback callback): 
                 _observable(sensor), _oldValue(0), _callback(callback){};
             bool check() {
                 if (_observable != nullptr) {
@@ -20,7 +20,7 @@ namespace Watcher {
                             "Sensor %s value changed %d->%d. Calling callback.", 
                             _observable->name, _oldValue, newValue
                         );
-                        _callback();
+                        _callback(newValue);
                         _oldValue = newValue;
                         return true;
                     }
@@ -30,7 +30,7 @@ namespace Watcher {
         protected:
             const Configurable::Sensor::Sensor * _observable;
             uint16_t _oldValue;
-            Callback _callback;
+            Callback::Sensor::Callback _callback;
     };
 }
 

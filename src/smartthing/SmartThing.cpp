@@ -203,7 +203,7 @@ bool SmartThingClass::addConfigEntry(const char * name, const char * caption, co
     return _configEntriesList.add(name, caption, type);
 }
 
-bool SmartThingClass::registerSensorWatcher(const char * name, Watcher::Callback callback) {
+bool SmartThingClass::registerSensorWatcher(const char * name, Watcher::Callback::Sensor::Callback callback) {
     const Sensor::Sensor * sensor = _sensorsList.findSensor(name);
     if (sensor == nullptr) {
         LOGGER.error(SMART_THING_TAG, "Can't find sensor with name %s. Not registered yet?", name);
@@ -212,7 +212,7 @@ bool SmartThingClass::registerSensorWatcher(const char * name, Watcher::Callback
     return _watchersList.registerSensorWatcher(sensor, callback);
 }
 
-bool SmartThingClass::registerDeviceStateWatcher(const char * name, Watcher::Callback callback) {
+bool SmartThingClass::registerDeviceStateWatcher(const char * name, Watcher::Callback::DeviceState::Callback callback) {
     const DeviceState::DeviceState * state = _deviceStatesList.findState(name);
     if (state == nullptr) {
         LOGGER.error(SMART_THING_TAG, "Can't find device state with name %s. Not registered yet?", name);

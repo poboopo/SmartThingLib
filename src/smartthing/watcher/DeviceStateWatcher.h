@@ -12,7 +12,7 @@ using namespace Configurable::Sensor;
 namespace Watcher {
     class DeviceStateWatcher: public Watcher {
         public:
-            DeviceStateWatcher(const Configurable::DeviceState::DeviceState * deviceState, Callback callback): 
+            DeviceStateWatcher(const Configurable::DeviceState::DeviceState * deviceState, Callback::DeviceState::Callback callback): 
                 _observable(deviceState), _callback(callback){};
             bool check() {
                 if (_observable != nullptr) {
@@ -27,7 +27,7 @@ namespace Watcher {
                             "Device state %s value changed %s->%s. Calling callback.", 
                             _observable->name, _oldValue, newValue
                         );
-                        _callback();
+                        _callback(newValue);
                         copyValue(newValue);
                         return true;
                     }
@@ -37,7 +37,7 @@ namespace Watcher {
         protected:
             const Configurable::DeviceState::DeviceState * _observable;
             char * _oldValue = nullptr;
-            Callback _callback;
+            Callback::DeviceState::Callback _callback;
             void copyValue(const char * value) {
                 if (_oldValue != nullptr) {
                     delete(_oldValue);

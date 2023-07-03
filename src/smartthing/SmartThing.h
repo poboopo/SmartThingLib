@@ -54,8 +54,8 @@ class SmartThingClass {
         Configurable::Action::ActionResult callAction(const char * action);
         bool addConfigEntry(const char * name, const char * caption, const char * type);
 
-        bool registerSensorWatcher(const char * name, Watcher::Callback callback);
-        bool registerDeviceStateWatcher(const char * name, Watcher::Callback callback);
+        bool registerSensorWatcher(const char * name, Watcher::Callback::Sensor::Callback callback);
+        bool registerDeviceStateWatcher(const char * name, Watcher::Callback::DeviceState::Callback callback);
 
         DynamicJsonDocument getDictionaries();
         DynamicJsonDocument getSensorsValues();

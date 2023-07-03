@@ -15,6 +15,8 @@
 #include "smartthing/configurable/ActionsList.h"
 #include "smartthing/configurable/ConfigEntriesList.h"
 
+#include "smartthing/watcher/WatchersList.h"
+
 #define SMART_THING_VERSION 0.2
 #define SMART_THING_TAG "SMART_THING"
 // Pins
@@ -52,6 +54,9 @@ class SmartThingClass {
         Configurable::Action::ActionResult callAction(const char * action);
         bool addConfigEntry(const char * name, const char * caption, const char * type);
 
+        bool registerSensorWatcher(const char * name, Watcher::Callback callback);
+        bool registerDeviceStateWatcher(const char * name, Watcher::Callback callback);
+
         DynamicJsonDocument getDictionaries();
         DynamicJsonDocument getSensorsValues();
         DynamicJsonDocument getDeviceStates();
@@ -68,6 +73,7 @@ class SmartThingClass {
         Configurable::DeviceState::DeviceStatesList _deviceStatesList;
         Configurable::Action::ActionsList _actionsList;
         Configurable::Config::ConfigEntriesList _configEntriesList;
+        Watcher::WatchersList _watchersList;
 
         // todo change to const * char?
         String _ip;

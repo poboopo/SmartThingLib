@@ -74,6 +74,7 @@ void SmartThingClass::loopRoutine() {
         ArduinoOTA.handle();
         _rest.handle();
         _multicaster.broadcast(_broadcastMessage.c_str());
+        _watchersList.check();
     }
 }
 
@@ -183,7 +184,7 @@ bool SmartThingClass::registerSensor(const char * name, Sensor::ValueGeneratorFu
     return _sensorsList.add(name, function);
 }
 bool SmartThingClass::registerDigitalSensor(const char * name, int pin) {
-    pinMode(pin, INPUT);
+    pinMode(pin, INPUT_PULLUP);
     return _sensorsList.addDigital(name, pin);
 }
 bool SmartThingClass::registerAnalogSensor(const char * name, int pin) {
@@ -200,6 +201,24 @@ Action::ActionResult SmartThingClass::callAction(const char * action) {
 
 bool SmartThingClass::addConfigEntry(const char * name, const char * caption, const char * type) {
     return _configEntriesList.add(name, caption, type);
+}
+
+bool SmartThingClass::registerSensorWatcher(const char * name, Watcher::Callback callback) {
+    const Sensor::Sensor * sensor = _sensorsList.findSensor(name);
+    if (sensor == nullptr) {
+        LOGGER.error(SMART_THING_TAG, "Can't find sensor with name %s. Not registered yet?", name);
+        return false;
+    }
+    return _watchersList.registerSensorWatcher(sensor, callback);
+}
+
+bool SmartThingClass::registerDeviceStateWatcher(const char * name, Watcher::Callback callback) {
+    const DeviceState::DeviceState * state = _deviceStatesList.findState(name);
+    if (state == nullptr) {
+        LOGGER.error(SMART_THING_TAG, "Can't find device state with name %s. Not registered yet?", name);
+        return false;
+    }
+    return _watchersList.registerDeviceStateWatcher(state, callback);
 }
 
 const String SmartThingClass::getType() {

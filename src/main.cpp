@@ -128,14 +128,22 @@ void addDeviceStates() {
     SmartThing.addDeviceState("test_state", []() {
         return "test_state_value";
     });
+
+    SmartThing.registerDeviceStateWatcher("automode", []() {
+        LOGGER.info("main", "Automode callback called");
+    });
 }
 
 void registerSensors() {
     SmartThing.registerAnalogSensor("light", LIGHT_SENSOR_PIN);
     SmartThing.registerAnalogSensor("position", POT_PIN);
-    SmartThing.registerDigitalSensor("test_digital", 90);
     SmartThing.registerSensor("light_controller", []() {return controller.getLightValue();});
     SmartThing.registerSensor("position_controller", []() {return controller.getMotorPosition();});
+
+    SmartThing.registerDigitalSensor("test_digital", 12);
+    SmartThing.registerSensorWatcher("test_digital", []() {
+        LOGGER.debug("main", "Digital sensor value changed");
+    });
 }
 
 void addActionsHandlers() {

@@ -4,20 +4,10 @@
 #include <functional>
 #include <ArduinoJson.h>
 #include <Arduino.h>
+#include "smartthing/configurable/ConfigurableObjects.h"
 
 namespace Configurable {
     namespace DeviceState {
-        typedef std::function<const char *(void)> ValueGeneratorFunction;
-
-        // add units?
-        struct DeviceState {
-            const char * name;
-            ValueGeneratorFunction valueGenerator = [](){return "";};
-
-            DeviceState * next;
-            DeviceState * previous;
-        };
-
         class DeviceStatesList {
             public:
                 DeviceStatesList(): _head(nullptr){};
@@ -27,11 +17,11 @@ namespace Configurable {
                 int size() {
                     return _count;
                 }
+                const DeviceState * findState(const char * name) const;
             private:
                 DeviceState * _head;
                 int _count;
                 void append(DeviceState * sensor);
-                const DeviceState * findState(const char * name) const;
         };
     }
 }

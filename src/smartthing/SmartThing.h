@@ -15,7 +15,9 @@
 #include "smartthing/configurable/ActionsList.h"
 #include "smartthing/configurable/ConfigEntriesList.h"
 
-#include "smartthing/watcher/WatchersList.h"
+#include "smartthing/watcher/WatchersManager.h"
+#include "smartthing/watcher/callback/LambdaCallback.h"
+#include "smartthing/watcher/callback/HttpCallback.h"
 
 #define SMART_THING_VERSION 0.2
 #define SMART_THING_TAG "SMART_THING"
@@ -54,8 +56,10 @@ class SmartThingClass {
         Configurable::Action::ActionResult callAction(const char * action);
         bool addConfigEntry(const char * name, const char * caption, const char * type);
 
-        bool registerSensorWatcher(const char * name, Watcher::Callback::Sensor::Callback callback);
-        bool registerDeviceStateWatcher(const char * name, Watcher::Callback::DeviceState::Callback callback);
+        bool registerDeviceStateWatcher(const char * name, Watcher::Callback::LambdaCallback<const char *>::CustomCallback callback);
+        bool registerDeviceStateWatcher(const char * name, const char * url);
+        bool registerSensorWatcher(const char * name, Watcher::Callback::LambdaCallback<uint16_t>::CustomCallback callback);
+        bool registerSensorWatcher(const char * name, const char * url);
 
         DynamicJsonDocument getDictionaries();
         DynamicJsonDocument getSensorsValues();
@@ -73,7 +77,7 @@ class SmartThingClass {
         Configurable::DeviceState::DeviceStatesList _deviceStatesList;
         Configurable::Action::ActionsList _actionsList;
         Configurable::Config::ConfigEntriesList _configEntriesList;
-        Watcher::WatchersList _watchersList;
+        Watcher::WatchersManager _watchersList;
 
         // todo change to const * char?
         String _ip;

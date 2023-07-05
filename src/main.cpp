@@ -129,9 +129,10 @@ void addDeviceStates() {
         return "test_state_value";
     });
 
-    SmartThing.registerDeviceStateWatcher("automode", [](const char * value) {
-        LOGGER.info("main", "Automode callback called. New value %s", value);
+    SmartThing.registerDeviceStateWatcher("automode", [](const char ** value) {
+        LOGGER.info("main", "Automode callback called. New value %s", *value);
     });
+    SmartThing.registerDeviceStateWatcher("automode", "http://192.168.1.66/info");
 }
 
 void registerSensors() {
@@ -141,8 +142,8 @@ void registerSensors() {
     SmartThing.registerSensor("position_controller", []() {return controller.getMotorPosition();});
 
     SmartThing.registerDigitalSensor("test_digital", 12);
-    SmartThing.registerSensorWatcher("test_digital", [](int value) {
-        LOGGER.debug("main", "Digital sensor value changed to %d", value);
+    SmartThing.registerSensorWatcher("test_digital", [](uint16_t * value) {
+        LOGGER.debug("main", "Digital sensor value changed to %u", *value);
     });
 }
 

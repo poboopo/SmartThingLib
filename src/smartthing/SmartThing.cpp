@@ -1,6 +1,7 @@
 #include "smartthing/SmartThing.h"
 
 using namespace Configurable;
+using namespace Watcher;
 
 SmartThingClass SmartThing;
 
@@ -203,22 +204,43 @@ bool SmartThingClass::addConfigEntry(const char * name, const char * caption, co
     return _configEntriesList.add(name, caption, type);
 }
 
-bool SmartThingClass::registerSensorWatcher(const char * name, Watcher::Callback::Sensor::Callback callback) {
+bool SmartThingClass::registerSensorWatcher(const char * name, Callback::LambdaCallback<uint16_t>::CustomCallback callback) {
     const Sensor::Sensor * sensor = _sensorsList.findSensor(name);
     if (sensor == nullptr) {
         LOGGER.error(SMART_THING_TAG, "Can't find sensor with name %s. Not registered yet?", name);
         return false;
     }
-    return _watchersList.registerSensorWatcher(sensor, callback);
+    Callback::LambdaCallback<uint16_t> * watcherCallback = new Callback::LambdaCallback<uint16_t>(callback);
+    return _watchersList.registerSensorWatcher(sensor, watcherCallback);
 }
 
-bool SmartThingClass::registerDeviceStateWatcher(const char * name, Watcher::Callback::DeviceState::Callback callback) {
+bool SmartThingClass::registerSensorWatcher(const char * name, const char * url) {
+    const Sensor::Sensor * sensor = _sensorsList.findSensor(name);
+    if (sensor == nullptr) {
+        LOGGER.error(SMART_THING_TAG, "Can't find sensor with name %s. Not registered yet?", name);
+        return false;
+    }
+    Callback::HttpCallback<uint16_t> * watcherCallback = new Callback::HttpCallback<uint16_t>(url);
+    return _watchersList.registerSensorWatcher(sensor, watcherCallback);
+}
+
+bool SmartThingClass::registerDeviceStateWatcher(const char * name, Callback::LambdaCallback<const char *>::CustomCallback callback) {
     const DeviceState::DeviceState * state = _deviceStatesList.findState(name);
     if (state == nullptr) {
         LOGGER.error(SMART_THING_TAG, "Can't find device state with name %s. Not registered yet?", name);
         return false;
     }
-    return _watchersList.registerDeviceStateWatcher(state, callback);
+    Callback::LambdaCallback<const char *> * watcherCallback = new Callback::LambdaCallback<const char *>(callback);
+    return _watchersList.registerDeviceStateWatcher(state, watcherCallback);
+}
+bool SmartThingClass::registerDeviceStateWatcher(const char * name, const char * url) {
+    const DeviceState::DeviceState * state = _deviceStatesList.findState(name);
+    if (state == nullptr) {
+        LOGGER.error(SMART_THING_TAG, "Can't find device state with name %s. Not registered yet?", name);
+        return false;
+    }
+    Callback::HttpCallback<const char *> * watcherCallback = new Callback::HttpCallback<const char *>(url);
+    return _watchersList.registerDeviceStateWatcher(state, watcherCallback);
 }
 
 const String SmartThingClass::getType() {

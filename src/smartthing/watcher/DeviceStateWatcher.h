@@ -2,6 +2,7 @@
 #define DEVICE_STATE_WATCHER_H
 
 #include "smartthing/watcher/Watcher.h"
+#include "smartthing/watcher/callback/WatcherCallback.h"
 #include "smartthing/configurable/ConfigurableObjects.h"
 #include "smartthing/logs/BetterLogger.h"
 
@@ -12,7 +13,7 @@ using namespace Configurable::Sensor;
 namespace Watcher {
     class DeviceStateWatcher: public Watcher {
         public:
-            DeviceStateWatcher(const Configurable::DeviceState::DeviceState * deviceState, Callback::DeviceState::Callback callback): 
+            DeviceStateWatcher(const Configurable::DeviceState::DeviceState * deviceState, Callback::WatcherCallback<const char *> * callback): 
                 _observable(deviceState), _callback(callback){};
             bool check() {
                 if (_observable != nullptr) {
@@ -27,7 +28,7 @@ namespace Watcher {
                             "Device state %s value changed %s->%s. Calling callback.", 
                             _observable->name, _oldValue, newValue
                         );
-                        _callback(newValue);
+                        _callback->call(&newValue);
                         copyValue(newValue);
                         return true;
                     }
@@ -37,7 +38,7 @@ namespace Watcher {
         protected:
             const Configurable::DeviceState::DeviceState * _observable;
             char * _oldValue = nullptr;
-            Callback::DeviceState::Callback _callback;
+            Callback::WatcherCallback<const char *> * _callback;
             void copyValue(const char * value) {
                 if (_oldValue != nullptr) {
                     delete(_oldValue);

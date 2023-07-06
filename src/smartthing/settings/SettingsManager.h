@@ -14,7 +14,7 @@
 
 class SettingsManager {
     private:
-        StaticJsonDocument<JSON_DOC_SIZE> _settings;
+        DynamicJsonDocument _settings = DynamicJsonDocument(JSON_DOC_SIZE);
         const char * loadFromEeprom();
         bool _loaded = false;
 

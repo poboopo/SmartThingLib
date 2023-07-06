@@ -12,7 +12,8 @@
         - change sensors and state response to dict +
         - make sensors and states unique by name (as actions and config) +
         - fix web page + 
-        - add watchers
+        - add watchers +
+        - arduino json rework asap
         - add callback scenarios
         
     - v0.3

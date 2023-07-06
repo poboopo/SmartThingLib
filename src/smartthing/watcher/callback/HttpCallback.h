@@ -25,15 +25,24 @@ namespace Watcher {
                     if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
                         HTTPClient client;
                         client.begin(_url);
-                        int responseCode = client.GET();
-                        LOGGER.info(HTTP_CALLBACK_TAG, "Request %s finished with code %d", _url, responseCode);
+                        _lastResponseCode = client.GET();
+                        LOGGER.info(HTTP_CALLBACK_TAG, "Request %s finished with code %d", _url, _lastResponseCode);
                         client.end();
                     } else {
                         LOGGER.error(HTTP_CALLBACK_TAG, "WiFi not connected!");
                     }
-                }
+                };
+
+                StaticJsonDocument<INFO_DOC_SIZE> getInfo() {
+                    StaticJsonDocument<INFO_DOC_SIZE> doc;
+                    doc["type"] = LAMBDA_CALLBACK_TAG;
+                    doc["url"] = _url;
+                    doc["lastResponseCode"] = _lastResponseCode;
+                    return doc;
+                };
             private:
                 const char * _url;
+                uint16_t _lastResponseCode = 0;
         };
     }
 }

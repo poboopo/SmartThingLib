@@ -63,9 +63,10 @@ class SmartThingClass {
 
         DynamicJsonDocument getDictionaries();
         DynamicJsonDocument getSensorsValues();
-        DynamicJsonDocument getDeviceStates();
-        DynamicJsonDocument getActionsDict();
-        DynamicJsonDocument getConfigEntriesDict();
+        DynamicJsonDocument getDeviceStatesInfo();
+        DynamicJsonDocument getActionsInfo();
+        DynamicJsonDocument getConfigEntriesInfo();
+        DynamicJsonDocument getWatchersInfo();
 
         RestController* getRestController();
         LedIndicator* getLed(); // are u sure u need this?
@@ -77,7 +78,7 @@ class SmartThingClass {
         Configurable::DeviceState::DeviceStatesList _deviceStatesList;
         Configurable::Action::ActionsList _actionsList;
         Configurable::Config::ConfigEntriesList _configEntriesList;
-        Watcher::WatchersManager _watchersList;
+        Watcher::WatchersManager _watchersManager;
 
         // todo change to const * char?
         String _ip;

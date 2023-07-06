@@ -20,19 +20,7 @@ DynamicJsonDocument SensorsList::getValues() {
     while (currentSensor != nullptr) {
         JsonObject sensorObj = doc.createNestedObject(currentSensor->name);
         sensorObj["value"] = currentSensor->valueGenerator();
-        switch (currentSensor->type){
-            case TYPE_CUSTOM:
-                sensorObj["type"] = "custom";
-                break;
-            case TYPE_ANALOG:
-                sensorObj["type"] = "analog";
-                break;
-            case TYPE_DIGITAL:
-                sensorObj["type"] = "digital";
-                break;
-            default:
-                sensorObj["type"] = "NOT_FOUND";
-        }
+        sensorObj["type"] = Configurable::Sensor::sensorTypeName(currentSensor->type);
         currentSensor = currentSensor->next;
     }
     return doc;

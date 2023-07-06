@@ -10,6 +10,17 @@ namespace Configurable {
             TYPE_DIGITAL,
             TYPE_ANALOG
         };
+        inline const char * sensorTypeName(SensorType type) {
+            switch (type) {
+                case TYPE_CUSTOM:
+                    return "custom";
+                case TYPE_DIGITAL:
+                    return "digital";
+                case TYPE_ANALOG:
+                    return "analog";
+            }
+            return "type_not_found_how";
+        };
 
         typedef std::function<uint16_t(void)> ValueGeneratorFunction;
 

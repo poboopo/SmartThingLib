@@ -21,7 +21,12 @@ namespace Watcher {
                         return;
                     }
                     _customCallback(value);
-                }
+                };
+                StaticJsonDocument<INFO_DOC_SIZE> getInfo() {
+                    StaticJsonDocument<INFO_DOC_SIZE> doc;
+                    doc["type"] = LAMBDA_CALLBACK_TAG;
+                    return doc;
+                };
             private:
                 CustomCallback _customCallback;
         };

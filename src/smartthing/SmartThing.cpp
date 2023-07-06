@@ -75,7 +75,7 @@ void SmartThingClass::loopRoutine() {
         ArduinoOTA.handle();
         _rest.handle();
         _multicaster.broadcast(_broadcastMessage.c_str());
-        _watchersList.check();
+        _watchersManager.check();
     }
 }
 
@@ -161,7 +161,7 @@ DynamicJsonDocument SmartThingClass::getDictionaries() {
     return doc;
 }
 
-DynamicJsonDocument SmartThingClass::getDeviceStates() {
+DynamicJsonDocument SmartThingClass::getDeviceStatesInfo() {
     return _deviceStatesList.getValues();
 }
 
@@ -169,12 +169,16 @@ DynamicJsonDocument SmartThingClass::getSensorsValues() {
     return _sensorsList.getValues();
 }
 
-DynamicJsonDocument SmartThingClass::getActionsDict() {
+DynamicJsonDocument SmartThingClass::getActionsInfo() {
     return _actionsList.getDict();
 }
 
-DynamicJsonDocument SmartThingClass::getConfigEntriesDict() {
+DynamicJsonDocument SmartThingClass::getConfigEntriesInfo() {
     return _configEntriesList.getDict();
+}
+
+DynamicJsonDocument SmartThingClass::getWatchersInfo() {
+    return _watchersManager.getWatcherInfo();
 }
 
 bool SmartThingClass::addDeviceState(const char * name, DeviceState::ValueGeneratorFunction function) {
@@ -211,7 +215,7 @@ bool SmartThingClass::registerSensorWatcher(const char * name, Callback::LambdaC
         return false;
     }
     Callback::LambdaCallback<uint16_t> * watcherCallback = new Callback::LambdaCallback<uint16_t>(callback);
-    return _watchersList.registerSensorWatcher(sensor, watcherCallback);
+    return _watchersManager.registerSensorWatcher(sensor, watcherCallback);
 }
 
 bool SmartThingClass::registerSensorWatcher(const char * name, const char * url) {
@@ -221,7 +225,7 @@ bool SmartThingClass::registerSensorWatcher(const char * name, const char * url)
         return false;
     }
     Callback::HttpCallback<uint16_t> * watcherCallback = new Callback::HttpCallback<uint16_t>(url);
-    return _watchersList.registerSensorWatcher(sensor, watcherCallback);
+    return _watchersManager.registerSensorWatcher(sensor, watcherCallback);
 }
 
 bool SmartThingClass::registerDeviceStateWatcher(const char * name, Callback::LambdaCallback<const char *>::CustomCallback callback) {
@@ -231,7 +235,7 @@ bool SmartThingClass::registerDeviceStateWatcher(const char * name, Callback::La
         return false;
     }
     Callback::LambdaCallback<const char *> * watcherCallback = new Callback::LambdaCallback<const char *>(callback);
-    return _watchersList.registerDeviceStateWatcher(state, watcherCallback);
+    return _watchersManager.registerDeviceStateWatcher(state, watcherCallback);
 }
 bool SmartThingClass::registerDeviceStateWatcher(const char * name, const char * url) {
     const DeviceState::DeviceState * state = _deviceStatesList.findState(name);
@@ -240,7 +244,7 @@ bool SmartThingClass::registerDeviceStateWatcher(const char * name, const char *
         return false;
     }
     Callback::HttpCallback<const char *> * watcherCallback = new Callback::HttpCallback<const char *>(url);
-    return _watchersList.registerDeviceStateWatcher(state, watcherCallback);
+    return _watchersManager.registerDeviceStateWatcher(state, watcherCallback);
 }
 
 const String SmartThingClass::getType() {

@@ -35,6 +35,15 @@ namespace Watcher {
                 }
                 return false;
             };
+
+            StaticJsonDocument<WATCHERS_INFO_DOC_SIZE> getInfo() {
+                StaticJsonDocument<WATCHERS_INFO_DOC_SIZE> doc;
+                doc["type"] = DEVICE_STATE_WATCHER_TAG;
+                doc["stateName"] = _observable->name;
+                doc["callback"] = _callback->getInfo();
+                return doc;
+            };
+
         protected:
             const Configurable::DeviceState::DeviceState * _observable;
             char * _oldValue = nullptr;

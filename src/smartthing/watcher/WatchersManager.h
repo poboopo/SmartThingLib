@@ -13,7 +13,7 @@ namespace Watcher {
             ~WatchersManager();
 
             bool registerDeviceStateWatcher(const Configurable::DeviceState::DeviceState * state, Callback::WatcherCallback<const char *> * callback);
-            bool registerSensorWatcher(const Configurable::Sensor::Sensor * sensor, Callback::WatcherCallback<uint16_t> * callback);
+            bool registerSensorWatcher(const Configurable::Sensor::Sensor * sensor, Callback::WatcherCallback<int16_t> * callback);
 
             void check();
             DynamicJsonDocument getWatcherInfo();

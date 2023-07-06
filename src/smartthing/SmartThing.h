@@ -56,10 +56,23 @@ class SmartThingClass {
         Configurable::Action::ActionResult callAction(const char * action);
         bool addConfigEntry(const char * name, const char * caption, const char * type);
 
-        bool registerDeviceStateWatcher(const char * name, Watcher::Callback::LambdaCallback<const char *>::CustomCallback callback);
-        bool registerDeviceStateWatcher(const char * name, const char * url);
-        bool registerSensorWatcher(const char * name, Watcher::Callback::LambdaCallback<uint16_t>::CustomCallback callback);
-        bool registerSensorWatcher(const char * name, const char * url);
+        bool registerDeviceStateWatcher(const char * name, Watcher::Callback::LambdaCallback<const char *>::CustomCallback callback, const char * triggerValue);
+        bool registerDeviceStateWatcher(const char * name, Watcher::Callback::LambdaCallback<const char *>::CustomCallback callback) {
+            return registerDeviceStateWatcher(name, callback, nullptr);
+        };
+        bool registerDeviceStateWatcher(const char * name, const char * url, const char * triggerValue);
+        bool registerDeviceStateWatcher(const char * name, const char * url) {
+            return registerDeviceStateWatcher(name, url, nullptr);
+        };
+
+        bool registerSensorWatcher(const char * name, Watcher::Callback::LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue);
+        bool registerSensorWatcher(const char * name, Watcher::Callback::LambdaCallback<int16_t>::CustomCallback callback) {
+            return registerSensorWatcher(name, callback, -1);
+        };
+        bool registerSensorWatcher(const char * name, const char * url, int16_t triggerValue);
+        bool registerSensorWatcher(const char * name, const char * url) {
+            return registerSensorWatcher(name, url, -1);
+        };
 
         DynamicJsonDocument getDictionaries();
         DynamicJsonDocument getSensorsValues();

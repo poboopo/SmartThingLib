@@ -18,13 +18,13 @@ namespace Watcher {
         delete(current);
     }
 
-    bool WatchersManager::registerSensorWatcher(const Configurable::Sensor::Sensor * sensor, Callback::WatcherCallback<uint16_t> * callback) {
+    bool WatchersManager::registerSensorWatcher(const Configurable::Sensor::Sensor * sensor, Callback::WatcherCallback<int16_t> * callback) {
         if (sensor == nullptr) {
             LOGGER.error(WATCHERS_LIST_TAG, "Sensor object is missing, skipping...");
             return false;
         }
         append(new SensorWatcher(sensor, callback));
-        LOGGER.debug(WATCHERS_LIST_TAG, "Registered new watcher for sensor %s", sensor->name);
+        LOGGER.debug(WATCHERS_LIST_TAG, "Registered new watcher for sensor [%s]", sensor->name);
         return true;
     }
 
@@ -34,7 +34,7 @@ namespace Watcher {
             return false;
         }
         append(new DeviceStateWatcher(state, callback));
-        LOGGER.debug(WATCHERS_LIST_TAG, "Registered new watcher for device state %s", state->name);
+        LOGGER.debug(WATCHERS_LIST_TAG, "Registered new watcher for device state [%s]", state->name);
         return true;
     }
 

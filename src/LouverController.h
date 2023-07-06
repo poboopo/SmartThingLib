@@ -61,6 +61,7 @@ class LouverController {
         bool isAutoModeEnabled();
         uint16_t getLightValue();
         uint16_t getMotorPosition();
+        const char * getPosition();
 
         bool open();
         bool close();

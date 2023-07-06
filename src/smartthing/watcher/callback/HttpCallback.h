@@ -13,7 +13,8 @@ namespace Watcher {
         template<typename T>
         class HttpCallback: public WatcherCallback<T> {
             public:
-                HttpCallback(const char * url): _url(url) {};
+                HttpCallback(const char * url, T triggerValue):
+                    WatcherCallback<T>(triggerValue), _url(url) {};
                 void call(T * value) {
                     if (value == nullptr) {
                         LOGGER.error(HTTP_CALLBACK_TAG, "Value is null!");

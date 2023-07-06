@@ -14,10 +14,10 @@ namespace Watcher {
     class DeviceStateWatcher: public Watcher {
         public:
             DeviceStateWatcher(const Configurable::DeviceState::DeviceState * deviceState, Callback::WatcherCallback<const char *> * callback): 
-                _observable(deviceState), _callback(callback){};
+                _deviceState(deviceState), _callback(callback){};
             bool check() {
-                if (_observable != nullptr) {
-                    const char * newValue = _observable->valueGenerator();
+                if (_deviceState != nullptr) {
+                    const char * newValue = _deviceState->valueGenerator();
                     if (_oldValue == nullptr) {
                         copyValue(newValue);
                         return false;
@@ -25,10 +25,14 @@ namespace Watcher {
                     if (strcmp(newValue, _oldValue) != 0) {
                         LOGGER.debug(
                             DEVICE_STATE_WATCHER_TAG, 
-                            "Device state %s value changed %s->%s. Calling callback.", 
-                            _observable->name, _oldValue, newValue
+                            "Device state %s value changed %s->%s.", 
+                            _deviceState->name, _oldValue, newValue
                         );
-                        _callback->call(&newValue);
+                        if (_callback->triggerValue() == nullptr || 
+                            (_callback->triggerValue() != nullptr && strcmp(newValue, _callback->triggerValue()) != 0)
+                        ) {
+                            _callback->call(&newValue);
+                        }
                         copyValue(newValue);
                         return true;
                     }
@@ -39,13 +43,16 @@ namespace Watcher {
             StaticJsonDocument<WATCHERS_INFO_DOC_SIZE> getInfo() {
                 StaticJsonDocument<WATCHERS_INFO_DOC_SIZE> doc;
                 doc["type"] = DEVICE_STATE_WATCHER_TAG;
-                doc["stateName"] = _observable->name;
+                doc["stateName"] = _deviceState->name;
                 doc["callback"] = _callback->getInfo();
+                if (_callback->triggerValue() != nullptr) {
+                    doc["triggerValue"] = _callback->triggerValue();
+                }
                 return doc;
             };
 
         protected:
-            const Configurable::DeviceState::DeviceState * _observable;
+            const Configurable::DeviceState::DeviceState * _deviceState;
             char * _oldValue = nullptr;
             Callback::WatcherCallback<const char *> * _callback;
             void copyValue(const char * value) {

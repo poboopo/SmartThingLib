@@ -20,6 +20,7 @@
 #define LOGGING_LEVEL_ALL
 
 
+// todo add websocker support?
 class BetterLogger {
     public:
         BetterLogger();

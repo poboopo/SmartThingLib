@@ -12,18 +12,20 @@ namespace Watcher {
     class SensorWatcher: public Watcher {
         public:
         // todo add treshold for analog sensor
-            SensorWatcher(const Configurable::Sensor::Sensor * sensor, Callback::WatcherCallback<uint16_t> * callback): 
+            SensorWatcher(const Configurable::Sensor::Sensor * sensor, Callback::WatcherCallback<int16_t> * callback): 
                 _sensor(sensor), _oldValue(0), _callback(callback){};
             bool check() {
                 if (_sensor != nullptr) {
-                    uint16_t newValue = _sensor->valueGenerator();
+                    int16_t newValue = _sensor->valueGenerator();
                     if (newValue != _oldValue) {
                         LOGGER.debug(
                             SENSOR_WATCHER_TAG, 
-                            "Sensor %s value changed %d->%d. Calling callback.", 
+                            "Sensor %s value changed %d->%d.", 
                             _sensor->name, _oldValue, newValue
                         );
-                        _callback->call(&newValue);
+                        if (_callback->triggerValue() < 0 || (_callback->triggerValue() >= 0 && newValue == _callback->triggerValue())) {
+                            _callback->call(&newValue);
+                        }
                         _oldValue = newValue;
                         return true;
                     }
@@ -36,12 +38,15 @@ namespace Watcher {
                 doc["type"] = SENSOR_WATCHER_TAG;
                 doc["sensorName"] = _sensor->name;
                 doc["callback"] = _callback->getInfo();
+                if (_callback->triggerValue() > 0) {
+                    doc["triggerValue"] = _callback->triggerValue();
+                }
                 return doc;
             };
         protected:
             const Configurable::Sensor::Sensor * _sensor;
-            uint16_t _oldValue;
-            Callback::WatcherCallback<uint16_t> * _callback;
+            int16_t _oldValue;
+            Callback::WatcherCallback<int16_t> * _callback;
     };
 }
 

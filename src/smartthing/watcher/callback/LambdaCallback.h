@@ -14,7 +14,8 @@ namespace Watcher {
             public:
                 typedef std::function<void(T *)>CustomCallback;
 
-                LambdaCallback(CustomCallback customCallback): _customCallback(customCallback) {};
+                LambdaCallback(CustomCallback customCallback, T triggerValue):
+                    WatcherCallback<T>(triggerValue), _customCallback(customCallback) {};
                 void call(T * value) {
                     if (value == nullptr) {
                         LOGGER.error(LAMBDA_CALLBACK_TAG, "Value is null!");

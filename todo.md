@@ -13,15 +13,19 @@
         - make sensors and states unique by name (as actions and config) +
         - fix web page + 
         - add watchers +
-        - arduino json rework asap
-        - add callback scenarios
+        - add rest to create callback
+        - add callback scenarios in web page
         
     - v0.3
+        - HttpCallback refactor
+        - put multiple callback for obe object in one watcher?
         - save state
         - replace string with const char *
-        - fix logger message lenght
+        - fix logger message length
+        - arduino json refactor
 
     - v0.4
+        - add possible values to device state
         - refactor handlers - make base handler with all routine(log, headers)
         - add restart handler
         - add settings compression

@@ -89,6 +89,20 @@ void LouverController::monitorLight() {
     }
 }
 
+const char * LouverController::getPosition() {
+    uint16_t pos = _motorController.getPosition();
+    if (pos >= CLOSE_POSITION) {
+        return "closed";
+    } else if (pos >= MIDDLE_POSITION) {
+        return "middle";
+    } else if (pos >= OPEN_POSITION) {
+        return "open";
+    } else if (pos >= BRIGHT_POSITION) {
+        return "bright";
+    }
+    return "error";
+}
+
 void LouverController::createMonitorTask(){
     xTaskCreate(
         [](void* o){ static_cast<LouverController*>(o)->monitorLight(); },

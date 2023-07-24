@@ -10,7 +10,7 @@ namespace Watcher {
     class Watcher {
         public:
             virtual bool check() = 0;
-            virtual StaticJsonDocument<WATCHERS_INFO_DOC_SIZE> getInfo() = 0;
+            virtual StaticJsonDocument<WATCHERS_INFO_DOC_SIZE> getInfo() = 0;;
             Watcher * next;
             Watcher * previous;
     };

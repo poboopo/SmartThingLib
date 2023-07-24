@@ -9,6 +9,7 @@
 #define DEVICE_STATE_WATCHER_TAG "device_state_watcher"
 
 using namespace Configurable::Sensor;
+#define STATE_WATCHER_TYPE DEVICE_STATE_WATCHER_TAG
 
 namespace Watcher {
     class DeviceStateWatcher: public Watcher {
@@ -42,11 +43,11 @@ namespace Watcher {
 
             StaticJsonDocument<WATCHERS_INFO_DOC_SIZE> getInfo() {
                 StaticJsonDocument<WATCHERS_INFO_DOC_SIZE> doc;
-                doc["type"] = DEVICE_STATE_WATCHER_TAG;
-                doc["stateName"] = _deviceState->name;
+                doc["type"] = STATE_WATCHER_TYPE;
+                doc["observable"] = _deviceState->name;
                 doc["callback"] = _callback->getInfo();
                 if (_callback->triggerValue() != nullptr) {
-                    doc["triggerValue"] = _callback->triggerValue();
+                    doc["trigger"] = _callback->triggerValue();
                 }
                 return doc;
             };

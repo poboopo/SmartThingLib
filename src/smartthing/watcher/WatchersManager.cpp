@@ -40,13 +40,12 @@ namespace Watcher {
 
     DynamicJsonDocument WatchersManager::getWatcherInfo() {
         DynamicJsonDocument doc(1024);
-        JsonArray array = doc.createNestedArray();
         if (_count == 0) {
             return doc;
         }
         Watcher * current = _head;
         while (current != nullptr) {
-            array.add(current->getInfo());
+            doc.add(current->getInfo());
             current = current->next;
         }
         return doc;

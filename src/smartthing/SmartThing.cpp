@@ -66,6 +66,10 @@ bool SmartThingClass::init(String type) {
         LOGGER.warning(SMART_THING_TAG, "WiFi not available, skipping all network setup");
     }
 
+    addDeviceState("wifi", [this]() {
+        return wifiConnected() ? "connected" : "disconnected";
+    });
+
     LOGGER.debug(SMART_THING_TAG, "Setup finished");
     return true;
 }
@@ -209,6 +213,54 @@ bool SmartThingClass::addConfigEntry(const char * name, const char * caption, co
     return _configEntriesList.add(name, caption, type);
 }
 
+char * copyString(const char * from) {
+    if (from == nullptr || strlen(from) == 0) {
+        return nullptr;
+    }
+    int size = strlen(from) + 1;
+    char * result = new char[size];
+    strncpy(result, from, size);
+    result[size - 1] = '\0';
+    return result;
+}
+
+bool SmartThingClass::createWatcher(const char * json) {
+    DynamicJsonDocument doc(1024);
+    deserializeJson(doc, json);
+    if (doc.memoryUsage() == 0) {
+        return false;
+    }
+
+    if (!doc.containsKey("type")) {
+        LOGGER.error(SMART_THING_TAG, "type value is missing!");
+        return false;
+    }
+    if (!doc.containsKey("observable")) {
+        LOGGER.error(SMART_THING_TAG, "observable value is missing!");
+        return false;
+    }
+    if (!doc.containsKey("callback_url")) {
+        LOGGER.error(SMART_THING_TAG, "callback_url value is missing!");
+        return false;
+    }
+
+    char * type = copyString(doc["type"]);
+    char * obs = copyString(doc["observable"]);
+    char * url = copyString(doc["callback_url"]);
+    char * trigger = copyString(doc["trigger"]);
+
+    if (strcmp(type, "state") == 0) {
+        LOGGER.debug(SMART_THING_TAG, "Creating state [%s] watcher: url=%s, trigger=%s", obs, url, trigger);
+        return registerDeviceStateWatcher(obs, url, trigger);
+    } else if (strcmp(type, "sensor") == 0) {
+        LOGGER.debug(SMART_THING_TAG, "Creating sensor [%s] watcher: url=%s, trigger=%s", obs, url, trigger);
+        return registerSensorWatcher(obs, url, (trigger != nullptr && strlen(trigger) > 0) ? atoi(trigger) : -1);
+    }
+
+    LOGGER.error(SMART_THING_TAG, "Watcher type %s not supported. Supported types: state, sensor.", type);
+    return false;
+}
+
 bool SmartThingClass::registerSensorWatcher(const char * name, Callback::LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue) {
     const Sensor::Sensor * sensor = _sensorsList.findSensor(name);
     if (sensor == nullptr) {
@@ -225,6 +277,7 @@ bool SmartThingClass::registerSensorWatcher(const char * name, const char * url,
         LOGGER.error(SMART_THING_TAG, "Can't find sensor with name %s. Not registered yet?", name);
         return false;
     }
+    LOGGER.debug(SMART_THING_TAG, "%s %d", name, triggerValue);
     Callback::HttpCallback<int16_t> * watcherCallback = new Callback::HttpCallback<int16_t>(url, triggerValue);
     return _watchersManager.registerSensorWatcher(sensor, watcherCallback);
 }

@@ -74,6 +74,8 @@ class SmartThingClass {
             return registerSensorWatcher(name, url, -1);
         };
 
+        bool createWatcher(const char * body);
+
         DynamicJsonDocument getDictionaries();
         DynamicJsonDocument getSensorsValues();
         DynamicJsonDocument getDeviceStatesInfo();

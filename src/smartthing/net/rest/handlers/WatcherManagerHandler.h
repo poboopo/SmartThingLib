@@ -17,20 +17,35 @@ class WatchersRequestHandler: public RequestHandler {
         };
 
         bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {
-            LOGGER.logRequest(WATCHER_RQ_TAG, http_method_str(requestMethod), requestUri.c_str(), "");
-            server.sendHeader("Access-Control-Allow-Origin", "*");
-
             if (requestMethod == HTTP_OPTIONS) {
+                server.sendHeader("Access-Control-Allow-Origin", "*");
                 server.sendHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
                 server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
                 server.send(200);
                 return true; 
             }
+            
+            LOGGER.logRequest(WATCHER_RQ_TAG, http_method_str(requestMethod), requestUri.c_str(), "");
+            server.sendHeader("Access-Control-Allow-Origin", "*");
+
             if (requestMethod == HTTP_GET) {
+                //todo get next id
                 DynamicJsonDocument doc = SmartThing.getWatchersInfo();
                 String response;
                 serializeJson(doc, response);
                 server.send(200, JSON_CONTENT_TYPE, response);
+                return true;
+            }
+            if (requestMethod == HTTP_POST) {
+                if (!server.hasArg("plain")) {
+                    server.send(400, JSON_CONTENT_TYPE, "Body is missin!");
+                    return true;
+                }
+                if (SmartThing.createWatcher(server.arg("plain").c_str())) {
+                    server.send(201);
+                } else {
+                    server.send(500, JSON_CONTENT_TYPE, buildErrorJson("Failed to create watcher. Check logs for additional information."));
+                }
                 return true;
             }
 

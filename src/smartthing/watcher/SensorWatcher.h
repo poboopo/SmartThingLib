@@ -7,6 +7,7 @@
 #include "smartthing/logs/BetterLogger.h"
 
 #define SENSOR_WATCHER_TAG "sensor_watcher"
+#define SENSOR_WATCHER_TYPE SENSOR_WATCHER_TAG
 
 namespace Watcher {
     class SensorWatcher: public Watcher {
@@ -35,11 +36,11 @@ namespace Watcher {
 
             StaticJsonDocument<WATCHERS_INFO_DOC_SIZE> getInfo() {
                 StaticJsonDocument<WATCHERS_INFO_DOC_SIZE> doc;
-                doc["type"] = SENSOR_WATCHER_TAG;
-                doc["sensorName"] = _sensor->name;
+                doc["type"] = SENSOR_WATCHER_TYPE;
+                doc["observable"] = _sensor->name;
                 doc["callback"] = _callback->getInfo();
                 if (_callback->triggerValue() > 0) {
-                    doc["triggerValue"] = _callback->triggerValue();
+                    doc["trigger"] = _callback->triggerValue();
                 }
                 return doc;
             };

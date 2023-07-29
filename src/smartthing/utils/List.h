@@ -95,6 +95,22 @@ class List {
             return -1;
         };
 
+        T * getByIndex(int16_t index) {
+            if (index > _count || index < 0) {
+                return nullptr;
+            }
+            int16_t i = 0;
+            Wrapper * current = _head;
+            while (current != nullptr) {
+                if (i == index) {
+                    return current->value;
+                }
+                i++;
+                current = current->next;
+            }
+            return nullptr;
+        }
+
         int16_t size() {
             return _count;
         }

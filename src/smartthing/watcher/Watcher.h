@@ -27,7 +27,7 @@ namespace Watcher {
 
             DynamicJsonDocument getCallbacksInfo() {
                 DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size());
-                _callbacks.forEach([doc](Callback::WatcherCallback<T> * current) {
+                _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
                     doc.add(current->getInfo());
                 });
                 return doc;
@@ -50,9 +50,6 @@ namespace Watcher {
             const O * getObservable() {
                 return _observable;
             };
-
-            Watcher<O, T> * next;
-            Watcher<O, T> * previous;
         protected:
             const O * _observable;
             T _oldValue;

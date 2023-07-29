@@ -185,6 +185,11 @@ DynamicJsonDocument SmartThingClass::getWatchersInfo() {
     return _watchersManager.getWatchersInfo();
 }
 
+DynamicJsonDocument SmartThingClass::getWatcherCallbacksInfo(const char * watcherType, int16_t index) {
+    return _watchersManager.getWatcherCallbacksInfo(watcherType, index);
+}
+
+
 // add possible values?
 bool SmartThingClass::addDeviceState(const char * name, Configurable::ConfigurableObject<const char *>::ValueGeneratorFunction function) {
     return _deviceStatesList.add(name, function);

@@ -8,7 +8,7 @@
 #include "smartthing/watcher/callback/WatcherCallback.h"
 
 #define SENSOR_WATCHER_TAG "sensor_watcher"
-#define SENSOR_WATCHER_TYPE SENSOR_WATCHER_TAG
+#define SENSOR_WATCHER_TYPE "sensor"
 
 // todo add treshold for analog sensor
 namespace Watcher {

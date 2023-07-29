@@ -8,7 +8,10 @@
 #define WATCHER_RQ_PATH "/watchers"
 #define WATCHER_RQ_TAG "watchers_handler"
 
-#define WATCHER_CALLBACKS_PAHT "/watchers/callbacks"
+#define WATCHER_CALLBACKS_PATH "/watchers/callbacks"
+
+#define WATCHER_TYPE_ARG "type"
+#define WATCHER_INDEX_ARG "index"
 
 class WatchersRequestHandler: public RequestHandler {
     public:
@@ -31,8 +34,18 @@ class WatchersRequestHandler: public RequestHandler {
             server.sendHeader("Access-Control-Allow-Origin", "*");
 
             if (requestMethod == HTTP_GET) {
-                if (strcmp(requestUri.c_str(), WATCHER_CALLBACKS_PAHT) == 0) {
+                if (strcmp(requestUri.c_str(), WATCHER_CALLBACKS_PATH) == 0) {
+                    String type = server.arg(WATCHER_TYPE_ARG);
+                    String index = server.arg(WATCHER_INDEX_ARG);
 
+                    if (type.isEmpty() || index.isEmpty()) {
+                        server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Watcher type or index args are missing!"));
+                        return true;
+                    }
+                    DynamicJsonDocument doc = SmartThing.getWatcherCallbacksInfo(type.c_str(), index.toInt());
+                    String response;
+                    serializeJson(doc, response);
+                    server.send(200, JSON_CONTENT_TYPE, response);
                     return true;
                 }
                 

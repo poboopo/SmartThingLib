@@ -19,9 +19,6 @@ namespace Watcher {
                 const T triggerValue() const {
                     return _triggerValue;
                 };
-
-                WatcherCallback<T> * next;
-                WatcherCallback<T> * previous;
             protected:
                 T _triggerValue;
         };

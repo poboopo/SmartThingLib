@@ -10,7 +10,7 @@
 #define DEVICE_STATE_WATCHER_TAG "device_state_watcher"
 
 using namespace Configurable::Sensor;
-#define STATE_WATCHER_TYPE DEVICE_STATE_WATCHER_TAG
+#define STATE_WATCHER_TYPE "state"
 
 namespace Watcher {
     class DeviceStateWatcher: public Watcher<Configurable::DeviceState::DeviceState, char *> {

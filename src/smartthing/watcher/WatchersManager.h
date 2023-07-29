@@ -19,12 +19,13 @@ namespace Watcher {
 
             void check();
             DynamicJsonDocument getWatchersInfo();
+            DynamicJsonDocument getWatcherCallbacksInfo(const char * watcherType, uint8_t index);
         private:
             List<Watcher<Configurable::Sensor::Sensor, int16_t>> _sensorsWatchers; 
             List<Watcher<Configurable::DeviceState::DeviceState, char *>> _statesWatchers; 
 
             template<typename O, typename T>
-            void collectInfo(List<Watcher<O, T>> * list, DynamicJsonDocument * doc);
+            void collectInfo(List<Watcher<O, T>> * list, JsonArray * array);
 
             template<typename O, typename T>
             Watcher<O, T> * getWatcher(List<Watcher<O, T>> * list, const O * observable);

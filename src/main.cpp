@@ -52,7 +52,7 @@ void setup() {
         registerSensors();
         addActionsHandlers();
         addConfigEntries();
-        // addCallbacks();
+        addCallbacks();
 
         processConfig();
         LOGGER.info("main", "Config proceed");

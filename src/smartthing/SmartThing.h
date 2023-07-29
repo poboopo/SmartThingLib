@@ -82,6 +82,7 @@ class SmartThingClass {
         DynamicJsonDocument getActionsInfo();
         DynamicJsonDocument getConfigEntriesInfo();
         DynamicJsonDocument getWatchersInfo();
+        DynamicJsonDocument getWatcherCallbacksInfo(const char * watcherType, int16_t index);
 
         RestController* getRestController();
         LedIndicator* getLed(); // are u sure u need this?

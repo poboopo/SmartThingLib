@@ -25,6 +25,7 @@ namespace Watcher {
                     // add value generator lambda?
                     if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
                         HTTPClient client;
+                        LOGGER.info(HTTP_CALLBACK_TAG, "Sending request to %s", _url);
                         client.begin(_url);
                         _lastResponseCode = client.GET();
                         LOGGER.info(HTTP_CALLBACK_TAG, "Request %s finished with code %d", _url, _lastResponseCode);

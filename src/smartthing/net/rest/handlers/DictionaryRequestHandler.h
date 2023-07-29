@@ -28,7 +28,7 @@ class DictionaryRequestHandler: public RequestHandler {
             }
             if (requestMethod == HTTP_GET) {
                 // todo add /actions and /config
-                DynamicJsonDocument doc = SmartThing.getDictionaries();
+                DynamicJsonDocument doc = SmartThing.getInfoionaries();
                 String response;
                 serializeJson(doc, response);
                 server.send(200, JSON_CONTENT_TYPE, response);

@@ -3,24 +3,34 @@
 
 #include <ArduinoJson.h>
 #include "smartthing/watcher/Watcher.h"
+#include "smartthing/watcher/SensorWatcher.h"
+#include "smartthing/watcher/DeviceStateWatcher.h"
 #include "smartthing/configurable/ConfigurableObjects.h"
 #include "smartthing/watcher/callback/WatcherCallback.h"
+#include "smartthing/utils/List.h"
+
+#define WATCHERS_LIST_INFO_SIZE 512
 
 namespace Watcher {
     class WatchersManager {
         public:
-            WatchersManager(): _head(nullptr){};
-            ~WatchersManager();
-
-            bool registerDeviceStateWatcher(const Configurable::DeviceState::DeviceState * state, Callback::WatcherCallback<const char *> * callback);
-            bool registerSensorWatcher(const Configurable::Sensor::Sensor * sensor, Callback::WatcherCallback<int16_t> * callback);
+            bool addDeviceStateCallback(const Configurable::DeviceState::DeviceState * state, Callback::WatcherCallback<char *> * callback);
+            bool addSensorCallback(const Configurable::Sensor::Sensor * sensor, Callback::WatcherCallback<int16_t> * callback);
 
             void check();
-            DynamicJsonDocument getWatcherInfo();
+            DynamicJsonDocument getWatchersInfo();
         private:
-            Watcher * _head;
-            int _count = 0;
-            void append(Watcher * watcher);
+            List<Watcher<Configurable::Sensor::Sensor, int16_t>> _sensorsWatchers; 
+            List<Watcher<Configurable::DeviceState::DeviceState, char *>> _statesWatchers; 
+
+            template<typename O, typename T>
+            void collectInfo(List<Watcher<O, T>> * list, DynamicJsonDocument * doc);
+
+            template<typename O, typename T>
+            Watcher<O, T> * getWatcher(List<Watcher<O, T>> * list, const O * observable);
+
+            template<typename O, typename T>
+            void checkWatchers(List<Watcher<O, T>> * list);
     };
 }
 

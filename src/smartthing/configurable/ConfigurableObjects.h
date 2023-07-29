@@ -4,6 +4,15 @@
 #include <functional>
 
 namespace Configurable {
+    template<typename T>
+    class ConfigurableObject {
+        public:
+            typedef std::function<T(void)> ValueGeneratorFunction;
+
+            const char * name;
+            ValueGeneratorFunction valueGenerator;
+    };
+
     namespace Sensor {
         enum SensorType {
             TYPE_CUSTOM,
@@ -22,29 +31,14 @@ namespace Configurable {
             return "type_not_found_how";
         };
 
-        typedef std::function<uint16_t(void)> ValueGeneratorFunction;
-
-        // add units?
-        struct Sensor {
-            int pin;
-            const char * name;
-            SensorType type;
-            ValueGeneratorFunction valueGenerator = [](){return 0;};
-
-            Sensor * next;
-            Sensor * previous;
+        class Sensor: public ConfigurableObject<int16_t> {
+            public:
+                int pin;
+                SensorType type;
         };
     }
     namespace DeviceState {
-        typedef std::function<const char *(void)> ValueGeneratorFunction;
-
-        struct DeviceState {
-            const char * name;
-            ValueGeneratorFunction valueGenerator = [](){return "";};
-
-            DeviceState * next;
-            DeviceState * previous;
-        };
+        class DeviceState: public ConfigurableObject<const char *> {};
     }
 }
 

@@ -3,16 +3,60 @@
 
 #include <functional>
 #include <ArduinoJson.h>
+#include "smartthing/watcher/callback/WatcherCallback.h"
+#include "smartthing/utils/List.h"
 
-#define WATCHERS_INFO_DOC_SIZE 128
+#define WATCHERS_CALLBACK_INFO_DOC_SIZE 128
+
+/*
+    Класс наблюдатель за объектами
+*/
 
 namespace Watcher {
+    // O - класс наблюдаемого объекта
+    // T - тип данных, которые хранит в себе объект
+    template<typename O, typename T>
     class Watcher {
         public:
+            Watcher(const O * observable, Callback::WatcherCallback<T> * callback): 
+                _observable(observable), _callbacks(callback) {};
+
             virtual bool check() = 0;
-            virtual StaticJsonDocument<WATCHERS_INFO_DOC_SIZE> getInfo() = 0;;
-            Watcher * next;
-            Watcher * previous;
+            virtual StaticJsonDocument<WATCHERS_CALLBACK_INFO_DOC_SIZE> getInfo() = 0;
+            virtual bool callbackAccept(Callback::WatcherCallback<T> * callback, T * newValue) = 0;
+
+            DynamicJsonDocument getCallbacksInfo() {
+                DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size());
+                _callbacks.forEach([doc](Callback::WatcherCallback<T> * current) {
+                    doc.add(current->getInfo());
+                });
+                return doc;
+            };
+            
+            void addCallback(Callback::WatcherCallback<T> * callback) {
+                if (callback != nullptr) {
+                    _callbacks.append(callback);
+                }
+            };
+
+            void callCallbacks(T * value) {
+                _callbacks.forEach([this, value](Callback::WatcherCallback<T> * current) {
+                    if (callbackAccept(current, value)) {
+                        current->call(value);
+                    }
+                });
+            };
+            
+            const O * getObservable() {
+                return _observable;
+            };
+
+            Watcher<O, T> * next;
+            Watcher<O, T> * previous;
+        protected:
+            const O * _observable;
+            T _oldValue;
+            List<Callback::WatcherCallback<T>> _callbacks;
     };
 }
 

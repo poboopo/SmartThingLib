@@ -1,3 +1,9 @@
+- CURRENT
+    - implement get info for watchers +
+    - implement method remove on CallbacksList +
+    - add endpoint for recieving info about callbacks. Don't send callbacks with watchers info!
+    - make WatcherCallback.call(const T * value)
+
 - v1.0
     - v0.1
         - make smart thing static +
@@ -13,7 +19,7 @@
         - make sensors and states unique by name (as actions and config) +
         - fix web page + 
         - add watchers +
-        - add rest to create callback
+        - add rest to create callback +
         - put multiple callback for one object in one watcher
         - execute http callbacks async
         - add callback scenarios in web page

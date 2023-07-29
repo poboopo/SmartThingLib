@@ -45,10 +45,10 @@ class SmartThingClass {
         const String getName();
         bool wifiConnected();
 
-        bool registerSensor(const char * name, Configurable::Sensor::ValueGeneratorFunction valueGenerator);
+        bool registerSensor(const char * name, Configurable::ConfigurableObject<int16_t>::ValueGeneratorFunction valueGenerator);
         bool registerDigitalSensor(const char * name, int pin);
         bool registerAnalogSensor(const char * name, int pin);
-        bool addDeviceState(const char * name, Configurable::DeviceState::ValueGeneratorFunction valueGenerator);
+        bool addDeviceState(const char * name, Configurable::ConfigurableObject<const char *>::ValueGeneratorFunction valueGenerator);
         bool addActionHandler(const char * action, const char * caption, Configurable::Action::ActionHandler handler);
         bool addActionHandler(const char * action, Configurable::Action::ActionHandler handler) {
             return addActionHandler(action, action, handler);
@@ -56,27 +56,27 @@ class SmartThingClass {
         Configurable::Action::ActionResult callAction(const char * action);
         bool addConfigEntry(const char * name, const char * caption, const char * type);
 
-        bool registerDeviceStateWatcher(const char * name, Watcher::Callback::LambdaCallback<const char *>::CustomCallback callback, const char * triggerValue);
-        bool registerDeviceStateWatcher(const char * name, Watcher::Callback::LambdaCallback<const char *>::CustomCallback callback) {
-            return registerDeviceStateWatcher(name, callback, nullptr);
+        bool addDeviceStateCallback(const char * name, Watcher::Callback::LambdaCallback<char *>::CustomCallback callback, const char * triggerValue);
+        bool addDeviceStateCallback(const char * name, Watcher::Callback::LambdaCallback<char *>::CustomCallback callback) {
+            return addDeviceStateCallback(name, callback, nullptr);
         };
-        bool registerDeviceStateWatcher(const char * name, const char * url, const char * triggerValue);
-        bool registerDeviceStateWatcher(const char * name, const char * url) {
-            return registerDeviceStateWatcher(name, url, nullptr);
+        bool addDeviceStateCallback(const char * name, const char * url, const char * triggerValue);
+        bool addDeviceStateCallback(const char * name, const char * url) {
+            return addDeviceStateCallback(name, url, nullptr);
         };
 
-        bool registerSensorWatcher(const char * name, Watcher::Callback::LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue);
-        bool registerSensorWatcher(const char * name, Watcher::Callback::LambdaCallback<int16_t>::CustomCallback callback) {
-            return registerSensorWatcher(name, callback, -1);
+        bool addSensorCallback(const char * name, Watcher::Callback::LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue);
+        bool addSensorCallback(const char * name, Watcher::Callback::LambdaCallback<int16_t>::CustomCallback callback) {
+            return addSensorCallback(name, callback, -1);
         };
-        bool registerSensorWatcher(const char * name, const char * url, int16_t triggerValue);
-        bool registerSensorWatcher(const char * name, const char * url) {
-            return registerSensorWatcher(name, url, -1);
+        bool addSensorCallback(const char * name, const char * url, int16_t triggerValue);
+        bool addSensorCallback(const char * name, const char * url) {
+            return addSensorCallback(name, url, -1);
         };
 
         bool createWatcher(const char * body);
 
-        DynamicJsonDocument getDictionaries();
+        DynamicJsonDocument getInfoionaries();
         DynamicJsonDocument getSensorsValues();
         DynamicJsonDocument getDeviceStatesInfo();
         DynamicJsonDocument getActionsInfo();

@@ -156,12 +156,12 @@ void SmartThingClass::setName(String name) {
     _broadcastMessage = buildBroadCastMessage(_ip, _name);
 }
 
-DynamicJsonDocument SmartThingClass::getDictionaries() {
+DynamicJsonDocument SmartThingClass::getInfoionaries() {
     int size = _actionsList.size() + _configEntriesList.size();
 
     DynamicJsonDocument doc(size * 64);
-    doc["actions"] = _actionsList.getDict();
-    doc["config"] = _configEntriesList.getDict();
+    doc["actions"] = _actionsList.getInfo();
+    doc["config"] = _configEntriesList.getInfo();
     return doc;
 }
 
@@ -174,23 +174,23 @@ DynamicJsonDocument SmartThingClass::getSensorsValues() {
 }
 
 DynamicJsonDocument SmartThingClass::getActionsInfo() {
-    return _actionsList.getDict();
+    return _actionsList.getInfo();
 }
 
 DynamicJsonDocument SmartThingClass::getConfigEntriesInfo() {
-    return _configEntriesList.getDict();
+    return _configEntriesList.getInfo();
 }
 
 DynamicJsonDocument SmartThingClass::getWatchersInfo() {
-    return _watchersManager.getWatcherInfo();
+    return _watchersManager.getWatchersInfo();
 }
 
 // add possible values?
-bool SmartThingClass::addDeviceState(const char * name, DeviceState::ValueGeneratorFunction function) {
+bool SmartThingClass::addDeviceState(const char * name, Configurable::ConfigurableObject<const char *>::ValueGeneratorFunction function) {
     return _deviceStatesList.add(name, function);
 }
 
-bool SmartThingClass::registerSensor(const char * name, Sensor::ValueGeneratorFunction function) {
+bool SmartThingClass::registerSensor(const char * name, Configurable::ConfigurableObject<int16_t>::ValueGeneratorFunction function) {
     return _sensorsList.add(name, function);
 }
 bool SmartThingClass::registerDigitalSensor(const char * name, int pin) {
@@ -251,54 +251,54 @@ bool SmartThingClass::createWatcher(const char * json) {
 
     if (strcmp(type, "state") == 0) {
         LOGGER.debug(SMART_THING_TAG, "Creating state [%s] watcher: url=%s, trigger=%s", obs, url, trigger);
-        return registerDeviceStateWatcher(obs, url, trigger);
+        return addDeviceStateCallback(obs, url, trigger);
     } else if (strcmp(type, "sensor") == 0) {
         LOGGER.debug(SMART_THING_TAG, "Creating sensor [%s] watcher: url=%s, trigger=%s", obs, url, trigger);
-        return registerSensorWatcher(obs, url, (trigger != nullptr && strlen(trigger) > 0) ? atoi(trigger) : -1);
+        return addSensorCallback(obs, url, (trigger != nullptr && strlen(trigger) > 0) ? atoi(trigger) : -1);
     }
 
     LOGGER.error(SMART_THING_TAG, "Watcher type %s not supported. Supported types: state, sensor.", type);
     return false;
 }
 
-bool SmartThingClass::registerSensorWatcher(const char * name, Callback::LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue) {
-    const Sensor::Sensor * sensor = _sensorsList.findSensor(name);
+bool SmartThingClass::addSensorCallback(const char * name, Callback::LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue) {
+    const Configurable::Sensor::Sensor * sensor = _sensorsList.findSensor(name);
     if (sensor == nullptr) {
         LOGGER.error(SMART_THING_TAG, "Can't find sensor with name %s. Not registered yet?", name);
         return false;
     }
     Callback::LambdaCallback<int16_t> * watcherCallback = new Callback::LambdaCallback<int16_t>(callback, triggerValue);
-    return _watchersManager.registerSensorWatcher(sensor, watcherCallback);
+    return _watchersManager.addSensorCallback(sensor, watcherCallback);
 }
 
-bool SmartThingClass::registerSensorWatcher(const char * name, const char * url, int16_t triggerValue) {
-    const Sensor::Sensor * sensor = _sensorsList.findSensor(name);
+bool SmartThingClass::addSensorCallback(const char * name, const char * url, int16_t triggerValue) {
+    const Configurable::Sensor::Sensor * sensor = _sensorsList.findSensor(name);
     if (sensor == nullptr) {
         LOGGER.error(SMART_THING_TAG, "Can't find sensor with name %s. Not registered yet?", name);
         return false;
     }
     LOGGER.debug(SMART_THING_TAG, "%s %d", name, triggerValue);
     Callback::HttpCallback<int16_t> * watcherCallback = new Callback::HttpCallback<int16_t>(url, triggerValue);
-    return _watchersManager.registerSensorWatcher(sensor, watcherCallback);
+    return _watchersManager.addSensorCallback(sensor, watcherCallback);
 }
 
-bool SmartThingClass::registerDeviceStateWatcher(const char * name, Callback::LambdaCallback<const char *>::CustomCallback callback, const char * triggerValue) {
+bool SmartThingClass::addDeviceStateCallback(const char * name, Callback::LambdaCallback<char *>::CustomCallback callback, const char * triggerValue) {
     const DeviceState::DeviceState * state = _deviceStatesList.findState(name);
     if (state == nullptr) {
         LOGGER.error(SMART_THING_TAG, "Can't find device state with name %s. Not registered yet?", name);
         return false;
     }
-    Callback::LambdaCallback<const char *> * watcherCallback = new Callback::LambdaCallback<const char *>(callback, triggerValue);
-    return _watchersManager.registerDeviceStateWatcher(state, watcherCallback);
+    Callback::LambdaCallback<char *> * watcherCallback = new Callback::LambdaCallback<char *>(callback, copyString(triggerValue));
+    return _watchersManager.addDeviceStateCallback(state, watcherCallback);
 }
-bool SmartThingClass::registerDeviceStateWatcher(const char * name, const char * url, const char * triggerValue) {
+bool SmartThingClass::addDeviceStateCallback(const char * name, const char * url, const char * triggerValue) {
     const DeviceState::DeviceState * state = _deviceStatesList.findState(name);
     if (state == nullptr) {
         LOGGER.error(SMART_THING_TAG, "Can't find device state with name %s. Not registered yet?", name);
         return false;
     }
-    Callback::HttpCallback<const char *> * watcherCallback = new Callback::HttpCallback<const char *>(url, triggerValue);
-    return _watchersManager.registerDeviceStateWatcher(state, watcherCallback);
+    Callback::HttpCallback<char *> * watcherCallback = new Callback::HttpCallback<char *>(url, copyString(triggerValue));
+    return _watchersManager.addDeviceStateCallback(state, watcherCallback);
 }
 
 const String SmartThingClass::getType() {

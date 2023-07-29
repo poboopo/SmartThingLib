@@ -5,7 +5,7 @@
 
 #include <ArduinoJson.h>
 
-#define INFO_DOC_SIZE 128
+#define CALLBACK_INFO_DOC_SIZE 128
 
 namespace Watcher {
     namespace Callback {
@@ -13,11 +13,15 @@ namespace Watcher {
         class WatcherCallback {
             public:
                 WatcherCallback(T triggerValue): _triggerValue(triggerValue){};
+                // todo make value const
                 virtual void call(T * value);
-                virtual StaticJsonDocument<INFO_DOC_SIZE> getInfo() = 0;
+                virtual StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> getInfo() = 0;
                 const T triggerValue() const {
                     return _triggerValue;
                 };
+
+                WatcherCallback<T> * next;
+                WatcherCallback<T> * previous;
             protected:
                 T _triggerValue;
         };

@@ -3,6 +3,9 @@
 
 #include <functional>
 #include <ArduinoJson.h>
+#include "smartthing/utils/List.h"
+
+#define ACTIONS_LIST_TAG "action_handlers_list"
 
 namespace Configurable {
     namespace Action {
@@ -17,31 +20,55 @@ namespace Configurable {
         typedef std::function<ActionResult(void)> ActionHandler;
 
         struct Action {
+            Action(const char * n, const char * c, ActionHandler h):
+                name(n), caption(c), handler(h) {};
             const char * name;
             const char * caption;
             ActionHandler handler;
-
-            Action * next;
-            Action * previous;
         };
 
-        class ActionsList {
+        class ActionsList: public List<Action> {
             public:
-                ActionsList(): _head(nullptr){};
-                ~ActionsList();
+                bool add(const char * actionName, const char * caption, ActionHandler handler) {
+                    if (findAction(actionName) != nullptr) {
+                        LOGGER.warning(ACTIONS_LIST_TAG, "Handler for action %s already exists! Skipping...", actionName);
+                        return false;
+                    }
+                    Action * action = new Action(actionName, caption, handler);
+                    if (append(action) > -1) {
+                        LOGGER.debug(ACTIONS_LIST_TAG, "Added new action handler - %s:%s", actionName, caption);
+                        return true;
+                    } else {
+                        if (action != nullptr) {
+                            delete(action);
+                        }
+                        LOGGER.error(ACTIONS_LIST_TAG, "Failed to add new action handler - %s:%s", actionName, caption);
+                        return false;
+                    }
+                };
 
-                bool add(const char * actionName, const char * caption, ActionHandler handler);
-                ActionResult callAction(const char * actionName);
-                DynamicJsonDocument getDict();
+                ActionResult callAction(const char * actionName) {
+                    const Action * action = findAction(actionName);
+                    if (action == nullptr) {
+                        LOGGER.error(ACTIONS_LIST_TAG, "Can't find action with name %s", actionName);
+                        return ActionResult(false, "Failed to find action");
+                    }
+                    return action->handler();
+                };
 
-                int size() {
-                    return _count;
-                }
+                DynamicJsonDocument getInfo(){
+                    DynamicJsonDocument doc(size() * 64);
+                    forEach([&](Action * current) {
+                        doc[current->name] = current->caption;
+                    });
+                    return doc;
+                };
             private:
-                Action * _head;
-                int _count = 0;
-                void append(Action * sensor);
-                const Action * findAction(const char * actionName) const;
+                const Action * findAction(const char * name) {
+                    return findValue([&](Action * current) {
+                        return strcmp(current->name, name) == 0;
+                    });
+                }
         };
     }
 }

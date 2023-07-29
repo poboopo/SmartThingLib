@@ -8,6 +8,8 @@
 #define WATCHER_RQ_PATH "/watchers"
 #define WATCHER_RQ_TAG "watchers_handler"
 
+#define WATCHER_CALLBACKS_PAHT "/watchers/callbacks"
+
 class WatchersRequestHandler: public RequestHandler {
     public:
         WatchersRequestHandler() {};
@@ -29,7 +31,11 @@ class WatchersRequestHandler: public RequestHandler {
             server.sendHeader("Access-Control-Allow-Origin", "*");
 
             if (requestMethod == HTTP_GET) {
-                //todo get next id
+                if (strcmp(requestUri.c_str(), WATCHER_CALLBACKS_PAHT) == 0) {
+
+                    return true;
+                }
+                
                 DynamicJsonDocument doc = SmartThing.getWatchersInfo();
                 String response;
                 serializeJson(doc, response);

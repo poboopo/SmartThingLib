@@ -1,5 +1,4 @@
 - CURRENT
-    - execute http callbacks async
     - add callback scenarios in web page
 
 - v1.0

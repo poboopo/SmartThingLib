@@ -145,7 +145,7 @@ void addCallbacks() {
     SmartThing.addDeviceStateCallback("automode", [](char ** value) {
         LOGGER.info("main", "Automode callback called. New value %s", *value);
     });
-    SmartThing.addDeviceStateCallback("automode", "http://192.168.1.66/info", "true");
+    SmartThing.addDeviceStateCallback("automode", "http://192.168.1.67/info", "true");
     SmartThing.addSensorCallback("test_digital", [](int16_t * value) {
         LOGGER.debug("main", "Digital sensor value changed to %u", *value);
     }, 1);

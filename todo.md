@@ -1,5 +1,6 @@
 - CURRENT
     - add callback scenarios in web page
+    - pass const value to callbacks
 
 - v1.0
     - v0.1

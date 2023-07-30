@@ -36,9 +36,10 @@ namespace Watcher {
                         "Device state %s value changed %s->%s.", 
                         _observable->name, _oldValue, newValue
                     );
-                    copyValue(newValue);
 
+                    copyValue(newValue);
                     callCallbacks(&_oldValue);
+
                     return true;
                 }
                 return false;
@@ -46,7 +47,7 @@ namespace Watcher {
 
             bool callbackAccept(Callback::WatcherCallback<char *> * callback, char ** value) {
                 return callback->triggerValue() == nullptr || 
-                    (callback->triggerValue() != nullptr && strcmp((*value), callback->triggerValue()) != 0);
+                    (callback->triggerValue() != nullptr && strcmp((*value), callback->triggerValue()) == 0);
             }
 
             StaticJsonDocument<WATCHERS_CALLBACK_INFO_DOC_SIZE> getInfo() {

@@ -15,7 +15,7 @@ namespace Watcher {
                 typedef std::function<void(T *)>CustomCallback;
 
                 LambdaCallback(CustomCallback customCallback, T triggerValue):
-                    WatcherCallback<T>(triggerValue), _customCallback(customCallback) {};
+                    WatcherCallback<T>(triggerValue, true), _customCallback(customCallback) {};
                 void call(T * value) {
                     if (value == nullptr) {
                         LOGGER.error(LAMBDA_CALLBACK_TAG, "Value is null!");
@@ -24,7 +24,7 @@ namespace Watcher {
                     _customCallback(value);
                 };
                 StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> getInfo() {
-                    StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> doc;
+                    StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> doc = this->getDeaultInfo();
                     doc["type"] = LAMBDA_CALLBACK_TAG;
                     doc["caption"] = "lambda";
                     return doc;

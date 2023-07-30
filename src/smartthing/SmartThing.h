@@ -63,18 +63,24 @@ class SmartThingClass {
         bool addDeviceStateCallback(const char * name, Watcher::Callback::LambdaCallback<char *>::CustomCallback callback) {
             return addDeviceStateCallback(name, callback, nullptr);
         };
-        bool addDeviceStateCallback(const char * name, const char * url, const char * triggerValue);
+        bool addDeviceStateCallback(const char * name, const char * url, const char * triggerValue, bool readonly);
+        bool addDeviceStateCallback(const char * name, const char * url, const char * triggerValue) {
+            return addDeviceStateCallback(name, url, triggerValue, true);
+        }
         bool addDeviceStateCallback(const char * name, const char * url) {
-            return addDeviceStateCallback(name, url, nullptr);
+            return addDeviceStateCallback(name, url, nullptr, true);
         };
 
         bool addSensorCallback(const char * name, Watcher::Callback::LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue);
         bool addSensorCallback(const char * name, Watcher::Callback::LambdaCallback<int16_t>::CustomCallback callback) {
             return addSensorCallback(name, callback, -1);
         };
-        bool addSensorCallback(const char * name, const char * url, int16_t triggerValue);
+        bool addSensorCallback(const char * name, const char * url, int16_t triggerValue, bool readonly);
+        bool addSensorCallback(const char * name, const char * url, int16_t triggerValue) {
+            return addSensorCallback(name, url, triggerValue, true);
+        }
         bool addSensorCallback(const char * name, const char * url) {
-            return addSensorCallback(name, url, -1);
+            return addSensorCallback(name, url, -1, true);
         };
 
         bool createWatcher(const char * body);

@@ -31,6 +31,7 @@ namespace Watcher {
                 StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> getInfo() {
                     StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> doc;
                     doc["type"] = HTTP_CALLBACK_TAG;
+                    doc["caption"] = "http";
                     doc["url"] = _url;
                     doc["lastResponseCode"] = _lastResponseCode;
                     doc["trigger"] = this->triggerValue();

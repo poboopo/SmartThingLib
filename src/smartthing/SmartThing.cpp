@@ -185,8 +185,8 @@ DynamicJsonDocument SmartThingClass::getWatchersInfo() {
     return _watchersManager.getWatchersInfo();
 }
 
-DynamicJsonDocument SmartThingClass::getWatcherCallbacksInfo(const char * watcherType, int16_t index) {
-    return _watchersManager.getWatcherCallbacksInfo(watcherType, index);
+DynamicJsonDocument SmartThingClass::getCallbacksInfo(const char * type, const char * name) {
+    return _watchersManager.getWatcherCallbacksInfo(type, name);
 }
 
 
@@ -254,15 +254,15 @@ bool SmartThingClass::createWatcher(const char * json) {
     char * url = copyString(doc["callback_url"]);
     char * trigger = copyString(doc["trigger"]);
 
-    if (strcmp(type, "state") == 0) {
-        LOGGER.debug(SMART_THING_TAG, "Creating state [%s] watcher: url=%s, trigger=%s", obs, url, trigger);
+    if (strcmp(type, STATE_TYPE) == 0) {
+        LOGGER.debug(SMART_THING_TAG, "Creating state [%s] callback: url=%s, trigger=%s", obs, url, trigger);
         return addDeviceStateCallback(obs, url, trigger);
-    } else if (strcmp(type, "sensor") == 0) {
-        LOGGER.debug(SMART_THING_TAG, "Creating sensor [%s] watcher: url=%s, trigger=%s", obs, url, trigger);
+    } else if (strcmp(type, SENSOR_TYPE) == 0) {
+        LOGGER.debug(SMART_THING_TAG, "Creating sensor [%s] callback: url=%s, trigger=%s", obs, url, trigger);
         return addSensorCallback(obs, url, (trigger != nullptr && strlen(trigger) > 0) ? atoi(trigger) : -1);
     }
 
-    LOGGER.error(SMART_THING_TAG, "Watcher type %s not supported. Supported types: state, sensor.", type);
+    LOGGER.error(SMART_THING_TAG, "Callback for type %s not supported. Supported types: state, sensor.", type);
     return false;
 }
 

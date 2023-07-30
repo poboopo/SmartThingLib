@@ -37,11 +37,8 @@ namespace Watcher {
                 return callback->triggerValue() < 0 || (callback->triggerValue() >= 0 && (*value) == callback->triggerValue());
             };
 
-            StaticJsonDocument<WATCHERS_CALLBACK_INFO_DOC_SIZE> getInfo() {
-                StaticJsonDocument<WATCHERS_CALLBACK_INFO_DOC_SIZE> doc;
-                doc["type"] = SENSOR_WATCHER_TYPE;
-                doc["observable"] = _observable->name;
-                return doc;
+            const char * getObservableInfo() {
+                return _observable->name;
             };
 
             const void * getObservable() {

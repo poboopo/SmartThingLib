@@ -1,6 +1,6 @@
 - CURRENT
     - add callback scenarios in web page
-    - pass const value to callbacks
+    - add editable parameter to callback, so system callbacks can't be edited from web
 
 - v1.0
     - v0.1

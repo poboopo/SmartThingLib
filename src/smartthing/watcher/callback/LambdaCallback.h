@@ -26,6 +26,7 @@ namespace Watcher {
                 StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> getInfo() {
                     StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> doc;
                     doc["type"] = LAMBDA_CALLBACK_TAG;
+                    doc["caption"] = "lambda";
                     return doc;
                 };
             private:

@@ -19,7 +19,7 @@ namespace Watcher {
 
             void check();
             DynamicJsonDocument getWatchersInfo();
-            DynamicJsonDocument getWatcherCallbacksInfo(const char * watcherType, uint8_t index);
+            DynamicJsonDocument getWatcherCallbacksInfo(const char * type, const char * name);
         private:
             List<Watcher<Configurable::Sensor::Sensor, int16_t>> _sensorsWatchers; 
             List<Watcher<Configurable::DeviceState::DeviceState, char *>> _statesWatchers; 

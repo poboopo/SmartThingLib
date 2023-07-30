@@ -22,7 +22,7 @@ namespace Watcher {
                 _observable(observable), _callbacks(callback) {};
 
             virtual bool check() = 0;
-            virtual StaticJsonDocument<WATCHERS_CALLBACK_INFO_DOC_SIZE> getInfo() = 0;
+            virtual const char * getObservableInfo() = 0;
             // это находится здесь, тк у callback нет привязки к типу,а у Watcherов есть
             virtual bool callbackAccept(Callback::WatcherCallback<T> * callback, T * newValue) = 0;
 

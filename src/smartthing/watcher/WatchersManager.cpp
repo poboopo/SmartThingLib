@@ -76,30 +76,34 @@ namespace Watcher {
         DynamicJsonDocument doc(1024);
         if (_sensorsWatchers.size() > 0) {
             LOGGER.debug(WATCHERS_MANAGER_TAG, "Collecting info from sensors watchers");
-            JsonArray array = doc.createNestedArray("sensors");
+            JsonArray array = doc.createNestedArray(SENSOR_WATCHER_TYPE);
             collectInfo<Sensor, int16_t>(&_sensorsWatchers, &array);
         }
         if (_statesWatchers.size() > 0) {
             LOGGER.debug(WATCHERS_MANAGER_TAG, "Collecting info from device state watchers");
-            JsonArray array = doc.createNestedArray("states");
+            JsonArray array = doc.createNestedArray(STATE_WATCHER_TYPE);
             collectInfo<DeviceState, char *>(&_statesWatchers, &array);
         }
         return doc;
     }
 
-    DynamicJsonDocument WatchersManager::getWatcherCallbacksInfo(const char * watcherType, uint8_t index) {
-        if (strcmp(watcherType, SENSOR_WATCHER_TYPE) == 0) {
-            Watcher<Sensor, int16_t> * watcher = _sensorsWatchers.getByIndex(index);
+    DynamicJsonDocument WatchersManager::getWatcherCallbacksInfo(const char * type, const char * name) {
+        if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
+            Watcher<Sensor, int16_t> * watcher = _sensorsWatchers.findValue([&](Watcher<Sensor, int16_t> * current) {
+                return strcmp(current->getObservable()->name, name) == 0;
+            });
             if (watcher != nullptr) {
                 return watcher->getCallbacksInfo();
             }
-        } else if (strcmp(watcherType, STATE_WATCHER_TYPE) == 0) {
-            Watcher<DeviceState, char *> * watcher = _statesWatchers.getByIndex(index);
+        } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
+            Watcher<DeviceState, char *> * watcher = _statesWatchers.findValue([&](Watcher<DeviceState, char *> * current) {
+                return strcmp(current->getObservable()->name, name) == 0;
+            });
             if (watcher != nullptr) {
                 return watcher->getCallbacksInfo();
             }
         }
-        LOGGER.error(WATCHERS_MANAGER_TAG, "Watcher with type %s and index %d not found!", watcherType, index);
+        LOGGER.error(WATCHERS_MANAGER_TAG, "Watcher with type %s and index %d not found!", type, index);
         DynamicJsonDocument doc(16);
         return doc;
     }
@@ -108,7 +112,7 @@ namespace Watcher {
     template<typename O, typename T>
     void WatchersManager::collectInfo(List<Watcher<O, T>> * list, JsonArray * array) {
         list->forEach([&](Watcher<O, T> * current) {
-            array->add(current->getInfo());
+            array->add(current->getObservableInfo());
         });
     }
 

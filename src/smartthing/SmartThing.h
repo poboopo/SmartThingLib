@@ -33,6 +33,9 @@
 
 #define DEVICE_NAME_LENGTH_MAX 15
 
+#define STATE_TYPE "state"
+#define SENSOR_TYPE "sensor"
+
 class SmartThingClass {
     public:
         ~SmartThingClass();
@@ -82,7 +85,7 @@ class SmartThingClass {
         DynamicJsonDocument getActionsInfo();
         DynamicJsonDocument getConfigEntriesInfo();
         DynamicJsonDocument getWatchersInfo();
-        DynamicJsonDocument getWatcherCallbacksInfo(const char * watcherType, int16_t index);
+        DynamicJsonDocument getCallbacksInfo(const char * watcherType, const char * name);
 
         RestController* getRestController();
         LedIndicator* getLed(); // are u sure u need this?

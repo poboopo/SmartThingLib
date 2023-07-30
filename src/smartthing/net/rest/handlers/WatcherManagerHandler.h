@@ -11,7 +11,7 @@
 #define WATCHER_CALLBACKS_PATH "/watchers/callbacks"
 
 #define WATCHER_TYPE_ARG "type"
-#define WATCHER_INDEX_ARG "index"
+#define WATCHER_NAME_ARG "name"
 
 class WatchersRequestHandler: public RequestHandler {
     public:
@@ -36,13 +36,13 @@ class WatchersRequestHandler: public RequestHandler {
             if (requestMethod == HTTP_GET) {
                 if (strcmp(requestUri.c_str(), WATCHER_CALLBACKS_PATH) == 0) {
                     String type = server.arg(WATCHER_TYPE_ARG);
-                    String index = server.arg(WATCHER_INDEX_ARG);
+                    String name = server.arg(WATCHER_NAME_ARG);
 
-                    if (type.isEmpty() || index.isEmpty()) {
-                        server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Watcher type or index args are missing!"));
+                    if (type.isEmpty() || name.isEmpty()) {
+                        server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Watcher type or name args are missing!"));
                         return true;
                     }
-                    DynamicJsonDocument doc = SmartThing.getWatcherCallbacksInfo(type.c_str(), index.toInt());
+                    DynamicJsonDocument doc = SmartThing.getCallbacksInfo(type.c_str(), name.c_str());
                     String response;
                     serializeJson(doc, response);
                     server.send(200, JSON_CONTENT_TYPE, response);

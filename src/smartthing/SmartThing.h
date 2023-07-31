@@ -15,7 +15,7 @@
 #include "smartthing/configurable/ActionsList.h"
 #include "smartthing/configurable/ConfigEntriesList.h"
 
-#include "smartthing/watcher/WatchersManager.h"
+#include "smartthing/watcher/CallbacksManager.h"
 #include "smartthing/watcher/callback/LambdaCallback.h"
 #include "smartthing/watcher/callback/HttpCallback.h"
 
@@ -59,8 +59,8 @@ class SmartThingClass {
         Configurable::Action::ActionResult callAction(const char * action);
         bool addConfigEntry(const char * name, const char * caption, const char * type);
 
-        bool addDeviceStateCallback(const char * name, Watcher::Callback::LambdaCallback<char *>::CustomCallback callback, const char * triggerValue);
-        bool addDeviceStateCallback(const char * name, Watcher::Callback::LambdaCallback<char *>::CustomCallback callback) {
+        bool addDeviceStateCallback(const char * name, Callback::LambdaCallback<char *>::CustomCallback callback, const char * triggerValue);
+        bool addDeviceStateCallback(const char * name, Callback::LambdaCallback<char *>::CustomCallback callback) {
             return addDeviceStateCallback(name, callback, nullptr);
         };
         bool addDeviceStateCallback(const char * name, const char * url, const char * triggerValue, bool readonly);
@@ -71,8 +71,8 @@ class SmartThingClass {
             return addDeviceStateCallback(name, url, nullptr, true);
         };
 
-        bool addSensorCallback(const char * name, Watcher::Callback::LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue);
-        bool addSensorCallback(const char * name, Watcher::Callback::LambdaCallback<int16_t>::CustomCallback callback) {
+        bool addSensorCallback(const char * name, Callback::LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue);
+        bool addSensorCallback(const char * name, Callback::LambdaCallback<int16_t>::CustomCallback callback) {
             return addSensorCallback(name, callback, -1);
         };
         bool addSensorCallback(const char * name, const char * url, int16_t triggerValue, bool readonly);
@@ -83,7 +83,7 @@ class SmartThingClass {
             return addSensorCallback(name, url, -1, true);
         };
 
-        bool createWatcher(const char * body);
+        bool createCallbacksFromJson(const char * body);
 
         DynamicJsonDocument getInfoionaries();
         DynamicJsonDocument getSensorsValues();
@@ -91,7 +91,7 @@ class SmartThingClass {
         DynamicJsonDocument getActionsInfo();
         DynamicJsonDocument getConfigEntriesInfo();
         DynamicJsonDocument getWatchersInfo();
-        DynamicJsonDocument getCallbacksInfo(const char * watcherType, const char * name);
+        DynamicJsonDocument getCallbacksJson(const char * watcherType, const char * name);
 
         RestController* getRestController();
         LedIndicator* getLed(); // are u sure u need this?
@@ -103,7 +103,7 @@ class SmartThingClass {
         Configurable::DeviceState::DeviceStatesList _deviceStatesList;
         Configurable::Action::ActionsList _actionsList;
         Configurable::Config::ConfigEntriesList _configEntriesList;
-        Watcher::WatchersManager _watchersManager;
+        Callback::CallbacksManager _CallbacksManager;
 
         // todo change to const * char?
         String _ip;

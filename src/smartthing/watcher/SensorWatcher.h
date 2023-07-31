@@ -11,7 +11,7 @@
 #define SENSOR_WATCHER_TYPE "sensor"
 
 // todo add treshold for analog sensor
-namespace Watcher {
+namespace Callback {
     class SensorWatcher: public Watcher<Configurable::Sensor::Sensor, int16_t> {
         public:
             SensorWatcher(const Configurable::Sensor::Sensor * sensor, Callback::WatcherCallback<int16_t> * callback): 

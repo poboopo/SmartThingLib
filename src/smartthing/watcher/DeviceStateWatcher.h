@@ -12,7 +12,7 @@
 using namespace Configurable::Sensor;
 #define STATE_WATCHER_TYPE "state"
 
-namespace Watcher {
+namespace Callback {
     class DeviceStateWatcher: public Watcher<Configurable::DeviceState::DeviceState, char *> {
         public:
             DeviceStateWatcher(const Configurable::DeviceState::DeviceState * deviceState, Callback::WatcherCallback<char *> * callback): 

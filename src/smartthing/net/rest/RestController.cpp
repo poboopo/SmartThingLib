@@ -7,7 +7,7 @@
 #include "smartthing/net/rest/handlers/StateRequestHandler.h"
 #include "smartthing/net/rest/handlers/DictionaryRequestHandler.h"
 #include "smartthing/net/rest/handlers/ActionRequestHandler.h"
-#include "smartthing/net/rest/handlers/WatcherManagerHandler.h"
+#include "smartthing/net/rest/handlers/CallbacksRequestHandler.h"
 
 #define WEB_SERVER_TAG "web_server"
 
@@ -58,7 +58,7 @@ void RestController::setupHandler() {
     _server.addHandler(new StateRequestHandler());
     _server.addHandler(new DictionaryRequestHandler());
     _server.addHandler(new ActionRequestHandler());
-    _server.addHandler(new WatchersRequestHandler());
+    _server.addHandler(new CallbacksRequestHandler());
 
     _server.on("/health", HTTP_GET, [this]() {
         preHandleRequest();

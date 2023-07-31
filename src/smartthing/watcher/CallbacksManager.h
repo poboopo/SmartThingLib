@@ -9,17 +9,15 @@
 #include "smartthing/watcher/callback/WatcherCallback.h"
 #include "smartthing/utils/List.h"
 
-#define WATCHERS_LIST_INFO_SIZE 512
-
-namespace Watcher {
-    class WatchersManager {
+namespace Callback {
+    class CallbacksManager {
         public:
             bool addDeviceStateCallback(const Configurable::DeviceState::DeviceState * state, Callback::WatcherCallback<char *> * callback);
             bool addSensorCallback(const Configurable::Sensor::Sensor * sensor, Callback::WatcherCallback<int16_t> * callback);
 
             void check();
             DynamicJsonDocument getWatchersInfo();
-            DynamicJsonDocument getWatcherCallbacksInfo(const char * type, const char * name);
+            DynamicJsonDocument getCallbacksJson(const char * type, const char * name);
         private:
             List<Watcher<Configurable::Sensor::Sensor, int16_t>> _sensorsWatchers; 
             List<Watcher<Configurable::DeviceState::DeviceState, char *>> _statesWatchers; 

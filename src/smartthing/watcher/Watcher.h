@@ -5,6 +5,7 @@
 #include <ArduinoJson.h>
 #include "smartthing/watcher/callback/WatcherCallback.h"
 #include "smartthing/utils/List.h"
+#include "smartthing/logs/BetterLogger.h"
 
 #define WATCHERS_CALLBACK_INFO_DOC_SIZE 128
 
@@ -39,6 +40,26 @@ class Watcher {
             }
         };
 
+        bool removeCallback(int16_t index) {
+            Callback::WatcherCallback<T> * callback = _callbacks.getByIndex(index);
+            if (callback == nullptr) {
+                return false;
+            }
+            if (callback->isReadonly()) {
+                LOGGER.error("watcher", "This callback is readonly!");
+                return false;
+            }
+            if (_callbacks.remove(callback)) {
+                delete(callback);
+                return true;
+            }
+            return false;
+        }
+
+        Callback::WatcherCallback<T> * getCallback(int16_t index) {
+            return _callbacks.getByIndex(index);
+        }
+
         void callCallbacks(T * value) {
             _callbacks.forEach([this, value](Callback::WatcherCallback<T> * current) {
                 if (callbackAccept(current, value)) {
@@ -50,6 +71,10 @@ class Watcher {
         const O * getObservable() {
             return _observable;
         };
+
+        bool haveCallbacks() {
+            return _callbacks.size() != 0;
+        }
     protected:
         const O * _observable;
         T _oldValue;

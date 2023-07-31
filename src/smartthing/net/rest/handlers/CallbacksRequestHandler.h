@@ -9,8 +9,9 @@
 #define CALLBACKS_RQ_PATH "/callbacks"
 #define CALLBACKS_RQ_TAG "callbacks_handler"
 
-#define WATCHER_TYPE_ARG "type"
-#define WATCHER_NAME_ARG "name"
+#define CALLBACK_TYPE_ARG "type"
+#define CALLBACK_NAME_ARG "name"
+#define CALLBACK_INDEX_ARG "index"
 
 class CallbacksRequestHandler: public RequestHandler {
     public:
@@ -33,11 +34,11 @@ class CallbacksRequestHandler: public RequestHandler {
             server.sendHeader("Access-Control-Allow-Origin", "*");
 
             if (requestMethod == HTTP_GET) {
-                String type = server.arg(WATCHER_TYPE_ARG);
-                String name = server.arg(WATCHER_NAME_ARG);
+                String type = server.arg(CALLBACK_TYPE_ARG);
+                String name = server.arg(CALLBACK_NAME_ARG);
 
                 if (type.isEmpty() || name.isEmpty()) {
-                    server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Watcher type or name args are missing!"));
+                    server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type or name args are missing!"));
                     return true;
                 }
                 DynamicJsonDocument doc = SmartThing.getCallbacksJson(type.c_str(), name.c_str());
@@ -46,7 +47,6 @@ class CallbacksRequestHandler: public RequestHandler {
                 server.send(200, JSON_CONTENT_TYPE, response);
                 return true;
             }
-            // TODO ADD EDIT AND DELETE
             if (requestMethod == HTTP_POST) {
                 if (!server.hasArg("plain")) {
                     server.send(400, JSON_CONTENT_TYPE, "Body is missin!");
@@ -59,6 +59,26 @@ class CallbacksRequestHandler: public RequestHandler {
                 }
                 return true;
             }
+            if (requestMethod == HTTP_PUT) {
+                
+            }
+            if (requestMethod == HTTP_DELETE) {
+                String type = server.arg(CALLBACK_TYPE_ARG);
+                String name = server.arg(CALLBACK_NAME_ARG);
+                String index = server.arg(CALLBACK_INDEX_ARG);
+
+                if (type.isEmpty() || name.isEmpty() || index.isEmpty()) {
+                    server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type, name or index args are missing!"));
+                    return true;
+                }
+                if(SmartThing.deleteCallback(type.c_str(), name.c_str(), index.toInt())) {
+                    server.send(200);
+                } else {
+                    server.send(500, JSON_CONTENT_TYPE, buildErrorJson("Failed to delete callback. Check logs for additional information."));
+                }
+                return true;
+            }
+            // TODO ADD EDIT
 
             return false;
         };

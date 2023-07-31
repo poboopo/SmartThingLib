@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <functional>
+#include "smartthing/logs/BetterLogger.h"
 
 template<typename T>
 class List {
@@ -17,13 +18,16 @@ class List {
         };
 
         void removeAll() {
-            Wrapper * current = _head;
-            while (current->next != nullptr) {
-                current = current->next;
-                delete(current->value);
-                delete(current->previous);
+            if (_count == 0) {
+                return;
             }
-            delete(current);
+            Wrapper * current = _head;
+            Wrapper * temp = new Wrapper(nullptr);
+            while (current != nullptr) {
+                temp = current;
+                current = current->next;
+                delete(temp);
+            }
         }
 
         int16_t append(T * value) {
@@ -41,25 +45,30 @@ class List {
             return _count - 1;
         };
 
-        void remove(T * value) {
+        bool remove(T * value) {
             if (value == nullptr) {
-                return;
+                return false;
             }
 
             Wrapper * current = _head;
             while (current != nullptr) {
                 if (value == current->value) {
+                    if (current->next != nullptr) {
+                        current->next->previous = current->previous;
+                        if (current->previous == nullptr) {
+                            _head = current->next;
+                        }
+                    }
                     if (current->previous != nullptr) {
                         current->previous->next = current->next;
                     }
-                    if (current->next != nullptr) {
-                        current->next->previous = current->next;
-                    }
                     delete(current);
-                    return;
+                    _count--;
+                    return true;
                 }
                 current = current->next;
             }
+            return false;
         };
 
         void forEach(ForEachFunction forFunc) {
@@ -96,7 +105,7 @@ class List {
         };
 
         T * getByIndex(int16_t index) {
-            if (index > _count || index < 0) {
+            if (index < 0 || index > _count) {
                 return nullptr;
             }
             int16_t i = 0;

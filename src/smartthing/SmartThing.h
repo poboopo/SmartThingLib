@@ -84,6 +84,9 @@ class SmartThingClass {
         };
 
         bool createCallbacksFromJson(const char * body);
+        bool deleteCallback(const char * type, const char * name, int16_t index) {
+            return _CallbacksManager.deleteCallback(type, name, index);
+        }
 
         DynamicJsonDocument getInfoionaries();
         DynamicJsonDocument getSensorsValues();

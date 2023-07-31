@@ -14,6 +14,11 @@ namespace Callback {
         public:
             bool addDeviceStateCallback(const Configurable::DeviceState::DeviceState * state, Callback::WatcherCallback<char *> * callback);
             bool addSensorCallback(const Configurable::Sensor::Sensor * sensor, Callback::WatcherCallback<int16_t> * callback);
+            /*
+                type - тип наблюдаемого объекта (state, sensor)
+                name - имя наблюдаемого объекта
+            */
+            bool deleteCallback(const char * type, const char * name, int16_t index);
 
             void check();
             DynamicJsonDocument getWatchersInfo();
@@ -27,6 +32,15 @@ namespace Callback {
 
             template<typename O, typename T>
             Watcher<O, T> * getWatcher(List<Watcher<O, T>> * list, const O * observable);
+
+            template<typename O, typename T>
+            Watcher<O, T> * getWatcherByObservableName(List<Watcher<O, T>> * list, const char * name);
+
+            template<typename O, typename T>
+            DynamicJsonDocument getCallbacksJsonFromList(List<Watcher<O, T>> * list, const char * name);
+
+            template<typename O, typename T>
+            bool deleteWatcherCallbackFromList(List<Watcher<O, T>> * list, const char * name, int16_t index);
 
             template<typename O, typename T>
             void checkWatchers(List<Watcher<O, T>> * list);

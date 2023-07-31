@@ -24,6 +24,9 @@ namespace Callback {
                 doc["readonly"] = _readonly;
                 return doc;
             }
+            bool isReadonly() {
+                return _readonly;
+            }
         protected:
             T _triggerValue;
             bool _readonly;

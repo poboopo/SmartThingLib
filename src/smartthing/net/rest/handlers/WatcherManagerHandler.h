@@ -8,6 +8,7 @@
 #define WATCHER_RQ_PATH "/watchers"
 #define WATCHER_RQ_TAG "watchers_handler"
 
+// rename to callbacks
 #define WATCHER_CALLBACKS_PATH "/watchers/callbacks"
 
 #define WATCHER_TYPE_ARG "type"
@@ -48,13 +49,14 @@ class WatchersRequestHandler: public RequestHandler {
                     server.send(200, JSON_CONTENT_TYPE, response);
                     return true;
                 }
-                
+                //remove
                 DynamicJsonDocument doc = SmartThing.getWatchersInfo();
                 String response;
                 serializeJson(doc, response);
                 server.send(200, JSON_CONTENT_TYPE, response);
                 return true;
             }
+            // TODO ADD EDIT AND DELETE
             if (requestMethod == HTTP_POST) {
                 if (!server.hasArg("plain")) {
                     server.send(400, JSON_CONTENT_TYPE, "Body is missin!");

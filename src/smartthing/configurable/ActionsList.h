@@ -56,7 +56,7 @@ namespace Configurable {
                     return action->handler();
                 };
 
-                DynamicJsonDocument getInfo(){
+                DynamicJsonDocument toJson(){
                     DynamicJsonDocument doc(size() * 64);
                     forEach([&](Action * current) {
                         doc[current->name] = current->caption;

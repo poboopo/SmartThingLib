@@ -28,7 +28,7 @@ namespace Watcher {
                     }
                 };
 
-                StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> getInfo() {
+                StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> toJson() {
                     StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> doc = this->getDeaultInfo();
                     doc["type"] = HTTP_CALLBACK_TAG;
                     doc["caption"] = "http";

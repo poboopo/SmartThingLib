@@ -34,7 +34,7 @@ namespace Configurable {
                         return false;
                     }
                 };
-                DynamicJsonDocument getInfo() {
+                DynamicJsonDocument toJson() {
                     DynamicJsonDocument doc(size() * 64);
                     forEach([&](ConfigEntry * current) {
                         JsonObject obj = doc.createNestedObject(current->name);

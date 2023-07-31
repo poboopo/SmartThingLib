@@ -160,8 +160,8 @@ DynamicJsonDocument SmartThingClass::getInfoionaries() {
     int size = _actionsList.size() + _configEntriesList.size();
 
     DynamicJsonDocument doc(size * 64);
-    doc["actions"] = _actionsList.getInfo();
-    doc["config"] = _configEntriesList.getInfo();
+    doc["actions"] = _actionsList.toJson();
+    doc["config"] = _configEntriesList.toJson();
     return doc;
 }
 
@@ -174,11 +174,11 @@ DynamicJsonDocument SmartThingClass::getSensorsValues() {
 }
 
 DynamicJsonDocument SmartThingClass::getActionsInfo() {
-    return _actionsList.getInfo();
+    return _actionsList.toJson();
 }
 
 DynamicJsonDocument SmartThingClass::getConfigEntriesInfo() {
-    return _configEntriesList.getInfo();
+    return _configEntriesList.toJson();
 }
 
 DynamicJsonDocument SmartThingClass::getWatchersInfo() {

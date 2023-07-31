@@ -29,7 +29,7 @@ namespace Watcher {
             DynamicJsonDocument getCallbacksInfo() {
                 DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size());
                 _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
-                    doc.add(current->getInfo());
+                    doc.add(current->toJson());
                 });
                 return doc;
             };

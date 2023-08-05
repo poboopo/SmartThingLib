@@ -1,6 +1,6 @@
 - CURRENT
+    - add edit callback implementation
     - add callback scenarios in web page
-    - add editable parameter to callback, so system callbacks can't be edited from web
 
 - v1.0
     - v0.1
@@ -19,7 +19,7 @@
         - add watchers +
         - add rest to create callback +
         - put multiple callback for one object in one watcher +
-        - execute http callbacks async
+        - execute http callbacks async +
         - add callback scenarios in web page
         
     - v0.3
@@ -29,6 +29,7 @@
         - replace string with const char *
         - fix logger message length
         - arduino json refactor
+        - add ids to callbacks
 
     - v0.4
         - HttpCallback refactor
@@ -38,4 +39,6 @@
         - remove white spaces in mobile version of web page
 
 - backlog
+    - wifi network scan
     - add authorization???
+    - tuya, zigbee integration

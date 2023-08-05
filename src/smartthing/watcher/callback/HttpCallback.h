@@ -8,12 +8,14 @@
 
 #define HTTP_CALLBACK_TAG "http_callback"
 
+#define JSON_URL_FIELD "url"
+
 namespace Callback {
     template<typename T>
     class HttpCallback: public WatcherCallback<T> {
         public:
             HttpCallback(const char * url, T triggerValue, bool readonly):
-                WatcherCallback<T>(triggerValue, readonly), _url(url) {};
+                WatcherCallback<T>(HTTP_CALLBACK_TAG, triggerValue, readonly), _url(url) {};
             void call(T * value) {
                 if (value == nullptr) {
                     LOGGER.error(HTTP_CALLBACK_TAG, "Value is null!");
@@ -29,9 +31,8 @@ namespace Callback {
 
             StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> toJson() {
                 StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> doc = this->getDeaultInfo();
-                doc["type"] = HTTP_CALLBACK_TAG;
                 doc["caption"] = "http";
-                doc["url"] = _url;
+                doc[JSON_URL_FIELD] = _url;
                 doc["lastResponseCode"] = _lastResponseCode;
                 return doc;
             };

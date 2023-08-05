@@ -17,8 +17,10 @@ namespace Callback {
             /*
                 type - тип наблюдаемого объекта (state, sensor)
                 name - имя наблюдаемого объекта
+                index - индекс в списке callbackов для данного объекта
             */
             bool deleteCallback(const char * type, const char * name, int16_t index);
+            bool updateCallback(const char * type, const char * name, int16_t index, const char * json);
 
             void check();
             DynamicJsonDocument getWatchersInfo();
@@ -41,6 +43,9 @@ namespace Callback {
 
             template<typename O, typename T>
             bool deleteWatcherCallbackFromList(List<Watcher<O, T>> * list, const char * name, int16_t index);
+
+            template<typename O, typename T>
+            bool updateWatcherCallbackFromList(List<Watcher<O, T>> * list, const char * name, int16_t index, const char * json);
 
             template<typename O, typename T>
             void checkWatchers(List<Watcher<O, T>> * list);

@@ -17,7 +17,7 @@ class ConfigRequestHandler: public RequestHandler {
 
         bool canHandle(HTTPMethod method, String uri) {
             return uri.startsWith(CONFIG_PATH) && 
-                (method == HTTP_GET || method == HTTP_OPTIONS || HTTP_POST || HTTP_DELETE);
+                (method == HTTP_GET || method == HTTP_OPTIONS || method == HTTP_POST || method == HTTP_DELETE);
         }
 
         bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {

@@ -46,7 +46,7 @@ class List {
         };
 
         bool remove(T * value) {
-            if (value == nullptr) {
+            if (value == nullptr || _count == 0) {
                 return false;
             }
 
@@ -92,6 +92,9 @@ class List {
         };
 
         int16_t indexOf(T * value) {
+            if (_count == 0) {
+                return -1;
+            }
             int16_t i = 0;
             Wrapper * current = _head;
             while (current != nullptr) {
@@ -105,7 +108,7 @@ class List {
         };
 
         T * getByIndex(int16_t index) {
-            if (index < 0 || index > _count) {
+            if (_count == 0 || index < 0 || index > _count) {
                 return nullptr;
             }
             int16_t i = 0;

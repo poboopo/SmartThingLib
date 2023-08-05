@@ -16,7 +16,7 @@ class InfoRequestHandler: public RequestHandler {
         InfoRequestHandler() {};
         bool canHandle(HTTPMethod method, String uri) {
             return uri.startsWith(INFO_RQ_PATH) && 
-                (method == HTTP_GET || HTTP_PUT || HTTP_OPTIONS);
+                (method == HTTP_GET || method == HTTP_PUT || method == HTTP_OPTIONS);
         }
         bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {
             String body = server.arg("plain");

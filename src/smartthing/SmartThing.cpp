@@ -30,10 +30,10 @@ bool SmartThingClass::init(String type) {
     }
     LOGGER.debug(SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
 
-    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    pinMode(WIPE_BUTTON_PIN, INPUT_PULLUP);
     _led.init(LED_PIN);
     
-    if (!digitalRead(BUTTON_PIN)) {
+    if (!digitalRead(WIPE_BUTTON_PIN)) {
         wipeSettings();
     }
 
@@ -78,7 +78,7 @@ void SmartThingClass::loopRoutine() {
         ArduinoOTA.handle();
         _rest.handle();
         _multicaster.broadcast(_broadcastMessage.c_str());
-        _CallbacksManager.check();
+        _callbacksManager.check();
     }
 }
 
@@ -136,9 +136,10 @@ void SmartThingClass::wipeSettings() {
     LOGGER.warning(SMART_THING_TAG, "ALL SETTINGS WILL BE WIPED IN %d ms!!!", WIPE_BUTTON_TIME);
 
     _led.on();
-    while (!digitalRead(BUTTON_PIN) && millis() - started < WIPE_BUTTON_TIME) {}
-    if (!digitalRead(BUTTON_PIN)) {
+    while (!digitalRead(WIPE_BUTTON_PIN) && millis() - started < WIPE_BUTTON_TIME) {}
+    if (!digitalRead(WIPE_BUTTON_PIN)) {
         STSettings.dropAll();
+        STSettings.saveSettings();
         LOGGER.warning(SMART_THING_TAG, "Settings were wiped!");
     }
     _led.off();
@@ -181,11 +182,11 @@ DynamicJsonDocument SmartThingClass::getConfigEntriesInfo() {
 }
 
 DynamicJsonDocument SmartThingClass::getWatchersInfo() {
-    return _CallbacksManager.getWatchersInfo();
+    return _callbacksManager.getWatchersInfo();
 }
 
 DynamicJsonDocument SmartThingClass::getCallbacksJson(const char * type, const char * name) {
-    return _CallbacksManager.getCallbacksJson(type, name);
+    return _callbacksManager.getCallbacksJson(type, name);
 }
 
 
@@ -251,7 +252,7 @@ bool SmartThingClass::createCallbacksFromJson(const char * json) {
     char * type = copyString(doc["type"]);
     char * obs = copyString(doc["observable"]);
     char * url = copyString(doc["callback_url"]);
-    char * trigger = copyString(doc["trigger"]);
+    char * trigger = copyString(doc["trigger"]); //todo replace with string?
 
     if (strcmp(type, STATE_TYPE) == 0) {
         LOGGER.debug(SMART_THING_TAG, "Creating state [%s] callback: url=%s, trigger=%s", obs, url, trigger);
@@ -272,7 +273,7 @@ bool SmartThingClass::addSensorCallback(const char * name, Callback::LambdaCallb
         return false;
     }
     Callback::LambdaCallback<int16_t> * watcherCallback = new Callback::LambdaCallback<int16_t>(callback, triggerValue);
-    return _CallbacksManager.addSensorCallback(sensor, watcherCallback);
+    return _callbacksManager.addSensorCallback(sensor, watcherCallback);
 }
 
 bool SmartThingClass::addSensorCallback(const char * name, const char * url, int16_t triggerValue, bool readonly) {
@@ -282,7 +283,7 @@ bool SmartThingClass::addSensorCallback(const char * name, const char * url, int
         return false;
     }
     Callback::HttpCallback<int16_t> * watcherCallback = new Callback::HttpCallback<int16_t>(url, triggerValue, readonly);
-    return _CallbacksManager.addSensorCallback(sensor, watcherCallback);
+    return _callbacksManager.addSensorCallback(sensor, watcherCallback);
 }
 
 bool SmartThingClass::addDeviceStateCallback(const char * name, Callback::LambdaCallback<char *>::CustomCallback callback, const char * triggerValue) {
@@ -292,7 +293,7 @@ bool SmartThingClass::addDeviceStateCallback(const char * name, Callback::Lambda
         return false;
     }
     Callback::LambdaCallback<char *> * watcherCallback = new Callback::LambdaCallback<char *>(callback, copyString(triggerValue));
-    return _CallbacksManager.addDeviceStateCallback(state, watcherCallback);
+    return _callbacksManager.addDeviceStateCallback(state, watcherCallback);
 }
 bool SmartThingClass::addDeviceStateCallback(const char * name, const char * url, const char * triggerValue, bool readonly) {
     const DeviceState::DeviceState * state = _deviceStatesList.findState(name);
@@ -301,7 +302,7 @@ bool SmartThingClass::addDeviceStateCallback(const char * name, const char * url
         return false;
     }
     Callback::HttpCallback<char *> * watcherCallback = new Callback::HttpCallback<char *>(url, copyString(triggerValue), readonly);
-    return _CallbacksManager.addDeviceStateCallback(state, watcherCallback);
+    return _callbacksManager.addDeviceStateCallback(state, watcherCallback);
 }
 
 const String SmartThingClass::getType() {

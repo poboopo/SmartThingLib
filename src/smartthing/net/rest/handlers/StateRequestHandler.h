@@ -13,7 +13,7 @@ class StateRequestHandler: public RequestHandler {
         StateRequestHandler() {};
         bool canHandle(HTTPMethod method, String uri) {
             return uri.startsWith(STATE_RQ_PATH) && 
-                (method == HTTP_GET || HTTP_PUT || HTTP_OPTIONS);
+                (method == HTTP_GET || method == HTTP_PUT || method == HTTP_OPTIONS);
         };
 
         bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {

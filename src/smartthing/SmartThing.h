@@ -22,8 +22,8 @@
 #define SMART_THING_VERSION 0.2
 #define SMART_THING_TAG "SMART_THING"
 // Pins
-#define LED_PIN 5
-#define BUTTON_PIN 18
+#define LED_PIN 14
+#define WIPE_BUTTON_PIN 18
 
 #define WIFI_SETUP_TIMEOUT 10000
 #define WIPE_BUTTON_TIME 5000
@@ -85,7 +85,10 @@ class SmartThingClass {
 
         bool createCallbacksFromJson(const char * body);
         bool deleteCallback(const char * type, const char * name, int16_t index) {
-            return _CallbacksManager.deleteCallback(type, name, index);
+            return _callbacksManager.deleteCallback(type, name, index);
+        }
+        bool updateCallback(const char * type, const char * name, int16_t index, const char * json) {
+            return _callbacksManager.updateCallback(type, name, index, json);
         }
 
         DynamicJsonDocument getInfoionaries();
@@ -106,7 +109,7 @@ class SmartThingClass {
         Configurable::DeviceState::DeviceStatesList _deviceStatesList;
         Configurable::Action::ActionsList _actionsList;
         Configurable::Config::ConfigEntriesList _configEntriesList;
-        Callback::CallbacksManager _CallbacksManager;
+        Callback::CallbacksManager _callbacksManager;
 
         // todo change to const * char?
         String _ip;

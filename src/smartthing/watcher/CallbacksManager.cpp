@@ -81,6 +81,58 @@ namespace Callback {
         return false;
     }
 
+    bool CallbacksManager::updateCallback(const char * type, const char * name, int16_t index, const char * json) {
+        if (type == nullptr || strlen(type) == 0) {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "Type of observable is missing!");
+            return false;
+        }
+
+        DynamicJsonDocument doc(1024);
+        deserializeJson(doc, json);
+
+        if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
+            Watcher<Sensor, int16_t> * watcher = getWatcherByObservableName(&_sensorsWatchers, name);
+            if (watcher == nullptr) {
+                LOGGER.error(CALLBACKS_MANAGER_TAG, "Can't find watcher for observable %s", name);
+                return false;
+            }
+            WatcherCallback<int16_t> * callback = watcher->getCallback(index);
+            if (callback == nullptr) {
+                LOGGER.error(CALLBACKS_MANAGER_TAG, "Can't find callback %d for observable %s", index, name);
+                return false;
+            }
+
+            int16_t newValue = doc["trigger"];
+            int16_t * oldValue = callback->triggerValuePointer();
+            memcpy(oldValue, &newValue, sizeof(*oldValue));
+        } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
+            Watcher<DeviceState, char *> * watcher = getWatcherByObservableName(&_statesWatchers, name);
+            if (watcher == nullptr) {
+                LOGGER.error(CALLBACKS_MANAGER_TAG, "Can't find watcher for observable %s", name);
+                return false;
+            }
+            WatcherCallback<char *> * callback = watcher->getCallback(index);
+            if (callback == nullptr) {
+                LOGGER.error(CALLBACKS_MANAGER_TAG, "Can't find callback %d for observable %s", index, name);
+                return false;
+            }
+
+            const char * newValue = doc["trigger"];
+            int size = strlen(newValue);
+            char * oldValue = (*callback->triggerValuePointer());
+            delete(oldValue);
+            oldValue = new char[size + 1];
+            strncpy(oldValue, newValue, size + 1);
+            oldValue[size] = '\0';
+        } else {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "Observable type [%s] not supported!", type);
+            return false;
+        }
+
+        LOGGER.info(CALLBACKS_MANAGER_TAG, "Callback №%d for [%s]::%s was updated!", index, type, name);
+        return true;
+    }
+
     template<typename O, typename T>
     bool CallbacksManager::deleteWatcherCallbackFromList(List<Watcher<O, T>> * list, const char * name, int16_t index) {
         if (name == nullptr || strlen(name) == 0) {
@@ -88,23 +140,23 @@ namespace Callback {
             return false;
         }
         Watcher<O, T> * watcher = getWatcherByObservableName(list, name);
-        if (watcher != nullptr) {
-            LOGGER.debug(CALLBACKS_MANAGER_TAG, "Trying to delete %s's callback %d", name, index);
-            if (!watcher->removeCallback(index)) {
-                return false;
-            }
-            LOGGER.warning(CALLBACKS_MANAGER_TAG, "Callback %d of %s was deleted", index, name);
-            if (watcher->haveCallbacks()) {
-                return true;
-            }
-            LOGGER.debug(CALLBACKS_MANAGER_TAG, "No callbacks left for %s, removing watcher!", name);
-            if (list->remove(watcher)) {
-                delete(watcher);
-                LOGGER.warning(CALLBACKS_MANAGER_TAG, "Watcher for %s removed!", name);
-            }
+        if (watcher == nullptr) {
+            return false;
+        }
+        LOGGER.debug(CALLBACKS_MANAGER_TAG, "Trying to delete %s's callback %d", name, index);
+        if (!watcher->removeCallback(index)) {
+            return false;
+        }
+        LOGGER.warning(CALLBACKS_MANAGER_TAG, "Callback %d of %s was deleted", index, name);
+        if (watcher->haveCallbacks()) {
             return true;
         }
-        return false;
+        LOGGER.debug(CALLBACKS_MANAGER_TAG, "No callbacks left for %s, removing watcher!", name);
+        if (list->remove(watcher)) {
+            delete(watcher);
+            LOGGER.warning(CALLBACKS_MANAGER_TAG, "Watcher for %s removed!", name);
+        }
+        return true;
     }
 
     DynamicJsonDocument CallbacksManager::getWatchersInfo() {

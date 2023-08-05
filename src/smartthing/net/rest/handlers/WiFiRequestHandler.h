@@ -16,7 +16,7 @@ class WiFiRequesthandler: public RequestHandler {
 
         bool canHandle(HTTPMethod method, String uri) {
             return uri.startsWith(WIFI_RQ_PATH) && 
-                (method == HTTP_GET || HTTP_POST || HTTP_OPTIONS);
+                (method == HTTP_GET || method == HTTP_POST || method == HTTP_OPTIONS);
         }
 
         bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {

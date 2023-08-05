@@ -70,7 +70,7 @@ void setup() {
 void loop() {
     SmartThing.loopRoutine();
 
-    if (!digitalRead(BUTTON_PIN)) {
+    if (!digitalRead(WIPE_BUTTON_PIN)) {
         if (controller.isAutoModeEnabled()) {
             controller.disableAutoMode();
         } else {
@@ -129,6 +129,9 @@ void addDeviceStates() {
     });
     SmartThing.addDeviceState("position", []() {
         return controller.getPosition();
+    });
+    SmartThing.addDeviceState("led", []() {
+        return SmartThing.getLed()->isOn() ? "on" : "off";
     });
 }
 

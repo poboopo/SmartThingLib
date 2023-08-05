@@ -91,14 +91,12 @@ namespace Callback {
         deserializeJson(doc, json);
 
         if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
-            Watcher<Sensor, int16_t> * watcher = getWatcherByObservableName(&_sensorsWatchers, name);
-            if (watcher == nullptr) {
-                LOGGER.error(CALLBACKS_MANAGER_TAG, "Can't find watcher for observable %s", name);
+            WatcherCallback<int16_t> * callback = getCallbackFromWatcherList(&_sensorsWatchers, name, index);
+            if (callback == nullptr) {
                 return false;
             }
-            WatcherCallback<int16_t> * callback = watcher->getCallback(index);
-            if (callback == nullptr) {
-                LOGGER.error(CALLBACKS_MANAGER_TAG, "Can't find callback %d for observable %s", index, name);
+            if (callback->isReadonly()) {
+                LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback %d for observable %s is readonly!", index, name);
                 return false;
             }
 
@@ -106,14 +104,12 @@ namespace Callback {
             int16_t * oldValue = callback->triggerValuePointer();
             memcpy(oldValue, &newValue, sizeof(*oldValue));
         } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
-            Watcher<DeviceState, char *> * watcher = getWatcherByObservableName(&_statesWatchers, name);
-            if (watcher == nullptr) {
-                LOGGER.error(CALLBACKS_MANAGER_TAG, "Can't find watcher for observable %s", name);
+            WatcherCallback<char *> * callback = getCallbackFromWatcherList(&_statesWatchers, name, index);
+            if (callback == nullptr) {
                 return false;
             }
-            WatcherCallback<char *> * callback = watcher->getCallback(index);
-            if (callback == nullptr) {
-                LOGGER.error(CALLBACKS_MANAGER_TAG, "Can't find callback %d for observable %s", index, name);
+            if (callback->isReadonly()) {
+                LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback %d for observable %s is readonly!", index, name);
                 return false;
             }
 
@@ -131,6 +127,22 @@ namespace Callback {
 
         LOGGER.info(CALLBACKS_MANAGER_TAG, "Callback №%d for [%s]::%s was updated!", index, type, name);
         return true;
+    }
+
+
+    template<typename O, typename T>
+    WatcherCallback<T> * CallbacksManager::getCallbackFromWatcherList(List<Watcher<O, T>> * list, const char * name, int16_t callbackIndex) {
+        Watcher<O, T> * watcher = getWatcherByObservableName(list, name);
+        if (watcher == nullptr) {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "Can't find watcher for observable %s", name);
+            return nullptr;
+        }
+        WatcherCallback<T> * callback = watcher->getCallback(callbackIndex);
+        if (callback == nullptr) {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "Can't find callback %d for observable %s", index, name);
+            return nullptr;
+        }
+        return callback;
     }
 
     template<typename O, typename T>

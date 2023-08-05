@@ -25,13 +25,7 @@ namespace Callback {
                 doc["type"] = _type;
                 return doc;
             }
-            // void setTriggerValue(T * newValue) {
-            //     if (newValue == nullptr) {
-            //         return;
-            //     }
-            //     memcpy(&_triggerValue, newValue, sizeof(_triggerValue));
-            // }
-
+            
             T * triggerValuePointer() {
                 return &_triggerValue;
             }

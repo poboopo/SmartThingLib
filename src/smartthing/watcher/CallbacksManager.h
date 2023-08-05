@@ -39,6 +39,9 @@ namespace Callback {
             Watcher<O, T> * getWatcherByObservableName(List<Watcher<O, T>> * list, const char * name);
 
             template<typename O, typename T>
+            WatcherCallback<T> * getCallbackFromWatcherList(List<Watcher<O, T>> * list, const char * name, int16_t callbackIndex);
+
+            template<typename O, typename T>
             DynamicJsonDocument getCallbacksJsonFromList(List<Watcher<O, T>> * list, const char * name);
 
             template<typename O, typename T>

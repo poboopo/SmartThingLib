@@ -55,9 +55,11 @@ bool SmartThingClass::init(String type) {
             WiFi.disconnect();
             WiFi.mode(WIFI_MODE_NULL);
             delay(500);
-            _ip = connectToWifi();\
-            // todo reload rest
+            _ip = connectToWifi();
             LOGGER.info(SMART_THING_TAG, "WiFi reloaded");
+            LOGGER.info(SMART_THING_TAG, "Reloading rest...");
+            _rest.reload();
+            LOGGER.info(SMART_THING_TAG, "Rest reloaded");
         });
         _rest.begin();
         LOGGER.debug(SMART_THING_TAG, "RestController started");

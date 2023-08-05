@@ -20,6 +20,14 @@ void RestController::begin() {
     _setupFinished = true;
 }
 
+void RestController::reload() {
+    if (_setupFinished) {
+        _setupFinished = false;
+        _server.stop();
+    }
+    begin();
+}
+
 void RestController::handle() {
     if (_setupFinished) {
         _server.handleClient();

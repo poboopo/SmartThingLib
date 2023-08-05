@@ -21,6 +21,7 @@ class RestController{
 
         typedef std::function<void(void)> HandlerFunction;
         void begin();
+        void reload();
         
         void addConfigUpdatedHandler(RestController::HandlerFunction hf) {
             _configUpdatedHandler = hf;

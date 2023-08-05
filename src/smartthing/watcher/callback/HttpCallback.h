@@ -41,7 +41,7 @@ namespace Callback {
             bool _sending = false;
         private:
             const char * _url;
-            uint16_t _lastResponseCode = 0;
+            int16_t _lastResponseCode = 0;
 
             void createRequestTask() {
                 if (_sending) {

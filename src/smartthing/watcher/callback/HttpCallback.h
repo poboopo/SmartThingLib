@@ -15,7 +15,9 @@ namespace Callback {
     class HttpCallback: public WatcherCallback<T> {
         public:
             HttpCallback(const char * url, T triggerValue, bool readonly):
-                WatcherCallback<T>(HTTP_CALLBACK_TAG, triggerValue, readonly), _url(url) {};
+                WatcherCallback<T>(HTTP_CALLBACK_TAG, triggerValue, readonly), _url(nullptr) {
+                    saveUrl(url);
+                };
             void call(T * value) {
                 if (value == nullptr) {
                     LOGGER.error(HTTP_CALLBACK_TAG, "Value is null!");
@@ -37,10 +39,17 @@ namespace Callback {
                 return doc;
             };
 
+            void updateCustom(DynamicJsonDocument doc) {
+                if (doc.containsKey("url")) {
+                    saveUrl(doc["url"]);
+                    LOGGER.debug(HTTP_CALLBACK_TAG, "Callback's url was updated to %s", _url);
+                }
+            };
+
             TaskHandle_t _requestTask = NULL; // not safe
             bool _sending = false;
         private:
-            const char * _url;
+            char * _url;
             int16_t _lastResponseCode = 0;
 
             void createRequestTask() {
@@ -72,6 +81,16 @@ namespace Callback {
                 _lastResponseCode = client.GET();
                 LOGGER.info(HTTP_CALLBACK_TAG, "Request %s finished with code %d", _url, _lastResponseCode);
                 client.end();
+            }
+
+            void saveUrl(const char * value) {
+                int size = strlen(value);
+                if (_url != nullptr) {
+                    delete(_url);
+                }
+                _url = new char[size + 1];
+                strncpy(_url, value, size + 1);
+                _url[size] = '\0';
             }
     };
 }

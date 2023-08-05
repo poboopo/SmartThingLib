@@ -17,6 +17,7 @@ namespace Callback {
             // todo make value const
             virtual void call(T * value) = 0;
             virtual StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> toJson() = 0;
+            virtual void updateCustom(DynamicJsonDocument doc) = 0;
 
             StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> getDeaultInfo() {
                 StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> doc;

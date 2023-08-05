@@ -100,9 +100,12 @@ namespace Callback {
                 return false;
             }
 
-            int16_t newValue = doc["trigger"];
-            int16_t * oldValue = callback->triggerValuePointer();
-            memcpy(oldValue, &newValue, sizeof(*oldValue));
+            if (doc.containsKey("trigger")) {
+                int16_t newValue = doc["trigger"];
+                int16_t * oldValue = callback->triggerValuePointer();
+                memcpy(oldValue, &newValue, sizeof(*oldValue));
+            }
+            callback->updateCustom(doc);
         } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
             WatcherCallback<char *> * callback = getCallbackFromWatcherList(&_statesWatchers, name, index);
             if (callback == nullptr) {
@@ -113,13 +116,17 @@ namespace Callback {
                 return false;
             }
 
-            const char * newValue = doc["trigger"];
-            int size = strlen(newValue);
-            char * oldValue = (*callback->triggerValuePointer());
-            delete(oldValue);
-            oldValue = new char[size + 1];
-            strncpy(oldValue, newValue, size + 1);
-            oldValue[size] = '\0';
+            if (doc.containsKey("trigger")) {
+                const char * newValue = doc["trigger"];
+                int size = strlen(newValue);
+                char * oldValue = (*callback->triggerValuePointer());
+                delete(oldValue);
+                oldValue = new char[size + 1];
+                strncpy(oldValue, newValue, size + 1);
+                oldValue[size] = '\0';
+            }
+
+            callback->updateCustom(doc);
         } else {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Observable type [%s] not supported!", type);
             return false;

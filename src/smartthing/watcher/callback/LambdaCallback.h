@@ -27,6 +27,7 @@ namespace Callback {
                 doc["caption"] = "lambda";
                 return doc;
             };
+            void updateCustom(DynamicJsonDocument doc){};
         private:
             CustomCallback _customCallback;
     };

@@ -221,7 +221,7 @@ bool SmartThingClass::addConfigEntry(const char * name, const char * caption, co
 }
 
 char * copyString(const char * from) {
-    if (from == nullptr || strlen(from) == 0) {
+    if (from == nullptr) {
         return nullptr;
     }
     int size = strlen(from) + 1;
@@ -237,6 +237,7 @@ bool SmartThingClass::createCallbacksFromJson(const char * json) {
     if (doc.memoryUsage() == 0) {
         return false;
     }
+    LOGGER.debug(SMART_THING_TAG, "Creating callback from json: %s", json);
 
     if (!doc.containsKey("type")) {
         LOGGER.error(SMART_THING_TAG, "type value is missing!");
@@ -246,15 +247,15 @@ bool SmartThingClass::createCallbacksFromJson(const char * json) {
         LOGGER.error(SMART_THING_TAG, "observable value is missing!");
         return false;
     }
-    if (!doc.containsKey("callback_url")) {
-        LOGGER.error(SMART_THING_TAG, "callback_url value is missing!");
+    if (!doc.containsKey("url")) {
+        LOGGER.error(SMART_THING_TAG, "url value is missing!");
         return false;
     }
 
     char * type = copyString(doc["type"]);
     char * obs = copyString(doc["observable"]);
-    char * url = copyString(doc["callback_url"]);
-    char * trigger = copyString(doc["trigger"]); //todo replace with string?
+    char * url = copyString(doc["url"]);
+    char * trigger = copyString(doc["trigger"]);
 
     if (strcmp(type, STATE_TYPE) == 0) {
         LOGGER.debug(SMART_THING_TAG, "Creating state [%s] callback: url=%s, trigger=%s", obs, url, trigger);

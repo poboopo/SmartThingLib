@@ -5,7 +5,7 @@
 
 #include <ArduinoJson.h>
 
-#define CALLBACK_INFO_DOC_SIZE 128
+#define CALLBACK_INFO_DOC_SIZE 256
 #define JSON_TRIGGER_FIELD "trigger"
 
 namespace Callback {

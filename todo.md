@@ -20,16 +20,17 @@
         - add rest to create callback +
         - put multiple callback for one object in one watcher +
         - execute http callbacks async +
-        - add callback scenarios in web page
+        - add callback scenarios in web page +
         
     - v0.3
         - add settings compression
-        - save watchers to settings
+        - add callabcks temaplate rest for callbacks creation (required fieldss)
+        - save callbacks to settings
+        - add statics rest
         - save state
         - replace string with const char *
         - fix logger message length
-        - arduino json refactor
-        - add ids to callbacks
+        - arduino json refactor        
 
     - v0.4
         - HttpCallback refactor

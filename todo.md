@@ -33,7 +33,7 @@
         - arduino json refactor        
 
     - v0.4
-        - HttpCallback refactor
+        - add ActionCallback - call action from callback (+ web)
         - add possible values to device state
         - refactor handlers - make base handler with all routine(log, headers)
         - add restart handler

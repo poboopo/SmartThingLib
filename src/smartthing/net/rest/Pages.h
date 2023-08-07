@@ -174,7 +174,7 @@ const String WEB_PAGE_MAIN = R"=====(
                 block,
                 "callback_trigger_" + index,
                 "Trigger value",
-                callback.trigger || "",
+                (callback.trigger || callback.trigger == 0) ? callback.trigger : "",
                 "Call callback when value equals",
                 callback.readonly
             );
@@ -318,8 +318,8 @@ const String WEB_PAGE_MAIN = R"=====(
                         response.trim();
                         const data = JSON.parse(response);
                         if (data["settings"]) {
-                            document.getElementById("ssid").value = data["settings"]["ss"];
-                            document.getElementById("password").value = data["settings"]["ps"];
+                            document.getElementById("ssid").value = data["settings"]["ss"] || "";
+                            document.getElementById("password").value = data["settings"]["ps"] || "";
                             fillComboBox("wifi-mode", data["modes"], data["settings"]["md"]);
                         }
                     }

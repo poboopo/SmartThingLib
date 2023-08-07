@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <freertos/semphr.h>
 
-#include "net/socket/Multicaster.h"
+#include "smartthing/net/socket/Multicaster.h"
 
 #define ENABLE_STATISTICS
 
@@ -20,6 +20,7 @@
 #define LOGGING_LEVEL_ALL
 
 
+// todo add websocker support?
 class BetterLogger {
     public:
         BetterLogger();

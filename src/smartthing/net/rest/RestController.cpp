@@ -1,8 +1,13 @@
-#include <net/rest/RestController.h>
-#include <net/rest/Pages.h>
-#include <net/rest/handlers/ConfigRequestHandler.h>
-#include <net/rest/handlers/WiFiRequestHandler.h>
-#include <net/rest/handlers/InfoRequestHandler.h>
+#include "smartthing/net/rest/RestController.h"
+#include "smartthing/net/rest/Pages.h"
+#include "smartthing/net/rest/handlers/ConfigRequestHandler.h"
+#include "smartthing/net/rest/handlers/WiFiRequestHandler.h"
+#include "smartthing/net/rest/handlers/InfoRequestHandler.h"
+#include "smartthing/net/rest/handlers/SensorsRequestHandler.h"
+#include "smartthing/net/rest/handlers/StateRequestHandler.h"
+#include "smartthing/net/rest/handlers/DictionaryRequestHandler.h"
+#include "smartthing/net/rest/handlers/ActionRequestHandler.h"
+#include "smartthing/net/rest/handlers/CallbacksRequestHandler.h"
 
 #define WEB_SERVER_TAG "web_server"
 
@@ -13,6 +18,14 @@ void RestController::begin() {
     setupHandler();
     _server.begin(SERVER_PORT);
     _setupFinished = true;
+}
+
+void RestController::reload() {
+    if (_setupFinished) {
+        _setupFinished = false;
+        _server.stop();
+    }
+    begin();
 }
 
 void RestController::handle() {
@@ -49,35 +62,22 @@ void RestController::setupHandler() {
     _server.addHandler(new ConfigRequestHandler(&_configUpdatedHandler));
     _server.addHandler(new WiFiRequesthandler(&_wifiUpdatedHandler));
     _server.addHandler(new InfoRequestHandler());
+    _server.addHandler(new SensorsRequestHandler());
+    _server.addHandler(new StateRequestHandler());
+    _server.addHandler(new DictionaryRequestHandler());
+    _server.addHandler(new ActionRequestHandler());
+    _server.addHandler(new CallbacksRequestHandler());
 
     _server.on("/health", HTTP_GET, [this]() {
         preHandleRequest();
-        _server.send(200, "text/html", "I am alive!!! :)");
+        _server.send(418, "text/html", "I am alive!!! :)");
     });
 
     _server.on("/", HTTP_GET, [this]() {
         preHandleRequest();
         _server.send(200, "text/html", WEB_PAGE_MAIN);
     });
-
-    _server.on("/dictionary", HTTP_GET, [this](){
-        preHandleRequest();
-        processRestHandlerResult(_getDictsHandler());
-    });
-    _server.on("/state", HTTP_GET, [this](){
-        preHandleRequest();
-        processRestHandlerResult(_getStateHandler());
-    });
-    _server.on("/action", HTTP_PUT, [this](){
-        LOGGER.info(WEB_SERVER_TAG, "[PUT] [/action] %s", getRequestArg("action").c_str());
-        _server.sendHeader("Access-Control-Allow-Origin", "*");
-        processRestHandlerResult(_actionHandler());
-    });
-    _server.on("/sensors", HTTP_GET, [this]() {
-        preHandleRequest();
-        processRestHandlerResult(_getSensorsHandler());
-    });
-
+    
     _server.on("/restart", HTTP_PUT, [&](){
         preHandleRequest();
 

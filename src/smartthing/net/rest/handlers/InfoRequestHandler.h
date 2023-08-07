@@ -2,11 +2,11 @@
 #define INFO_RQ_H
 
 #include <WebServer.h>
-#include "net/rest/RestController.h"
-#include "net/logs/BetterLogger.h"
-#include "utils/SettingsManager.h"
-#include "net/rest/handlers/HandlerUtils.h"
-#include "SmartThing.h"
+#include "smartthing/net/rest/RestController.h"
+#include "smartthing/logs/BetterLogger.h"
+#include "smartthing/settings/SettingsManager.h"
+#include "smartthing/net/rest/handlers/HandlerUtils.h"
+#include "smartthing/SmartThing.h"
 
 #define INFO_RQ_PATH "/info"
 #define INFO_RQ_TAG "wifi_handler"
@@ -16,7 +16,7 @@ class InfoRequestHandler: public RequestHandler {
         InfoRequestHandler() {};
         bool canHandle(HTTPMethod method, String uri) {
             return uri.startsWith(INFO_RQ_PATH) && 
-                (method == HTTP_GET || HTTP_PUT || HTTP_OPTIONS);
+                (method == HTTP_GET || method == HTTP_PUT || method == HTTP_OPTIONS);
         }
         bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {
             String body = server.arg("plain");

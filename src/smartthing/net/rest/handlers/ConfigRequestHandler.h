@@ -2,10 +2,10 @@
 #define CONFIG_RH_H
 
 #include <WebServer.h>
-#include "utils/SettingsManager.h"
-#include "net/logs/BetterLogger.h"
-#include "net/rest/handlers/HandlerUtils.h"
-#include "net/rest/RestController.h"
+#include "smartthing/settings/SettingsManager.h"
+#include "smartthing/logs/BetterLogger.h"
+#include "smartthing/net/rest/handlers/HandlerUtils.h"
+#include "smartthing/net/rest/RestController.h"
 
 #define CONFIG_PATH "/config"
 #define CONFIG_LOG_TAG "config_handler"
@@ -17,7 +17,7 @@ class ConfigRequestHandler: public RequestHandler {
 
         bool canHandle(HTTPMethod method, String uri) {
             return uri.startsWith(CONFIG_PATH) && 
-                (method == HTTP_GET || method == HTTP_OPTIONS || HTTP_POST || HTTP_DELETE);
+                (method == HTTP_GET || method == HTTP_OPTIONS || method == HTTP_POST || method == HTTP_DELETE);
         }
 
         bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {

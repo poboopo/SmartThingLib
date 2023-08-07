@@ -1,4 +1,4 @@
-#include <utils/LedIndicator.h>
+#include "smartthing/utils/LedIndicator.h"
 
 LedIndicator::LedIndicator(){}
 
@@ -18,6 +18,7 @@ void LedIndicator::off() {
         _taskHandle = NULL;
     }
     digitalWrite(_ledPin, LOW);
+    _enabled = false;
 }
 
 void LedIndicator::on() {
@@ -26,12 +27,14 @@ void LedIndicator::on() {
         _taskHandle = NULL;
     }
     digitalWrite(_ledPin, HIGH);
+    _enabled = true;
 }
 
 void LedIndicator::blinkTask() {
     bool state = true;
     const TickType_t xDelay = BLINK_DELAY / portTICK_PERIOD_MS;
-
+    
+    _enabled = true;
     while (_count == -1 || _count > 0) {
         digitalWrite(_ledPin, state);
         vTaskDelay(xDelay);
@@ -40,6 +43,8 @@ void LedIndicator::blinkTask() {
             _count--;
         }
     }
+    _enabled = false;
+
     vTaskDelete(_taskHandle);
 }
 

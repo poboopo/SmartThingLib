@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 #include "motor/MotorController.h"
-#include "utils/LedIndicator.h"
-#include "net/logs/BetterLogger.h"
+#include "smartthing/utils/LedIndicator.h"
+#include "smartthing/logs/BetterLogger.h"
 
 #define LIGHT_MONITOR_TAG "light_monitor"
 #define LOUVER_CONTROLLER_TAG "louver_controller"
@@ -61,6 +61,7 @@ class LouverController {
         bool isAutoModeEnabled();
         uint16_t getLightValue();
         uint16_t getMotorPosition();
+        const char * getPosition();
 
         bool open();
         bool close();

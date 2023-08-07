@@ -27,6 +27,7 @@ const String WEB_PAGE_MAIN = R"=====(
                 </div>
             </div>
             <div id="actions"class="content-block btn-group hidable">
+                <div class="loading-info">Loading</div>
                 <h1>Actions</h1>
                 <div id="control-buttons-block"></div>
             </div>
@@ -43,13 +44,22 @@ const String WEB_PAGE_MAIN = R"=====(
                 <div class="loading-info">Loading</div>
                 <h1>State</h1>
                 <button class="update-button" onclick="loadState()">Update</button>
-                <div id="state-fields-block" style="text-align: start;"></div>
+                <div id="state-fields-block" class="grid-view"></div>
             </div>
             <div id="sensors" class="content-block hidable">
                 <div class="loading-info">Loading</div>
                 <h1>Sensors values</h1>
                 <button class="update-button" onclick="loadSensors()">Update</button>
-                <div id="sensors-fields-block" style="text-align: start;"></div>
+                <div id="sensors-fields-block" class="grid-view"></div>
+            </div>
+            <div id="callbacks" class="content-block hidable">
+                <div class="loading-info">Loading</div>
+                <h1 id="callbacks-title"></h1>
+                <div class="btn-group">
+                    <button id="add-new-callback">Add new</button>
+                </div>
+                <button class="update-button" onclick="updateCallbacks()">Update</button>
+                <div id="callbacks-block" style="text-align: start;"></div>
             </div>
         </div>
     </body>
@@ -64,6 +74,187 @@ const String WEB_PAGE_MAIN = R"=====(
             loadState();
             loadSensors();
         };
+        function updateCallbacks() {
+            const callbacksBlock = document.getElementById("callbacks-block");
+            if(callbacksBlock) {
+                loadCallbacks(callbacksBlock.getAttribute("type"), callbacksBlock.getAttribute("observable"));
+            }
+        }
+        function loadCallbacks(type, observable) {
+            if (!type || !observable) {
+                console.warn("Watcher type or observable are missing!");
+                return;
+            }
+            restRequest(
+                "GET",
+                "http://" + getHost() + "/callbacks?type=" + type + "&name=" + observable,
+                null,
+                function (response) {
+                    if (response) {
+                        displayCallbacks(type, observable, JSON.parse(response));
+                    }
+                },
+                "callbacks"
+            );
+        }
+
+        function addCallback(type, observable) {
+            if (document.getElementById("callback_new")) {
+                return;
+            }
+            const callbacksBlock = document.getElementById("callbacks-block");
+            if (!callbacksBlock) {
+                console.error("Can't find callbacks-block!");
+                return;
+            }
+            callbacksBlock.prepend(
+                buildCallbackView(type, observable, {
+                    "type": "http_callback",
+                    "readonly": false, 
+                    "url": "callback url",
+                    "caption": "New http callback"
+                }, "new")
+            );
+        }   
+        function displayCallbacks(type, observable, callbacks) {
+            const callbacksBlock = document.getElementById("callbacks-block");
+            if (!callbacksBlock) {
+                console.error("Can't find callbacks-block!");
+                return;
+            }
+            callbacksBlock.setAttribute("type", type);
+            callbacksBlock.setAttribute("observable", observable);
+            callbacksBlock.innerHTML = "";
+            document.getElementById("callbacks").style.display = "block";
+
+            if (callbacks) {
+                callbacks.forEach((callback, index) => {
+                    callbacksBlock.appendChild(buildCallbackView(type, observable, callback, index));
+                });
+            }   else {
+                console.warn("Callbacks list are empty!");
+            }
+
+            const addButton = document.getElementById("add-new-callback");
+            if (addButton) {
+                addButton.onclick = () => {
+                    addCallback(type, observable);  
+                };
+            }
+            document.getElementById("callbacks-title").innerHTML = type + " " + observable + "'s callbacks";
+        }
+        function buildCallbackView(type, observable, callback, index) {
+            const div = document.createElement("div");
+            div.id = "callback_" + index;
+            div.className = "content-block";
+            const h2 = document.createElement("h2");
+            h2.innerHTML = callback["caption"] || callback["type"];
+            div.appendChild(h2);
+            const block = document.createElement("div");
+            block.className = "grid-view";
+            if (callback["type"] == "http_callback") {
+                createEntryInput(
+                    block,
+                    "callback_url_" + index,
+                    "Url",
+                    callback.url,
+                    "Callback url",
+                    callback.readonly
+                );
+                createEntryInput(
+                    block,
+                    "callback_response_" + index,
+                    "Last callback response code",
+                    callback.lastResponseCode || "Not called yet",
+                    "Last callback response code",
+                    true
+                );
+            }
+            createEntryInput(
+                block,
+                "callback_trigger_" + index,
+                "Trigger value",
+                (callback.trigger || callback.trigger == 0) ? callback.trigger : "",
+                "Call callback when value equals",
+                callback.readonly
+            );
+            div.appendChild(block);
+
+            if (!callback.readonly) {
+                const wrap = document.createElement("div");
+                wrap.classList.add("btn-group", "grid-view");
+                const button = document.createElement("button");
+                button.innerHTML = "save"
+                button.onclick = () => saveCallback(type, observable, index);
+                wrap.appendChild(button);
+                if (index != "new") {
+                    const deleteButton = document.createElement("button");
+                    deleteButton.innerHTML = "delete";
+                    deleteButton.style.backgroundColor = "red";
+                    deleteButton.onclick = () => {
+                        if (confirm("Are you sure you want to delete this callback?")) {
+                            deleteCallback(type, observable, index);
+                        }
+                    };
+                    wrap.appendChild(deleteButton);
+                }
+                div.appendChild(wrap);
+            }
+            return div;
+        }
+        function saveCallback(type, observable, index) {
+            const reqPayload = {type, observable};
+            const triggerInput = document.getElementById("callback_trigger_" + index);
+            if (triggerInput) {
+                reqPayload["trigger"] = triggerInput.value;
+            }
+            const urlInput = document.getElementById("callback_url_" + index);
+            if (urlInput) {
+                reqPayload["url"] = urlInput.value;
+            }
+
+            if (Object.keys(reqPayload).length === 0) {
+                console.error("Empty update payload! Skipping");
+                return;
+            }
+            
+            if (index == "new") {
+                restRequest(
+                    "POST",
+                    "http://" + getHost() + "/callbacks",
+                    reqPayload,
+                    (response) => {
+                        console.log("Callback created!");
+                        loadCallbacks(type, observable);
+                    },
+                    "callbacks"
+                )
+            } else {
+                const queryPart = "?type=" + type + "&name=" + observable + "&index=" + index;
+                restRequest(
+                    "PUT",
+                    "http://" + getHost() + "/callbacks" + queryPart,
+                    reqPayload,
+                    (response) => {
+                        console.log("Callback updated!");
+                    },
+                    "callbacks"
+                )
+            }
+        }
+        function deleteCallback(type, observable, index) {
+            const queryPart = "?type=" + type + "&name=" + observable + "&index=" + index;
+            restRequest(
+                "DELETE",
+                "http://" + getHost() + "/callbacks" + queryPart,
+                null,
+                (response) => {
+                    console.log("Callback deleted :(");
+                    loadCallbacks(type, observable);
+                },
+                "callbacks"
+            )
+        }
         function loadDeviceInfo() {
             restRequest(
                 "GET",
@@ -83,30 +274,28 @@ const String WEB_PAGE_MAIN = R"=====(
             if (this.deviceInfo && block) {
                 block.innerHTML = "";
                 Object.entries(this.deviceInfo).forEach(([key, value]) => {
-                    const p = document.createElement("p");
-                    p.innerHTML = key;
-                    block.appendChild(p);
-                    const input = document.createElement("input");
-                    input.value = value;
-                    input.id = block.id + "-" + key;
                     if (key === "name") {
-                        input.title = "Insert new name";
-                        input.disabled = false;
-                        const button = document.createElement("button");
-                        button.style.backgroundColor = "#04AA6D";
-                        button.innerHTML = "Save";
-                        button.title = "Save new device name";
-                        button.onclick = () => saveNewName();
-                        const div = document.createElement("div");
-                        div.className = "config-block";
-                        div.appendChild(input);
-                        div.appendChild(button);
-                        block.appendChild(div);
+                        createEntryInput(
+                            block,
+                            block.id + "-" + key,
+                            key,
+                            value,
+                            "Insert new name",
+                            false,
+                            "Save",
+                            () => saveNewName(),
+                            "Save new device name"
+                        );
                     } else {
-                        input.disabled = true;
-                        block.appendChild(input);
+                        createEntryInput(
+                            block,
+                            block.id + "-" + key,
+                            key,
+                            value,
+                            key,
+                            true
+                        );
                     }
-                    
                 });
             }
         }
@@ -129,8 +318,8 @@ const String WEB_PAGE_MAIN = R"=====(
                         response.trim();
                         const data = JSON.parse(response);
                         if (data["settings"]) {
-                            document.getElementById("ssid").value = data["settings"]["ss"];
-                            document.getElementById("password").value = data["settings"]["ps"];
+                            document.getElementById("ssid").value = data["settings"]["ss"] || "";
+                            document.getElementById("password").value = data["settings"]["ps"] || "";
                             fillComboBox("wifi-mode", data["modes"], data["settings"]["md"]);
                         }
                     }
@@ -139,7 +328,6 @@ const String WEB_PAGE_MAIN = R"=====(
             );
         }
         function fillComboBox(comboboxId, values, selectedValue) {
-            console.log(values);
             if (!values) {
                 return;
             }
@@ -183,9 +371,11 @@ const String WEB_PAGE_MAIN = R"=====(
                     if (response) {
                         const loadedConfig = JSON.parse(response);
                         if (loadedConfig) {
-                            Object.entries(loadedConfig).forEach(([key, value]) => this.config[key] = value);
+                            Object.entries(loadedConfig).forEach(([key, value]) => {
+                                this.config[key] = value;
+                                document.getElementById(key).value = value;
+                            });
                         }
-                        updateConfigFields();
                     }
                 },
                 "config"
@@ -231,11 +421,6 @@ const String WEB_PAGE_MAIN = R"=====(
                 )
             }
         }
-        function updateConfigFields() {
-            if (this.config) {
-                Object.keys(this.config).forEach((key) => document.getElementById(key).value = this.config[key]);
-            }
-        }
         function loadState() {
             restRequest(
                 "GET",
@@ -245,7 +430,18 @@ const String WEB_PAGE_MAIN = R"=====(
                     if (response) {
                         response.trim();
                         document.getElementById("state").style.display = "block";
-                        updateBlockValues("state-fields-block", JSON.parse(response));
+                        const block = document.getElementById("state-fields-block");
+                        const states =  JSON.parse(response);
+                        if (block && states) {
+                            block.innerHTML = "";
+                            Object.entries(states).forEach(([key, value]) => {
+                                createEntryInput(block, "state_" + key, key, value, key, true,
+                                    "Callbacks",
+                                    () => loadCallbacks("state", key),
+                                    "Device state callbacks"
+                                );
+                            });
+                        }
                     }
                 },
                 "state"
@@ -260,24 +456,22 @@ const String WEB_PAGE_MAIN = R"=====(
                     if (response) {
                         response.trim();
                         document.getElementById("sensors").style.display = "block";
-                        updateBlockValues("sensors-fields-block", JSON.parse(response));
+                        const block = document.getElementById("sensors-fields-block");
+                        const sensors = JSON.parse(response);
+                        if (block && sensors) {
+                            block.innerHTML = "";
+                            Object.entries(sensors).forEach(([key, {value, type}]) => {
+                                createEntryInput(block, "sensor_" + key, key, value, key, true,
+                                    "Callbacks",
+                                    () => loadCallbacks("sensor", key),
+                                    "Sensors callbacks"
+                                );
+                            });
+                        }
                     }
                 },
                 "sensors"
             );
-        }
-        function updateBlockValues(blockId, elements) {
-            if (!elements) {
-                return;
-            }
-            const stateBlock = document.getElementById(blockId);
-            stateBlock.innerHTML = "";
-            Object.entries(elements).forEach(([key, value]) => {
-                const p = document.createElement("p");
-                p.id = key;
-                p.innerHTML = key + ": " + value;
-                stateBlock.appendChild(p);
-            });
         }
         function loadDictionaries() {
             restRequest(
@@ -294,20 +488,23 @@ const String WEB_PAGE_MAIN = R"=====(
             )
         }
         function processDictionaries() {
+            if (!this.dictionaries) {
+                return;
+            }
             const actions = this.dictionaries.actions;
             if (actions) {
                 document.getElementById("actions").style.display = "block";
                 const actionsBlock = document.getElementById("control-buttons-block");
-                actions.forEach((action) => {
+                Object.entries(actions).forEach(([action, caption]) => {
                     const button = document.createElement("button");
                     button.onclick = function() {
-                        if (action.action || action.action == 0) {
-                            restRequest("PUT", "http://" + getHost() + "/action?action=" + action.action);
+                        if (action || action == 0) {
+                            restRequest("PUT", "http://" + getHost() + "/action?action=" + action, null, null, "actions");
                         } else {
                             console.error("Action is missing!");
                         }
                     };
-                    button.innerHTML = action.caption;
+                    button.innerHTML = caption;
                     actionsBlock.appendChild(button);
                 });
             }
@@ -316,20 +513,20 @@ const String WEB_PAGE_MAIN = R"=====(
             if (configFields) {
                 document.getElementById("config").style.display = "block";
                 const configFieldsBlock = document.getElementById("config-fields-block");
-                configFields.forEach((configField) => {
-                    this.config[configField.name] = null;
+                Object.entries(configFields).forEach(([name, {caption, type}]) => {
+                    this.config[name] = null;
                     const p = document.createElement("p");
-                    p.innerHTML = configField.caption;
-                    p.for = configField.name;
+                    p.innerHTML = caption;
+                    p.for = name;
                     const input = document.createElement("input");
-                    input.type = configField.type;
-                    input.id = configField.name;
+                    input.type = type;
+                    input.id = name;
                     const button = document.createElement("button");
                     button.innerHTML = "X";
                     button.title = "Clear config value";
                     button.style.backgroundColor = "rgb(175, 53, 53)";
                     button.onclick = function () {
-                        deleteConfigValue(configField.name);
+                        deleteConfigValue(name);
                     };
                     const div = document.createElement("div");
                     div.className = "config-block";
@@ -359,7 +556,7 @@ const String WEB_PAGE_MAIN = R"=====(
         function getHost() {
             const { host } = window.location;
             return host;
-            // return "192.168.1.104";
+            // return "192.168.63.17";
         }
         function restRequest(method, path, data, callback, blockId) {
             if (blockId) displayBlockInfo(blockId);
@@ -370,7 +567,13 @@ const String WEB_PAGE_MAIN = R"=====(
             xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4 ){
                         if (xhr.status >= 200 && xhr.status <= 299) {
-                            if (callback) callback(xhr.response);
+                            if (callback) {
+                                try {
+                                    callback(xhr.response);
+                                } catch (exception) {
+                                    console.error("Callback failed for " + path, exception);
+                                }
+                            }
                             if (blockId) displayBlockInfo(blockId, false);
                         } else {
                             console.error("Request " + path + " failed with code " + xhr.status);
@@ -380,6 +583,30 @@ const String WEB_PAGE_MAIN = R"=====(
                 };
             xhr.send(data ? JSON.stringify(data) : null);
         }
+        function createEntryInput(container, inputId, caption, value, inputTitle, disabled, buttonCaption, buttonCallback, buttonTitle, backgroundColor = "#04AA6D") {
+            const p = document.createElement("p");
+            p.innerHTML = caption;
+            container.appendChild(p);
+            const input = document.createElement("input");
+            input.value = value;
+            input.id = inputId;
+            input.disabled = disabled;
+            if (buttonCaption && buttonCallback) {
+                input.title = inputTitle;
+                const button = document.createElement("button");
+                button.style.backgroundColor = backgroundColor;
+                button.innerHTML = buttonCaption;
+                button.title = buttonTitle;
+                button.onclick = buttonCallback;
+                const div = document.createElement("div");
+                div.className = "config-block";
+                div.appendChild(input);
+                div.appendChild(button);
+                container.appendChild(div);
+            } else {
+                container.appendChild(input);
+            }
+        }
     </script>
     <style>
         body {
@@ -388,7 +615,7 @@ const String WEB_PAGE_MAIN = R"=====(
         * {
             border-radius: 20px;
         }
-        p, input, button, select, .loading-info {
+        p, input, button, select, li, label, .loading-info {
             font-size: 50px;
         }
         h1 {
@@ -416,7 +643,7 @@ const String WEB_PAGE_MAIN = R"=====(
             * {
                 border-radius: 10px;
             }
-            p, input, button, select, .loading-info {
+            p, input, button, select, li, label, .loading-info {
                 font-size: 20px;
             }
             h1 {
@@ -431,7 +658,7 @@ const String WEB_PAGE_MAIN = R"=====(
         }
         .content-block {
             background-color: azure;
-            flex-basis: 400px;
+            flex-basis: 500px;
             height: fit-content;
             padding: 10px;
             border: 2px solid grey;
@@ -440,6 +667,7 @@ const String WEB_PAGE_MAIN = R"=====(
         }
         .content-block input {
             border:2px solid grey;
+            background-color: azure;
         }
         .hidable {
             display: none;

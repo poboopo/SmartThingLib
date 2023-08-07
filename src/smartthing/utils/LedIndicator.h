@@ -12,6 +12,7 @@ class LedIndicator {
         int8_t _count;
         TaskHandle_t _taskHandle = NULL;
         void blinkTask();
+        bool _enabled;
     public:
         LedIndicator();
         ~LedIndicator();
@@ -20,6 +21,9 @@ class LedIndicator {
         void blink(int8_t count);
         void on();
         void off();
+        bool isOn() {
+            return _enabled;
+        }
 };
 
 #endif

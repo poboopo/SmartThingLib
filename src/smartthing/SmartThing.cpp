@@ -79,10 +79,13 @@ bool SmartThingClass::init(String type) {
 void SmartThingClass::loopRoutine() {
     if (wifiConnected()) {
         ArduinoOTA.handle();
+        // todo change rest to async
         _rest.handle();
+        // move to async task?
         _multicaster.broadcast(_broadcastMessage.c_str());
-        _callbacksManager.check();
     }
+    // move to async task
+    _callbacksManager.check();
 }
 
 String SmartThingClass::connectToWifi() {

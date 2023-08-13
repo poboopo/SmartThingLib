@@ -79,7 +79,7 @@ void loop() {
         LOGGER.statistics();
     }
 
-    delay(500);
+    delay(200);
 }
 
 void setupRestHandlers() {

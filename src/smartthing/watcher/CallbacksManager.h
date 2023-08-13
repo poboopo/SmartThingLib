@@ -7,13 +7,39 @@
 #include "smartthing/watcher/DeviceStateWatcher.h"
 #include "smartthing/configurable/ConfigurableObjects.h"
 #include "smartthing/watcher/callback/WatcherCallback.h"
+#include "smartthing/watcher/callback/LambdaCallback.h"
 #include "smartthing/utils/List.h"
 
 namespace Callback {
     class CallbacksManager {
         public:
-            bool addDeviceStateCallback(const Configurable::DeviceState::DeviceState * state, Callback::WatcherCallback<char *> * callback);
-            bool addSensorCallback(const Configurable::Sensor::Sensor * sensor, Callback::WatcherCallback<int16_t> * callback);
+            bool createCallbacksFromJson(const char * json);
+
+            bool addDeviceStateCallback(const char * name, LambdaCallback<String>::CustomCallback callback, const char * triggerValue);
+            bool addDeviceStateCallback(const char * name, LambdaCallback<String>::CustomCallback callback) {
+                return addDeviceStateCallback(name, callback, nullptr);
+            };
+            bool addDeviceStateCallback(const char * name, const char * url, const char * triggerValue, bool readonly);
+            bool addDeviceStateCallback(const char * name, const char * url, const char * triggerValue) {
+                return addDeviceStateCallback(name, url, triggerValue, true);
+            }
+            bool addDeviceStateCallback(const char * name, const char * url) {
+                return addDeviceStateCallback(name, url, nullptr, true);
+            };
+
+            bool addSensorCallback(const char * name, LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue);
+            bool addSensorCallback(const char * name, LambdaCallback<int16_t>::CustomCallback callback) {
+                return addSensorCallback(name, callback, -1);
+            };
+            bool addSensorCallback(const char * name, const char * url, int16_t triggerValue, bool readonly);
+            bool addSensorCallback(const char * name, const char * url, int16_t triggerValue) {
+                return addSensorCallback(name, url, triggerValue, true);
+            }
+            bool addSensorCallback(const char * name, const char * url) {
+                return addSensorCallback(name, url, -1, true);
+            };
+            bool addDeviceStateCallback(const Configurable::DeviceState::DeviceState * state, WatcherCallback<String> * callback);
+            bool addSensorCallback(const Configurable::Sensor::Sensor * sensor, WatcherCallback<int16_t> * callback);
             /*
                 type - тип наблюдаемого объекта (state, sensor)
                 name - имя наблюдаемого объекта
@@ -27,7 +53,7 @@ namespace Callback {
             DynamicJsonDocument getCallbacksJson(const char * type, const char * name);
         private:
             List<Watcher<Configurable::Sensor::Sensor, int16_t>> _sensorsWatchers; 
-            List<Watcher<Configurable::DeviceState::DeviceState, char *>> _statesWatchers; 
+            List<Watcher<Configurable::DeviceState::DeviceState, String>> _statesWatchers; 
 
             template<typename O, typename T>
             void collectInfo(List<Watcher<O, T>> * list, JsonArray * array);

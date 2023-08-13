@@ -52,7 +52,7 @@ class CallbacksRequestHandler: public RequestHandler {
                     server.send(400, JSON_CONTENT_TYPE, "Body is missin!");
                     return true;
                 }
-                if (SmartThing.createCallbacksFromJson(server.arg("plain").c_str())) {
+                if (SmartThing.getCallbacksManager()->createCallbacksFromJson(server.arg("plain").c_str())) {
                     server.send(201);
                 } else {
                     server.send(500, JSON_CONTENT_TYPE, buildErrorJson("Failed to create watcher. Check logs for additional information."));
@@ -75,7 +75,7 @@ class CallbacksRequestHandler: public RequestHandler {
                     return true;
                 }
                 
-                if(SmartThing.updateCallback(type.c_str(), name.c_str(), index.toInt(), body.c_str())) {
+                if(SmartThing.getCallbacksManager()->updateCallback(type.c_str(), name.c_str(), index.toInt(), body.c_str())) {
                     server.send(200);
                 } else {
                     server.send(500, JSON_CONTENT_TYPE, buildErrorJson("Failed to update callback. Check logs for additional information."));
@@ -91,7 +91,7 @@ class CallbacksRequestHandler: public RequestHandler {
                     server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type, name or index args are missing!"));
                     return true;
                 }
-                if(SmartThing.deleteCallback(type.c_str(), name.c_str(), index.toInt())) {
+                if(SmartThing.getCallbacksManager()->deleteCallback(type.c_str(), name.c_str(), index.toInt())) {
                     server.send(200);
                 } else {
                     server.send(500, JSON_CONTENT_TYPE, buildErrorJson("Failed to delete callback. Check logs for additional information."));

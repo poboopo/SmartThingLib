@@ -145,10 +145,10 @@ void registerSensors() {
 }
 
 void addCallbacks() {
-    SmartThing.addDeviceStateCallback("automode", [](char ** value) {
+    SmartThing.getCallbacksManager()->addDeviceStateCallback("automode", [](String * value) {
         LOGGER.info("main", "Automode callback called. New value %s", *value);
     });
-    SmartThing.addSensorCallback("test_digital", [](int16_t * value) {
+    SmartThing.getCallbacksManager()->addSensorCallback("test_digital", [](int16_t * value) {
         LOGGER.debug("main", "Digital sensor value changed to %u", *value);
         if (controller.isAutoModeEnabled()) {
             controller.disableAutoMode();

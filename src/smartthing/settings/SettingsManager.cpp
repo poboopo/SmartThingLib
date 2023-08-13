@@ -47,6 +47,7 @@ const char * SettingsManager::loadFromEeprom() {
         String data = "{";
         uint8_t val;
         bool completed = false;
+        //todo replace with readString?
         for (int i = 0; i < EEPROM_LOAD_SIZE; i++){
             val = EEPROM.read(i);
             if (isAscii(val)) {
@@ -106,11 +107,11 @@ void SettingsManager::saveSettings() {
     }
 
     if (EEPROM.begin(EEPROM_LOAD_SIZE)) {
+        //todo replace with write string?
         LOGGER.debug(SETTINGS_MANAGER_TAG, "Saving settings (length [%u]): %s", data.length(), data.c_str());
         for (int i = 0; i < data.length(); i++) {
             EEPROM.write(i, data.charAt(i));
         }
-
         EEPROM.commit();
         LOGGER.info(SETTINGS_MANAGER_TAG, "Settings saved");
     } else {

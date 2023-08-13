@@ -1,6 +1,6 @@
 - CURRENT
-    - add edit callback implementation
-    - add callback scenarios in web page
+    - add callabcks temaplate rest for callbacks creation (required fieldss)
+    - save callbacks to settings
 
 - v1.0
     - v0.1
@@ -23,16 +23,18 @@
         - add callback scenarios in web page +
         
     - v0.3
-        - add settings compression
+        - add settings compression LZ78 - [CANCELLED BCZ USLESS]
+        - add different http callback types support +
         - add callabcks temaplate rest for callbacks creation (required fieldss)
         - save callbacks to settings
         - add statics rest
         - save state
         - replace string with const char *
         - fix logger message length
-        - arduino json refactor        
+        - arduino json refactor
 
     - v0.4
+        - add import export config
         - add ActionCallback - call action from callback (+ web)
         - add possible values to device state
         - refactor handlers - make base handler with all routine(log, headers)

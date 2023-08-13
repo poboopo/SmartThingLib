@@ -8,15 +8,20 @@
 
 #define HTTP_CALLBACK_TAG "http_callback"
 
-#define JSON_URL_FIELD "url"
-
 namespace Callback {
     template<typename T>
     class HttpCallback: public WatcherCallback<T> {
         public:
             HttpCallback(const char * url, T triggerValue, bool readonly):
-                WatcherCallback<T>(HTTP_CALLBACK_TAG, triggerValue, readonly), _url(nullptr) {
-                    saveUrl(url);
+                WatcherCallback<T>(HTTP_CALLBACK_TAG, triggerValue, readonly), _url(url), _method("GET") {
+                    fixUrl();
+                };
+            HttpCallback(const char * url, const char * method, const char * payload, T triggerValue, bool readonly):
+                WatcherCallback<T>(HTTP_CALLBACK_TAG, triggerValue, readonly), _url(url), _method(method), _payload(payload) {
+                    fixUrl();
+                    if (_method.isEmpty()) {
+                        _method = "GET";
+                    }
                 };
             void call(T * value) {
                 if (value == nullptr) {
@@ -34,22 +39,35 @@ namespace Callback {
             StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> toJson() {
                 StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> doc = this->getDeaultInfo();
                 doc["caption"] = "http";
-                doc[JSON_URL_FIELD] = _url;
+                doc["url"] = _url;
+                doc["method"] = _method;
+                doc["payload"] = _payload;
                 doc["lastResponseCode"] = _lastResponseCode;
                 return doc;
             };
 
             void updateCustom(DynamicJsonDocument doc) {
                 if (doc.containsKey("url")) {
-                    saveUrl(doc["url"]);
-                    LOGGER.debug(HTTP_CALLBACK_TAG, "Callback's url was updated to %s", _url);
+                    _url = doc["url"].as<String>();
+                    fixUrl();
+                    LOGGER.debug(HTTP_CALLBACK_TAG, "Callback's url was updated to %s", _url.c_str());
+                }
+                if (doc.containsKey("method")) {
+                    _method = doc["method"].as<String>();
+                    LOGGER.debug(HTTP_CALLBACK_TAG, "Callback's method was updated to %s", _url.c_str());
+                }
+                if (doc.containsKey("payload")) {
+                    _payload = doc["payload"].as<String>();
+                    LOGGER.debug(HTTP_CALLBACK_TAG, "Callback's payload was updated to %s", _url.c_str());
                 }
             };
 
             TaskHandle_t _requestTask = NULL; // not safe
             bool _sending = false;
         private:
-            char * _url;
+            String _url;
+            String _method = "GET";
+            String _payload;
             int16_t _lastResponseCode = 0;
 
             void createRequestTask() {
@@ -75,22 +93,18 @@ namespace Callback {
 
             void sendRequest() {
                 HTTPClient client;
-                LOGGER.info(HTTP_CALLBACK_TAG, "Sending request to %s", _url);
+                LOGGER.info(HTTP_CALLBACK_TAG, "Sending request to %s", _url.c_str());
                 client.setTimeout(2000);
                 client.begin(_url);
-                _lastResponseCode = client.GET();
-                LOGGER.info(HTTP_CALLBACK_TAG, "Request %s finished with code %d", _url, _lastResponseCode);
+                _lastResponseCode = client.sendRequest(_method.c_str(), _payload.c_str());
+                LOGGER.info(HTTP_CALLBACK_TAG, "Request %s finished with code %d", _url.c_str(), _lastResponseCode);
                 client.end();
             }
 
-            void saveUrl(const char * value) {
-                int size = strlen(value);
-                if (_url != nullptr) {
-                    delete(_url);
+            void fixUrl() {
+                if (!_url.startsWith("http")) {
+                    _url = "http://" + _url;
                 }
-                _url = new char[size + 1];
-                strncpy(_url, value, size + 1);
-                _url[size] = '\0';
             }
     };
 }

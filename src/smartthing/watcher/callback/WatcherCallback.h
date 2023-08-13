@@ -8,6 +8,8 @@
 #define CALLBACK_INFO_DOC_SIZE 256
 #define JSON_TRIGGER_FIELD "trigger"
 
+//todo RENAME TO CALLBACK
+
 namespace Callback {
     template<typename T>
     class WatcherCallback {
@@ -27,8 +29,8 @@ namespace Callback {
                 return doc;
             }
             
-            T * triggerValuePointer() {
-                return &_triggerValue;
+            void setTriggerValue(T triggerValue) {
+                _triggerValue = triggerValue;
             }
 
             bool isReadonly() {

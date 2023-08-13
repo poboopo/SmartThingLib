@@ -141,14 +141,11 @@ void registerSensors() {
     SmartThing.registerSensor("light_controller", []() {return controller.getLightValue();});
     SmartThing.registerSensor("position_controller", []() {return controller.getMotorPosition();});
 
-    SmartThing.registerDigitalSensor("test_digital", 12);
+    SmartThing.registerDigitalSensor("button", 12);
 }
 
 void addCallbacks() {
-    SmartThing.addDeviceStateCallback("automode", [](char ** value) {
-        LOGGER.info("main", "Automode callback called. New value %s", *value);
-    });
-    SmartThing.addSensorCallback("test_digital", [](int16_t * value) {
+    SmartThing.addSensorCallback("button", [](int16_t * value) {
         LOGGER.debug("main", "Digital sensor value changed to %u", *value);
         if (controller.isAutoModeEnabled()) {
             controller.disableAutoMode();

@@ -29,31 +29,46 @@ class InfoRequestHandler: public RequestHandler {
                 server.send(200);
                 return true; 
             }
-            if (requestMethod == HTTP_GET) {
-                DynamicJsonDocument jsonDoc(256);
-                jsonDoc["version"] = SMART_THING_VERSION;
-                jsonDoc["name"] = SmartThing.getName();
-                jsonDoc["type"] = SmartThing.getType();
-                jsonDoc["chip_model"] = ESP.getChipModel();
-                jsonDoc["chip_revision"] = ESP.getChipRevision();
+            if (requestUri.equals("/info/system")) {
+                if (requestMethod == HTTP_GET) {
+                    DynamicJsonDocument jsonDoc(256);
+                    jsonDoc["version"] = SMART_THING_VERSION;
+                    jsonDoc["name"] = SmartThing.getName();
+                    jsonDoc["type"] = SmartThing.getType();
+                    jsonDoc["chip_model"] = ESP.getChipModel();
+                    jsonDoc["chip_revision"] = ESP.getChipRevision();
 
-                String result;
-                serializeJson(jsonDoc, result);
-                server.send(200, JSON_CONTENT_TYPE, result);
-                return true;
-            }
-            if (requestMethod == HTTP_PUT) {
-                DynamicJsonDocument jsDoc(64);
-                deserializeJson(jsDoc, body);
-                const char * newName = jsDoc["name"];
-                if (strlen(newName) == 0 || strlen(newName) > DEVICE_NAME_LENGTH_MAX) {
-                    server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Name is missing or too long (max 10 symbols)"));
+                    String result;
+                    serializeJson(jsonDoc, result);
+                    server.send(200, JSON_CONTENT_TYPE, result);
                     return true;
                 }
+                if (requestMethod == HTTP_PUT) {
+                    DynamicJsonDocument jsDoc(64);
+                    deserializeJson(jsDoc, body);
+                    const char * newName = jsDoc["name"];
+                    if (strlen(newName) == 0 || strlen(newName) > DEVICE_NAME_LENGTH_MAX) {
+                        server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Name is missing or too long (max 10 symbols)"));
+                        return true;
+                    }
 
-                LOGGER.info(INFO_RQ_TAG, "Got new name %s", newName);
-                SmartThing.setName(newName);
-                server.send(200);
+                    SmartThing.setName(newName);
+                    server.send(200);
+                    return true;
+                }
+            }
+            if (requestUri.equals("/info/actions") && requestMethod == HTTP_GET) {
+                DynamicJsonDocument doc = SmartThing.getActionsInfo();
+                String response;
+                serializeJson(doc, response);
+                server.send(200, JSON_CONTENT_TYPE, response);
+                return true;
+            }
+            if (requestUri.equals("/info/config") && requestMethod == HTTP_GET) {
+                DynamicJsonDocument doc = SmartThing.getConfigInfo();
+                String response;
+                serializeJson(doc, response);
+                server.send(200, JSON_CONTENT_TYPE, response);
                 return true;
             }
 

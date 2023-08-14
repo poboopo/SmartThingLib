@@ -145,7 +145,7 @@ void SmartThingClass::wipeSettings() {
     while (!digitalRead(WIPE_BUTTON_PIN) && millis() - started < WIPE_BUTTON_TIME) {}
     if (!digitalRead(WIPE_BUTTON_PIN)) {
         STSettings.dropAll();
-        STSettings.saveSettings();
+        STSettings.save();
         LOGGER.warning(SMART_THING_TAG, "Settings were wiped!");
     }
     _led.off();
@@ -158,8 +158,9 @@ void SmartThingClass::setName(String name) {
     _name = name;
     // todo move from there
     STSettings.setDeviceName(name.c_str());
-    STSettings.saveSettings();
+    STSettings.save();
     _broadcastMessage = buildBroadCastMessage(_ip, _name);
+    LOGGER.info(SMART_THING_TAG, "New device name %s", name.c_str());
 }
 
 DynamicJsonDocument SmartThingClass::getInfoDictionaries() {
@@ -183,7 +184,7 @@ DynamicJsonDocument SmartThingClass::getActionsInfo() {
     return _actionsList.toJson();
 }
 
-DynamicJsonDocument SmartThingClass::getConfigEntriesInfo() {
+DynamicJsonDocument SmartThingClass::getConfigInfo() {
     return _configEntriesList.toJson();
 }
 

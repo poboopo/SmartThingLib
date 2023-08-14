@@ -37,8 +37,9 @@ const String WEB_PAGE_MAIN = R"=====(
                 <div id="config-fields-block" class="grid-view"></div>
                 <div class="btn-group" >
                     <button title="Save config values" onclick="saveConfig()">save</button>
+                    <button title="Save config values" style="background-color: red;" onclick="deleteConfig()">delete all</button>
                 </div>
-                <button class="update-button" onclick="loadConfig()">Update</button>
+                <button class="update-button" onclick="loadConfigValues()">Update</button>
             </div>
             <div id="state" class="content-block hidable">
                 <div class="loading-info">Loading</div>
@@ -258,7 +259,7 @@ const String WEB_PAGE_MAIN = R"=====(
         function loadDeviceInfo() {
             restRequest(
                 "GET",
-                "http://" + getHost() + "/info",
+                "http://" + getHost() + "/info/system",
                 null,
                 function (response) {
                     if (response) {
@@ -362,7 +363,7 @@ const String WEB_PAGE_MAIN = R"=====(
                 "wifi"
             );
         }
-        function loadConfig() {
+        function loadConfigValues() {
             restRequest(
                 "GET",
                 "http://" + getHost() + "/config",
@@ -371,15 +372,28 @@ const String WEB_PAGE_MAIN = R"=====(
                     if (response) {
                         const loadedConfig = JSON.parse(response);
                         if (loadedConfig) {
-                            Object.entries(loadedConfig).forEach(([key, value]) => {
-                                this.config[key] = value;
-                                document.getElementById(key).value = value;
+                            Object.keys(this.config).forEach((key) => {
+                                this.config[key] = loadedConfig[key];
+                                document.getElementById(key).value = loadedConfig[key];
                             });
                         }
                     }
                 },
                 "config"
             );
+        }
+        function deleteConfig() {
+            if (confirm("Are you sure you want to delete ALL config values?")) {
+                restRequest(
+                    "DELETE",
+                    "http://" + getHost() + "/config/remove/all",
+                    null,
+                    function(response) {
+                        loadConfigValues();
+                    },
+                    "config"
+                )
+            }
         }
         function saveConfig() {
             if(!this.config) {
@@ -412,7 +426,7 @@ const String WEB_PAGE_MAIN = R"=====(
             if (name) {
                 restRequest(
                     "DELETE",
-                    "http://" + getHost() + "/config?name=" + name,
+                    "http://" + getHost() + "/config/remove?name=" + name,
                     null,
                     function(response) {
                         document.getElementById(name).value = null;
@@ -476,22 +490,29 @@ const String WEB_PAGE_MAIN = R"=====(
         function loadDictionaries() {
             restRequest(
                 "GET",
-                "http://" + getHost() + "/dictionary",
+                "http://" + getHost() + "/info/actions",
                 null,
                 function(response) {
                     if (response) {
-                        this.dictionaries = JSON.parse(response);
-                        processDictionaries();
-                        loadConfig();
+                        const actions = JSON.parse(response);
+                        processActions(actions);
+                    }
+                }
+            )
+            restRequest(
+                "GET",
+                "http://" + getHost() + "/info/config",
+                null,
+                function(response) {
+                    if (response) {
+                        const configEntries = JSON.parse(response);
+                        processConfigEntries(configEntries);
+                        loadConfigValues();
                     }
                 }
             )
         }
-        function processDictionaries() {
-            if (!this.dictionaries) {
-                return;
-            }
-            const actions = this.dictionaries.actions;
+        function processActions(actions) {
             if (actions) {
                 document.getElementById("actions").style.display = "block";
                 const actionsBlock = document.getElementById("control-buttons-block");
@@ -508,8 +529,8 @@ const String WEB_PAGE_MAIN = R"=====(
                     actionsBlock.appendChild(button);
                 });
             }
-
-            const configFields = this.dictionaries.config;
+        }
+        function processConfigEntries(configFields) {
             if (configFields) {
                 document.getElementById("config").style.display = "block";
                 const configFieldsBlock = document.getElementById("config-fields-block");
@@ -554,9 +575,9 @@ const String WEB_PAGE_MAIN = R"=====(
             }
         }
         function getHost() {
-            const { host } = window.location;
-            return host;
-            // return "192.168.63.17";
+            // const { host } = window.location;
+            // return host;
+            return "192.168.1.103";
         }
         function restRequest(method, path, data, callback, blockId) {
             if (blockId) displayBlockInfo(blockId);

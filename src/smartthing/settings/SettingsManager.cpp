@@ -28,7 +28,7 @@ void SettingsManager::loadSettings() {
 
 void SettingsManager::addDefaultSettings() {
     _settings[DEVICE_NAME] = ESP.getChipModel();
-    saveSettings();
+    save();
 }
 
 void SettingsManager::clear() {
@@ -83,7 +83,7 @@ void SettingsManager::removeIfEmpty(const char * group) {
     }
 }
 
-void SettingsManager::saveSettings() {
+void SettingsManager::save() {
     removeIfEmpty(GROUP_WIFI);
     removeIfEmpty(GROUP_CONFIG);
     removeIfEmpty(GROUP_STATE);
@@ -146,6 +146,15 @@ JsonObject SettingsManager::getOrCreateObject(const char * name) {
 
 JsonObject SettingsManager::getConfig() {
     return getOrCreateObject(GROUP_CONFIG);
+}
+
+void SettingsManager::dropConfig() {
+    if (_settings.containsKey(GROUP_CONFIG)) {
+        _settings.remove(GROUP_CONFIG);
+        LOGGER.warning(SETTINGS_MANAGER_TAG, "All config values were removed!");
+    } else {
+        LOGGER.debug(SETTINGS_MANAGER_TAG, "Config settings not exists");
+    }
 }
 
 JsonObject SettingsManager::getState() {

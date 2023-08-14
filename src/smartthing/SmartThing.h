@@ -64,7 +64,7 @@ class SmartThingClass {
         DynamicJsonDocument getSensorsValues();
         DynamicJsonDocument getDeviceStatesInfo();
         DynamicJsonDocument getActionsInfo();
-        DynamicJsonDocument getConfigEntriesInfo();
+        DynamicJsonDocument getConfigInfo();
         DynamicJsonDocument getWatchersInfo();
         DynamicJsonDocument getCallbacksJson(const char * watcherType, const char * name);
 

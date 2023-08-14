@@ -5,7 +5,6 @@
 #include "smartthing/net/rest/handlers/InfoRequestHandler.h"
 #include "smartthing/net/rest/handlers/SensorsRequestHandler.h"
 #include "smartthing/net/rest/handlers/StateRequestHandler.h"
-#include "smartthing/net/rest/handlers/DictionaryRequestHandler.h"
 #include "smartthing/net/rest/handlers/ActionRequestHandler.h"
 #include "smartthing/net/rest/handlers/CallbacksRequestHandler.h"
 
@@ -64,7 +63,6 @@ void RestController::setupHandler() {
     _server.addHandler(new InfoRequestHandler());
     _server.addHandler(new SensorsRequestHandler());
     _server.addHandler(new StateRequestHandler());
-    _server.addHandler(new DictionaryRequestHandler());
     _server.addHandler(new ActionRequestHandler());
     _server.addHandler(new CallbacksRequestHandler());
 
@@ -84,7 +82,7 @@ void RestController::setupHandler() {
         // add restart handler
         // RestHandlerResult result = _getStateHandler();
         // STSettings.putSetting(GROUP_STATE, result.body);
-        // STSettings.saveSettings();
+        // STSettings.save();
         _server.send(200);
 
         LOGGER.info(WEB_SERVER_TAG, "---------RESTART---------");

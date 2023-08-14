@@ -29,11 +29,11 @@
         - save callbacks to settings
         - add statics rest
         - save state
-        - replace string with const char *
         - fix logger message length
         - arduino json refactor
 
     - v0.4
+        - todo SmartThing loop task routine - move to async
         - add import export config
         - add ActionCallback - call action from callback (+ web)
         - add possible values to device state

@@ -29,10 +29,11 @@ class SettingsManager {
         void removeSetting(const char * name);
         void dropWifiCredits();
         void dropAll();
-        void saveSettings();
+        void save();
         void clear();
 
         JsonObject getConfig();
+        void dropConfig();
         JsonObject getState();
         JsonObject getWiFi();
         const char * getDeviceName();

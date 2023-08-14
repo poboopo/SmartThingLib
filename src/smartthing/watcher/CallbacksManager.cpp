@@ -26,7 +26,7 @@ namespace Callback {
             return false;
         }
 
-        if (!doc.containsKey("type")) {
+        if (!doc.containsKey("observableType")) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "type value is missing!");
             return false;
         }
@@ -35,19 +35,19 @@ namespace Callback {
             return false;
         }
 
-        const char * type = doc["type"];
+        const char * observableType = doc["observableType"];
         const char * obs = doc["observable"];
-        if (type == nullptr || obs == nullptr) {
-            LOGGER.error(CALLBACKS_MANAGER_TAG, "Parameters type or observable are missing!");
+        if (observableType == nullptr || obs == nullptr) {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "Parameters observableType or observable are missing!");
             return false;
         }
 
         CallbackBuilder builder;
-        builder.url(doc["url"])->method(doc["method"])->payload(doc["payload"])->readOnly(doc["readOnly"]);
+        builder.url(doc["url"])->method(doc["method"])->payload(doc["payload"]);
         String trigger = doc["trigger"];
-        if (strcmp(type, STATE_TYPE) == 0) {
+        if (strcmp(observableType, STATE_TYPE) == 0) {
             return addDeviceStateCallback(SmartThing.getDeviceState(obs), builder.build<String>(trigger));
-        } else if (strcmp(type, SENSOR_TYPE) == 0) {
+        } else if (strcmp(observableType, SENSOR_TYPE) == 0) {
             int triggerValue;
             if (trigger.length() == 0) {
                 triggerValue = -1;
@@ -57,7 +57,7 @@ namespace Callback {
             return addSensorCallback(SmartThing.getSensor(obs), builder.build<int16_t>(triggerValue));
         }
 
-        LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback for observable[%s] of type %s not supported. Supported types: state, sensor.", obs, type);
+        LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback for observable[%s] of type %s not supported. Supported types: state, sensor.", obs, observableType);
         return false;
     }
 

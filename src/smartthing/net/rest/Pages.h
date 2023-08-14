@@ -78,28 +78,28 @@ const String WEB_PAGE_MAIN = R"=====(
         function updateCallbacks() {
             const callbacksBlock = document.getElementById("callbacks-block");
             if(callbacksBlock) {
-                loadCallbacks(callbacksBlock.getAttribute("type"), callbacksBlock.getAttribute("observable"));
+                loadCallbacks(callbacksBlock.getAttribute("observableType"), callbacksBlock.getAttribute("observable"));
             }
         }
-        function loadCallbacks(type, observable) {
-            if (!type || !observable) {
-                console.warn("Watcher type or observable are missing!");
+        function loadCallbacks(observableType, observable) {
+            if (!observableType || !observable) {
+                console.warn("Callback observableType or observable are missing!");
                 return;
             }
             restRequest(
                 "GET",
-                "http://" + getHost() + "/callbacks?type=" + type + "&name=" + observable,
+                "http://" + getHost() + "/callbacks?observableType=" + observableType + "&name=" + observable,
                 null,
                 function (response) {
                     if (response) {
-                        displayCallbacks(type, observable, JSON.parse(response));
+                        displayCallbacks(observableType, observable, JSON.parse(response));
                     }
                 },
                 "callbacks"
             );
         }
 
-        function addCallback(type, observable) {
+        function addCallback(observableType, observable) {
             if (document.getElementById("callback_new")) {
                 return;
             }
@@ -108,29 +108,32 @@ const String WEB_PAGE_MAIN = R"=====(
                 console.error("Can't find callbacks-block!");
                 return;
             }
+            const template = this.callbackTemplates["http_callback"] || {};
+            const additionalFields = Object.entries(template).reduce((acc, [key, _]) => {acc[key] = ""; return acc;}, {});
             callbacksBlock.prepend(
-                buildCallbackView(type, observable, {
+                buildCallbackView(observableType, observable, {
                     "type": "http_callback",
-                    "readonly": false, 
-                    "url": "callback url",
-                    "caption": "New http callback"
+                    "readonly": false,
+                    "caption": "New http callback",
+                    "trigger": "",
+                    ...additionalFields
                 }, "new")
             );
-        }   
-        function displayCallbacks(type, observable, callbacks) {
+        }
+        function displayCallbacks(observableType, observable, callbacks) {
             const callbacksBlock = document.getElementById("callbacks-block");
             if (!callbacksBlock) {
                 console.error("Can't find callbacks-block!");
                 return;
             }
-            callbacksBlock.setAttribute("type", type);
+            callbacksBlock.setAttribute("observableType", observableType);
             callbacksBlock.setAttribute("observable", observable);
             callbacksBlock.innerHTML = "";
             document.getElementById("callbacks").style.display = "block";
 
             if (callbacks) {
                 callbacks.forEach((callback, index) => {
-                    callbacksBlock.appendChild(buildCallbackView(type, observable, callback, index));
+                    callbacksBlock.appendChild(buildCallbackView(observableType, observable, callback, index));
                 });
             }   else {
                 console.warn("Callbacks list are empty!");
@@ -139,46 +142,33 @@ const String WEB_PAGE_MAIN = R"=====(
             const addButton = document.getElementById("add-new-callback");
             if (addButton) {
                 addButton.onclick = () => {
-                    addCallback(type, observable);  
+                    addCallback(observableType, observable);  
                 };
             }
-            document.getElementById("callbacks-title").innerHTML = type + " " + observable + "'s callbacks";
+            document.getElementById("callbacks-title").innerHTML = observableType + " " + observable + "'s callbacks";
         }
-        function buildCallbackView(type, observable, callback, index) {
+        function buildCallbackView(observableType, observable, callback, index) {
+            const callbackType = callback["type"];
             const div = document.createElement("div");
             div.id = "callback_" + index;
             div.className = "content-block";
             const h2 = document.createElement("h2");
-            h2.innerHTML = callback["caption"] || callback["type"];
+            h2.innerHTML = callback["caption"] || callbackType;
             div.appendChild(h2);
             const block = document.createElement("div");
             block.className = "grid-view";
-            if (callback["type"] == "http_callback") {
-                createEntryInput(
-                    block,
-                    "callback_url_" + index,
-                    "Url",
-                    callback.url,
-                    "Callback url",
-                    callback.readonly
-                );
-                createEntryInput(
-                    block,
-                    "callback_response_" + index,
-                    "Last callback response code",
-                    callback.lastResponseCode || "Not called yet",
-                    "Last callback response code",
-                    true
-                );
-            }
-            createEntryInput(
-                block,
-                "callback_trigger_" + index,
-                "Trigger value",
-                (callback.trigger || callback.trigger == 0) ? callback.trigger : "",
-                "Call callback when value equals",
-                callback.readonly
-            );
+            const template = this.callbackTemplates[callbackType] || {};
+            Object.entries(callback).filter(([key, _]) => key != "type" && key != "caption" && key != "readonly")
+                .forEach(([key, value]) => {
+                    createEntryInput(
+                        block,
+                        "callback_" + key + "_" + index,
+                        key,
+                        value != null ? String(value) : "",
+                        key,
+                        callback.readonly || (key != "trigger" && !template[key])
+                    );
+                });
             div.appendChild(block);
 
             if (!callback.readonly) {
@@ -186,7 +176,7 @@ const String WEB_PAGE_MAIN = R"=====(
                 wrap.classList.add("btn-group", "grid-view");
                 const button = document.createElement("button");
                 button.innerHTML = "save"
-                button.onclick = () => saveCallback(type, observable, index);
+                button.onclick = () => saveCallback(callbackType, observableType, observable, index);
                 wrap.appendChild(button);
                 if (index != "new") {
                     const deleteButton = document.createElement("button");
@@ -194,7 +184,7 @@ const String WEB_PAGE_MAIN = R"=====(
                     deleteButton.style.backgroundColor = "red";
                     deleteButton.onclick = () => {
                         if (confirm("Are you sure you want to delete this callback?")) {
-                            deleteCallback(type, observable, index);
+                            deleteCallback(observableType, observable, index);
                         }
                     };
                     wrap.appendChild(deleteButton);
@@ -203,19 +193,37 @@ const String WEB_PAGE_MAIN = R"=====(
             }
             return div;
         }
-        function saveCallback(type, observable, index) {
-            const reqPayload = {type, observable};
+        function saveCallback(callbackType, observableType, observable, index) {
+            if (!index && index !== 0) {
+                console.error("Index are missing!")
+                return;
+            }
+            const template = this.callbackTemplates[callbackType] || {};
+            const reqPayload = {observableType, observable};
             const triggerInput = document.getElementById("callback_trigger_" + index);
             if (triggerInput) {
                 reqPayload["trigger"] = triggerInput.value;
             }
-            const urlInput = document.getElementById("callback_url_" + index);
-            if (urlInput) {
-                reqPayload["url"] = urlInput.value;
-            }
+
+            let valid = true;
+            Object.entries(template).forEach(([key, {required}]) => {
+                const input = document.getElementById("callback_" + key + "_" + index);
+                if (input) {
+                    const value = input.value;
+                    if (!value && value != 0) {
+                        valid += !required;
+                    }
+                    reqPayload[key] = value;
+                }
+            })
 
             if (Object.keys(reqPayload).length === 0) {
                 console.error("Empty update payload! Skipping");
+                return;
+            }
+
+            if (!valid) {
+                console.error("Validation failed!");
                 return;
             }
             
@@ -226,12 +234,12 @@ const String WEB_PAGE_MAIN = R"=====(
                     reqPayload,
                     (response) => {
                         console.log("Callback created!");
-                        loadCallbacks(type, observable);
+                        loadCallbacks(observableType, observable);
                     },
                     "callbacks"
                 )
             } else {
-                const queryPart = "?type=" + type + "&name=" + observable + "&index=" + index;
+                const queryPart = "?observableType=" + observableType + "&name=" + observable + "&index=" + index;
                 restRequest(
                     "PUT",
                     "http://" + getHost() + "/callbacks" + queryPart,
@@ -243,15 +251,15 @@ const String WEB_PAGE_MAIN = R"=====(
                 )
             }
         }
-        function deleteCallback(type, observable, index) {
-            const queryPart = "?type=" + type + "&name=" + observable + "&index=" + index;
+        function deleteCallback(observableType, observable, index) {
+            const queryPart = "?observableType=" + observableType + "&name=" + observable + "&index=" + index;
             restRequest(
                 "DELETE",
                 "http://" + getHost() + "/callbacks" + queryPart,
                 null,
                 (response) => {
                     console.log("Callback deleted :(");
-                    loadCallbacks(type, observable);
+                    loadCallbacks(observableType, observable);
                 },
                 "callbacks"
             )
@@ -511,6 +519,16 @@ const String WEB_PAGE_MAIN = R"=====(
                     }
                 }
             )
+            restRequest(
+                "GET",
+                "http://" + getHost() + "/callbacks/template",
+                null,
+                (response) => {
+                    if (response) {
+                        this.callbackTemplates = JSON.parse(response);
+                    }
+                }
+            )
         }
         function processActions(actions) {
             if (actions) {
@@ -575,9 +593,9 @@ const String WEB_PAGE_MAIN = R"=====(
             }
         }
         function getHost() {
-            // const { host } = window.location;
-            // return host;
-            return "192.168.1.103";
+            const { host } = window.location;
+            return host;
+            // return "192.168.1.103";
         }
         function restRequest(method, path, data, callback, blockId) {
             if (blockId) displayBlockInfo(blockId);

@@ -11,6 +11,7 @@
 
 #define CALLBACK_TYPE_ARG "type"
 #define CALLBACK_NAME_ARG "name"
+#define CALLBACK_OBSERVABLE_TYPE "observableType"
 #define CALLBACK_INDEX_ARG "index"
 
 class CallbacksRequestHandler: public RequestHandler {
@@ -34,7 +35,11 @@ class CallbacksRequestHandler: public RequestHandler {
             
             server.sendHeader("Access-Control-Allow-Origin", "*");
             if (requestMethod == HTTP_GET) {
-                String type = server.arg(CALLBACK_TYPE_ARG);
+                if (requestUri.equals("/callbacks/template")) {
+                    server.send(200, JSON_CONTENT_TYPE, "{\"http_callback\": {\"url\": {\"required\": true},\"method\": {\"required\": false},\"payload\": {\"required\": false}}}");
+                    return true;
+                }
+                String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
                 String name = server.arg(CALLBACK_NAME_ARG);
 
                 if (type.isEmpty() || name.isEmpty()) {
@@ -60,7 +65,7 @@ class CallbacksRequestHandler: public RequestHandler {
                 return true;
             }
             if (requestMethod == HTTP_PUT) {
-                String type = server.arg(CALLBACK_TYPE_ARG);
+                String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
                 String name = server.arg(CALLBACK_NAME_ARG);
                 String index = server.arg(CALLBACK_INDEX_ARG);
 
@@ -83,7 +88,7 @@ class CallbacksRequestHandler: public RequestHandler {
                 return true;
             }
             if (requestMethod == HTTP_DELETE) {
-                String type = server.arg(CALLBACK_TYPE_ARG);
+                String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
                 String name = server.arg(CALLBACK_NAME_ARG);
                 String index = server.arg(CALLBACK_INDEX_ARG);
 

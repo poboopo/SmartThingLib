@@ -34,6 +34,7 @@
 
     - v0.4
         - todo SmartThing loop task routine - move to async
+        - all handlers uri rework
         - add import export config
         - add ActionCallback - call action from callback (+ web)
         - add possible values to device state

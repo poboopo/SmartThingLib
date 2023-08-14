@@ -1,5 +1,4 @@
 - CURRENT
-    - add callabcks temaplate rest for callbacks creation (required fieldss)
     - save callbacks to settings
 
 - v1.0
@@ -25,18 +24,18 @@
     - v0.3
         - add settings compression LZ78 - [CANCELLED BCZ USLESS]
         - add different http callback types support +
-        - add callabcks temaplate rest for callbacks creation (required fieldss)
+        - add callabcks temaplate rest for callbacks creation (required fields) +
         - save callbacks to settings
-        - add statics rest
         - save state
+        - add statics rest
         - fix logger message length
         - arduino json refactor
 
     - v0.4
+        - add ActionCallback - call action from callback (+ web)
         - todo SmartThing loop task routine - move to async
         - all handlers uri rework
         - add import export config
-        - add ActionCallback - call action from callback (+ web)
         - add possible values to device state
         - refactor handlers - make base handler with all routine(log, headers)
         - add restart handler

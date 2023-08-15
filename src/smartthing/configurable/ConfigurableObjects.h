@@ -2,15 +2,31 @@
 #define CONFIG_OBJECTS_H
 
 #include <functional>
+#include <ArduinoJson.h>
+
+#define STATE_TYPE "state"
+#define SENSOR_TYPE "sensor"
+
+#define CONFIGURABLE_JS0N_SIZE 64
 
 namespace Configurable {
     template<typename T>
-    class ConfigurableObject {
+    struct ConfigurableObject {
         public:
+            ConfigurableObject(const char * objType): type(objType){};
             typedef std::function<T(void)> ValueGeneratorFunction;
 
             const char * name;
+            const char * type;
+            
             ValueGeneratorFunction valueGenerator;
+
+            StaticJsonDocument<CONFIGURABLE_JS0N_SIZE> toJson() {
+                StaticJsonDocument<CONFIGURABLE_JS0N_SIZE> doc;
+                doc["name"] = name;
+                doc["type"] = type;
+                return doc;
+            };
     };
 
     namespace Sensor {
@@ -31,14 +47,17 @@ namespace Configurable {
             return "type_not_found_how";
         };
 
-        class Sensor: public ConfigurableObject<int16_t> {
+        struct Sensor: public ConfigurableObject<int16_t> {
             public:
+                Sensor(): ConfigurableObject<int16_t>(SENSOR_TYPE) {};
                 int pin;
                 SensorType type;
         };
     }
     namespace DeviceState {
-        class DeviceState: public ConfigurableObject<const char *> {};
+        struct DeviceState: public ConfigurableObject<const char *> {
+            DeviceState(): ConfigurableObject<const char *>(STATE_TYPE) {};
+        };
     }
 }
 

@@ -32,6 +32,7 @@
         - arduino json refactor
 
     - v0.4
+        - watcher refactor
         - add ActionCallback - call action from callback (+ web)
         - todo SmartThing loop task routine - move to async
         - all handlers uri rework
@@ -42,6 +43,7 @@
         - remove white spaces in mobile version of web page
 
 - backlog
+    - ОПИШИ АРХИТЕКТУРУ
     - wifi network scan
     - add authorization???
     - tuya, zigbee integration

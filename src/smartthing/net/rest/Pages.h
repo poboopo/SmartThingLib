@@ -88,7 +88,7 @@ const String WEB_PAGE_MAIN = R"=====(
             }
             restRequest(
                 "GET",
-                "http://" + getHost() + "/callbacks?observableType=" + observableType + "&name=" + observable,
+                "http://" + getHost() + "/callbacks/by/observable?observableType=" + observableType + "&name=" + observable,
                 null,
                 function (response) {
                     if (response) {

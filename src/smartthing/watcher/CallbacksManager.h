@@ -14,6 +14,7 @@ namespace Callback {
     class CallbacksManager {
         public:
             bool createCallbacksFromJson(const char * json);
+            DynamicJsonDocument callbacksToJson();
 
             bool addDeviceStateCallback(const char * name, LambdaCallback<String>::CustomCallback callback, const char * triggerValue);
             bool addDeviceStateCallback(const char * name, LambdaCallback<String>::CustomCallback callback) {
@@ -54,6 +55,7 @@ namespace Callback {
         private:
             List<Watcher<Configurable::Sensor::Sensor, int16_t>> _sensorsWatchers; 
             List<Watcher<Configurable::DeviceState::DeviceState, String>> _statesWatchers; 
+            int _callbacksCount = 0;
 
             template<typename O, typename T>
             void collectInfo(List<Watcher<O, T>> * list, JsonArray * array);

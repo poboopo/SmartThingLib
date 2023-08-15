@@ -39,14 +39,21 @@ class CallbacksRequestHandler: public RequestHandler {
                     server.send(200, JSON_CONTENT_TYPE, "{\"http_callback\": {\"url\": {\"required\": true},\"method\": {\"required\": false},\"payload\": {\"required\": false}}}");
                     return true;
                 }
-                String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
-                String name = server.arg(CALLBACK_NAME_ARG);
+                if (requestUri.equals("/callbacks/by/observable")) {
+                    String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
+                    String name = server.arg(CALLBACK_NAME_ARG);
 
-                if (type.isEmpty() || name.isEmpty()) {
-                    server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type or name args are missing!"));
+                    if (type.isEmpty() || name.isEmpty()) {
+                        server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type or name args are missing!"));
+                        return true;
+                    }
+                    DynamicJsonDocument doc = SmartThing.getCallbacksManager()->getCallbacksJson(type.c_str(), name.c_str());
+                    String response;
+                    serializeJson(doc, response);
+                    server.send(200, JSON_CONTENT_TYPE, response);
                     return true;
                 }
-                DynamicJsonDocument doc = SmartThing.getCallbacksJson(type.c_str(), name.c_str());
+                DynamicJsonDocument doc = SmartThing.getCallbacksManager()->callbacksToJson();
                 String response;
                 serializeJson(doc, response);
                 server.send(200, JSON_CONTENT_TYPE, response);

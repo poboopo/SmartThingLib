@@ -61,6 +61,20 @@ namespace Callback {
         return false;
     }
 
+    DynamicJsonDocument CallbacksManager::callbacksToJson() {
+        int size = _callbacksCount * CALLBACK_INFO_DOC_SIZE + 
+            (_statesWatchers.size() + _sensorsWatchers.size()) * WATCHER_INFO_DOC_SIZE;
+
+        DynamicJsonDocument doc(size);
+        _sensorsWatchers.forEach([&](Watcher<Sensor, int16_t> * watcher){
+            doc.add(watcher->toJson());
+        });
+        _statesWatchers.forEach([&](Watcher<DeviceState, String> * watcher){
+            doc.add(watcher->toJson());
+        });
+        return doc;
+    }
+
     bool CallbacksManager::addSensorCallback(const char * name, LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue) {
         const Sensor * sensor = SmartThing.getSensor(name);
         if (sensor == nullptr) {
@@ -125,6 +139,7 @@ namespace Callback {
             LOGGER.debug(CALLBACKS_MANAGER_TAG, "Watcher for sensor %s already exists!", sensor->name);
 
             watcher->addCallback(callback);
+            _callbacksCount++;
             LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for sensor %s", sensor->name);
         }
         return true;
@@ -154,6 +169,7 @@ namespace Callback {
             LOGGER.debug(CALLBACKS_MANAGER_TAG, "Watcher for device state %s already exists!", state->name);
 
             watcher->addCallback(callback);
+            _callbacksCount++;
             LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for device sate %s", state->name);
         }
         return true;
@@ -252,6 +268,7 @@ namespace Callback {
         if (!watcher->removeCallback(index)) {
             return false;
         }
+        _callbacksCount--;
         LOGGER.warning(CALLBACKS_MANAGER_TAG, "Callback %d of %s was deleted", index, name);
         if (watcher->haveCallbacks()) {
             return true;

@@ -6,8 +6,9 @@
 #include "smartthing/watcher/callback/WatcherCallback.h"
 #include "smartthing/utils/List.h"
 #include "smartthing/logs/BetterLogger.h"
+#include "smartthing/configurable/ConfigurableObjects.h"
 
-#define WATCHERS_CALLBACK_INFO_DOC_SIZE 128
+#define WATCHER_INFO_DOC_SIZE 128
 
 /*
     Класс наблюдатель за объектами
@@ -15,6 +16,7 @@
 
 // O - класс наблюдаемого объекта
 // T - тип данных, которые хранит в себе объект
+// todo remove typename O and just use configurable object!
 template<typename O, typename T>
 class Watcher {
     public:
@@ -33,6 +35,13 @@ class Watcher {
             });
             return doc;
         };
+
+        DynamicJsonDocument toJson() {
+            DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size() + 128);
+            doc["observable"] = ((Configurable::ConfigurableObject<T> *) _observable)->toJson();
+            doc["callbacks"] = getCallbacksJson();
+            return doc;
+        }
         
         void addCallback(Callback::WatcherCallback<T> * callback) {
             if (callback != nullptr) {
@@ -74,6 +83,10 @@ class Watcher {
 
         bool haveCallbacks() {
             return _callbacks.size() != 0;
+        }
+
+        uint8_t callbacksCount() {
+            return _callbacks.size();
         }
     protected:
         const O * _observable;

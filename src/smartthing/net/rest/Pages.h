@@ -683,9 +683,9 @@ const String WEB_PAGE_MAIN = R"=====(
             }
         }
         function getHost() {
-            // const { host } = window.location;
-            // return host;
-            return "192.168.1.103";
+            const { host } = window.location;
+            return host;
+            // return "192.168.1.103";
         }
     </script>
     <style>

@@ -7,7 +7,7 @@ const String CALLBACKS_TEMPLATES_JSON = R"=====(
 {
   "http_callback": {
     "url": {
-      "required": true,
+      "required": true
     },
     "method": {
       "required": false,

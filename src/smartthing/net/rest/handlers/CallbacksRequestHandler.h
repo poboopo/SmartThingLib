@@ -53,7 +53,7 @@ class CallbacksRequestHandler: public RequestHandler {
                     server.send(200, JSON_CONTENT_TYPE, response);
                     return true;
                 }
-                DynamicJsonDocument doc = SmartThing.getCallbacksManager()->callbacksToJson();
+                DynamicJsonDocument doc = SmartThing.getCallbacksManager()->callbacksToJson(false, false);
                 String response;
                 serializeJson(doc, response);
                 server.send(200, JSON_CONTENT_TYPE, response);
@@ -64,7 +64,8 @@ class CallbacksRequestHandler: public RequestHandler {
                     server.send(400, JSON_CONTENT_TYPE, "Body is missin!");
                     return true;
                 }
-                if (SmartThing.getCallbacksManager()->createCallbacksFromJson(server.arg("plain").c_str())) {
+                if (SmartThing.getCallbacksManager()->createCallbackFromJson(server.arg("plain").c_str())) {
+                    SmartThing.getCallbacksManager()->saveCallbacksToSettings();
                     server.send(201);
                 } else {
                     server.send(500, JSON_CONTENT_TYPE, buildErrorJson("Failed to create watcher. Check logs for additional information."));
@@ -88,6 +89,7 @@ class CallbacksRequestHandler: public RequestHandler {
                 }
                 
                 if(SmartThing.getCallbacksManager()->updateCallback(type.c_str(), name.c_str(), index.toInt(), body.c_str())) {
+                    SmartThing.getCallbacksManager()->saveCallbacksToSettings();
                     server.send(200);
                 } else {
                     server.send(500, JSON_CONTENT_TYPE, buildErrorJson("Failed to update callback. Check logs for additional information."));
@@ -104,6 +106,7 @@ class CallbacksRequestHandler: public RequestHandler {
                     return true;
                 }
                 if(SmartThing.getCallbacksManager()->deleteCallback(type.c_str(), name.c_str(), index.toInt())) {
+                    SmartThing.getCallbacksManager()->saveCallbacksToSettings();
                     server.send(200);
                 } else {
                     server.send(500, JSON_CONTENT_TYPE, buildErrorJson("Failed to delete callback. Check logs for additional information."));

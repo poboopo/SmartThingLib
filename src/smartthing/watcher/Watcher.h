@@ -29,17 +29,28 @@ class Watcher {
         virtual bool callbackAccept(Callback::WatcherCallback<T> * callback, T * newValue) = 0;
 
         DynamicJsonDocument getCallbacksJson() {
+            return getCallbacksJson(false, false);
+        }
+
+        DynamicJsonDocument getCallbacksJson(bool ignoreReadOnly, bool shortJson) {
             DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size());
             _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
-                doc.add(current->toJson());
+                if (ignoreReadOnly && current->isReadonly()) {
+                    return;
+                }
+                doc.add(current->toJson(shortJson));
             });
             return doc;
         };
 
-        DynamicJsonDocument toJson() {
+        DynamicJsonDocument toJson(bool ignoreReadOnly, bool shortJson) {
+            DynamicJsonDocument callbacks = getCallbacksJson(ignoreReadOnly, shortJson);
+            if (callbacks.size() == 0) {
+                return callbacks;
+            }
             DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size() + 128);
             doc["observable"] = ((Configurable::ConfigurableObject<T> *) _observable)->toJson();
-            doc["callbacks"] = getCallbacksJson();
+            doc["callbacks"] = callbacks;
             return doc;
         }
         

@@ -13,8 +13,11 @@
 namespace Callback {
     class CallbacksManager {
         public:
-            bool createCallbacksFromJson(const char * json);
-            DynamicJsonDocument callbacksToJson();
+            void loadFromSettings();
+            bool createCallbackFromJson(const char * json);
+            bool createCallback(JsonObject observableInfo, JsonObject callbackInfo);
+            // replace with JsonArray?
+            DynamicJsonDocument callbacksToJson(bool ignoreReadOnly, bool shortJson);
 
             bool addDeviceStateCallback(const char * name, LambdaCallback<String>::CustomCallback callback, const char * triggerValue);
             bool addDeviceStateCallback(const char * name, LambdaCallback<String>::CustomCallback callback) {
@@ -52,6 +55,8 @@ namespace Callback {
             void check();
             DynamicJsonDocument getWatchersInfo();
             DynamicJsonDocument getCallbacksJson(const char * type, const char * name);
+            
+            void saveCallbacksToSettings();
         private:
             List<Watcher<Configurable::Sensor::Sensor, int16_t>> _sensorsWatchers; 
             List<Watcher<Configurable::DeviceState::DeviceState, String>> _statesWatchers; 

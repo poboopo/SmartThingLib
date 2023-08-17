@@ -72,6 +72,10 @@ bool SmartThingClass::init(String type) {
         return wifiConnected() ? "connected" : "disconnected";
     });
 
+    LOGGER.debug(SMART_THING_TAG, "Loading callbacks from settings...");
+    _callbacksManager.loadFromSettings();
+    LOGGER.debug(SMART_THING_TAG, "Callbacks loaded");
+
     LOGGER.debug(SMART_THING_TAG, "Setup finished");
     return true;
 }

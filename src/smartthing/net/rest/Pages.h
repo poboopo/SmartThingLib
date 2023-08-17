@@ -199,10 +199,11 @@ const String WEB_PAGE_MAIN = R"=====(
                 return;
             }
             const template = this.callbackTemplates[callbackType] || {};
-            const reqPayload = {observableType, observable};
+            const reqPayload = {observable: {type: observableType, name: observable}};
+            const callbackInfo = {};
             const triggerInput = document.getElementById("callback_trigger_" + index);
             if (triggerInput) {
-                reqPayload["trigger"] = triggerInput.value;
+                callbackInfo["trigger"] = triggerInput.value;
             }
 
             let valid = true;
@@ -213,12 +214,12 @@ const String WEB_PAGE_MAIN = R"=====(
                     if (!value && value != 0) {
                         valid += !required;
                     }
-                    reqPayload[key] = value;
+                    callbackInfo[key] = value;
                 }
             })
 
-            if (Object.keys(reqPayload).length === 0) {
-                console.error("Empty update payload! Skipping");
+            if (Object.keys(callbackInfo).length === 0) {
+                console.error("Empty callback payload! Skipping");
                 return;
             }
 
@@ -226,7 +227,8 @@ const String WEB_PAGE_MAIN = R"=====(
                 console.error("Validation failed!");
                 return;
             }
-            
+            reqPayload["callback"] = callbackInfo;
+
             if (index == "new") {
                 restRequest(
                     "POST",

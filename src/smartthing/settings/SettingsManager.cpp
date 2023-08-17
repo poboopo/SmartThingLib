@@ -5,6 +5,7 @@
 #define GROUP_WIFI "wf"
 #define GROUP_STATE "st"
 #define DEVICE_NAME "dn"
+#define GROUP_CALLBACKS "cb"
 
 SettingsManager STSettings;
 
@@ -87,6 +88,7 @@ void SettingsManager::save() {
     removeIfEmpty(GROUP_WIFI);
     removeIfEmpty(GROUP_CONFIG);
     removeIfEmpty(GROUP_STATE);
+    removeIfEmpty(GROUP_CALLBACKS);
     _settings.garbageCollect();
 
     String data;
@@ -176,6 +178,22 @@ const char * SettingsManager::getDeviceName() {
     return "";
 }
 
-const JsonObject SettingsManager::getAllSettings() {
-    return _settings.to<JsonObject>();
+void SettingsManager::setCallbacks(JsonArray doc) {
+    _settings[GROUP_CALLBACKS] = doc;
+}
+
+JsonArray SettingsManager::getCallbacks() {
+    if (_settings.containsKey(GROUP_CALLBACKS)) {
+        return _settings[GROUP_CALLBACKS];
+    }
+    return _settings.createNestedArray(GROUP_CALLBACKS);
+}
+
+void SettingsManager::dropAllCallbacks() {
+    _settings.remove(GROUP_CALLBACKS);
+    _settings.garbageCollect();
+}
+
+const DynamicJsonDocument SettingsManager::getAllSettings() {
+    return _settings;
 }

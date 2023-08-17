@@ -16,12 +16,12 @@ namespace Callback {
             template<typename T>
             WatcherCallback<T> * build(T triggerValue) {
                 WatcherCallback<T> * callback;
-                if (_url != nullptr) {
+                if (!_url.isEmpty()) {
                     LOGGER.debug(CALLBACK_BUILDER_TAG, "Building new http callback %s", _url.c_str());
                     callback = new HttpCallback<T>(_url.c_str(), _method.c_str(), _payload.c_str(), triggerValue, _isReadOnly);
                 } else {
                     LOGGER.debug(CALLBACK_BUILDER_TAG, "Building new lambda callback");
-                    callback = new LambdaCallback<T>([](T * v){}, triggerValue);
+                    callback = new LambdaCallback<T>([](T * v){}, triggerValue, _isReadOnly);
                 }
                 return callback;
             }
@@ -37,21 +37,21 @@ namespace Callback {
                 _isReadOnly = isReadOnly;
                 return this;
             }
-            CallbackBuilder * url(const char * url) {
+            CallbackBuilder * url(String url) {
                 if (url == nullptr) {
                     return this;
                 }
                 _url = url;
                 return this;
             }
-            CallbackBuilder * method(const char * method) {
+            CallbackBuilder * method(String method) {
                 if (method == nullptr) {
                     return this;
                 }
                 _method = method;
                 return this;
             }
-            CallbackBuilder * payload(const char * payload) {
+            CallbackBuilder * payload(String payload) {
                 if (payload == nullptr) {
                     return this;
                 }

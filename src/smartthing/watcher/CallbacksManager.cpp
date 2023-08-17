@@ -3,6 +3,7 @@
 #include "smartthing/watcher/DeviceStateWatcher.h"
 #include "smartthing/SmartThing.h"
 #include "smartthing/watcher/callback/CallbackBuilder.h"
+#include "smartthing/settings/SettingsManager.h"
 
 #define CALLBACKS_MANAGER_TAG "callbacks_manager"
 
@@ -10,7 +11,23 @@ namespace Callback {
     using namespace Configurable::Sensor;
     using namespace Configurable::DeviceState;
 
-    bool CallbacksManager::createCallbacksFromJson(const char * json) {
+    void CallbacksManager::loadFromSettings() {
+        JsonArray callbacksInfo = STSettings.getCallbacks();
+        if (callbacksInfo.size() == 0) {
+            LOGGER.debug(CALLBACKS_MANAGER_TAG, "There is not callbacks in settings");
+            return;
+        }
+
+        for (int i = 0; i < callbacksInfo.size(); i++) {
+            JsonObject observable = callbacksInfo[i]["observable"];
+            JsonArray callbacks = callbacksInfo[i]["callbacks"];
+            for (int j = 0; j < callbacks.size(); j++) {
+                createCallback(observable, callbacks[j]);
+            }
+        }
+    }
+
+    bool CallbacksManager::createCallbackFromJson(const char * json) {
         if (json == nullptr) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Json is null!");
             return false;
@@ -19,34 +36,52 @@ namespace Callback {
         
         DynamicJsonDocument doc(1024);
         deserializeJson(doc, json);
-        if (doc.size() == 0) {
+
+        // if (!doc.containsKey("observable")) {
+        //     LOGGER.error(CALLBACKS_MANAGER_TAG, "observable object is missing!");
+        //     return false;
+        // }
+        // if (!doc.containsKey("callback")) {
+        //     LOGGER.error(CALLBACKS_MANAGER_TAG, "callback object is missing!");
+        //     return false;
+        // }
+
+        return createCallback(doc["observable"], doc["callback"]);        
+    }
+
+    bool CallbacksManager::createCallback(JsonObject observableInfo, JsonObject callback) {
+        if (observableInfo.size() == 0) {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "ObservableInfo object is empty!");
             return false;
         }
-        if (doc.memoryUsage() == 0) {
+        if (callback.size() == 0) {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback object is empty!");
             return false;
         }
 
-        if (!doc.containsKey("observableType")) {
-            LOGGER.error(CALLBACKS_MANAGER_TAG, "type value is missing!");
+        if (!observableInfo.containsKey("type")) {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "observable type value is missing!");
             return false;
         }
-        if (!doc.containsKey("observable")) {
-            LOGGER.error(CALLBACKS_MANAGER_TAG, "observable value is missing!");
+        if (!observableInfo.containsKey("name")) {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "observable name value is missing!");
             return false;
         }
 
-        const char * observableType = doc["observableType"];
-        const char * obs = doc["observable"];
-        if (observableType == nullptr || obs == nullptr) {
+        const char * observableType = observableInfo["type"];
+        const char * name = observableInfo["name"];
+        if (observableType == nullptr || name == nullptr) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Parameters observableType or observable are missing!");
             return false;
         }
 
+        LOGGER.debug(CALLBACKS_MANAGER_TAG, "Creating new callback for [%s]%s", observableType, name);
+
         CallbackBuilder builder;
-        builder.url(doc["url"])->method(doc["method"])->payload(doc["payload"]);
-        String trigger = doc["trigger"];
+        builder.url(callback["url"])->method(callback["method"])->payload(callback["payload"]);
+        String trigger = callback["trigger"];
         if (strcmp(observableType, STATE_TYPE) == 0) {
-            return addDeviceStateCallback(SmartThing.getDeviceState(obs), builder.build<String>(trigger));
+            return addDeviceStateCallback(SmartThing.getDeviceState(name), builder.build<String>(trigger));
         } else if (strcmp(observableType, SENSOR_TYPE) == 0) {
             int triggerValue;
             if (trigger.length() == 0) {
@@ -54,23 +89,27 @@ namespace Callback {
             } else {
                 triggerValue = trigger.toInt();
             }
-            return addSensorCallback(SmartThing.getSensor(obs), builder.build<int16_t>(triggerValue));
+            return addSensorCallback(SmartThing.getSensor(name), builder.build<int16_t>(triggerValue));
         }
 
-        LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback for observable[%s] of type %s not supported. Supported types: state, sensor.", obs, observableType);
+        LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback for observable[%s] of type %s not supported. Supported types: state, sensor.", name, observableType);
         return false;
     }
 
-    DynamicJsonDocument CallbacksManager::callbacksToJson() {
+    DynamicJsonDocument CallbacksManager::callbacksToJson(bool ignoreReadOnly, bool shortJson) {
         int size = _callbacksCount * CALLBACK_INFO_DOC_SIZE + 
             (_statesWatchers.size() + _sensorsWatchers.size()) * WATCHER_INFO_DOC_SIZE;
 
         DynamicJsonDocument doc(size);
         _sensorsWatchers.forEach([&](Watcher<Sensor, int16_t> * watcher){
-            doc.add(watcher->toJson());
+            DynamicJsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
+            if (wjs.size() > 0)
+                doc.add(wjs);
         });
         _statesWatchers.forEach([&](Watcher<DeviceState, String> * watcher){
-            doc.add(watcher->toJson());
+            DynamicJsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
+            if (wjs.size() > 0)
+                doc.add(wjs);
         });
         return doc;
     }
@@ -243,12 +282,12 @@ namespace Callback {
     WatcherCallback<T> * CallbacksManager::getCallbackFromWatcherList(List<Watcher<O, T>> * list, const char * name, int16_t callbackIndex) {
         Watcher<O, T> * watcher = getWatcherByObservableName(list, name);
         if (watcher == nullptr) {
-            LOGGER.error(CALLBACKS_MANAGER_TAG, "Can't find watcher for observable %s", name);
+            LOGGER.warning(CALLBACKS_MANAGER_TAG, "Can't find watcher for observable %s", name);
             return nullptr;
         }
         WatcherCallback<T> * callback = watcher->getCallback(callbackIndex);
         if (callback == nullptr) {
-            LOGGER.error(CALLBACKS_MANAGER_TAG, "Can't find callback %d for observable %s", index, name);
+            LOGGER.warning(CALLBACKS_MANAGER_TAG, "Can't find callback %d for observable %s", index, name);
             return nullptr;
         }
         return callback;
@@ -359,5 +398,10 @@ namespace Callback {
         list->forEach([](Watcher<O, T> * current) {
             current->check();
         });
+    }
+
+    void CallbacksManager::saveCallbacksToSettings() {
+        STSettings.setCallbacks(callbacksToJson(true, true).as<JsonArray>());
+        STSettings.save();
     }
 }

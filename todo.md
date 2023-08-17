@@ -1,5 +1,6 @@
 - CURRENT
     - save callbacks to settings
+    - add combobox for methods in http callback
 
 - v1.0
     - v0.1

@@ -36,13 +36,16 @@ namespace Callback {
                 }
             };
 
-            StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> toJson() {
-                StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> doc = this->getDeaultInfo();
-                doc["caption"] = "http";
+            DynamicJsonDocument toJson(bool shortJson) {
+                DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE);
+                if (!shortJson) {
+                    doc["caption"] = "http";
+                    doc["lastResponseCode"] = _lastResponseCode;
+                }
                 doc["url"] = _url;
                 doc["method"] = _method;
                 doc["payload"] = _payload;
-                doc["lastResponseCode"] = _lastResponseCode;
+                this->addDefaultInfo(doc);
                 return doc;
             };
 

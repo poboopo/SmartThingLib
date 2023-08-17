@@ -39,6 +39,9 @@ void addConfigEntries();
 void addCallbacks();
 
 void setup() {
+    addDeviceStates();
+    registerSensors();
+    
     bool started = SmartThing.init("louver");
     if (started) {
         if (SmartThing.wifiConnected()) {
@@ -48,8 +51,6 @@ void setup() {
         controller.addLedIndicator(SmartThing.getLed());
         LOGGER.info("main", "Controller created");
 
-        addDeviceStates();
-        registerSensors();
         addActionsHandlers();
         addConfigEntries();
         addCallbacks();

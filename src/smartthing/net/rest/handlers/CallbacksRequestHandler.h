@@ -2,9 +2,12 @@
 #define CALLBACKS_RQ_H
 
 #include <WebServer.h>
+#include <ArduinoJson.h>
+
 #include "smartthing/logs/BetterLogger.h"
 #include "smartthing/SmartThing.h"
 #include "smartthing/net/rest/handlers/HandlerUtils.h"
+#include "smartthing/watcher/callback/CallbacksTemplatesJsons.h"
 
 #define CALLBACKS_RQ_PATH "/callbacks"
 #define CALLBACKS_RQ_TAG "callbacks_handler"
@@ -36,7 +39,7 @@ class CallbacksRequestHandler: public RequestHandler {
             server.sendHeader("Access-Control-Allow-Origin", "*");
             if (requestMethod == HTTP_GET) {
                 if (requestUri.equals("/callbacks/template")) {
-                    server.send(200, JSON_CONTENT_TYPE, "{\"http_callback\": {\"url\": {\"required\": true},\"method\": {\"required\": false},\"payload\": {\"required\": false}}}");
+                    server.send(200, JSON_CONTENT_TYPE, CALLBACKS_TEMPLATES_JSON);
                     return true;
                 }
                 if (requestUri.equals("/callbacks/by/observable")) {

@@ -1,6 +1,4 @@
 - CURRENT
-    - save callbacks to settings
-    - add combobox for methods in http callback
 
 - v1.0
     - v0.1
@@ -26,14 +24,13 @@
         - add settings compression LZ78 - [CANCELLED BCZ USLESS]
         - add different http callback types support +
         - add callabcks temaplate rest for callbacks creation (required fields) +
-        - save callbacks to settings
+        - save callbacks to settings +
         - save state
         - add statics rest
         - fix logger message length
-        - arduino json refactor
+        - replace value in url in HTTP_CALLBACK
 
     - v0.4
-        - watcher refactor
         - add ActionCallback - call action from callback (+ web)
         - todo SmartThing loop task routine - move to async
         - all handlers uri rework

@@ -160,13 +160,16 @@ const String WEB_PAGE_MAIN = R"=====(
             const template = this.callbackTemplates[callbackType] || {};
             Object.entries(callback).filter(([key, _]) => key != "type" && key != "caption" && key != "readonly")
                 .forEach(([key, value]) => {
+                    const {required, values} = template[key] || {};
                     createEntryInput(
-                        block,
-                        "callback_" + key + "_" + index,
-                        key,
-                        value != null ? String(value) : "",
-                        key,
-                        callback.readonly || (key != "trigger" && !template[key])
+                        block, 
+                        {
+                            id: "callback_" + key + "_" + index,
+                            caption: key,
+                            value: value != null ? String(value) : "",
+                            values,
+                            disabled: callback.readonly || (key != "trigger" && !template[key])
+                        }
                     );
                 });
             div.appendChild(block);
@@ -288,23 +291,27 @@ const String WEB_PAGE_MAIN = R"=====(
                     if (key === "name") {
                         createEntryInput(
                             block,
-                            block.id + "-" + key,
-                            key,
-                            value,
-                            "Insert new name",
-                            false,
-                            "Save",
-                            () => saveNewName(),
-                            "Save new device name"
+                            {
+                                id: block.id + "-" + key,
+                                caption: key,
+                                title: "Insert new name",
+                                value 
+                            },
+                            {
+                                caption: "Save",
+                                title: "Save new device name",
+                                callback: () => saveNewName()
+                            }
                         );
                     } else {
                         createEntryInput(
                             block,
-                            block.id + "-" + key,
-                            key,
-                            value,
-                            key,
-                            true
+                            {
+                                id: block.id + "-" + key,
+                                caption: key,
+                                value: value,
+                                disabled: true
+                            }
                         );
                     }
                 });
@@ -331,30 +338,12 @@ const String WEB_PAGE_MAIN = R"=====(
                         if (data["settings"]) {
                             document.getElementById("ssid").value = data["settings"]["ss"] || "";
                             document.getElementById("password").value = data["settings"]["ps"] || "";
-                            fillComboBox("wifi-mode", data["modes"], data["settings"]["md"]);
+                            fillComboBox(document.getElementById("wifi-mode"), data["modes"], data["settings"]["md"]);
                         }
                     }
                 },
                 "wifi"
             );
-        }
-        function fillComboBox(comboboxId, values, selectedValue) {
-            if (!values) {
-                return;
-            }
-            const combobox = document.getElementById(comboboxId);
-            if (combobox) {
-                combobox.innerHTML = "";
-                values.forEach((data) => {
-                    const option = document.createElement("option");
-                    option.innerHTML = data["caption"];
-                    option.value = data["value"];
-                    combobox.appendChild(option);
-                });
-                if (selectedValue) {
-                    combobox.value = selectedValue;
-                }
-            }
         }
         function saveWifiSettings() {
             const ssid = document.getElementById("ssid").value;
@@ -459,10 +448,19 @@ const String WEB_PAGE_MAIN = R"=====(
                         if (block && states) {
                             block.innerHTML = "";
                             Object.entries(states).forEach(([key, value]) => {
-                                createEntryInput(block, "state_" + key, key, value, key, true,
-                                    "Callbacks",
-                                    () => loadCallbacks("state", key),
-                                    "Device state callbacks"
+                                createEntryInput(
+                                    block,
+                                    {
+                                        id: "state_" + key,
+                                        caption: key,
+                                        value,
+                                        disabled: true
+                                    },
+                                    {
+                                        caption: "Callbacks",
+                                        title: "Device state callbacks",
+                                        callback: () => loadCallbacks("state", key)
+                                    }
                                 );
                             });
                         }
@@ -485,10 +483,19 @@ const String WEB_PAGE_MAIN = R"=====(
                         if (block && sensors) {
                             block.innerHTML = "";
                             Object.entries(sensors).forEach(([key, {value, type}]) => {
-                                createEntryInput(block, "sensor_" + key, key, value, key, true,
-                                    "Callbacks",
-                                    () => loadCallbacks("sensor", key),
-                                    "Sensors callbacks"
+                                createEntryInput(
+                                    block,
+                                    {
+                                        id: "sensor_" + key,
+                                        caption: key,
+                                        value,
+                                        disabled: true
+                                    },
+                                    {
+                                        caption: "Callbacks",
+                                        title: "Sensors callbacks",
+                                        callback: () => loadCallbacks("sensor", key)
+                                    }
                                 );
                             });
                         }
@@ -594,11 +601,6 @@ const String WEB_PAGE_MAIN = R"=====(
                 }
             }
         }
-        function getHost() {
-            const { host } = window.location;
-            return host;
-            // return "192.168.1.103";
-        }
         function restRequest(method, path, data, callback, blockId) {
             if (blockId) displayBlockInfo(blockId);
             let xhr = new XMLHttpRequest();
@@ -624,21 +626,31 @@ const String WEB_PAGE_MAIN = R"=====(
                 };
             xhr.send(data ? JSON.stringify(data) : null);
         }
-        function createEntryInput(container, inputId, caption, value, inputTitle, disabled, buttonCaption, buttonCallback, buttonTitle, backgroundColor = "#04AA6D") {
+        /*
+        inputInfo: {id, caption, title, value, values, disabled}
+        buttonInfo: {caption, title, callback, bgrColor}
+        */
+        function createEntryInput(container, inputInfo, buttonInfo) {
             const p = document.createElement("p");
-            p.innerHTML = caption;
+            p.innerHTML = inputInfo.caption;
             container.appendChild(p);
-            const input = document.createElement("input");
-            input.value = value;
-            input.id = inputId;
-            input.disabled = disabled;
-            if (buttonCaption && buttonCallback) {
-                input.title = inputTitle;
+            let input = null;
+            if (inputInfo.values) {
+                input = document.createElement("select")
+                fillComboBox(input, inputInfo.values, inputInfo.value);
+            } else {
+                input = document.createElement("input")
+                input.value = inputInfo.value;
+            }
+            input.id = inputInfo.id;
+            input.disabled = inputInfo.disabled || false;
+            if (buttonInfo && buttonInfo.callback) {
+                input.title = inputInfo.title;
                 const button = document.createElement("button");
-                button.style.backgroundColor = backgroundColor;
-                button.innerHTML = buttonCaption;
-                button.title = buttonTitle;
-                button.onclick = buttonCallback;
+                button.style.backgroundColor = buttonInfo.bgrColor || "#04AA6D";
+                button.innerHTML = buttonInfo.caption;
+                button.title = buttonInfo.title;
+                button.onclick = buttonInfo.callback;
                 const div = document.createElement("div");
                 div.className = "config-block";
                 div.appendChild(input);
@@ -647,6 +659,33 @@ const String WEB_PAGE_MAIN = R"=====(
             } else {
                 container.appendChild(input);
             }
+        }
+        function fillComboBox(combobox, values, selectedValue) {
+            if (!values) {
+                return;
+            }
+            if (combobox) {
+                combobox.innerHTML = "";
+                values.forEach((data) => {
+                    const option = document.createElement("option");
+                    if (typeof data == "string") {
+                        option.innerHTML = data;
+                        option.value = data;
+                    } else {
+                        option.innerHTML = data["caption"];
+                        option.value = data["value"];
+                    }
+                    combobox.appendChild(option);
+                });
+                if (selectedValue) {
+                    combobox.value = selectedValue;
+                }
+            }
+        }
+        function getHost() {
+            // const { host } = window.location;
+            // return host;
+            return "192.168.1.103";
         }
     </script>
     <style>

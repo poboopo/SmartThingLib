@@ -76,22 +76,13 @@ class CallbacksRequestHandler: public RequestHandler {
                 return true;
             }
             if (requestMethod == HTTP_PUT) {
-                String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
-                String name = server.arg(CALLBACK_NAME_ARG);
-                String index = server.arg(CALLBACK_INDEX_ARG);
-
-                if (type.isEmpty() || name.isEmpty() || index.isEmpty()) {
-                    server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type, name or index args are missing!"));
-                    return true;
-                }
-
                 String body = server.arg("plain");
                 if (body.isEmpty()) {
                     server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Body is missing!"));
                     return true;
                 }
                 
-                if(SmartThing.getCallbacksManager()->updateCallback(type.c_str(), name.c_str(), index.toInt(), body.c_str())) {
+                if(SmartThing.getCallbacksManager()->updateCallback(body.c_str())) {
                     SmartThing.getCallbacksManager()->saveCallbacksToSettings();
                     server.send(200);
                 } else {

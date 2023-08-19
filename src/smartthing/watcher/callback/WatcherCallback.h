@@ -12,6 +12,7 @@
 
 namespace Callback {
     template<typename T>
+    // template<ConfigurableObject<T> ????>
     class WatcherCallback {
         public:
             WatcherCallback(const char * type, T triggerValue, bool readonly): 
@@ -19,7 +20,7 @@ namespace Callback {
             // todo make value const
             virtual void call(T * value) = 0;
             virtual DynamicJsonDocument toJson(bool shortJson) = 0;
-            virtual void updateCustom(DynamicJsonDocument doc) = 0;
+            virtual void updateCustom(JsonObject doc) = 0;
 
             void addDefaultInfo(DynamicJsonDocument& doc) {
                 doc[JSON_TRIGGER_FIELD] = _triggerValue;

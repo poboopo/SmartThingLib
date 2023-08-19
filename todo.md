@@ -1,4 +1,5 @@
 - CURRENT
+    - update callback - remove url args and use json body
 
 - v1.0
     - v0.1

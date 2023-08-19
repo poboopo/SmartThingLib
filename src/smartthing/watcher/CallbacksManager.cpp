@@ -230,14 +230,33 @@ namespace Callback {
         return false;
     }
 
-    bool CallbacksManager::updateCallback(const char * type, const char * name, int16_t index, const char * json) {
-        if (type == nullptr || strlen(type) == 0) {
-            LOGGER.error(CALLBACKS_MANAGER_TAG, "Type of observable is missing!");
+    bool CallbacksManager::updateCallback(const char * json) {
+        DynamicJsonDocument doc(1024);
+        deserializeJson(doc, json);
+        JsonObject observable = doc["observable"];
+        JsonObject callbackObject = doc["callback"];
+
+        if (observable.size() == 0) {
+            LOGGER.error(CALLBACK_BUILDER_TAG, "Observable object is missing!");
+            return false;
+        }
+        if (callbackObject.size() == 0) {
+            LOGGER.error(CALLBACK_BUILDER_TAG, "Callback object is missing!");
             return false;
         }
 
-        DynamicJsonDocument doc(1024);
-        deserializeJson(doc, json);
+        const char * name = observable["name"];
+        const char * type = observable["type"];
+        if (name == nullptr || type == nullptr) {
+            LOGGER.error(CALLBACK_BUILDER_TAG, "Observable name or type is missing!");
+            return false;
+        }
+        if (!callbackObject.containsKey("index")) {
+            LOGGER.error(CALLBACK_BUILDER_TAG, "Callback index is missing!");
+            return false;   
+        }
+
+        int index = callbackObject["index"];
 
         if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
             WatcherCallback<int16_t> * callback = getCallbackFromWatcherList(&_sensorsWatchers, name, index);
@@ -249,10 +268,10 @@ namespace Callback {
                 return false;
             }
 
-            if (doc.containsKey("trigger")) {
-                callback->setTriggerValue(doc["trigger"]);
+            if (callbackObject.containsKey("trigger")) {
+                callback->setTriggerValue(callbackObject["trigger"]);
             }
-            callback->updateCustom(doc);
+            callback->updateCustom(callbackObject);
         } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
             WatcherCallback<String> * callback = getCallbackFromWatcherList(&_statesWatchers, name, index);
             if (callback == nullptr) {
@@ -263,11 +282,11 @@ namespace Callback {
                 return false;
             }
 
-            if (doc.containsKey("trigger")) {
-                callback->setTriggerValue(doc["trigger"]);
+            if (callbackObject.containsKey("trigger")) {
+                callback->setTriggerValue(callbackObject["trigger"]);
             }
 
-            callback->updateCustom(doc);
+            callback->updateCustom(callbackObject);
         } else {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Observable type [%s] not supported!", type);
             return false;

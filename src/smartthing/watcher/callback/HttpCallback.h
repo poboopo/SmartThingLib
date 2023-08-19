@@ -49,7 +49,7 @@ namespace Callback {
                 return doc;
             };
 
-            void updateCustom(DynamicJsonDocument doc) {
+            void updateCustom(JsonObject doc) {
                 if (doc.containsKey("url")) {
                     _url = doc["url"].as<String>();
                     fixUrl();

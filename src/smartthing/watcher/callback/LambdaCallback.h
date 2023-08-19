@@ -30,7 +30,7 @@ namespace Callback {
                 this->addDefaultInfo(doc);
                 return doc;
             };
-            void updateCustom(DynamicJsonDocument doc){};
+            void updateCustom(JsonObject doc){};
         private:
             CustomCallback _customCallback;
     };

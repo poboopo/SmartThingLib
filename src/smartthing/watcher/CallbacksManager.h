@@ -50,7 +50,7 @@ namespace Callback {
                 index - индекс в списке callbackов для данного объекта
             */
             bool deleteCallback(const char * type, const char * name, int16_t index);
-            bool updateCallback(const char * type, const char * name, int16_t index, const char * json);
+            bool updateCallback(const char * json);
 
             void check();
             DynamicJsonDocument getWatchersInfo();

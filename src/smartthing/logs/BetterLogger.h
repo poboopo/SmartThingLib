@@ -43,7 +43,7 @@ class BetterLogger {
         }
         
         void logRequest(const char * tag, const char *  method, const char *  uri, const char *  body) {
-            info(tag, "[%s] %s - %s", method, uri, body);
+            info(tag, "[%s] %s - %s", method, uri, body == nullptr ? "" : body);
         };
 
         //bad realization, but i have no other ideas

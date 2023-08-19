@@ -26,7 +26,8 @@ class CallbacksRequestHandler: public RequestHandler {
         };
 
         bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {
-            LOGGER.logRequest(CALLBACKS_RQ_TAG, http_method_str(requestMethod), requestUri.c_str(), "");
+            String body = server.arg("plain");
+            LOGGER.logRequest(CALLBACKS_RQ_TAG, http_method_str(requestMethod), requestUri.c_str(), body.c_str());
             
             if (requestMethod == HTTP_OPTIONS) {
                 server.sendHeader("Access-Control-Allow-Origin", "*");

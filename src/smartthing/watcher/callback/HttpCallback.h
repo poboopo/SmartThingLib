@@ -57,11 +57,11 @@ namespace Callback {
                 }
                 if (doc.containsKey("method")) {
                     _method = doc["method"].as<String>();
-                    LOGGER.debug(HTTP_CALLBACK_TAG, "Callback's method was updated to %s", _url.c_str());
+                    LOGGER.debug(HTTP_CALLBACK_TAG, "Callback's method was updated to %s", _method.c_str());
                 }
                 if (doc.containsKey("payload")) {
                     _payload = doc["payload"].as<String>();
-                    LOGGER.debug(HTTP_CALLBACK_TAG, "Callback's payload was updated to %s", _url.c_str());
+                    LOGGER.debug(HTTP_CALLBACK_TAG, "Callback's payload was updated to %s", _payload.c_str());
                 }
             };
 

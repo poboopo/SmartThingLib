@@ -13,10 +13,10 @@ using namespace Configurable::Sensor;
 #define STATE_WATCHER_TYPE "state"
 
 namespace Callback {
-    class DeviceStateWatcher: public Watcher<Configurable::DeviceState::DeviceState, String> {
+    class DeviceStateWatcher: public Watcher<String> {
         public:
             DeviceStateWatcher(const Configurable::DeviceState::DeviceState * deviceState, Callback::WatcherCallback<String> * callback): 
-                Watcher<Configurable::DeviceState::DeviceState, String>(deviceState, callback) {
+                Watcher<String>(deviceState, callback) {
                     _oldValue = "";
                 };
             bool check() {
@@ -24,13 +24,13 @@ namespace Callback {
                     return false;
                 }
 
-                const char * newValue = _observable->valueGenerator();
+                String newValue = _observable->valueGenerator();
                 if (_oldValue.isEmpty()) {
                     _oldValue = newValue;
                     return false;
                 }
                 
-                if (strcmp(newValue, _oldValue.c_str()) != 0) {
+                if (!newValue.equals(_oldValue)) {
                     LOGGER.debug(
                         DEVICE_STATE_WATCHER_TAG, 
                         "Device state %s value changed %s->%s.", 
@@ -53,10 +53,6 @@ namespace Callback {
             const char * getObservableInfo() {
                 return _observable->name;
             };
-            
-            const void * getObservable() {
-                return (void *) _observable;
-            }
     };
 }
 

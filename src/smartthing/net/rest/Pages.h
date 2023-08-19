@@ -203,7 +203,7 @@ const String WEB_PAGE_MAIN = R"=====(
             }
             const template = this.callbackTemplates[callbackType] || {};
             const reqPayload = {observable: {type: observableType, name: observable}};
-            const callbackInfo = {};
+            const callbackInfo = {index};
             const triggerInput = document.getElementById("callback_trigger_" + index);
             if (triggerInput) {
                 callbackInfo["trigger"] = triggerInput.value;
@@ -244,10 +244,9 @@ const String WEB_PAGE_MAIN = R"=====(
                     "callbacks"
                 )
             } else {
-                const queryPart = "?observableType=" + observableType + "&name=" + observable + "&index=" + index;
                 restRequest(
                     "PUT",
-                    "http://" + getHost() + "/callbacks" + queryPart,
+                    "http://" + getHost() + "/callbacks",
                     reqPayload,
                     (response) => {
                         console.log("Callback updated!");

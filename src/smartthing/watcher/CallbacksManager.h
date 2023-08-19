@@ -58,33 +58,33 @@ namespace Callback {
             
             void saveCallbacksToSettings();
         private:
-            List<Watcher<Configurable::Sensor::Sensor, int16_t>> _sensorsWatchers; 
-            List<Watcher<Configurable::DeviceState::DeviceState, String>> _statesWatchers; 
+            List<Watcher<int16_t>> _sensorsWatchers; 
+            List<Watcher<String>> _statesWatchers; 
             int _callbacksCount = 0;
 
-            template<typename O, typename T>
-            void collectInfo(List<Watcher<O, T>> * list, JsonArray * array);
+            template<typename T>
+            void collectInfo(List<Watcher<T>> * list, JsonArray * array);
 
-            template<typename O, typename T>
-            Watcher<O, T> * getWatcher(List<Watcher<O, T>> * list, const O * observable);
+            template<typename T>
+            Watcher<T> * getWatcher(List<Watcher<T>> * list, const Configurable::ConfigurableObject<T> * observable);
 
-            template<typename O, typename T>
-            Watcher<O, T> * getWatcherByObservableName(List<Watcher<O, T>> * list, const char * name);
+            template<typename T>
+            Watcher<T> * getWatcherByObservableName(List<Watcher<T>> * list, const char * name);
 
-            template<typename O, typename T>
-            WatcherCallback<T> * getCallbackFromWatcherList(List<Watcher<O, T>> * list, const char * name, int16_t callbackIndex);
+            template<typename T>
+            WatcherCallback<T> * getCallbackFromWatcherList(List<Watcher<T>> * list, const char * name, int16_t callbackIndex);
 
-            template<typename O, typename T>
-            DynamicJsonDocument getCallbacksJsonFromList(List<Watcher<O, T>> * list, const char * name);
+            template<typename T>
+            DynamicJsonDocument getCallbacksJsonFromList(List<Watcher<T>> * list, const char * name);
 
-            template<typename O, typename T>
-            bool deleteWatcherCallbackFromList(List<Watcher<O, T>> * list, const char * name, int16_t index);
+            template<typename T>
+            bool deleteWatcherCallbackFromList(List<Watcher<T>> * list, const char * name, int16_t index);
 
-            template<typename O, typename T>
-            bool updateWatcherCallbackFromList(List<Watcher<O, T>> * list, const char * name, int16_t index, const char * json);
+            template<typename T>
+            bool updateWatcherCallbackFromList(List<Watcher<T>> * list, const char * name, int16_t index, const char * json);
 
-            template<typename O, typename T>
-            void checkWatchers(List<Watcher<O, T>> * list);
+            template<typename T>
+            void checkWatchers(List<Watcher<T>> * list);
     };
 }
 

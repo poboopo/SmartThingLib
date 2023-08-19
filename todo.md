@@ -1,5 +1,6 @@
 - CURRENT
-    - update callback - remove url args and use json body
+    - save state
+    - add statics rest
 
 - v1.0
     - v0.1

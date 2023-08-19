@@ -14,13 +14,12 @@
     Класс наблюдатель за объектами
 */
 
-// O - класс наблюдаемого объекта
 // T - тип данных, которые хранит в себе объект
 // todo remove typename O and just use configurable object!
-template<typename O, typename T>
+template<typename T>
 class Watcher {
     public:
-        Watcher(const O * observable, Callback::WatcherCallback<T> * callback): 
+        Watcher(const Configurable::ConfigurableObject<T> * observable, Callback::WatcherCallback<T> * callback): 
             _observable(observable), _callbacks(callback) {};
 
         virtual bool check() = 0;
@@ -88,7 +87,7 @@ class Watcher {
             });
         };
         
-        const O * getObservable() {
+        const Configurable::ConfigurableObject<T> * getObservable() {
             return _observable;
         };
 
@@ -100,7 +99,7 @@ class Watcher {
             return _callbacks.size();
         }
     protected:
-        const O * _observable;
+        const  Configurable::ConfigurableObject<T> * _observable;
         T _oldValue;
         List<Callback::WatcherCallback<T>> _callbacks;
 };

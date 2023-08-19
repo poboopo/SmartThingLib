@@ -10,7 +10,7 @@
 #define CONFIGURABLE_JS0N_SIZE 64
 
 namespace Configurable {
-    template<typename T>
+    template<class T>
     struct ConfigurableObject {
         public:
             ConfigurableObject(const char * objType): type(objType){};
@@ -55,8 +55,8 @@ namespace Configurable {
         };
     }
     namespace DeviceState {
-        struct DeviceState: public ConfigurableObject<const char *> {
-            DeviceState(): ConfigurableObject<const char *>(STATE_TYPE) {};
+        struct DeviceState: public ConfigurableObject<String> {
+            DeviceState(): ConfigurableObject<String>(STATE_TYPE) {};
         };
     }
 }

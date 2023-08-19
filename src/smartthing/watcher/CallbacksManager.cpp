@@ -101,12 +101,12 @@ namespace Callback {
             (_statesWatchers.size() + _sensorsWatchers.size()) * WATCHER_INFO_DOC_SIZE;
 
         DynamicJsonDocument doc(size);
-        _sensorsWatchers.forEach([&](Watcher<Sensor, int16_t> * watcher){
+        _sensorsWatchers.forEach([&](Watcher<int16_t> * watcher){
             DynamicJsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
             if (wjs.size() > 0)
                 doc.add(wjs);
         });
-        _statesWatchers.forEach([&](Watcher<DeviceState, String> * watcher){
+        _statesWatchers.forEach([&](Watcher<String> * watcher){
             DynamicJsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
             if (wjs.size() > 0)
                 doc.add(wjs);
@@ -163,7 +163,7 @@ namespace Callback {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback is missing, skipping...");
             return false;
         }
-        Watcher<Sensor, int16_t> * watcher = getWatcher<Sensor, int16_t>(&_sensorsWatchers, sensor);
+        Watcher<int16_t> * watcher = getWatcher<int16_t>(&_sensorsWatchers, sensor);
         if (watcher == nullptr) {
             watcher = new SensorWatcher(sensor, callback);
             if (_sensorsWatchers.append(watcher) < 0) {
@@ -193,7 +193,7 @@ namespace Callback {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback is missing, skipping...");
             return false;
         }
-        Watcher<DeviceState, String> * watcher = getWatcher<DeviceState, String>(&_statesWatchers, state);
+        Watcher<String> * watcher = getWatcher<String>(&_statesWatchers, state);
         if (watcher == nullptr) {
             watcher = new DeviceStateWatcher(state, callback);
             if (_statesWatchers.append(watcher) < 0) {
@@ -221,9 +221,9 @@ namespace Callback {
         }
 
         if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
-            return deleteWatcherCallbackFromList<Sensor, int16_t>(&_sensorsWatchers, name, index);
+            return deleteWatcherCallbackFromList<int16_t>(&_sensorsWatchers, name, index);
         } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
-            return deleteWatcherCallbackFromList<DeviceState, String>(&_statesWatchers, name, index);
+            return deleteWatcherCallbackFromList<String>(&_statesWatchers, name, index);
         }
 
         LOGGER.error(CALLBACKS_MANAGER_TAG, "Type %s not supported", type);
@@ -297,9 +297,9 @@ namespace Callback {
     }
 
 
-    template<typename O, typename T>
-    WatcherCallback<T> * CallbacksManager::getCallbackFromWatcherList(List<Watcher<O, T>> * list, const char * name, int16_t callbackIndex) {
-        Watcher<O, T> * watcher = getWatcherByObservableName(list, name);
+    template<typename T>
+    WatcherCallback<T> * CallbacksManager::getCallbackFromWatcherList(List<Watcher<T>> * list, const char * name, int16_t callbackIndex) {
+        Watcher<T> * watcher = getWatcherByObservableName(list, name);
         if (watcher == nullptr) {
             LOGGER.warning(CALLBACKS_MANAGER_TAG, "Can't find watcher for observable %s", name);
             return nullptr;
@@ -312,13 +312,13 @@ namespace Callback {
         return callback;
     }
 
-    template<typename O, typename T>
-    bool CallbacksManager::deleteWatcherCallbackFromList(List<Watcher<O, T>> * list, const char * name, int16_t index) {
+    template<typename T>
+    bool CallbacksManager::deleteWatcherCallbackFromList(List<Watcher<T>> * list, const char * name, int16_t index) {
         if (name == nullptr || strlen(name) == 0) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Name of observable is missing!");
             return false;
         }
-        Watcher<O, T> * watcher = getWatcherByObservableName(list, name);
+        Watcher<T> * watcher = getWatcherByObservableName(list, name);
         if (watcher == nullptr) {
             return false;
         }
@@ -344,21 +344,21 @@ namespace Callback {
         if (_sensorsWatchers.size() > 0) {
             LOGGER.debug(CALLBACKS_MANAGER_TAG, "Collecting info from sensors watchers");
             JsonArray array = doc.createNestedArray(SENSOR_WATCHER_TYPE);
-            collectInfo<Sensor, int16_t>(&_sensorsWatchers, &array);
+            collectInfo<int16_t>(&_sensorsWatchers, &array);
         }
         if (_statesWatchers.size() > 0) {
             LOGGER.debug(CALLBACKS_MANAGER_TAG, "Collecting info from device state watchers");
             JsonArray array = doc.createNestedArray(STATE_WATCHER_TYPE);
-            collectInfo<DeviceState, String>(&_statesWatchers, &array);
+            collectInfo<String>(&_statesWatchers, &array);
         }
         return doc;
     }
 
     DynamicJsonDocument CallbacksManager::getCallbacksJson(const char * type, const char * name) {
         if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
-            return getCallbacksJsonFromList<Sensor, int16_t>(&_sensorsWatchers, name);
+            return getCallbacksJsonFromList<int16_t>(&_sensorsWatchers, name);
         } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
-            return getCallbacksJsonFromList<DeviceState, String>(&_statesWatchers, name);
+            return getCallbacksJsonFromList<String>(&_statesWatchers, name);
 
         }
         LOGGER.error(CALLBACKS_MANAGER_TAG, "Type %s not supported", type);
@@ -366,12 +366,12 @@ namespace Callback {
         return doc;
     }
 
-    template<typename O, typename T>
-    DynamicJsonDocument CallbacksManager::getCallbacksJsonFromList(List<Watcher<O, T>> * list, const char * name) {
+    template<typename T>
+    DynamicJsonDocument CallbacksManager::getCallbacksJsonFromList(List<Watcher<T>> * list, const char * name) {
         if (name == nullptr || strlen(name) == 0) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Name of observable is missing!");
         } else {
-            Watcher<O, T> * watcher = getWatcherByObservableName(list, name);
+            Watcher<T> * watcher = getWatcherByObservableName(list, name);
             if (watcher != nullptr) {
                 return watcher->getCallbacksJson();
             } else {
@@ -382,39 +382,39 @@ namespace Callback {
         return doc;
     }
 
-    template<typename O, typename T>
-    Watcher<O, T> * CallbacksManager::getWatcher(List<Watcher<O, T>> * list, const O * observable) {
-        return list->findValue([observable](Watcher<O, T> * current) {
+    template<typename T>
+    Watcher<T> * CallbacksManager::getWatcher(List<Watcher<T>> * list, const Configurable::ConfigurableObject<T> * observable) {
+        return list->findValue([observable](Watcher<T> * current) {
             return current->getObservable() == observable;
         });
     }
 
-    template<typename O, typename T>
-    Watcher<O, T> * CallbacksManager::getWatcherByObservableName(List<Watcher<O, T>> * list, const char * name) {
-        return list->findValue([name](Watcher<O, T> * current) {
+    template<typename T>
+    Watcher<T> * CallbacksManager::getWatcherByObservableName(List<Watcher<T>> * list, const char * name) {
+        return list->findValue([name](Watcher<T> * current) {
             return strcmp(current->getObservable()->name, name) == 0;
         });
     }
 
-    template<typename O, typename T>
-    void CallbacksManager::collectInfo(List<Watcher<O, T>> * list, JsonArray * array) {
-        list->forEach([&](Watcher<O, T> * current) {
+    template<typename T>
+    void CallbacksManager::collectInfo(List<Watcher<T>> * list, JsonArray * array) {
+        list->forEach([&](Watcher<T> * current) {
             array->add(current->getObservableInfo());
         });
     }
 
     void CallbacksManager::check() {
         if (_sensorsWatchers.size() > 0) {
-            checkWatchers<Sensor, int16_t>(&_sensorsWatchers);
+            checkWatchers<int16_t>(&_sensorsWatchers);
         }
         if (_statesWatchers.size() > 0) {
-            checkWatchers<DeviceState, String>(&_statesWatchers);
+            checkWatchers<String>(&_statesWatchers);
         }
     }
 
-    template<typename O, typename T>
-    void CallbacksManager::checkWatchers(List<Watcher<O, T>> * list) {
-        list->forEach([](Watcher<O, T> * current) {
+    template<typename T>
+    void CallbacksManager::checkWatchers(List<Watcher<T>> * list) {
+        list->forEach([](Watcher<T> * current) {
             current->check();
         });
     }

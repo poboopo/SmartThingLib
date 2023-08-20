@@ -127,6 +127,7 @@ void SettingsManager::removeSetting(const char * name) {
         return;
     }
     _settings.remove(name);
+    _settings.garbageCollect();
 }
 
 void SettingsManager::dropAll() {

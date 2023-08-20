@@ -96,7 +96,7 @@ namespace Callback {
 
             void sendRequest() {
                 HTTPClient client;
-                LOGGER.info(HTTP_CALLBACK_TAG, "Sending request to %s", _url.c_str());
+                LOGGER.info(HTTP_CALLBACK_TAG, "Sending request [%s] %s :: %s", _method.c_str(), _url.c_str(), _payload.c_str());
                 client.setTimeout(2000);
                 client.begin(_url);
                 _lastResponseCode = client.sendRequest(_method.c_str(), _payload.c_str());

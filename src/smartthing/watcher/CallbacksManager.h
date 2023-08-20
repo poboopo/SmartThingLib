@@ -57,6 +57,10 @@ namespace Callback {
             DynamicJsonDocument getCallbacksJson(const char * type, const char * name);
             
             void saveCallbacksToSettings();
+
+            int16_t getTotalCallbacksCount() {
+                return _callbacksCount;
+            }
         private:
             List<Watcher<int16_t>> _sensorsWatchers; 
             List<Watcher<String>> _statesWatchers; 

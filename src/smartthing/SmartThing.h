@@ -64,6 +64,14 @@ class SmartThingClass {
         DynamicJsonDocument getConfigInfo();
         DynamicJsonDocument getWatchersInfo();
 
+        int16_t getSensorsCount() {
+            return _sensorsList.size();
+        }
+
+        int16_t getDeviceStatesCount() {
+            return _deviceStatesList.size();
+        }
+
         RestController* getRestController() {
             return &_rest;
         }

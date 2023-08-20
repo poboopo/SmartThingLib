@@ -75,6 +75,29 @@ void RestController::setupHandler() {
         preHandleRequest();
         _server.send(200, "text/html", WEB_PAGE_MAIN);
     });
+
+    _server.on("/statistic", HTTP_GET, [this]() {
+        preHandleRequest();
+        DynamicJsonDocument doc(4096);
+        doc["uptime"] = millis();
+
+        JsonObject obj = doc.createNestedObject("heap");
+        obj["free"] = ESP.getFreeHeap();
+        obj["size"] = ESP.getHeapSize();
+        obj["minFree"] = ESP.getMinFreeHeap();
+        obj["maxAlloc"] = ESP.getMaxAllocHeap();
+        obj["settingsUsage"] = STSettings.usage();
+
+        JsonObject counts = doc.createNestedObject("counts");
+        counts["sensors"] = SmartThing.getSensorsCount();
+        counts["states"] = SmartThing.getDeviceStatesCount();
+        counts["callbacks"] = SmartThing.getCallbacksManager()->getTotalCallbacksCount();
+        
+        String response;
+        serializeJson(doc, response);
+
+        _server.send(200, JSON_CONTENT_TYPE, response);
+    });
     
     _server.on("/restart", HTTP_PUT, [&](){
         preHandleRequest();

@@ -47,6 +47,9 @@ class SettingsManager {
         void dropAllCallbacks();
 
         const DynamicJsonDocument getAllSettings();
+        int16_t usage() {
+            return _settings.memoryUsage();
+        }
 };
 
 extern SettingsManager STSettings;

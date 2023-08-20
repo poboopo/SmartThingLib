@@ -27,7 +27,7 @@
         - add different http callback types support +
         - add callabcks temaplate rest for callbacks creation (required fields) +
         - save callbacks to settings +
-        - save state
+        - save state +
         - add statics rest
         - fix logger message length
         - replace value in url in HTTP_CALLBACK

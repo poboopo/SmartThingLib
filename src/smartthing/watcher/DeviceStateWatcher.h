@@ -16,9 +16,7 @@ namespace Callback {
     class DeviceStateWatcher: public Watcher<String> {
         public:
             DeviceStateWatcher(const Configurable::DeviceState::DeviceState * deviceState, Callback::WatcherCallback<String> * callback): 
-                Watcher<String>(deviceState, callback) {
-                    _oldValue = "";
-                };
+                Watcher<String>(deviceState, callback, "") {};
             bool check() {
                 if (_observable == nullptr) {
                     return false;

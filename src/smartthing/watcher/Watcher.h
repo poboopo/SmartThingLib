@@ -19,8 +19,8 @@
 template<typename T>
 class Watcher {
     public:
-        Watcher(const Configurable::ConfigurableObject<T> * observable, Callback::WatcherCallback<T> * callback): 
-            _observable(observable), _callbacks(callback) {};
+        Watcher(const Configurable::ConfigurableObject<T> * observable, Callback::WatcherCallback<T> * callback, T initialValue): 
+            _observable(observable), _callbacks(callback), _oldValue(initialValue) {};
 
         virtual bool check() = 0;
         virtual const char * getObservableInfo() = 0;

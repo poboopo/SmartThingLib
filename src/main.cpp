@@ -11,8 +11,7 @@
 #define POT_PIN 36
 #define LIGHT_SENSOR_PIN 35
 
-#define AUTOMODE_SETTING "am"
-
+#define AUTO_MODE_STATE "automode"
 #define DISABLE_AUTO_MODE "disable_auto"
 #define ENABLE_AUTO_MODE "enable_auto"
 #define OPEN "open"
@@ -59,7 +58,7 @@ void setup() {
         LOGGER.info("main", "Config proceed");
 
         JsonObject state = STSettings.getState();
-        if (state.containsKey(AUTOMODE_SETTING) && state[AUTOMODE_SETTING].as<int>()) {
+        if (state.containsKey(AUTO_MODE_STATE) && state[AUTO_MODE_STATE].as<bool>()) {
             controller.enableAutoMode();
         }
     } else {
@@ -109,8 +108,6 @@ void processConfig() {
     if (accuracy > 0) {
         controller.setMotorAccuracy(accuracy);
     }
-
-    controller.restartAutoMode();
 }
 
 void addConfigEntries() {
@@ -148,6 +145,9 @@ void registerSensors() {
 void addCallbacks() {
     SmartThing.getCallbacksManager()->addDeviceStateCallback("automode", [](String * value) {
         LOGGER.info("main", "Automode callback called. New value %s", *value);
+        JsonObject state = STSettings.getState();
+        state[AUTO_MODE_STATE] = value->c_str();
+        STSettings.save();
     });
     SmartThing.getCallbacksManager()->addSensorCallback("test_digital", [](int16_t * value) {
         LOGGER.debug("main", "Digital sensor value changed to %u", *value);

@@ -21,6 +21,7 @@ namespace Callback {
                     int16_t newValue = _observable->valueGenerator();
                     if (_oldValue == -1) {
                         _oldValue = newValue;
+                        callCallbacks(&newValue);
                         return false;
                     }
                     if (newValue != _oldValue) {

@@ -29,14 +29,15 @@
         - save callbacks to settings +
         - save state +
         - add statics rest +
-        - replace value in url in HTTP_CALLBACK
+        - replace value in url in HTTP_CALLBACK +
 
     - v0.4
         - add ActionCallback - call action from callback (+ web)
         - todo SmartThing loop task routine - move to async
+        - add to watchers treshold
         - all handlers uri rework
         - add import export config
-        - add possible values to device state
+        - add possible values to device state ?
         - refactor handlers - make base handler with all routine(log, headers)
         - add restart handler
         - remove white spaces in mobile version of web page

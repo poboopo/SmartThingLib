@@ -25,6 +25,7 @@ namespace Callback {
                 String newValue = _observable->valueGenerator();
                 if (_oldValue.isEmpty()) {
                     _oldValue = newValue;
+                    callCallbacks(&_oldValue);
                     return false;
                 }
                 
@@ -44,7 +45,7 @@ namespace Callback {
             };
 
             bool callbackAccept(Callback::WatcherCallback<String> * callback, String * value) {
-                return callback->triggerValue() == nullptr || 
+                return callback->triggerValue().isEmpty() || 
                     (callback->triggerValue() != nullptr && strcmp((*value).c_str(), callback->triggerValue().c_str()) == 0);
             }
 

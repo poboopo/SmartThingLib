@@ -135,9 +135,7 @@ void addDeviceStates() {
 
 void registerSensors() {
     SmartThing.registerAnalogSensor("light", LIGHT_SENSOR_PIN);
-    SmartThing.registerAnalogSensor("position", POT_PIN);
-    SmartThing.registerSensor("light_controller", []() {return controller.getLightValue();});
-    SmartThing.registerSensor("position_controller", []() {return controller.getMotorPosition();});
+    SmartThing.registerSensor("position", []() {return controller.getMotorPosition();});
 
     SmartThing.registerDigitalSensor("test_digital", 12);
 }

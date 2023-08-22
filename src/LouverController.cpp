@@ -91,13 +91,13 @@ void LouverController::monitorLight() {
 
 const char * LouverController::getPosition() {
     uint16_t pos = _motorController.getPosition();
-    if (pos >= CLOSE_POSITION) {
+    if (pos <= CLOSE_POSITION && pos > MIDDLE_POSITION) {
         return "closed";
-    } else if (pos >= MIDDLE_POSITION) {
+    } else if (pos <= MIDDLE_POSITION && pos > OPEN_POSITION) {
         return "middle";
-    } else if (pos >= OPEN_POSITION) {
+    } else if (pos <= OPEN_POSITION && pos > BRIGHT_POSITION) {
         return "open";
-    } else if (pos >= BRIGHT_POSITION) {
+    } else if (pos <= BRIGHT_POSITION) {
         return "bright";
     }
     return "error";

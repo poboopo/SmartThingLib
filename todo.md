@@ -29,7 +29,6 @@
         - save callbacks to settings +
         - save state +
         - add statics rest +
-        - fix logger message length
         - replace value in url in HTTP_CALLBACK
 
     - v0.4
@@ -43,6 +42,7 @@
         - remove white spaces in mobile version of web page
 
 - backlog
+    - fix logger message length
     - ОПИШИ АРХИТЕКТУРУ
     - wifi network scan
     - add authorization???

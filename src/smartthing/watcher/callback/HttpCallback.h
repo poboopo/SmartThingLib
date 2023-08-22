@@ -7,6 +7,7 @@
 #include "smartthing/logs/BetterLogger.h"
 
 #define HTTP_CALLBACK_TAG "http_callback"
+#define VALUE_DYNAMIC_PARAM "${value}"
 
 namespace Callback {
     template<typename T>
@@ -28,7 +29,7 @@ namespace Callback {
                     LOGGER.error(HTTP_CALLBACK_TAG, "Value is null!");
                     return;
                 }
-                // todo replace ${value} in url
+                _currentValue = value;
                 if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
                     createRequestTask();
                 } else {
@@ -72,6 +73,7 @@ namespace Callback {
             String _method = "GET";
             String _payload;
             int16_t _lastResponseCode = 0;
+            T * _currentValue;
 
             void createRequestTask() {
                 if (_sending) {
@@ -95,13 +97,24 @@ namespace Callback {
             }
 
             void sendRequest() {
+                //probably bad realisation for memory
+
+                String valueStr = _currentValue != nullptr ? String(*_currentValue) : "";
+
+                String urlCopy = _url;
+                String payloadCopy = _payload;
+                
+                urlCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
+                payloadCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
+                LOGGER.info(HTTP_CALLBACK_TAG, "Sending request [%s] %s :: %s", _method.c_str(), urlCopy.c_str(), payloadCopy.c_str());
+                
                 HTTPClient client;
-                LOGGER.info(HTTP_CALLBACK_TAG, "Sending request [%s] %s :: %s", _method.c_str(), _url.c_str(), _payload.c_str());
                 client.setTimeout(2000);
-                client.begin(_url);
-                _lastResponseCode = client.sendRequest(_method.c_str(), _payload.c_str());
-                LOGGER.info(HTTP_CALLBACK_TAG, "Request %s finished with code %d", _url.c_str(), _lastResponseCode);
+                client.begin(urlCopy);
+                _lastResponseCode = client.sendRequest(_method.c_str(), payloadCopy.c_str());
                 client.end();
+                
+                LOGGER.info(HTTP_CALLBACK_TAG, "Request %s finished with code %d", urlCopy.c_str(), _lastResponseCode);
             }
 
             void fixUrl() {

@@ -21,24 +21,35 @@ class SettingsManager {
         JsonObject getOrCreateObject(const char * name);
         void removeIfEmpty(const char * group);
         void addDefaultSettings();
+        void clear(); //clears EEPROM
     public:
         SettingsManager();
         ~SettingsManager();
         
         void loadSettings();
         void removeSetting(const char * name);
-        void dropWifiCredits();
         void dropAll();
-        void saveSettings();
-        void clear();
+        void save();
 
         JsonObject getConfig();
+        void dropConfig();
+        
         JsonObject getState();
+        
         JsonObject getWiFi();
+        void dropWifiCredits();
+        
         const char * getDeviceName();
         void setDeviceName(const char * name);
 
-        const JsonObject getAllSettings();
+        void setCallbacks(JsonArray doc);
+        JsonArray getCallbacks();
+        void dropAllCallbacks();
+
+        const DynamicJsonDocument getAllSettings();
+        int16_t usage() {
+            return _settings.memoryUsage();
+        }
 };
 
 extern SettingsManager STSettings;

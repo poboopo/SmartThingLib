@@ -1,6 +1,6 @@
 - CURRENT
-    - add edit callback implementation
-    - add callback scenarios in web page
+    - save state
+    - add statics rest
 
 - v1.0
     - v0.1
@@ -23,23 +23,28 @@
         - add callback scenarios in web page +
         
     - v0.3
-        - add settings compression
-        - add callabcks temaplate rest for callbacks creation (required fieldss)
-        - save callbacks to settings
-        - add statics rest
-        - save state
-        - replace string with const char *
-        - fix logger message length
-        - arduino json refactor        
+        - add settings compression LZ78 - [CANCELLED BCZ USLESS]
+        - add different http callback types support +
+        - add callabcks temaplate rest for callbacks creation (required fields) +
+        - save callbacks to settings +
+        - save state +
+        - add statics rest +
+        - replace value in url in HTTP_CALLBACK +
 
     - v0.4
         - add ActionCallback - call action from callback (+ web)
-        - add possible values to device state
+        - todo SmartThing loop task routine - move to async
+        - add to watchers treshold
+        - all handlers uri rework
+        - add import export config
+        - add possible values to device state ?
         - refactor handlers - make base handler with all routine(log, headers)
         - add restart handler
         - remove white spaces in mobile version of web page
 
 - backlog
+    - fix logger message length
+    - ОПИШИ АРХИТЕКТУРУ
     - wifi network scan
     - add authorization???
     - tuya, zigbee integration

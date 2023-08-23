@@ -50,31 +50,38 @@ class ConfigRequestHandler: public RequestHandler {
                 //  bad realisation
                 //  why i made it????
                 for (JsonPair pair: root) {
-                    config[pair.key().c_str()] = pair.value();
+                    config[pair.key()] = pair.value();
                 }
 
-                STSettings.saveSettings();
+                STSettings.save();
                 server.send(200);
                 callHandler();
                 return true; 
             } else if (requestMethod == HTTP_DELETE) {
-                if (!server.hasArg("name")) {
-                    server.send(400, "content/json", buildErrorJson("Setting name is missing"));
-                }
-                String name = server.arg("name");
-
-                JsonObject config = STSettings.getConfig();
-                if (config.containsKey(name)) {
-                    LOGGER.warning(CONFIG_LOG_TAG, "Removing config value %s", name);
-                    config.remove(name);
-                    STSettings.saveSettings();
+                if (requestUri.equals("/config/remove/all")) {
+                    STSettings.dropConfig();
+                    STSettings.save();
                     server.send(200);
-                    callHandler();
-                } else {
-                    LOGGER.error(CONFIG_LOG_TAG, "Failed to remove config %s - no such key", name);
-                    server.send(404, "content/json", buildErrorJson("No such key"));
+                    return true;
+                } else if (requestUri.equals("/config/remove")){
+                    if (!server.hasArg("name")) {
+                        server.send(400, "content/json", buildErrorJson("Setting name is missing"));
+                    }
+                    String name = server.arg("name");
+
+                    JsonObject config = STSettings.getConfig();
+                    if (config.containsKey(name)) {
+                        LOGGER.warning(CONFIG_LOG_TAG, "Removing config value %s", name);
+                        config.remove(name);
+                        STSettings.save();
+                        server.send(200);
+                        callHandler();
+                    } else {
+                        LOGGER.error(CONFIG_LOG_TAG, "Failed to remove config %s - no such key", name);
+                        server.send(404, "content/json", buildErrorJson("No such key"));
+                    }
+                    return true;
                 }
-                return true;
             }
             return false;
         }

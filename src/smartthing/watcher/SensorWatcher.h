@@ -12,13 +12,18 @@
 
 // todo add treshold for analog sensor
 namespace Callback {
-    class SensorWatcher: public Watcher<Configurable::Sensor::Sensor, int16_t> {
+    class SensorWatcher: public Watcher<int16_t> {
         public:
             SensorWatcher(const Configurable::Sensor::Sensor * sensor, Callback::WatcherCallback<int16_t> * callback): 
-                Watcher<Configurable::Sensor::Sensor, int16_t>(sensor, callback) {};
+                Watcher<int16_t>(sensor, callback, -1) {};
             bool check() {
                 if (_observable != nullptr) {
                     int16_t newValue = _observable->valueGenerator();
+                    if (_oldValue == -1) {
+                        _oldValue = newValue;
+                        callCallbacks(&newValue);
+                        return false;
+                    }
                     if (newValue != _oldValue) {
                         LOGGER.debug(
                             SENSOR_WATCHER_TAG, 
@@ -39,10 +44,6 @@ namespace Callback {
 
             const char * getObservableInfo() {
                 return _observable->name;
-            };
-
-            const void * getObservable() {
-                return (void *) _observable;
             };
     };
 }

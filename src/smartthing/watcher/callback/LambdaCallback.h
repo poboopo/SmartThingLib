@@ -15,6 +15,8 @@ namespace Callback {
 
             LambdaCallback(CustomCallback customCallback, T triggerValue):
                 WatcherCallback<T>(LAMBDA_CALLBACK_TAG, triggerValue, true), _customCallback(customCallback) {};
+            LambdaCallback(CustomCallback customCallback, T triggerValue, bool readOnly):
+                WatcherCallback<T>(LAMBDA_CALLBACK_TAG, triggerValue, readOnly), _customCallback(customCallback) {};
             void call(T * value) {
                 if (value == nullptr) {
                     LOGGER.error(LAMBDA_CALLBACK_TAG, "Value is null!");
@@ -22,12 +24,13 @@ namespace Callback {
                 }
                 _customCallback(value);
             };
-            StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> toJson() {
-                StaticJsonDocument<CALLBACK_INFO_DOC_SIZE> doc = this->getDeaultInfo();
+            DynamicJsonDocument toJson(bool shortJson) {
+                DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE);
                 doc["caption"] = "lambda";
+                this->addDefaultInfo(doc);
                 return doc;
             };
-            void updateCustom(DynamicJsonDocument doc){};
+            void updateCustom(JsonObject doc){};
         private:
             CustomCallback _customCallback;
     };

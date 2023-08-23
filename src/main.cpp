@@ -11,8 +11,7 @@
 #define POT_PIN 36
 #define LIGHT_SENSOR_PIN 35
 
-#define AUTOMODE_SETTING "am"
-
+#define AUTO_MODE_STATE "automode"
 #define DISABLE_AUTO_MODE "disable_auto"
 #define ENABLE_AUTO_MODE "enable_auto"
 #define OPEN "open"
@@ -39,6 +38,9 @@ void addConfigEntries();
 void addCallbacks();
 
 void setup() {
+    addDeviceStates();
+    registerSensors();
+    
     bool started = SmartThing.init("louver");
     if (started) {
         if (SmartThing.wifiConnected()) {
@@ -48,8 +50,6 @@ void setup() {
         controller.addLedIndicator(SmartThing.getLed());
         LOGGER.info("main", "Controller created");
 
-        addDeviceStates();
-        registerSensors();
         addActionsHandlers();
         addConfigEntries();
         addCallbacks();
@@ -58,7 +58,7 @@ void setup() {
         LOGGER.info("main", "Config proceed");
 
         JsonObject state = STSettings.getState();
-        if (state.containsKey(AUTOMODE_SETTING) && state[AUTOMODE_SETTING].as<int>()) {
+        if (state.containsKey(AUTO_MODE_STATE) && state[AUTO_MODE_STATE].as<bool>()) {
             controller.enableAutoMode();
         }
     } else {
@@ -79,7 +79,7 @@ void loop() {
         LOGGER.statistics();
     }
 
-    delay(500);
+    delay(200);
 }
 
 void setupRestHandlers() {
@@ -108,8 +108,6 @@ void processConfig() {
     if (accuracy > 0) {
         controller.setMotorAccuracy(accuracy);
     }
-
-    controller.restartAutoMode();
 }
 
 void addConfigEntries() {
@@ -137,15 +135,19 @@ void addDeviceStates() {
 
 void registerSensors() {
     SmartThing.registerAnalogSensor("light", LIGHT_SENSOR_PIN);
-    SmartThing.registerAnalogSensor("position", POT_PIN);
-    SmartThing.registerSensor("light_controller", []() {return controller.getLightValue();});
-    SmartThing.registerSensor("position_controller", []() {return controller.getMotorPosition();});
+    SmartThing.registerSensor("position", []() {return controller.getMotorPosition();});
 
     SmartThing.registerDigitalSensor("button", 12);
 }
 
 void addCallbacks() {
-    SmartThing.addSensorCallback("button", [](int16_t * value) {
+    SmartThing.getCallbacksManager()->addDeviceStateCallback("automode", [](String * value) {
+        LOGGER.info("main", "Automode callback called. New value %s", *value);
+        JsonObject state = STSettings.getState();
+        state[AUTO_MODE_STATE] = value->c_str();
+        STSettings.save();
+    });
+    SmartThing.getCallbacksManager()->addSensorCallback("test_digital", [](int16_t * value) {
         LOGGER.debug("main", "Digital sensor value changed to %u", *value);
         if (controller.isAutoModeEnabled()) {
             controller.disableAutoMode();

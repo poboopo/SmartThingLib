@@ -13,31 +13,30 @@ using namespace Configurable::Sensor;
 #define STATE_WATCHER_TYPE "state"
 
 namespace Callback {
-    class DeviceStateWatcher: public Watcher<Configurable::DeviceState::DeviceState, char *> {
+    class DeviceStateWatcher: public Watcher<String> {
         public:
-            DeviceStateWatcher(const Configurable::DeviceState::DeviceState * deviceState, Callback::WatcherCallback<char *> * callback): 
-                Watcher<Configurable::DeviceState::DeviceState, char *>(deviceState, callback) {
-                    _oldValue = nullptr;
-                };
+            DeviceStateWatcher(const Configurable::DeviceState::DeviceState * deviceState, Callback::WatcherCallback<String> * callback): 
+                Watcher<String>(deviceState, callback, "") {};
             bool check() {
                 if (_observable == nullptr) {
                     return false;
                 }
 
-                const char * newValue = _observable->valueGenerator();
-                if (_oldValue == nullptr) {
-                    copyValue(newValue);
+                String newValue = _observable->valueGenerator();
+                if (_oldValue.isEmpty()) {
+                    _oldValue = newValue;
+                    callCallbacks(&_oldValue);
                     return false;
                 }
                 
-                if (strcmp(newValue, _oldValue) != 0) {
+                if (!newValue.equals(_oldValue)) {
                     LOGGER.debug(
                         DEVICE_STATE_WATCHER_TAG, 
                         "Device state %s value changed %s->%s.", 
                         _observable->name, _oldValue, newValue
                     );
 
-                    copyValue(newValue);
+                    _oldValue = newValue;
                     callCallbacks(&_oldValue);
 
                     return true;
@@ -45,28 +44,14 @@ namespace Callback {
                 return false;
             };
 
-            bool callbackAccept(Callback::WatcherCallback<char *> * callback, char ** value) {
-                return callback->triggerValue() == nullptr || 
-                    (callback->triggerValue() != nullptr && strcmp((*value), callback->triggerValue()) == 0);
+            bool callbackAccept(Callback::WatcherCallback<String> * callback, String * value) {
+                return callback->triggerValue().isEmpty() || 
+                    (callback->triggerValue() != nullptr && strcmp((*value).c_str(), callback->triggerValue().c_str()) == 0);
             }
 
             const char * getObservableInfo() {
                 return _observable->name;
             };
-            
-            const void * getObservable() {
-                return (void *) _observable;
-            }
-        private:
-            void copyValue(const char * value) {
-                if (_oldValue != nullptr) {
-                    delete(_oldValue);
-                }
-                int size = strlen(value) + 1;
-                _oldValue = new char[size];
-                strncpy(_oldValue, value, size);
-                _oldValue[size - 1] = '\0';
-            }
     };
 }
 

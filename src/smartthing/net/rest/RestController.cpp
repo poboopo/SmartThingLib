@@ -5,7 +5,6 @@
 #include "smartthing/net/rest/handlers/InfoRequestHandler.h"
 #include "smartthing/net/rest/handlers/SensorsRequestHandler.h"
 #include "smartthing/net/rest/handlers/StateRequestHandler.h"
-#include "smartthing/net/rest/handlers/DictionaryRequestHandler.h"
 #include "smartthing/net/rest/handlers/ActionRequestHandler.h"
 #include "smartthing/net/rest/handlers/CallbacksRequestHandler.h"
 
@@ -64,7 +63,6 @@ void RestController::setupHandler() {
     _server.addHandler(new InfoRequestHandler());
     _server.addHandler(new SensorsRequestHandler());
     _server.addHandler(new StateRequestHandler());
-    _server.addHandler(new DictionaryRequestHandler());
     _server.addHandler(new ActionRequestHandler());
     _server.addHandler(new CallbacksRequestHandler());
 
@@ -77,16 +75,34 @@ void RestController::setupHandler() {
         preHandleRequest();
         _server.send(200, "text/html", WEB_PAGE_MAIN);
     });
+
+    _server.on("/statistic", HTTP_GET, [this]() {
+        preHandleRequest();
+        DynamicJsonDocument doc(4096);
+        doc["uptime"] = millis();
+
+        JsonObject obj = doc.createNestedObject("heap");
+        obj["free"] = ESP.getFreeHeap();
+        obj["size"] = ESP.getHeapSize();
+        obj["minFree"] = ESP.getMinFreeHeap();
+        obj["maxAlloc"] = ESP.getMaxAllocHeap();
+        obj["settingsUsage"] = STSettings.usage();
+
+        JsonObject counts = doc.createNestedObject("counts");
+        counts["sensors"] = SmartThing.getSensorsCount();
+        counts["states"] = SmartThing.getDeviceStatesCount();
+        counts["callbacks"] = SmartThing.getCallbacksManager()->getTotalCallbacksCount();
+        
+        String response;
+        serializeJson(doc, response);
+
+        _server.send(200, JSON_CONTENT_TYPE, response);
+    });
     
     _server.on("/restart", HTTP_PUT, [&](){
         preHandleRequest();
 
-        // add restart handler
-        // RestHandlerResult result = _getStateHandler();
-        // STSettings.putSetting(GROUP_STATE, result.body);
-        // STSettings.saveSettings();
         _server.send(200);
-
         LOGGER.info(WEB_SERVER_TAG, "---------RESTART---------");
 
         delay(2000);

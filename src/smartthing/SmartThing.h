@@ -16,10 +16,8 @@
 #include "smartthing/configurable/ConfigEntriesList.h"
 
 #include "smartthing/watcher/CallbacksManager.h"
-#include "smartthing/watcher/callback/LambdaCallback.h"
-#include "smartthing/watcher/callback/HttpCallback.h"
 
-#define SMART_THING_VERSION 0.2
+#define SMART_THING_VERSION 0.3
 #define SMART_THING_TAG "SMART_THING"
 // Pins
 #define LED_PIN 14
@@ -32,9 +30,6 @@
 #define MULTICAST_PORT 7778
 
 #define DEVICE_NAME_LENGTH_MAX 15
-
-#define STATE_TYPE "state"
-#define SENSOR_TYPE "sensor"
 
 class SmartThingClass {
     public:
@@ -59,48 +54,33 @@ class SmartThingClass {
         Configurable::Action::ActionResult callAction(const char * action);
         bool addConfigEntry(const char * name, const char * caption, const char * type);
 
-        bool addDeviceStateCallback(const char * name, Callback::LambdaCallback<char *>::CustomCallback callback, const char * triggerValue);
-        bool addDeviceStateCallback(const char * name, Callback::LambdaCallback<char *>::CustomCallback callback) {
-            return addDeviceStateCallback(name, callback, nullptr);
-        };
-        bool addDeviceStateCallback(const char * name, const char * url, const char * triggerValue, bool readonly);
-        bool addDeviceStateCallback(const char * name, const char * url, const char * triggerValue) {
-            return addDeviceStateCallback(name, url, triggerValue, true);
-        }
-        bool addDeviceStateCallback(const char * name, const char * url) {
-            return addDeviceStateCallback(name, url, nullptr, true);
-        };
+        const Configurable::DeviceState::DeviceState * getDeviceState(const char * name);
+        const Configurable::Sensor::Sensor * getSensor(const char * name);
 
-        bool addSensorCallback(const char * name, Callback::LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue);
-        bool addSensorCallback(const char * name, Callback::LambdaCallback<int16_t>::CustomCallback callback) {
-            return addSensorCallback(name, callback, -1);
-        };
-        bool addSensorCallback(const char * name, const char * url, int16_t triggerValue, bool readonly);
-        bool addSensorCallback(const char * name, const char * url, int16_t triggerValue) {
-            return addSensorCallback(name, url, triggerValue, true);
-        }
-        bool addSensorCallback(const char * name, const char * url) {
-            return addSensorCallback(name, url, -1, true);
-        };
-
-        bool createCallbacksFromJson(const char * body);
-        bool deleteCallback(const char * type, const char * name, int16_t index) {
-            return _callbacksManager.deleteCallback(type, name, index);
-        }
-        bool updateCallback(const char * type, const char * name, int16_t index, const char * json) {
-            return _callbacksManager.updateCallback(type, name, index, json);
-        }
-
-        DynamicJsonDocument getInfoionaries();
+        DynamicJsonDocument getInfoDictionaries();
         DynamicJsonDocument getSensorsValues();
         DynamicJsonDocument getDeviceStatesInfo();
         DynamicJsonDocument getActionsInfo();
-        DynamicJsonDocument getConfigEntriesInfo();
+        DynamicJsonDocument getConfigInfo();
         DynamicJsonDocument getWatchersInfo();
-        DynamicJsonDocument getCallbacksJson(const char * watcherType, const char * name);
 
-        RestController* getRestController();
-        LedIndicator* getLed(); // are u sure u need this?
+        int16_t getSensorsCount() {
+            return _sensorsList.size();
+        }
+
+        int16_t getDeviceStatesCount() {
+            return _deviceStatesList.size();
+        }
+
+        RestController* getRestController() {
+            return &_rest;
+        }
+        Callback::CallbacksManager * getCallbacksManager() {
+            return &_callbacksManager;
+        }
+        LedIndicator* getLed() {
+            return &_led;
+        }
     private:
         Multicaster _multicaster;
         RestController _rest;

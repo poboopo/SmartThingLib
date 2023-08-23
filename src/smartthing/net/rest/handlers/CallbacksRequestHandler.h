@@ -2,15 +2,19 @@
 #define CALLBACKS_RQ_H
 
 #include <WebServer.h>
+#include <ArduinoJson.h>
+
 #include "smartthing/logs/BetterLogger.h"
 #include "smartthing/SmartThing.h"
 #include "smartthing/net/rest/handlers/HandlerUtils.h"
+#include "smartthing/watcher/callback/CallbacksTemplatesJsons.h"
 
 #define CALLBACKS_RQ_PATH "/callbacks"
 #define CALLBACKS_RQ_TAG "callbacks_handler"
 
 #define CALLBACK_TYPE_ARG "type"
 #define CALLBACK_NAME_ARG "name"
+#define CALLBACK_OBSERVABLE_TYPE "observableType"
 #define CALLBACK_INDEX_ARG "index"
 
 class CallbacksRequestHandler: public RequestHandler {
@@ -22,7 +26,8 @@ class CallbacksRequestHandler: public RequestHandler {
         };
 
         bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {
-            LOGGER.logRequest(CALLBACKS_RQ_TAG, http_method_str(requestMethod), requestUri.c_str(), "");
+            String body = server.arg("plain");
+            LOGGER.logRequest(CALLBACKS_RQ_TAG, http_method_str(requestMethod), requestUri.c_str(), body.c_str());
             
             if (requestMethod == HTTP_OPTIONS) {
                 server.sendHeader("Access-Control-Allow-Origin", "*");
@@ -34,14 +39,25 @@ class CallbacksRequestHandler: public RequestHandler {
             
             server.sendHeader("Access-Control-Allow-Origin", "*");
             if (requestMethod == HTTP_GET) {
-                String type = server.arg(CALLBACK_TYPE_ARG);
-                String name = server.arg(CALLBACK_NAME_ARG);
-
-                if (type.isEmpty() || name.isEmpty()) {
-                    server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type or name args are missing!"));
+                if (requestUri.equals("/callbacks/template")) {
+                    server.send(200, JSON_CONTENT_TYPE, CALLBACKS_TEMPLATES_JSON);
                     return true;
                 }
-                DynamicJsonDocument doc = SmartThing.getCallbacksJson(type.c_str(), name.c_str());
+                if (requestUri.equals("/callbacks/by/observable")) {
+                    String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
+                    String name = server.arg(CALLBACK_NAME_ARG);
+
+                    if (type.isEmpty() || name.isEmpty()) {
+                        server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type or name args are missing!"));
+                        return true;
+                    }
+                    DynamicJsonDocument doc = SmartThing.getCallbacksManager()->getCallbacksJson(type.c_str(), name.c_str());
+                    String response;
+                    serializeJson(doc, response);
+                    server.send(200, JSON_CONTENT_TYPE, response);
+                    return true;
+                }
+                DynamicJsonDocument doc = SmartThing.getCallbacksManager()->callbacksToJson(false, false);
                 String response;
                 serializeJson(doc, response);
                 server.send(200, JSON_CONTENT_TYPE, response);
@@ -52,7 +68,8 @@ class CallbacksRequestHandler: public RequestHandler {
                     server.send(400, JSON_CONTENT_TYPE, "Body is missin!");
                     return true;
                 }
-                if (SmartThing.createCallbacksFromJson(server.arg("plain").c_str())) {
+                if (SmartThing.getCallbacksManager()->createCallbackFromJson(server.arg("plain").c_str())) {
+                    SmartThing.getCallbacksManager()->saveCallbacksToSettings();
                     server.send(201);
                 } else {
                     server.send(500, JSON_CONTENT_TYPE, buildErrorJson("Failed to create watcher. Check logs for additional information."));
@@ -60,22 +77,14 @@ class CallbacksRequestHandler: public RequestHandler {
                 return true;
             }
             if (requestMethod == HTTP_PUT) {
-                String type = server.arg(CALLBACK_TYPE_ARG);
-                String name = server.arg(CALLBACK_NAME_ARG);
-                String index = server.arg(CALLBACK_INDEX_ARG);
-
-                if (type.isEmpty() || name.isEmpty() || index.isEmpty()) {
-                    server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type, name or index args are missing!"));
-                    return true;
-                }
-
                 String body = server.arg("plain");
                 if (body.isEmpty()) {
                     server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Body is missing!"));
                     return true;
                 }
                 
-                if(SmartThing.updateCallback(type.c_str(), name.c_str(), index.toInt(), body.c_str())) {
+                if(SmartThing.getCallbacksManager()->updateCallback(body.c_str())) {
+                    SmartThing.getCallbacksManager()->saveCallbacksToSettings();
                     server.send(200);
                 } else {
                     server.send(500, JSON_CONTENT_TYPE, buildErrorJson("Failed to update callback. Check logs for additional information."));
@@ -83,7 +92,7 @@ class CallbacksRequestHandler: public RequestHandler {
                 return true;
             }
             if (requestMethod == HTTP_DELETE) {
-                String type = server.arg(CALLBACK_TYPE_ARG);
+                String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
                 String name = server.arg(CALLBACK_NAME_ARG);
                 String index = server.arg(CALLBACK_INDEX_ARG);
 
@@ -91,7 +100,8 @@ class CallbacksRequestHandler: public RequestHandler {
                     server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type, name or index args are missing!"));
                     return true;
                 }
-                if(SmartThing.deleteCallback(type.c_str(), name.c_str(), index.toInt())) {
+                if(SmartThing.getCallbacksManager()->deleteCallback(type.c_str(), name.c_str(), index.toInt())) {
+                    SmartThing.getCallbacksManager()->saveCallbacksToSettings();
                     server.send(200);
                 } else {
                     server.send(500, JSON_CONTENT_TYPE, buildErrorJson("Failed to delete callback. Check logs for additional information."));

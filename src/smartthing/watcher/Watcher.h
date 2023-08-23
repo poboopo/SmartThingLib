@@ -6,20 +6,21 @@
 #include "smartthing/watcher/callback/WatcherCallback.h"
 #include "smartthing/utils/List.h"
 #include "smartthing/logs/BetterLogger.h"
+#include "smartthing/configurable/ConfigurableObjects.h"
 
-#define WATCHERS_CALLBACK_INFO_DOC_SIZE 128
+#define WATCHER_INFO_DOC_SIZE 128
 
 /*
     Класс наблюдатель за объектами
 */
 
-// O - класс наблюдаемого объекта
 // T - тип данных, которые хранит в себе объект
-template<typename O, typename T>
+// todo remove typename O and just use configurable object!
+template<typename T>
 class Watcher {
     public:
-        Watcher(const O * observable, Callback::WatcherCallback<T> * callback): 
-            _observable(observable), _callbacks(callback) {};
+        Watcher(const Configurable::ConfigurableObject<T> * observable, Callback::WatcherCallback<T> * callback, T initialValue): 
+            _observable(observable), _callbacks(callback), _oldValue(initialValue) {};
 
         virtual bool check() = 0;
         virtual const char * getObservableInfo() = 0;
@@ -27,12 +28,30 @@ class Watcher {
         virtual bool callbackAccept(Callback::WatcherCallback<T> * callback, T * newValue) = 0;
 
         DynamicJsonDocument getCallbacksJson() {
+            return getCallbacksJson(false, false);
+        }
+
+        DynamicJsonDocument getCallbacksJson(bool ignoreReadOnly, bool shortJson) {
             DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size());
             _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
-                doc.add(current->toJson());
+                if (ignoreReadOnly && current->isReadonly()) {
+                    return;
+                }
+                doc.add(current->toJson(shortJson));
             });
             return doc;
         };
+
+        DynamicJsonDocument toJson(bool ignoreReadOnly, bool shortJson) {
+            DynamicJsonDocument callbacks = getCallbacksJson(ignoreReadOnly, shortJson);
+            if (callbacks.size() == 0) {
+                return callbacks;
+            }
+            DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size() + 128);
+            doc["observable"] = ((Configurable::ConfigurableObject<T> *) _observable)->toJson();
+            doc["callbacks"] = callbacks;
+            return doc;
+        }
         
         void addCallback(Callback::WatcherCallback<T> * callback) {
             if (callback != nullptr) {
@@ -68,15 +87,19 @@ class Watcher {
             });
         };
         
-        const O * getObservable() {
+        const Configurable::ConfigurableObject<T> * getObservable() {
             return _observable;
         };
 
         bool haveCallbacks() {
             return _callbacks.size() != 0;
         }
+
+        uint8_t callbacksCount() {
+            return _callbacks.size();
+        }
     protected:
-        const O * _observable;
+        const  Configurable::ConfigurableObject<T> * _observable;
         T _oldValue;
         List<Callback::WatcherCallback<T>> _callbacks;
 };

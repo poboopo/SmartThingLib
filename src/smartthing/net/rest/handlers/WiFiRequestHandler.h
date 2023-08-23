@@ -83,7 +83,7 @@ class WiFiRequesthandler: public RequestHandler {
                 wifiSettings[SSID_SETTING] = ssid;
                 wifiSettings[PASSWORD_SETTING] = password;
                 wifiSettings[WIFI_MODE_SETTING] = mode;
-                STSettings.saveSettings();
+                STSettings.save();
                 server.send(200);
                 if (_wifiUpdatedHandler != nullptr) {
                     (*_wifiUpdatedHandler)();

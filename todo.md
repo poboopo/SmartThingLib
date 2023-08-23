@@ -1,5 +1,4 @@
 - CURRENT
-    - add web support for different callbacks temaplates
 
 - v1.0
     - v0.1
@@ -31,7 +30,7 @@
         - replace value in url in HTTP_CALLBACK +
 
     - v0.4
-        - add ActionCallback - call action from callback (+ web)
+        - add ActionCallback - call action from callback (+ web) +
         - todo SmartThing loop task routine - move to async
         - add to watchers treshold
         - all handlers uri rework

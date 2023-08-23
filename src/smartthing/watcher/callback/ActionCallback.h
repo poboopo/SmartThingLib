@@ -16,6 +16,7 @@ namespace Callback {
 
             void call(T * value) {
                 // replace ${value} in _action?
+                LOGGER.debug(ACTION_CALLBACK_TAG, "Calling action  %s", _action.c_str());
                 SmartThing.callAction(_action.c_str());
             }
 

@@ -56,8 +56,11 @@ const String WEB_PAGE_MAIN = R"=====(
             <div id="callbacks" class="content-block hidable">
                 <div class="loading-info">Loading</div>
                 <h1 id="callbacks-title"></h1>
-                <div class="btn-group">
-                    <button id="add-new-callback">Add new</button>
+                <div class="grid-view">
+                    <select id="callback-types"></select>
+                    <div class="btn-group">
+                        <button id="add-new-callback">Add new</button>
+                    </div>
                 </div>
                 <button class="update-button" onclick="updateCallbacks()">Update</button>
                 <div id="callbacks-block" style="text-align: start;"></div>
@@ -71,7 +74,6 @@ const String WEB_PAGE_MAIN = R"=====(
         window.onload = function() {
             loadDeviceInfo();
             loadWiFiSettings();
-            loadDictionaries();
             loadState();
             loadSensors();
         };
@@ -101,20 +103,21 @@ const String WEB_PAGE_MAIN = R"=====(
 
         function addCallback(observableType, observable) {
             if (document.getElementById("callback_new")) {
-                return;
+                document.getElementById("callback_new").remove();
             }
             const callbacksBlock = document.getElementById("callbacks-block");
             if (!callbacksBlock) {
                 console.error("Can't find callbacks-block!");
                 return;
             }
-            const template = this.callbackTemplates["http_callback"] || {};
+            const type = document.getElementById("callback-types").value;
+            const template = this.callbackTemplates[type] || {};
             const additionalFields = Object.entries(template).reduce((acc, [key, _]) => {acc[key] = ""; return acc;}, {});
             callbacksBlock.prepend(
                 buildCallbackView(observableType, observable, {
-                    "type": "http_callback",
+                    type,
                     "readonly": false,
-                    "caption": "New http callback",
+                    "caption": "New " + type +" callback",
                     "trigger": "",
                     ...additionalFields
                 }, "new")
@@ -203,7 +206,7 @@ const String WEB_PAGE_MAIN = R"=====(
             }
             const template = this.callbackTemplates[callbackType] || {};
             const reqPayload = {observable: {type: observableType, name: observable}};
-            const callbackInfo = {index};
+            const callbackInfo = {index, "type": callbackType};
             const triggerInput = document.getElementById("callback_trigger_" + index);
             if (triggerInput) {
                 callbackInfo["trigger"] = triggerInput.value;
@@ -281,6 +284,45 @@ const String WEB_PAGE_MAIN = R"=====(
                 },
                 "info"
             );
+            restRequest(
+                "GET",
+                "http://" + getHost() + "/info/actions",
+                null,
+                function(response) {
+                    if (response) {
+                        const actions = JSON.parse(response);
+                        processActions(actions);
+                    }
+                }
+            )
+            restRequest(
+                "GET",
+                "http://" + getHost() + "/info/config",
+                null,
+                function(response) {
+                    if (response) {
+                        const configEntries = JSON.parse(response);
+                        processConfigEntries(configEntries);
+                        loadConfigValues();
+                    }
+                }
+            )
+            restRequest(
+                "GET",
+                "http://" + getHost() + "/callbacks/template",
+                null,
+                (response) => {
+                    if (response) {
+                        this.callbackTemplates = JSON.parse(response);
+                        const types = Object.keys(this.callbackTemplates);
+                        if (!types) {
+                            console.error("No callbacks templates were loaded");
+                            return;
+                        }
+                        fillComboBox(document.getElementById("callback-types"), types, types[0]);
+                    }
+                }
+            )
         }
         function processDeviceInfo() {
             const block = document.getElementById("device-info");
@@ -503,41 +545,6 @@ const String WEB_PAGE_MAIN = R"=====(
                 "sensors"
             );
         }
-        function loadDictionaries() {
-            restRequest(
-                "GET",
-                "http://" + getHost() + "/info/actions",
-                null,
-                function(response) {
-                    if (response) {
-                        const actions = JSON.parse(response);
-                        processActions(actions);
-                    }
-                }
-            )
-            restRequest(
-                "GET",
-                "http://" + getHost() + "/info/config",
-                null,
-                function(response) {
-                    if (response) {
-                        const configEntries = JSON.parse(response);
-                        processConfigEntries(configEntries);
-                        loadConfigValues();
-                    }
-                }
-            )
-            restRequest(
-                "GET",
-                "http://" + getHost() + "/callbacks/template",
-                null,
-                (response) => {
-                    if (response) {
-                        this.callbackTemplates = JSON.parse(response);
-                    }
-                }
-            )
-        }
         function processActions(actions) {
             if (actions) {
                 document.getElementById("actions").style.display = "block";
@@ -665,14 +672,24 @@ const String WEB_PAGE_MAIN = R"=====(
             }
             if (combobox) {
                 combobox.innerHTML = "";
-                values.forEach((data) => {
+                let valuesArray;
+                if (Array.isArray(values)) {
+                    valuesArray = values;
+                } else if (typeof values == "object") {
+                    valuesArray = Object.entries(values);
+                } else {
+                    console.error("Bad value data type: " + typeof values);
+                    return;
+                }
+                valuesArray.forEach((data) => {
                     const option = document.createElement("option");
                     if (typeof data == "string") {
                         option.innerHTML = data;
                         option.value = data;
                     } else {
-                        option.innerHTML = data["caption"];
-                        option.value = data["value"];
+                        const [value, caption] = data;
+                        option.innerHTML = caption;
+                        option.value = value;
                     }
                     combobox.appendChild(option);
                 });

@@ -36,13 +36,9 @@ class WiFiRequesthandler: public RequestHandler {
                 //todo hide password smh
                 DynamicJsonDocument jsonDoc(1028);
                 jsonDoc["settings"] = STSettings.getWiFi();
-                JsonArray modes = jsonDoc.createNestedArray("modes");
-                JsonObject mode1 = modes.createNestedObject();
-                mode1["caption"] = "WIFI_MODE_STA";
-                mode1["value"] = WIFI_MODE_STA;
-                JsonObject mode2 = modes.createNestedObject();
-                mode2["caption"] = "WIFI_MODE_AP";
-                mode2["value"] = WIFI_MODE_AP;
+                JsonObject modes = jsonDoc.createNestedObject("modes");
+                modes[String(WIFI_MODE_STA)] = "STA";
+                modes[String(WIFI_MODE_AP)] = "AP";
 
                 String response;
                 serializeJson(jsonDoc, response);

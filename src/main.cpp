@@ -147,7 +147,7 @@ void addCallbacks() {
         state[AUTO_MODE_STATE] = value->c_str();
         STSettings.save();
     });
-    SmartThing.getCallbacksManager()->addSensorCallback("test_digital", [](int16_t * value) {
+    SmartThing.getCallbacksManager()->addSensorCallback("button", [](int16_t * value) {
         LOGGER.debug("main", "Digital sensor value changed to %u", *value);
         if (controller.isAutoModeEnabled()) {
             controller.disableAutoMode();

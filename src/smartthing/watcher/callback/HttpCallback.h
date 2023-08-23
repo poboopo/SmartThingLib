@@ -10,6 +10,26 @@
 #define VALUE_DYNAMIC_PARAM "${value}"
 
 namespace Callback {
+    const String CALLBACKS_TEMPLATES_JSON = R"=====(
+    {
+        "url": {
+            "required": true
+        },
+        "method": {
+            "required": false,
+            "values": [
+            "GET",
+            "POST",
+            "DELETE",
+            "PUT"
+            ]
+        },
+        "payload": {
+            "required": false
+        }
+    }
+    )=====";
+
     template<typename T>
     class HttpCallback: public WatcherCallback<T> {
         public:
@@ -65,6 +85,12 @@ namespace Callback {
                     LOGGER.debug(HTTP_CALLBACK_TAG, "Callback's payload was updated to %s", _payload.c_str());
                 }
             };
+
+            static DynamicJsonDocument getTemplate() {
+                DynamicJsonDocument doc(MAX_CALLBACK_TEMAPLATE_SIZE);
+                deserializeJson(doc, CALLBACKS_TEMPLATES_JSON);
+                return doc;
+            }
 
             TaskHandle_t _requestTask = NULL; // not safe
             bool _sending = false;

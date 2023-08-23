@@ -73,7 +73,6 @@ void LouverController::monitorLight() {
     // Кривая фурье?
     for(;;) {
         lightValue = calculateFloatingAverage(floating, getLightValue());
-        LOGGER.debug(LOUVER_CONTROLLER_TAG, "Light value %d", lightValue);
         if (abs(lightValue - oldLightValue) > LIGHT_THRESHOLD || oldLightValue == -1) {
             if (lightValue < _lightClose) {
                 _motorController.setPosition(CLOSE_POSITION);

@@ -37,15 +37,6 @@ namespace Callback {
         DynamicJsonDocument doc(1024);
         deserializeJson(doc, json);
 
-        // if (!doc.containsKey("observable")) {
-        //     LOGGER.error(CALLBACKS_MANAGER_TAG, "observable object is missing!");
-        //     return false;
-        // }
-        // if (!doc.containsKey("callback")) {
-        //     LOGGER.error(CALLBACKS_MANAGER_TAG, "callback object is missing!");
-        //     return false;
-        // }
-
         return createCallback(doc["observable"], doc["callback"]);        
     }
 
@@ -78,7 +69,11 @@ namespace Callback {
         LOGGER.debug(CALLBACKS_MANAGER_TAG, "Creating new callback for [%s]%s", observableType, name);
 
         CallbackBuilder builder;
-        builder.url(callback["url"])->method(callback["method"])->payload(callback["payload"]);
+        builder.type(callback["type"])
+            ->url(callback["url"])
+            ->method(callback["method"])
+            ->payload(callback["payload"])
+            ->action(callback["action"]);
         String trigger = callback["trigger"];
         if (strcmp(observableType, STATE_TYPE) == 0) {
             return addDeviceStateCallback(SmartThing.getDeviceState(name), builder.build<String>(trigger));
@@ -251,51 +246,42 @@ namespace Callback {
             LOGGER.error(CALLBACK_BUILDER_TAG, "Observable name or type is missing!");
             return false;
         }
-        if (!callbackObject.containsKey("index")) {
-            LOGGER.error(CALLBACK_BUILDER_TAG, "Callback index is missing!");
-            return false;   
-        }
-
-        int index = callbackObject["index"];
 
         if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
-            WatcherCallback<int16_t> * callback = getCallbackFromWatcherList(&_sensorsWatchers, name, index);
-            if (callback == nullptr) {
-                return false;
-            }
-            if (callback->isReadonly()) {
-                LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback %d for observable %s is readonly!", index, name);
-                return false;
-            }
-
-            if (callbackObject.containsKey("trigger")) {
-                callback->setTriggerValue(callbackObject["trigger"]);
-            }
-            callback->updateCustom(callbackObject);
+            return updateCallback<int16_t>(&_sensorsWatchers, name, callbackObject);
         } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
-            WatcherCallback<String> * callback = getCallbackFromWatcherList(&_statesWatchers, name, index);
-            if (callback == nullptr) {
-                return false;
-            }
-            if (callback->isReadonly()) {
-                LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback %d for observable %s is readonly!", index, name);
-                return false;
-            }
+            return updateCallback<String>(&_statesWatchers, name, callbackObject);
+        } 
+        LOGGER.error(CALLBACKS_MANAGER_TAG, "Observable type [%s] not supported!", type);
+        return false;
+    }
 
-            if (callbackObject.containsKey("trigger")) {
-                callback->setTriggerValue(callbackObject["trigger"]);
-            }
+    template<typename T>
+    bool CallbacksManager::updateCallback(List<Watcher<T>> * list, const char * name, JsonObject callbackObject) {
+        if (!callbackObject.containsKey("index")) {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "Index value in callback object is missing!");
+            return false;
+        }
+        
+        int index = callbackObject["index"];
 
-            callback->updateCustom(callbackObject);
-        } else {
-            LOGGER.error(CALLBACKS_MANAGER_TAG, "Observable type [%s] not supported!", type);
+        WatcherCallback<T> * callback = getCallbackFromWatcherList(list, name, index);
+        if (callback == nullptr) {
+            return false;
+        }
+        if (callback->isReadonly()) {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback %d for observable %s is readonly!", index, name);
             return false;
         }
 
-        LOGGER.info(CALLBACKS_MANAGER_TAG, "Callback №%d for [%s]::%s was updated!", index, type, name);
+        if (callbackObject.containsKey("trigger")) {
+            callback->setTriggerValue(callbackObject["trigger"]);
+        }
+
+        callback->updateCustom(callbackObject);
+        LOGGER.info(CALLBACKS_MANAGER_TAG, "Callback №%d for %s was updated!", index, name);
         return true;
     }
-
 
     template<typename T>
     WatcherCallback<T> * CallbacksManager::getCallbackFromWatcherList(List<Watcher<T>> * list, const char * name, int16_t callbackIndex) {
@@ -422,5 +408,13 @@ namespace Callback {
     void CallbacksManager::saveCallbacksToSettings() {
         STSettings.setCallbacks(callbacksToJson(true, true).as<JsonArray>());
         STSettings.save();
+    }
+
+    DynamicJsonDocument CallbacksManager::getCallbacksTemplates() {
+        DynamicJsonDocument doc(MAX_CALLBACK_TEMAPLATE_SIZE * 2);
+        //<bruh>
+        doc[HTTP_CALLBACK_TAG] = HttpCallback<int>::getTemplate();
+        doc[ACTION_CALLBACK_TAG] = ActionCallback<int>::getTemplate();
+        return doc;
     }
 }

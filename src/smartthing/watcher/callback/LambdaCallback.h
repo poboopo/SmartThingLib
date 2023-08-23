@@ -8,7 +8,7 @@
 #define LAMBDA_CALLBACK_TAG "lambda_callback"
 
 namespace Callback {
-    template<typename T>
+    template<class T>
     class LambdaCallback: public WatcherCallback<T> {
         public:
             typedef std::function<void(T *)>CustomCallback;

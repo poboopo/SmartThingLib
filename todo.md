@@ -1,6 +1,5 @@
 - CURRENT
-    - save state
-    - add statics rest
+    - add web support for different callbacks temaplates
 
 - v1.0
     - v0.1

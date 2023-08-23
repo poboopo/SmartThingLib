@@ -7,7 +7,6 @@
 #include "smartthing/logs/BetterLogger.h"
 #include "smartthing/SmartThing.h"
 #include "smartthing/net/rest/handlers/HandlerUtils.h"
-#include "smartthing/watcher/callback/CallbacksTemplatesJsons.h"
 
 #define CALLBACKS_RQ_PATH "/callbacks"
 #define CALLBACKS_RQ_TAG "callbacks_handler"
@@ -40,7 +39,10 @@ class CallbacksRequestHandler: public RequestHandler {
             server.sendHeader("Access-Control-Allow-Origin", "*");
             if (requestMethod == HTTP_GET) {
                 if (requestUri.equals("/callbacks/template")) {
-                    server.send(200, JSON_CONTENT_TYPE, CALLBACKS_TEMPLATES_JSON);
+                    DynamicJsonDocument doc = SmartThing.getCallbacksManager()->getCallbacksTemplates();
+                    String response;
+                    serializeJson(doc, response);
+                    server.send(200, JSON_CONTENT_TYPE, response);
                     return true;
                 }
                 if (requestUri.equals("/callbacks/by/observable")) {

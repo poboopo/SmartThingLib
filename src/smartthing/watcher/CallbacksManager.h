@@ -61,6 +61,8 @@ namespace Callback {
             int16_t getTotalCallbacksCount() {
                 return _callbacksCount;
             }
+
+            DynamicJsonDocument getCallbacksTemplates();
         private:
             List<Watcher<int16_t>> _sensorsWatchers; 
             List<Watcher<String>> _statesWatchers; 
@@ -86,6 +88,9 @@ namespace Callback {
 
             template<typename T>
             bool updateWatcherCallbackFromList(List<Watcher<T>> * list, const char * name, int16_t index, const char * json);
+
+            template<typename T>
+            bool updateCallback(List<Watcher<T>> * list, const char * name, JsonObject callbackObject);
 
             template<typename T>
             void checkWatchers(List<Watcher<T>> * list);

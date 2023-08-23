@@ -61,7 +61,7 @@ int16_t calculateFloatingAverage(int16_t * floating, int16_t newValue) {
 
 void LouverController::monitorLight() {
     int16_t lightValue = getLightValue();
-    int16_t oldLightValue = -lightValue;
+    int16_t oldLightValue = -1;
     int16_t floating[LIGHT_FLOATING_AVERAGE_OF]; // плавующее среднее для значения датчика света
     const TickType_t xDelay = _taskDelay / portTICK_PERIOD_MS;
 
@@ -73,7 +73,8 @@ void LouverController::monitorLight() {
     // Кривая фурье?
     for(;;) {
         lightValue = calculateFloatingAverage(floating, getLightValue());
-        if (abs(lightValue - oldLightValue) > LIGHT_THRESHOLD) {
+        LOGGER.debug(LOUVER_CONTROLLER_TAG, "Light value %d", lightValue);
+        if (abs(lightValue - oldLightValue) > LIGHT_THRESHOLD || oldLightValue == -1) {
             if (lightValue < _lightClose) {
                 _motorController.setPosition(CLOSE_POSITION);
             } else if (lightValue > _lightBright) {
@@ -82,6 +83,8 @@ void LouverController::monitorLight() {
                 _motorController.setPosition(map(lightValue, _lightBright, _lightOpen, BRIGHT_POSITION, OPEN_POSITION));
             } else if (lightValue > _lightClose && lightValue < _lightOpen) {
                 _motorController.setPosition(map(lightValue, _lightOpen, _lightClose, OPEN_POSITION, CLOSE_POSITION));
+            } else {
+                LOGGER.error(LOUVER_CONTROLLER_TAG, "Failed to define position for light value %d", lightValue);
             }
             oldLightValue = lightValue;
         }

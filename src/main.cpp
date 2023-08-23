@@ -137,7 +137,7 @@ void registerSensors() {
     SmartThing.registerAnalogSensor("light", LIGHT_SENSOR_PIN);
     SmartThing.registerSensor("position", []() {return controller.getMotorPosition();});
 
-    SmartThing.registerDigitalSensor("test_digital", 12);
+    SmartThing.registerDigitalSensor("button", 12);
 }
 
 void addCallbacks() {

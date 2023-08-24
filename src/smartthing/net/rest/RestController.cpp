@@ -104,11 +104,12 @@ void RestController::setupHandler() {
 
         _server.send(200);
         LOGGER.info(WEB_SERVER_TAG, "---------RESTART---------");
+        _restartHandler();
 
         delay(2000);
         ESP.restart();
     });
-
+    
     _server.onNotFound([&](){
         _server.send(404, "text/plain", "Page not found");
     });

@@ -65,7 +65,7 @@ class CallbacksRequestHandler: public RequestHandler {
                 server.send(200, JSON_CONTENT_TYPE, response);
                 return true;
             }
-            if (requestMethod == HTTP_POST) {
+            if (requestMethod == HTTP_POST && requestUri.equals("/callbacks/create")) {
                 if (!server.hasArg("plain")) {
                     server.send(400, JSON_CONTENT_TYPE, "Body is missin!");
                     return true;
@@ -78,7 +78,7 @@ class CallbacksRequestHandler: public RequestHandler {
                 }
                 return true;
             }
-            if (requestMethod == HTTP_PUT) {
+            if (requestMethod == HTTP_PUT && requestUri.equals("/callbacks/update")) {
                 String body = server.arg("plain");
                 if (body.isEmpty()) {
                     server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Body is missing!"));
@@ -93,7 +93,7 @@ class CallbacksRequestHandler: public RequestHandler {
                 }
                 return true;
             }
-            if (requestMethod == HTTP_DELETE) {
+            if (requestMethod == HTTP_DELETE && requestUri.equals("/callbacks/delete")) {
                 String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
                 String name = server.arg(CALLBACK_NAME_ARG);
                 String index = server.arg(CALLBACK_INDEX_ARG);

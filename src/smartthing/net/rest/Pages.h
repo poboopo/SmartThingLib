@@ -238,7 +238,7 @@ const String WEB_PAGE_MAIN = R"=====(
             if (index == "new") {
                 restRequest(
                     "POST",
-                    "http://" + getHost() + "/callbacks",
+                    "http://" + getHost() + "/callbacks/create",
                     reqPayload,
                     (response) => {
                         console.log("Callback created!");
@@ -249,7 +249,7 @@ const String WEB_PAGE_MAIN = R"=====(
             } else {
                 restRequest(
                     "PUT",
-                    "http://" + getHost() + "/callbacks",
+                    "http://" + getHost() + "/callbacks/update",
                     reqPayload,
                     (response) => {
                         console.log("Callback updated!");
@@ -262,7 +262,7 @@ const String WEB_PAGE_MAIN = R"=====(
             const queryPart = "?observableType=" + observableType + "&name=" + observable + "&index=" + index;
             restRequest(
                 "DELETE",
-                "http://" + getHost() + "/callbacks" + queryPart,
+                "http://" + getHost() + "/callbacks/delete" + queryPart,
                 null,
                 (response) => {
                     console.log("Callback deleted :(");
@@ -426,7 +426,7 @@ const String WEB_PAGE_MAIN = R"=====(
             if (confirm("Are you sure you want to delete ALL config values?")) {
                 restRequest(
                     "DELETE",
-                    "http://" + getHost() + "/config/remove/all",
+                    "http://" + getHost() + "/config/delete/all",
                     null,
                     function(response) {
                         loadConfigValues();
@@ -456,7 +456,7 @@ const String WEB_PAGE_MAIN = R"=====(
 
             restRequest(
                 "POST",
-                "http://" + getHost() + "/config",
+                "http://" + getHost() + "/config/add",
                 Object.fromEntries(Object.entries(this.config).filter(([_, v]) => v)),
                 null,
                 "config"
@@ -466,7 +466,7 @@ const String WEB_PAGE_MAIN = R"=====(
             if (name) {
                 restRequest(
                     "DELETE",
-                    "http://" + getHost() + "/config/remove?name=" + name,
+                    "http://" + getHost() + "/config/delete?name=" + name,
                     null,
                     function(response) {
                         document.getElementById(name).value = null;

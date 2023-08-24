@@ -45,7 +45,8 @@ class WiFiRequesthandler: public RequestHandler {
 
                 server.send(200, JSON_CONTENT_TYPE, response);
                 return true;
-            } else if (requestMethod == HTTP_POST) {
+            } 
+            if (requestMethod == HTTP_POST) {
                 if (body.length() == 0) {
                     server.send(400, "content/json", buildErrorJson("Body is missing"));
                     return true;

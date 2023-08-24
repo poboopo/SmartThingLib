@@ -30,13 +30,15 @@ class ConfigRequestHandler: public RequestHandler {
                 server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
                 server.send(200);
                 return true; 
-            } else if (requestMethod == HTTP_GET) {
+            } 
+            if (requestMethod == HTTP_GET) {
                 JsonObject config = STSettings.getConfig();
                 String response;
                 serializeJson(config, response);
                 server.send(200, "application/json", response);
                 return true; 
-            } else if (requestMethod == HTTP_POST) {
+            } 
+            if (requestMethod == HTTP_POST && requestUri.equals("/config/add")) {
                 if (body.length() == 0) {
                     server.send(400, "application/json", buildErrorJson("Body is missing"));
                     return true;
@@ -57,13 +59,15 @@ class ConfigRequestHandler: public RequestHandler {
                 server.send(200);
                 callHandler();
                 return true; 
-            } else if (requestMethod == HTTP_DELETE) {
-                if (requestUri.equals("/config/remove/all")) {
+            } 
+            if (requestMethod == HTTP_DELETE) {
+                if (requestUri.equals("/config/delete/all")) {
                     STSettings.dropConfig();
                     STSettings.save();
                     server.send(200);
                     return true;
-                } else if (requestUri.equals("/config/remove")){
+                } 
+                if (requestUri.equals("/config/delete")) {
                     if (!server.hasArg("name")) {
                         server.send(400, "content/json", buildErrorJson("Setting name is missing"));
                     }

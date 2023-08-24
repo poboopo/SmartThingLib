@@ -1,5 +1,3 @@
-- CURRENT
-
 - v1.0
     - v0.1
         - make smart thing static +
@@ -35,11 +33,13 @@
         - add restart handler +
         - all handlers uri rework +
         - add import export config
-        - remove white spaces in mobile version of web page
         - add to watchers treshold
 
 - backlog
+    - add tests
     - add multiple values support for trigger value
+    - add message broker support in logger
+    - add different templates support on logger?
     - fix logger message length
     - ОПИШИ АРХИТЕКТУРУ
     - wifi network scan

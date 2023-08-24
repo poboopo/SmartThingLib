@@ -31,7 +31,7 @@
 
     - v0.4
         - add ActionCallback - call action from callback (+ web) +
-        - todo SmartThing loop task routine - move to async
+        - todo SmartThing loop task routine - move to async +
         - add to watchers treshold
         - all handlers uri rework
         - add import export config
@@ -41,6 +41,7 @@
         - remove white spaces in mobile version of web page
 
 - backlog
+    - add multiple values support for trigger value
     - fix logger message length
     - ОПИШИ АРХИТЕКТУРУ
     - wifi network scan

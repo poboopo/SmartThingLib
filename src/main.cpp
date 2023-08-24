@@ -68,8 +68,6 @@ void setup() {
 }
 
 void loop() {
-    SmartThing.loopRoutine();
-
     if (!digitalRead(WIPE_BUTTON_PIN)) {
         if (controller.isAutoModeEnabled()) {
             controller.disableAutoMode();
@@ -78,8 +76,7 @@ void loop() {
         }
         LOGGER.statistics();
     }
-
-    delay(200);
+    delay(500);
 }
 
 void setupRestHandlers() {

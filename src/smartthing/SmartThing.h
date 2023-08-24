@@ -30,6 +30,7 @@
 #define MULTICAST_PORT 7778
 
 #define DEVICE_NAME_LENGTH_MAX 15
+#define SMART_THING_LOOP_TASK_DELAY 250 //ms
 
 class SmartThingClass {
     public:
@@ -37,7 +38,6 @@ class SmartThingClass {
         SmartThingClass();
 
         bool init(String type);
-        void loopRoutine();
         void setName(String name);
         const String getType();
         const String getName();
@@ -90,6 +90,7 @@ class SmartThingClass {
         Configurable::Action::ActionsList _actionsList;
         Configurable::Config::ConfigEntriesList _configEntriesList;
         Callback::CallbacksManager _callbacksManager;
+        TaskHandle_t _loopTaskHandle = NULL;
 
         // todo change to const * char?
         String _ip;
@@ -99,6 +100,8 @@ class SmartThingClass {
 
         void wipeSettings();
         String connectToWifi();
+
+        void loopRoutine();
 };
 
 extern SmartThingClass SmartThing;

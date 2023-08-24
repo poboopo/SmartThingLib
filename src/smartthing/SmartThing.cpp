@@ -76,20 +76,33 @@ bool SmartThingClass::init(String type) {
     _callbacksManager.loadFromSettings();
     LOGGER.debug(SMART_THING_TAG, "Callbacks loaded");
 
+    LOGGER.debug(SMART_THING_TAG, "Creating loop task");
+    xTaskCreate(
+        [](void* o){ static_cast<SmartThingClass*>(o)->loopRoutine(); },
+        SMART_THING_TAG,
+        20000,
+        this,
+        1,
+        &_loopTaskHandle
+    );
+    LOGGER.debug(SMART_THING_TAG, "Loop task created");
+
     LOGGER.debug(SMART_THING_TAG, "Setup finished");
     return true;
 }
 
 void SmartThingClass::loopRoutine() {
-    if (wifiConnected()) {
-        ArduinoOTA.handle();
-        // todo change rest to async
-        _rest.handle();
-        // move to async task?
-        _multicaster.broadcast(_broadcastMessage.c_str());
+    const TickType_t xDelay = SMART_THING_LOOP_TASK_DELAY / portTICK_PERIOD_MS;
+
+    for(;;) {
+        if (wifiConnected()) {
+            ArduinoOTA.handle();
+            _rest.handle();
+            _multicaster.broadcast(_broadcastMessage.c_str());
+        }
+        _callbacksManager.check();
+        vTaskDelay(xDelay);
     }
-    // move to async task
-    _callbacksManager.check();
 }
 
 String SmartThingClass::connectToWifi() {

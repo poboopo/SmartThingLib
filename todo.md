@@ -32,6 +32,7 @@
         - todo SmartThing loop task routine - move to async +
         - add restart handler +
         - all handlers uri rework +
+        - rework log message format - just use : or $ to separate data +
         - add import export config
         - add to watchers treshold
 

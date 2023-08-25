@@ -1,7 +1,7 @@
 #include "smartthing/logs/BetterLogger.h"
 
-// {ip:name}[level][tag]::message
-#define LOGGER_MESSAGE_TEMPLATE "{%s:%s}[%s][%s]::%s"
+// ip$name$level$tag$message
+#define LOGGER_MESSAGE_TEMPLATE "%s$%s$%s$%s$%s"
 #define STAT_LOG_TAG "STATISTICS"
 
 BetterLogger LOGGER;

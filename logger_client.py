@@ -44,7 +44,7 @@ try:
         name = splitted[1]
         logLevel = splitted[2]
         tag = splitted[3]
-        messageCuted = splitted[4]
+        messageCuted = splitted[4].strip()
 
         if (ip not in ipColor.keys()):
             ipColor.update({ip: f"3;9{lastColorIndex}m"})

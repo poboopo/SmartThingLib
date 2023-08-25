@@ -32,6 +32,9 @@ def colorByLevel(logLevel):
     return "30"
 
 try:
+    print(f"{START_COLOR + '1;36m'}{'':->115}")
+    print(f"{'TIMESTAMP': ^26} [{'IP': ^15} :: {'NAME': ^15}] - [{'LEVEL': ^7}] [{'TAG': ^20}] :: LOG MESSAGE")
+    print(f"{'':-<115}{END_COLOR}")
     while True:
         message = mainSocket.recv(4096).decode()
         # that will cause problems
@@ -47,12 +50,11 @@ try:
         messageCuted = splitted[4].strip()
 
         if (ip not in ipColor.keys()):
-            ipColor.update({ip: f"3;9{lastColorIndex}m"})
+            ipColor.update({ip: f"3{lastColorIndex}m"})
             lastColorIndex += 1
 
-        formatedMessage = f"{datetime.now()} {START_COLOR + ipColor[ip]}[{ip} :: {name}]{END_COLOR} - "
-        formatedMessage += f"{START_COLOR + colorByLevel(logLevel)}[{logLevel: ^7}] "
-        formatedMessage += f"[{tag: ^20}] :: {messageCuted}{END_COLOR}"
+        formatedMessage = f"{START_COLOR + ipColor[ip]}{datetime.now()} [{ip: ^15} :: {name: ^15}]{END_COLOR} - "
+        formatedMessage += f"{START_COLOR + colorByLevel(logLevel)}[{logLevel: ^7}] [{tag: ^20}] :: {messageCuted}{END_COLOR}"
         print(formatedMessage)
         logFile.write(formatedMessage + '\n')
         logFile.flush()

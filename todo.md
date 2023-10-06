@@ -1,7 +1,3 @@
-- CURRENT
-    - save state
-    - add statics rest
-
 - v1.0
     - v0.1
         - make smart thing static +
@@ -32,19 +28,22 @@
         - replace value in url in HTTP_CALLBACK +
 
     - v0.4
-        - add ActionCallback - call action from callback (+ web)
-        - todo SmartThing loop task routine - move to async
-        - add to watchers treshold
-        - all handlers uri rework
-        - add import export config
-        - add possible values to device state ?
-        - refactor handlers - make base handler with all routine(log, headers)
-        - add restart handler
-        - remove white spaces in mobile version of web page
+        - add ActionCallback - call action from callback (+ web) +
+        - todo SmartThing loop task routine - move to async +
+        - add restart handler +
+        - all handlers uri rework +
+        - rework log message format - just use : or $ to separate data +
+        - add import export config - [DENIED JUST USE CONFIG/ADD AND GET CONFIG]
+        - add to watchers threshold
 
 - backlog
+    - tuya, zigbee integration
+    - store sensors values
+    - add tests
+    - add multiple values support for trigger value
+    - add message broker support in logger
+    - add different templates support on logger?
     - fix logger message length
     - ОПИШИ АРХИТЕКТУРУ
     - wifi network scan
     - add authorization???
-    - tuya, zigbee integration

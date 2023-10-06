@@ -76,7 +76,7 @@ void RestController::setupHandler() {
         _server.send(200, "text/html", WEB_PAGE_MAIN);
     });
 
-    _server.on("/statistic", HTTP_GET, [this]() {
+    _server.on("/metrics", HTTP_GET, [this]() {
         preHandleRequest();
         DynamicJsonDocument doc(4096);
         doc["uptime"] = millis();

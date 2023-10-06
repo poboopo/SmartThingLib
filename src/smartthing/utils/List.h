@@ -9,6 +9,7 @@ template<typename T>
 class List {
     public:
         typedef std::function<void(T *)> ForEachFunction;
+        typedef std::function<void(T *, int index)> ForEachIndexFunction;
         typedef std::function<bool(T *)> FindFunction;
 
         List():_count(0), _head(nullptr){};
@@ -76,6 +77,16 @@ class List {
             while (current != nullptr) {
                 forFunc(current->value);
                 current = current->next;
+            }
+        };
+
+        void forEach(ForEachIndexFunction forFunc) {
+            Wrapper * current = _head;
+            int i = 0;
+            while (current != nullptr) {
+                forFunc(current->value, i);
+                current = current->next;
+                i++;
             }
         };
 

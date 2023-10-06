@@ -1,6 +1,8 @@
 #ifndef CALLBACK_BUILDER_H
 #define CALLBACK_BUILDER_H
 
+#include <typeinfo>
+
 #include "smartthing/watcher/callback/LambdaCallback.h"
 #include "smartthing/watcher/callback/HttpCallback.h"
 #include "smartthing/watcher/callback/ActionCallback.h"
@@ -12,7 +14,7 @@
 namespace Callback {
     class CallbackBuilder {
         public:
-            CallbackBuilder(): _readOnly(false){};
+            CallbackBuilder(): _readOnly(false), _threshold(-1){};
 
             template<typename T>
             WatcherCallback<T> * build(T triggerValue) {
@@ -20,27 +22,32 @@ namespace Callback {
                     LOGGER.error(CALLBACK_BUILDER_TAG, "Callback type is missing! Can't build allback without it.");
                     return nullptr;
                 }
-
+                WatcherCallback<T> * callback = nullptr;
                 if (_type.equals(HTTP_CALLBACK_TAG)) {
                     if (_url.isEmpty()) {
                         LOGGER.error(CALLBACK_BUILDER_TAG, "Can't build callback of type %s without url!", _type.c_str());
                         return nullptr;
                     }
                     LOGGER.debug(CALLBACK_BUILDER_TAG, "Building new http callback %s", _url.c_str());
-                    return new HttpCallback<T>(_url.c_str(), _method.c_str(), _payload.c_str(), triggerValue, _readOnly);
+                    callback = new HttpCallback<T>(_url.c_str(), _method.c_str(), _payload.c_str(), triggerValue, _readOnly);
                 } else if (_type.equals(LAMBDA_CALLBACK_TAG)) {
                     LOGGER.debug(CALLBACK_BUILDER_TAG, "Building new lambda callback");
-                    return new LambdaCallback<T>([](T * v){}, triggerValue, _readOnly);
+                    callback = new LambdaCallback<T>([](T * v){}, triggerValue, _readOnly);
                 } else if (_type.equals(ACTION_CALLBACK_TAG)) {
                     if (_action.isEmpty()) {
                         LOGGER.error(CALLBACK_BUILDER_TAG, "Can't build callback of type %s without action!", _action.c_str());
                         return nullptr;
                     }
                     LOGGER.debug(CALLBACK_BUILDER_TAG, "Building new action callback");
-                    return new ActionCallback<T>(_action.c_str(), triggerValue, _readOnly);
+                    callback = new ActionCallback<T>(_action.c_str(), triggerValue, _readOnly);
+                } else {
+                    LOGGER.error(CALLBACK_BUILDER_TAG, "Failed to build callback of type %s", _type.c_str());
+                    return nullptr;
                 }
-                LOGGER.error(CALLBACK_BUILDER_TAG, "Failed to build callback of type %s", _type.c_str());
-                return nullptr;
+
+                callback->setThresholdValue(_threshold);
+
+                return callback;
             }
 
             // CallbackBuilder * callback(LambdaCallback::CustomCallback * callback) {
@@ -89,6 +96,10 @@ namespace Callback {
                 _action = action;
                 return this;
             }
+            CallbackBuilder * threshold(int16_t value) {
+                _threshold = value;
+                return this;
+            }
             
         private:
             // LambdaCallback<int16_t>::CustomCallback * _callback;
@@ -98,6 +109,7 @@ namespace Callback {
             String _method;
             String _payload;
             String _action;
+            int16_t _threshold;
     };
 }
 

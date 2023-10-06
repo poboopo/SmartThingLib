@@ -119,6 +119,7 @@ const String WEB_PAGE_MAIN = R"=====(
                     "readonly": false,
                     "caption": "New " + type +" callback",
                     "trigger": "",
+                    "threshold": "",
                     ...additionalFields
                 }, "new")
             );
@@ -171,7 +172,7 @@ const String WEB_PAGE_MAIN = R"=====(
                             caption: key,
                             value: value != null ? String(value) : "",
                             values,
-                            disabled: callback.readonly || (key != "trigger" && !template[key])
+                            disabled: callback.readonly || ((key != "trigger" && key != "threshold") && !template[key])
                         }
                     );
                 });
@@ -207,10 +208,9 @@ const String WEB_PAGE_MAIN = R"=====(
             const template = this.callbackTemplates[callbackType] || {};
             const reqPayload = {observable: {type: observableType, name: observable}};
             const callbackInfo = {index, "type": callbackType};
-            const triggerInput = document.getElementById("callback_trigger_" + index);
-            if (triggerInput) {
-                callbackInfo["trigger"] = triggerInput.value;
-            }
+            
+            callbackInfo["trigger"] = document.getElementById("callback_trigger_" + index).value;
+            callbackInfo["threshold"] = document.getElementById("callback_threshold_" + index).value;
 
             let valid = true;
             Object.entries(template).forEach(([key, {required}]) => {
@@ -701,7 +701,7 @@ const String WEB_PAGE_MAIN = R"=====(
         function getHost() {
             const { host } = window.location;
             return host;
-            // return "192.168.1.103";
+            // return "192.168.1.104";
         }
     </script>
     <style>

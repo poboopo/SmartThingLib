@@ -13,7 +13,7 @@ bool SmartThingClass::wifiConnected() {
 }
 
 String buildBroadCastMessage(String ip, String name) {
-    return ip + ":" + name;
+    return ip + "$" + name;
 }
 
 bool SmartThingClass::init(String type) {

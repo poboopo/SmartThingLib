@@ -43,7 +43,7 @@ namespace Callback {
                 DynamicJsonDocument doc(MAX_CALLBACK_TEMAPLATE_SIZE);
                 JsonObject actionObj = doc.createNestedObject("action");
                 actionObj["required"] = true;
-                actionObj["values"] = SmartThing.getActionsInfo();                
+                actionObj["values"] = SmartThing.getActionsInfo(); 
                 return doc;
             }
         private:

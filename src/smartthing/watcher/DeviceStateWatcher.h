@@ -25,7 +25,6 @@ namespace Callback {
                 String newValue = _observable->valueGenerator();
                 if (_oldValue.isEmpty()) {
                     _oldValue = newValue;
-                    callCallbacks(&_oldValue);
                     return false;
                 }
                 
@@ -35,18 +34,17 @@ namespace Callback {
                         "Device state %s value changed %s->%s.", 
                         _observable->name, _oldValue, newValue
                     );
+                    callCallbacks(_oldValue, newValue);
 
                     _oldValue = newValue;
-                    callCallbacks(&_oldValue);
-
                     return true;
                 }
                 return false;
             };
 
-            bool callbackAccept(Callback::WatcherCallback<String> * callback, String * value) {
+            bool callbackAccept(Callback::WatcherCallback<String> * callback, String &oldValue, String &value) {
                 return callback->triggerValue().isEmpty() || 
-                    (callback->triggerValue() != nullptr && strcmp((*value).c_str(), callback->triggerValue().c_str()) == 0);
+                    (callback->triggerValue() != nullptr && strcmp(value.c_str(), callback->triggerValue().c_str()) == 0);
             }
 
             const char * getObservableInfo() {

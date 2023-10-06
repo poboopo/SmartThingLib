@@ -33,10 +33,12 @@
         - add restart handler +
         - all handlers uri rework +
         - rework log message format - just use : or $ to separate data +
-        - add import export config
-        - add to watchers treshold
+        - add import export config - [DENIED JUST USE CONFIG/ADD AND GET CONFIG]
+        - add to watchers threshold
 
 - backlog
+    - tuya, zigbee integration
+    - store sensors values
     - add tests
     - add multiple values support for trigger value
     - add message broker support in logger
@@ -45,4 +47,3 @@
     - ОПИШИ АРХИТЕКТУРУ
     - wifi network scan
     - add authorization???
-    - tuya, zigbee integration

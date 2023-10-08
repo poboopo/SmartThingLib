@@ -259,12 +259,12 @@ namespace Callback {
 
     template<typename T>
     bool CallbacksManager::updateCallback(List<Watcher<T>> * list, const char * name, JsonObject callbackObject) {
-        if (!callbackObject.containsKey("index")) {
-            LOGGER.error(CALLBACKS_MANAGER_TAG, "Index value in callback object is missing!");
+        if (!callbackObject.containsKey("id")) {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "Id value in callback object is missing!");
             return false;
         }
         
-        int index = callbackObject["index"];
+        int index = callbackObject["id"];
 
         WatcherCallback<T> * callback = getCallbackFromWatcherList(list, name, index);
         if (callback == nullptr) {

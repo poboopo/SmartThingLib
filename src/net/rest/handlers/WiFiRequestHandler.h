@@ -33,7 +33,6 @@ class WiFiRequesthandler: public RequestHandler {
             
             server.sendHeader("Access-Control-Allow-Origin", "*");
             if (requestMethod == HTTP_GET) {
-                //todo hide password smh
                 DynamicJsonDocument jsonDoc(1028);
                 jsonDoc["settings"] = STSettings.getWiFi();
                 JsonObject modes = jsonDoc.createNestedObject("modes");

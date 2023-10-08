@@ -33,11 +33,15 @@ class Watcher {
 
         DynamicJsonDocument getCallbacksJson(bool ignoreReadOnly, bool shortJson) {
             DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size());
-            _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
+            _callbacks.forEach([&](Callback::WatcherCallback<T> * current, int index) {
                 if (ignoreReadOnly && current->isReadonly()) {
                     return;
                 }
-                doc.add(current->toJson(shortJson));
+                DynamicJsonDocument cb = current->toJson(shortJson);
+                if (!shortJson) {
+                    cb["id"] = index;
+                }
+                doc.add(cb);
             });
             return doc;
         };

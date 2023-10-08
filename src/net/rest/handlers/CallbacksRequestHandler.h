@@ -14,7 +14,7 @@
 #define CALLBACK_TYPE_ARG "type"
 #define CALLBACK_NAME_ARG "name"
 #define CALLBACK_OBSERVABLE_TYPE "observableType"
-#define CALLBACK_INDEX_ARG "index"
+#define CALLBACK_ID_ARG "id"
 
 class CallbacksRequestHandler: public RequestHandler {
     public:
@@ -96,7 +96,7 @@ class CallbacksRequestHandler: public RequestHandler {
             if (requestMethod == HTTP_DELETE && requestUri.equals("/callbacks/delete")) {
                 String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
                 String name = server.arg(CALLBACK_NAME_ARG);
-                String index = server.arg(CALLBACK_INDEX_ARG);
+                String index = server.arg(CALLBACK_ID_ARG);
 
                 if (type.isEmpty() || name.isEmpty() || index.isEmpty()) {
                     server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type, name or index args are missing!"));

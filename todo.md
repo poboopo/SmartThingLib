@@ -47,3 +47,4 @@
     - ОПИШИ АРХИТЕКТУРУ
     - wifi network scan
     - add authorization???
+    - add search blink led - /blink

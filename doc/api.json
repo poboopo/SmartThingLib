@@ -1,0 +1,669 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "0.4",
+    "title": "SmartThing device API",
+    "description": "Описание API устройства семейства SmartThing"
+  },
+  "paths": {
+    "/info/system": {
+      "get": {
+        "tags": ["Device information"],
+        "description": "Get device full information",
+        "responses": {
+          "200": {
+            "description": "Device full info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/DeviceInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/info/actions": {
+      "get": {
+        "tags": ["Device information"],
+        "description": "Get device actions",
+        "responses": {
+          "200": {
+            "description": "Device actions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Pairs of action system name and caption"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/info/config": {
+      "get": {
+        "tags": ["Device information"],
+        "description": "Get device configuration fields",
+        "responses": {
+          "200": {
+            "description": "Device condifguration fields",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/wifi": {
+      "get": {
+        "tags": ["Configuration"],
+        "description": "Get wifi configuration",
+        "responses": {
+          "200": {
+            "description": "Wifi SSID and password",
+            "content": {
+              "application/json":{
+                "schema": {
+                  "$ref": "#components/schemas/WifiInfo"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Configuration"],
+        "description": "Update wifi configuration",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#components/schemas/WifiInfo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Wifi SSID and password was updated"
+          }
+        }
+      }
+    },
+    "/config": {
+      "get": {
+        "tags": ["Configuration"],
+        "description": "Get device configuration",
+        "responses": {
+          "200": {
+            "description": "Device configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/Configuration"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/add": {
+      "post": {
+        "tags": ["Configuration"],
+        "description": "Add device configuration entries",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#components/schemas/Configuration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "New device configuration entries added"
+          }
+        }
+      }
+    },
+    "/config/delete": {
+      "delete": {
+        "tags": ["Configuration"],
+        "description": "Delete configuration value",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Name of configuration entry",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Configuration value was deleted"
+          },
+          "404": {
+            "description": "Configuration entry with provided name not found"
+          }
+        }
+      }
+    },
+    "/action": {
+      "put": {
+        "tags": ["Actions"],
+        "description": "Perform device action",
+        "parameters": [
+          {
+            "name": "action",
+            "in": "query",
+            "description": "Action system name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action completed successfully"
+          },
+          "500": {
+            "description": "Failed to complete action",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#content/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sensors": {
+      "get": {
+        "tags": ["Sensors and states"],
+        "description": "Get device sensors values",
+        "responses": {
+          "200": {
+            "description": "Sensors values",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/SensorsValues"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/state": {
+      "get": {
+        "tags": ["Sensors and states"],
+        "description": "Get device states values",
+        "responses": {
+          "200": {
+            "description": "Device states values",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/DeviceStates"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/callbacks": {
+      "get": {
+        "tags": ["Callback"],
+        "description": "Get all device callbacks",
+        "responses": {
+          "200": {
+            "description": "List of callbacks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/ObservablesCallbacks"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/callbacks/by/observable": {
+      "get": {
+        "tags": ["Callback"],
+        "description": "Get callbacks for observable object (sensor or state)",
+        "parameters": [
+          {
+            "name": "observableType",
+            "in": "query",
+            "description": "Observable type",
+            "example": "sensor/state",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Observable name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of callbacks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/CallbacksList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/callbacks/template": {
+      "get": {
+        "tags": ["Callback"],
+        "description": "Get callbacks templates for creation",
+        "responses": {
+          "200": {
+            "$ref": "#components/responses/CallbackTemplates"
+          }
+        }
+      }
+    },
+    "/callbacks/create": {
+      "post": {
+        "tags": ["Callback"],
+        "description": "Create new callback",
+        "requestBody": {
+          "description": "Callback info",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#components/schemas/CallbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Callback created"
+          },
+          "500": {
+            "description": "Failed to create callback",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/callbacks/update": {
+      "put": {
+        "tags": ["Callback"],
+        "description": "Updates callback",
+        "requestBody": {
+          "description": "Callback info",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#components/schemas/CallbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Callback updated"
+          },
+          "500": {
+            "description": "Failed to update callback",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/callbacks/delete": {
+      "delete": {
+        "tags": ["Callback"],
+        "description": "Delete observable's callback",
+        "parameters": [
+          {
+            "name": "observableType",
+            "description": "Observable type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "sensor/state"
+          },
+          {
+            "name": "name",
+            "description": "Observable name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "description": "Callback id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Callback deleted"
+          },
+          "500": {
+            "description": "Failed to delete callback",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorResponse": {
+        "description": "Error response",
+        "type": "object",
+        "properties": {
+          "error": {
+            "description": "Error message",
+            "type": "string"
+          }
+        }
+      },
+      "DeviceInfo": {
+        "description": "Device info",
+        "type": "object",
+        "properties": {
+          "version": {
+            "description": "Firmware version",
+            "type": "string"
+          },
+          "name": {
+            "description": "Device name",
+            "type": "string"
+          },
+          "type": {
+            "description": "Device type",
+            "type": "string"
+          },
+          "chip_model": {
+            "description": "Device chip model",
+            "type": "string"
+          },
+          "chip_revision": {
+            "description": "Device chip revision",
+            "type": "string"
+          }
+        }
+      },
+      "WifiInfo": {
+        "description": "WiFi info object",
+        "type": "object",
+        "properties": {
+          "ssid": {
+            "description": "Wifi ssid",
+            "type": "string",
+            "maxLength": 32
+          },
+          "password": {
+            "description": "Wifi password",
+            "type": "string"
+          },
+          "mode": {
+            "description": "WiFi mode: STA or AP (1 or 2)",
+            "type": "integer"
+          }
+        }
+      },
+      "Configuration": {
+        "description": "Device configuration",
+        "type": "object",
+        "example": {
+          "entry1": "value1",
+          "entry2": 123,
+          "entry3": false
+        }
+      },
+      "SensorsValues": {
+        "description": "Sensors values response",
+        "type": "object",
+        "properties": {
+          "sensor_name": {
+            "description": "Sensor info",
+            "type": "object",
+            "properties": {
+              "value": {
+                "description": "Sensor value",
+                "type": "integer"
+              },
+              "type": {
+                "description": "Sensor type",
+                "type": "string",
+                "example": "digital/analog/custom"
+              }
+            }
+          }
+        },
+        "example": {
+          "button": {"value": 1, "type": "digital"},
+          "position":{"value":0,"type":"custom"},
+          "light":{"value":0,"type":"analog"}
+        }
+      },
+      "DeviceStates": {
+        "description": "Device states response",
+        "type": "object",
+        "properties": {
+          "device_state": {
+            "type": "string",
+            "description": "Device state value"
+          }
+        },
+        "example": {
+          "wifi":"connected",
+          "led":"on",
+          "position":"open",
+          "automode":"true"
+        }
+      },
+      "CallbacksList": {
+        "description": "Observable's object callbacks",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "description": "Callback id",
+              "type": "integer"
+            },
+            "caption": {
+              "description": "Callback caption",
+              "type": "string"
+            },
+            "trigger": {
+              "description": "Trigger value, when callback gonna ba called"
+            },
+            "threshold": {
+              "description": "Only for sensors. Threshold for callback call",
+              "type": "integer"
+            },
+            "readonly": {
+              "description": "Is callback readonly",
+              "type": "boolean"
+            },
+            "type": {
+              "description": "Callback type",
+              "type": "string",
+              "example": "lambda_callback/http_callback/action_callback"
+            }
+          }
+        }
+      },
+      "ObservablesCallbacks": {
+        "description": "List of all device callbacks",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "observable": {
+              "description": "Observable object info (sensor or device state)",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Observable's name",
+                  "type": "string"
+                },
+                "type": {
+                  "description": "Observable's type",
+                  "type": "string",
+                  "example": "sensor/state"
+                }
+              }
+            },
+            "callbacks": {
+              "$ref": "#components/schemas/CallbacksList"
+            }
+          }
+        }
+      },
+      "CallbackRequest": {
+        "description": "Create callback body",
+        "type": "object",
+        "required": ["observable", "callback"],
+        "properties": {
+          "observable": {
+            "description": "Observable info",
+            "type": "object",
+            "required": ["type", "name"],
+            "properties": {
+              "type": {
+                "description": "Observable type",
+                "type": "string",
+                "example": "sensor/state"
+              },
+              "name": {
+                "description": "Observable name",
+                "type": "string"
+              }
+            }
+          },
+          "callback": {
+            "description": "Callback info. Only base fields, take others from template.",
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "id": {
+                "description": "Callback id. Just index in list.",
+                "type": "integer"
+              },
+              "type": {
+                "description": "Callback type. Get it from template.",
+                "type": "string",
+                "example": "http_callback/action_callback"
+              },
+              "trigger": {
+                "description": "Callback trigger value",
+                "type": "string"
+              },
+              "threshold": {
+                "description": "Only for sensors",
+                "type":"integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "CallbackTemplates": {
+        "description": "Callback templates response",
+        "content": {
+          "application/json": {
+            "example": {
+              "http_callback": {
+                "url": {
+                  "required": true
+                },
+                "method": {
+                  "required": false,
+                  "values": [
+                    "GET",
+                    "POST",
+                    "DELETE",
+                    "PUT"
+                  ]
+                },
+                "payload": {
+                  "required": false
+                }
+              },
+              "action_callback": {
+                "action": {
+                  "required": true,
+                  "values": {
+                    "bright": "Set louver bright position",
+                    "middle": "Set louver middle position",
+                    "close": "Set louver close position",
+                    "open": "Set louver open position",
+                    "disable_auto": "Disable automode",
+                    "enable_auto": "Enable automode"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+  
+  

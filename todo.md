@@ -34,7 +34,6 @@
         - all handlers uri rework +
         - rework log message format - just use : or $ to separate data +
         - add import export config - [DENIED JUST USE CONFIG/ADD AND GET CONFIG]
-        - add to watchers threshold
 
 - backlog
     - tuya, zigbee integration
@@ -48,3 +47,6 @@
     - wifi network scan
     - add authorization???
     - add search blink led - /blink
+
+- small fixes
+    - append callbacks to the end of the list

@@ -258,3 +258,1107 @@
 [32m2023-10-07 00:02:49.155284 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 200[0m
 [32m2023-10-07 00:05:56.236964 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 200[0m
 [33m2023-10-07 00:08:17.189409 [  192.168.1.2   ::  peepeepoopoo  ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 600[0m
+[32m2023-10-09 18:45:04.912681 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 1->0.[0m
+[32m2023-10-09 18:45:04.920333 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Trigger value present: 1[0m
+[32m2023-10-09 18:45:04.929376 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:lambda_callback[0m
+[32m2023-10-09 18:45:05.191953 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 0->1.[0m
+[32m2023-10-09 18:45:05.195604 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Trigger value present: 1[0m
+[32m2023-10-09 18:45:05.209296 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [        main        ] :: Digital sensor value changed to 1[0m
+[32m2023-10-09 18:45:05.212727 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[32m2023-10-09 18:45:05.223669 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-09 18:45:05.225387 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value false[0m
+[32m2023-10-09 18:45:05.236488 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[32m2023-10-09 18:45:05.248602 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}}[0m
+[32m2023-10-09 18:45:05.271961 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [104]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}[0m
+[32m2023-10-09 18:45:05.282513 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-09 18:45:06.554077 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 1->0.[0m
+[32m2023-10-09 18:45:06.565225 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Trigger value present: 1[0m
+[32m2023-10-09 18:45:06.566315 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:lambda_callback[0m
+[32m2023-10-09 18:45:07.076758 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 0->1.[0m
+[32m2023-10-09 18:45:07.077921 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Trigger value present: 1[0m
+[32m2023-10-09 18:45:07.089279 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [        main        ] :: Digital sensor value changed to 1[0m
+[32m2023-10-09 18:45:07.090625 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[32m2023-10-09 18:45:07.102688 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-09 18:45:07.106364 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[32m2023-10-09 18:45:07.119280 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[32m2023-10-09 18:45:07.130048 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500}}[0m
+[32m2023-10-09 18:45:07.149457 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [103]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500}[0m
+[32m2023-10-09 18:45:07.244797 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:45:31.590906 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [POST] /callbacks/create - {"observable":{"type":"state","name":"position"},"callback":{"index":"new","type":"http_callback","trigger":"closed","threshold":"","url":"http://192.168.1.104/action?action=enable_automode","method":"PUT","payload":""}}[0m
+[33m2023-10-09 18:45:31.612440 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating callback from json: {"observable":{"type":"state","name":"position"},"callback":{"index":"new","type":"http_callback","trigger":"closed","threshold":"","url":"http://192.168.1.104/action?action=enable_automode","method":"PUT","payload":""}}[0m
+[33m2023-10-09 18:45:31.624474 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [state]:position[0m
+[33m2023-10-09 18:45:31.636589 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://192.168.1.104/action?action=enable_automode[0m
+[33m2023-10-09 18:45:31.638127 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [position].[0m
+[33m2023-10-09 18:45:31.856651 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:45:32.136275 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[33m2023-10-09 18:45:42.315824 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[33m2023-10-09 18:46:56.788949 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [POST] /callbacks/create - {"observable":{"type":"state","name":"position"},"callback":{"index":"new","type":"http_callback","trigger":"open","threshold":"","url":"http://192.168.1.104/action?action=disable_automode","method":"PUT","payload":""}}[0m
+[33m2023-10-09 18:46:56.811264 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating callback from json: {"observable":{"type":"state","name":"position"},"callback":{"index":"new","type":"http_callback","trigger":"open","threshold":"","url":"http://192.168.1.104/action?action=disable_automode","method":"PUT","payload":""}}[0m
+[33m2023-10-09 18:46:56.822766 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [state]:position[0m
+[33m2023-10-09 18:46:56.835035 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://192.168.1.104/action?action=disable_automode[0m
+[33m2023-10-09 18:46:56.836734 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for device state [position] already exists![0m
+[33m2023-10-09 18:46:56.847904 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for device sate [position][0m
+[33m2023-10-09 18:46:57.168087 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:46:57.447354 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[33m2023-10-09 18:49:25.802911 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - open[0m
+[33m2023-10-09 18:49:25.804317 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[33m2023-10-09 18:49:26.164847 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed closed->middle.[0m
+[33m2023-10-09 18:49:26.182977 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[33m2023-10-09 18:49:26.183514 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[33m2023-10-09 18:49:26.193361 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[33m2023-10-09 18:49:26.194286 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value false[0m
+[33m2023-10-09 18:49:26.307354 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wifi":{"ssid":"PUK","password":"donttouch"},"state":"{\"automode\":true,\"position\":2620,\"light\":0}","config":{"light_close":1000,"light_open":2000,"light_bright":4096,"delay":5000,"accuracy":200,"name":"louver_1"},"dn":"main_louver","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"light_bright":4096,"light_open":2000,"light_close":1000,"accuracy":200,"delay":5000},"st":{"automode":"false"},"cb":[{"observable":{"name":"position","type":"state"},"callbacks":[{"url":"http://192.168.1.104/action?action=disable_automode","method":"PUT","payload":"","trigger":"open","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_automode","method":"PUT","payload":"","trigger":"closed","threshold":0,"readonly":false,"type":"http_callback"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://192.168.1.103/action?action=disable_auto","method":"PUT","payload":"","trigger":"false","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"true","threshold":0,"readonly":false,"type":"http_callback"}]}]}[0m
+[33m2023-10-09 18:49:26.418133 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [1170]): "wifi":{"ssid":"PUK","password":"donttouch"},"state":"{\"automode\":true,\"position\":2620,\"light\":0}","config":{"light_close":1000,"light_open":2000,"light_bright":4096,"delay":5000,"accuracy":200,"name":"louver_1"},"dn":"main_louver","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"light_bright":4096,"light_open":2000,"light_close":1000,"accuracy":200,"delay":5000},"st":{"automode":"false"},"cb":[{"observable":{"name":"position","type":"state"},"callbacks":[{"url":"http://192.168.1.104/action?action=disable_automode","method":"PUT","payload":"","trigger":"open","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_automode","method":"PUT","payload":"","trigger":"closed","threshold":0,"readonly":false,"type":"http_callback"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://192.168.1.103/action?action=disable_auto","method":"PUT","payload":"","trigger":"false","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"true","threshold":0,"readonly":false,"type":"http_callback"}]}][0m
+[33m2023-10-09 18:49:26.521016 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:49:26.523061 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [2]:http_callback[0m
+[33m2023-10-09 18:49:26.534697 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.103/action?action=disable_auto ::[0m
+[33m2023-10-09 18:49:27.288581 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed middle->open.[0m
+[33m2023-10-09 18:49:27.302433 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[33m2023-10-09 18:49:27.312762 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=disable_automode ::[0m
+[32m2023-10-09 18:49:27.938033 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_automode[0m
+[32m2023-10-09 18:49:27.949824 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [action_handlers_list] :: Can't find action with name disable_automode[0m
+[33m2023-10-09 18:49:28.068946 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=disable_automode finished with code 500[0m
+[33m2023-10-09 18:49:34.932606 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[33m2023-10-09 18:49:34.934471 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[33m2023-10-09 18:49:34.961237 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[33m2023-10-09 18:49:34.975189 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[33m2023-10-09 18:49:35.097943 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wifi":{"ssid":"PUK","password":"donttouch"},"state":"{\"automode\":true,\"position\":2620,\"light\":0}","config":{"light_close":1000,"light_open":2000,"light_bright":4096,"delay":5000,"accuracy":200,"name":"louver_1"},"dn":"main_louver","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"light_bright":4096,"light_open":2000,"light_close":1000,"accuracy":200,"delay":5000},"st":{"automode":"true"},"cb":[{"observable":{"name":"position","type":"state"},"callbacks":[{"url":"http://192.168.1.104/action?action=disable_automode","method":"PUT","payload":"","trigger":"open","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_automode","method":"PUT","payload":"","trigger":"closed","threshold":0,"readonly":false,"type":"http_callback"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://192.168.1.103/action?action=disable_auto","method":"PUT","payload":"","trigger":"false","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"true","threshold":0,"readonly":false,"type":"http_callback"}]}]}[0m
+[33m2023-10-09 18:49:35.259692 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [1169]): "wifi":{"ssid":"PUK","password":"donttouch"},"state":"{\"automode\":true,\"position\":2620,\"light\":0}","config":{"light_close":1000,"light_open":2000,"light_bright":4096,"delay":5000,"accuracy":200,"name":"louver_1"},"dn":"main_louver","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"light_bright":4096,"light_open":2000,"light_close":1000,"accuracy":200,"delay":5000},"st":{"automode":"true"},"cb":[{"observable":{"name":"position","type":"state"},"callbacks":[{"url":"http://192.168.1.104/action?action=disable_automode","method":"PUT","payload":"","trigger":"open","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_automode","method":"PUT","payload":"","trigger":"closed","threshold":0,"readonly":false,"type":"http_callback"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://192.168.1.103/action?action=disable_auto","method":"PUT","payload":"","trigger":"false","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"true","threshold":0,"readonly":false,"type":"http_callback"}]}][0m
+[33m2023-10-09 18:49:35.418458 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:49:35.419122 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[33m2023-10-09 18:49:35.420123 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=enable_auto ::[0m
+[33m2023-10-09 18:49:35.664762 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed open->closed.[0m
+[33m2023-10-09 18:49:35.676859 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[33m2023-10-09 18:49:35.689113 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=enable_automode ::[0m
+[32m2023-10-09 18:49:35.834161 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-09 18:49:35.834836 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[33m2023-10-09 18:49:35.973272 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=enable_auto finished with code 200[0m
+[32m2023-10-09 18:49:36.100180 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_automode[0m
+[32m2023-10-09 18:49:36.101493 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [action_handlers_list] :: Can't find action with name enable_automode[0m
+[33m2023-10-09 18:49:36.236421 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=enable_automode finished with code 500[0m
+[32m2023-10-09 18:49:47.792097 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [     web_server     ] :: [GET] / -[0m
+[32m2023-10-09 18:49:48.134251 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-09 18:49:48.413016 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[32m2023-10-09 18:49:48.688056 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[32m2023-10-09 18:49:48.967455 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-09 18:49:49.241045 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[32m2023-10-09 18:49:49.516815 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[33m2023-10-09 18:49:57.130150 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.103/action?action=disable_auto finished with code -1[0m
+[33m2023-10-09 18:50:02.364445 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {"observable":{"type":"state","name":"position"},"callback":{"index":0,"type":"http_callback","trigger":"open","threshold":"0","url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":""}}[0m
+[33m2023-10-09 18:50:02.377400 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's url was updated to http://192.168.1.104/action?action=disable_auto[0m
+[33m2023-10-09 18:50:02.378689 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's method was updated to PUT[0m
+[33m2023-10-09 18:50:02.390075 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's payload was updated to[0m
+[33m2023-10-09 18:50:02.391780 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Callback № 0 for observable [position] was updated![0m
+[33m2023-10-09 18:50:02.600637 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:50:08.990150 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {"observable":{"type":"state","name":"position"},"callback":{"index":1,"type":"http_callback","trigger":"closed","threshold":"0","url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":""}}[0m
+[33m2023-10-09 18:50:08.991822 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's url was updated to http://192.168.1.104/action?action=enable_auto[0m
+[33m2023-10-09 18:50:09.003270 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's method was updated to PUT[0m
+[33m2023-10-09 18:50:09.014613 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's payload was updated to[0m
+[33m2023-10-09 18:50:09.015854 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Callback № 1 for observable [position] was updated![0m
+[33m2023-10-09 18:50:09.334696 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:50:19.508363 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - open[0m
+[33m2023-10-09 18:50:19.509862 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[33m2023-10-09 18:50:19.888953 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed closed->middle.[0m
+[33m2023-10-09 18:50:19.900685 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[33m2023-10-09 18:50:19.901884 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[33m2023-10-09 18:50:19.913767 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[33m2023-10-09 18:50:19.915084 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value false[0m
+[33m2023-10-09 18:50:20.034481 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wifi":{"ssid":"PUK","password":"donttouch"},"state":"{\"automode\":true,\"position\":2620,\"light\":0}","config":{"light_close":1000,"light_open":2000,"light_bright":4096,"delay":5000,"accuracy":200,"name":"louver_1"},"dn":"main_louver","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"light_bright":4096,"light_open":2000,"light_close":1000,"accuracy":200,"delay":5000},"st":{"automode":"false"},"cb":[{"observable":{"name":"position","type":"state"},"callbacks":[{"url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":"","trigger":"open","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"closed","threshold":0,"readonly":false,"type":"http_callback"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://192.168.1.103/action?action=disable_auto","method":"PUT","payload":"","trigger":"false","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"true","threshold":0,"readonly":false,"type":"http_callback"}]}]}[0m
+[33m2023-10-09 18:50:20.148680 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [1162]): "wifi":{"ssid":"PUK","password":"donttouch"},"state":"{\"automode\":true,\"position\":2620,\"light\":0}","config":{"light_close":1000,"light_open":2000,"light_bright":4096,"delay":5000,"accuracy":200,"name":"louver_1"},"dn":"main_louver","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"light_bright":4096,"light_open":2000,"light_close":1000,"accuracy":200,"delay":5000},"st":{"automode":"false"},"cb":[{"observable":{"name":"position","type":"state"},"callbacks":[{"url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":"","trigger":"open","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"closed","threshold":0,"readonly":false,"type":"http_callback"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://192.168.1.103/action?action=disable_auto","method":"PUT","payload":"","trigger":"false","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"true","threshold":0,"readonly":false,"type":"http_callback"}]}][0m
+[33m2023-10-09 18:50:20.270489 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:50:20.270634 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [2]:http_callback[0m
+[33m2023-10-09 18:50:20.270794 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.103/action?action=disable_auto ::[0m
+[33m2023-10-09 18:50:21.021623 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed middle->open.[0m
+[33m2023-10-09 18:50:21.034321 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=disable_auto ::[0m
+[33m2023-10-09 18:50:21.045780 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[33m2023-10-09 18:50:23.318838 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=disable_auto finished with code -11[0m
+[33m2023-10-09 18:50:25.113292 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - close[0m
+[33m2023-10-09 18:50:25.114905 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[33m2023-10-09 18:50:25.498432 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed open->closed.[0m
+[33m2023-10-09 18:50:25.509982 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[33m2023-10-09 18:50:25.522742 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=enable_auto ::[0m
+[33m2023-10-09 18:50:27.830485 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=enable_auto finished with code -11[0m
+[33m2023-10-09 18:50:46.612775 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {"observable":{"type":"state","name":"position"},"callback":{"index":0,"type":"http_callback","trigger":"close","threshold":"0","url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":""}}[0m
+[33m2023-10-09 18:50:46.615702 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's url was updated to http://192.168.1.104/action?action=disable_auto[0m
+[33m2023-10-09 18:50:46.626650 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's method was updated to PUT[0m
+[33m2023-10-09 18:50:46.638124 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's payload was updated to[0m
+[33m2023-10-09 18:50:46.639398 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Callback № 0 for observable [position] was updated![0m
+[33m2023-10-09 18:50:46.991259 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:50:50.178753 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.103/action?action=disable_auto finished with code -1[0m
+[33m2023-10-09 18:50:59.701423 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {"observable":{"type":"state","name":"position"},"callback":{"index":0,"type":"http_callback","trigger":"opened","threshold":"0","url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":""}}[0m
+[33m2023-10-09 18:50:59.703841 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's url was updated to http://192.168.1.104/action?action=disable_auto[0m
+[33m2023-10-09 18:50:59.715240 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's method was updated to PUT[0m
+[33m2023-10-09 18:50:59.726733 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's payload was updated to[0m
+[33m2023-10-09 18:50:59.728022 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Callback № 0 for observable [position] was updated![0m
+[33m2023-10-09 18:50:59.968039 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:51:02.528708 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - open[0m
+[33m2023-10-09 18:51:02.530161 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[33m2023-10-09 18:51:02.907596 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed closed->middle.[0m
+[33m2023-10-09 18:51:02.919372 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[33m2023-10-09 18:51:02.920641 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[33m2023-10-09 18:51:03.685288 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed middle->open.[0m
+[33m2023-10-09 18:51:03.696558 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[33m2023-10-09 18:51:03.697667 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[33m2023-10-09 18:51:03.955918 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[33m2023-10-09 18:51:05.252504 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[33m2023-10-09 18:51:07.304211 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - open[0m
+[33m2023-10-09 18:51:07.305912 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[33m2023-10-09 18:51:09.608030 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[33m2023-10-09 18:51:12.171298 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - bright[0m
+[33m2023-10-09 18:51:12.172917 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[33m2023-10-09 18:51:13.598994 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[33m2023-10-09 18:51:15.391823 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[33m2023-10-09 18:51:18.706804 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - close[0m
+[33m2023-10-09 18:51:18.708331 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[33m2023-10-09 18:51:19.236223 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed open->closed.[0m
+[33m2023-10-09 18:51:19.247841 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[33m2023-10-09 18:51:19.260285 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=enable_auto ::[0m
+[33m2023-10-09 18:51:21.032629 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[33m2023-10-09 18:51:28.945103 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {"observable":{"type":"state","name":"position"},"callback":{"index":0,"type":"http_callback","trigger":"opene","threshold":"0","url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":""}}[0m
+[33m2023-10-09 18:51:28.958828 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's url was updated to http://192.168.1.104/action?action=disable_auto[0m
+[33m2023-10-09 18:51:28.960048 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's method was updated to PUT[0m
+[33m2023-10-09 18:51:28.972186 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's payload was updated to[0m
+[33m2023-10-09 18:51:28.972945 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Callback № 0 for observable [position] was updated![0m
+[33m2023-10-09 18:51:29.282337 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:51:32.367197 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {"observable":{"type":"state","name":"position"},"callback":{"index":0,"type":"http_callback","trigger":"open","threshold":"0","url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":""}}[0m
+[33m2023-10-09 18:51:32.369580 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's url was updated to http://192.168.1.104/action?action=disable_auto[0m
+[33m2023-10-09 18:51:32.381360 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's method was updated to PUT[0m
+[33m2023-10-09 18:51:32.393059 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's payload was updated to[0m
+[33m2023-10-09 18:51:32.395682 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Callback № 0 for observable [position] was updated![0m
+[33m2023-10-09 18:51:32.772863 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:51:33.265314 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {"observable":{"type":"state","name":"position"},"callback":{"index":0,"type":"http_callback","trigger":"open","threshold":"0","url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":""}}[0m
+[33m2023-10-09 18:51:33.278734 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's url was updated to http://192.168.1.104/action?action=disable_auto[0m
+[33m2023-10-09 18:51:33.282106 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's method was updated to PUT[0m
+[33m2023-10-09 18:51:33.291035 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [   http_callback    ] :: Callback's payload was updated to[0m
+[33m2023-10-09 18:51:33.292288 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Callback № 0 for observable [position] was updated![0m
+[33m2023-10-09 18:51:33.619981 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:51:37.765961 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=enable_auto finished with code -1[0m
+[33m2023-10-09 18:52:10.212505 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[33m2023-10-09 18:52:16.329663 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - open[0m
+[33m2023-10-09 18:52:16.330803 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[33m2023-10-09 18:52:16.710278 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed closed->middle.[0m
+[33m2023-10-09 18:52:16.721969 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[33m2023-10-09 18:52:16.723226 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[33m2023-10-09 18:52:17.496322 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed middle->open.[0m
+[33m2023-10-09 18:52:17.513908 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[33m2023-10-09 18:52:17.514329 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=disable_auto ::[0m
+[33m2023-10-09 18:52:34.528843 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[33m2023-10-09 18:52:34.529494 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[33m2023-10-09 18:52:34.554865 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[33m2023-10-09 18:52:34.569097 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[33m2023-10-09 18:52:34.678606 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wifi":{"ssid":"PUK","password":"donttouch"},"state":"{\"automode\":true,\"position\":2620,\"light\":0}","config":{"light_close":1000,"light_open":2000,"light_bright":4096,"delay":5000,"accuracy":200,"name":"louver_1"},"dn":"main_louver","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"light_bright":4096,"light_open":2000,"light_close":1000,"accuracy":200,"delay":5000},"st":{"automode":"true"},"cb":[{"observable":{"name":"position","type":"state"},"callbacks":[{"url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":"","trigger":"open","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"closed","threshold":0,"readonly":false,"type":"http_callback"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://192.168.1.103/action?action=disable_auto","method":"PUT","payload":"","trigger":"false","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT"}]}]}[0m
+[33m2023-10-09 18:52:34.850097 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [1077]): "wifi":{"ssid":"PUK","password":"donttouch"},"state":"{\"automode\":true,\"position\":2620,\"light\":0}","config":{"light_close":1000,"light_open":2000,"light_bright":4096,"delay":5000,"accuracy":200,"name":"louver_1"},"dn":"main_louver","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"light_bright":4096,"light_open":2000,"light_close":1000,"accuracy":200,"delay":5000},"st":{"automode":"true"},"cb":[{"observable":{"name":"position","type":"state"},"callbacks":[{"url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":"","trigger":"open","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"closed","threshold":0,"readonly":false,"type":"http_callback"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://192.168.1.103/action?action=disable_auto","method":"PUT","payload":"","trigger":"false","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT"}]}][0m
+[33m2023-10-09 18:52:34.908025 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:52:34.908682 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[33m2023-10-09 18:52:34.921900 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=enable_auto ::[0m
+[33m2023-10-09 18:52:35.165915 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed open->closed.[0m
+[33m2023-10-09 18:52:35.177417 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[33m2023-10-09 18:52:35.189348 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=enable_auto ::[0m
+[33m2023-10-09 18:52:35.783185 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=disable_auto finished with code -1[0m
+[32m2023-10-09 18:52:44.110467 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.104[0m
+[32m2023-10-09 18:52:44.138869 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-09 18:52:44.142558 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-09 18:52:44.145723 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-09 18:52:44.156128 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-09 18:52:44.162239 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-09 18:52:44.168875 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: There is not callbacks in settings[0m
+[32m2023-10-09 18:52:44.170063 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-09 18:52:44.181306 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-09 18:52:44.182616 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-09 18:52:44.185101 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-09 18:52:44.187350 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Controller created[0m
+[32m2023-10-09 18:52:44.199234 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-09 18:52:44.210645 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-09 18:52:44.223545 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - open:Set louver open position[0m
+[32m2023-10-09 18:52:44.249572 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - close:Set louver close position[0m
+[32m2023-10-09 18:52:44.250159 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - middle:Set louver middle position[0m
+[32m2023-10-09 18:52:44.251504 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - bright:Set louver bright position[0m
+[32m2023-10-09 18:52:44.257959 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - delay:Automode update delay[0m
+[32m2023-10-09 18:52:44.269671 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - accuracy:Motor accuracy[0m
+[32m2023-10-09 18:52:44.280841 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_close:Light close value[0m
+[32m2023-10-09 18:52:44.281923 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_open:Light open value[0m
+[32m2023-10-09 18:52:44.294186 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_bright:Light bright value[0m
+[32m2023-10-09 18:52:44.306484 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-09 18:52:44.307081 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-09 18:52:44.319106 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-09 18:52:44.372249 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[32m2023-10-09 18:52:44.373177 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-09 18:52:47.523707 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-09 18:52:47.529152 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[33m2023-10-09 18:52:47.661249 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=enable_auto finished with code 200[0m
+[32m2023-10-09 18:52:47.803503 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-09 18:52:47.804316 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[33m2023-10-09 18:52:47.922227 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=enable_auto finished with code 200[0m
+[33m2023-10-09 18:53:33.600231 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[33m2023-10-09 18:54:17.820987 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - open[0m
+[33m2023-10-09 18:54:17.822406 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[33m2023-10-09 18:54:18.199921 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed closed->middle.[0m
+[33m2023-10-09 18:54:18.211309 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[33m2023-10-09 18:54:18.212528 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[33m2023-10-09 18:54:18.226275 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[33m2023-10-09 18:54:18.228213 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value false[0m
+[33m2023-10-09 18:54:18.340073 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wifi":{"ssid":"PUK","password":"donttouch"},"state":"{\"automode\":true,\"position\":2620,\"light\":0}","config":{"light_close":1000,"light_open":2000,"light_bright":4096,"delay":5000,"accuracy":200,"name":"louver_1"},"dn":"main_louver","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"light_bright":4096,"light_open":2000,"light_close":1000,"accuracy":200,"delay":5000},"st":{"automode":"false"},"cb":[{"observable":{"name":"position","type":"state"},"callbacks":[{"url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":"","trigger":"open","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"closed","threshold":0,"readonly":false,"type":"http_callback"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://192.168.1.103/action?action=disable_auto","method":"PUT","payload":"","trigger":"false","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT"}]}]}[0m
+[33m2023-10-09 18:54:18.439206 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [1078]): "wifi":{"ssid":"PUK","password":"donttouch"},"state":"{\"automode\":true,\"position\":2620,\"light\":0}","config":{"light_close":1000,"light_open":2000,"light_bright":4096,"delay":5000,"accuracy":200,"name":"louver_1"},"dn":"main_louver","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"light_bright":4096,"light_open":2000,"light_close":1000,"accuracy":200,"delay":5000},"st":{"automode":"false"},"cb":[{"observable":{"name":"position","type":"state"},"callbacks":[{"url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":"","trigger":"open","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"closed","threshold":0,"readonly":false,"type":"http_callback"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://192.168.1.103/action?action=disable_auto","method":"PUT","payload":"","trigger":"false","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT"}]}][0m
+[33m2023-10-09 18:54:18.536338 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:54:18.537351 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [2]:http_callback[0m
+[33m2023-10-09 18:54:18.548945 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.103/action?action=disable_auto ::[0m
+[33m2023-10-09 18:54:19.303161 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed middle->open.[0m
+[33m2023-10-09 18:54:19.315278 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[33m2023-10-09 18:54:19.327085 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=disable_auto ::[0m
+[32m2023-10-09 18:54:20.005337 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[32m2023-10-09 18:54:20.006839 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[32m2023-10-09 18:54:20.016519 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-09 18:54:20.028163 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value false[0m
+[32m2023-10-09 18:54:20.029492 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[32m2023-10-09 18:54:20.051842 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}}[0m
+[32m2023-10-09 18:54:20.073723 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [104]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}[0m
+[33m2023-10-09 18:54:20.117274 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=disable_auto finished with code 200[0m
+[32m2023-10-09 18:54:20.187270 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:54:23.640139 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[33m2023-10-09 18:54:26.205616 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[33m2023-10-09 18:54:26.207336 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[33m2023-10-09 18:54:26.235651 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[33m2023-10-09 18:54:26.238072 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[33m2023-10-09 18:54:26.346568 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wifi":{"ssid":"PUK","password":"donttouch"},"state":"{\"automode\":true,\"position\":2620,\"light\":0}","config":{"light_close":1000,"light_open":2000,"light_bright":4096,"delay":5000,"accuracy":200,"name":"louver_1"},"dn":"main_louver","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"light_bright":4096,"light_open":2000,"light_close":1000,"accuracy":200,"delay":5000},"st":{"automode":"true"},"cb":[{"observable":{"name":"position","type":"state"},"callbacks":[{"url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":"","trigger":"open","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"closed","threshold":0,"readonly":false,"type":"http_callback"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://192.168.1.103/action?action=disable_auto","method":"PUT","payload":"","trigger":"false","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT"}]}]}[0m
+[33m2023-10-09 18:54:26.504616 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [1077]): "wifi":{"ssid":"PUK","password":"donttouch"},"state":"{\"automode\":true,\"position\":2620,\"light\":0}","config":{"light_close":1000,"light_open":2000,"light_bright":4096,"delay":5000,"accuracy":200,"name":"louver_1"},"dn":"main_louver","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"light_bright":4096,"light_open":2000,"light_close":1000,"accuracy":200,"delay":5000},"st":{"automode":"true"},"cb":[{"observable":{"name":"position","type":"state"},"callbacks":[{"url":"http://192.168.1.104/action?action=disable_auto","method":"PUT","payload":"","trigger":"open","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT","payload":"","trigger":"closed","threshold":0,"readonly":false,"type":"http_callback"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://192.168.1.103/action?action=disable_auto","method":"PUT","payload":"","trigger":"false","threshold":0,"readonly":false,"type":"http_callback"},{"url":"http://192.168.1.104/action?action=enable_auto","method":"PUT"}]}][0m
+[33m2023-10-09 18:54:26.665592 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:54:26.667144 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[33m2023-10-09 18:54:26.680652 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=enable_auto ::[0m
+[33m2023-10-09 18:54:26.928022 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed open->closed.[0m
+[33m2023-10-09 18:54:26.937622 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[33m2023-10-09 18:54:26.950715 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=enable_auto ::[0m
+[32m2023-10-09 18:54:27.296731 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-09 18:54:27.298957 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[32m2023-10-09 18:54:27.320488 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-09 18:54:27.330417 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[32m2023-10-09 18:54:27.333707 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[32m2023-10-09 18:54:27.349897 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500}}[0m
+[32m2023-10-09 18:54:27.399288 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [103]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500}[0m
+[32m2023-10-09 18:54:27.421437 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[33m2023-10-09 18:54:27.482839 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=enable_auto finished with code 200[0m
+[32m2023-10-09 18:54:27.684950 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-09 18:54:27.689124 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[33m2023-10-09 18:54:27.752847 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=enable_auto finished with code 200[0m
+[33m2023-10-09 18:54:49.366377 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.103/action?action=disable_auto finished with code -1[0m
+[32m2023-10-09 18:57:22.886139 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 200[0m
+[34m2023-10-09 19:08:23.618701 [  192.168.1.2   ::  peepeepoopoo  ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 200[0m
+[32m2023-10-09 19:19:58.253321 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 200[0m
+[34m2023-10-09 19:21:27.216299 [  192.168.1.2   ::  peepeepoopoo  ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 200[0m
+[32m2023-10-09 19:21:28.258550 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[34m2023-10-09 19:21:28.350459 [  192.168.1.2   ::  peepeepoopoo  ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[33m2023-10-09 19:21:28.436996 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[34m2023-10-09 19:21:48.858316 [  192.168.1.2   ::  peepeepoopoo  ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[34m2023-10-09 19:21:52.765321 [  192.168.1.2   ::  peepeepoopoo  ][0m - [34m[ INFO  ] [     web_server     ] :: [GET] / -[0m
+[34m2023-10-09 19:21:53.162911 [  192.168.1.2   ::  peepeepoopoo  ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[34m2023-10-09 19:21:53.471684 [  192.168.1.2   ::  peepeepoopoo  ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[34m2023-10-09 19:21:53.764175 [  192.168.1.2   ::  peepeepoopoo  ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[34m2023-10-09 19:21:54.065120 [  192.168.1.2   ::  peepeepoopoo  ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[34m2023-10-09 19:21:54.342803 [  192.168.1.2   ::  peepeepoopoo  ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[34m2023-10-09 19:21:54.620789 [  192.168.1.2   ::  peepeepoopoo  ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[34m2023-10-09 19:21:54.914264 [  192.168.1.2   ::  peepeepoopoo  ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[34m2023-10-09 19:21:56.251742 [  192.168.1.2   ::  peepeepoopoo  ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[34m2023-10-09 19:21:58.602366 [  192.168.1.2   ::  peepeepoopoo  ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [PUT] /info - {"name":"biba"}[0m
+[34m2023-10-09 19:21:58.903086 [  192.168.1.2   ::      biba      ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[34m2023-10-09 19:21:58.905004 [  192.168.1.2   ::      biba      ][0m - [34m[ INFO  ] [    SMART_THING     ] :: New device name biba[0m
+[33m2023-10-09 19:22:01.227649 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[34m2023-10-09 19:22:01.250518 [  192.168.1.2   ::      biba      ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-09 19:22:01.256912 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[33m2023-10-09 19:22:04.548452 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-09 19:22:04.624540 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[34m2023-10-09 19:22:04.637363 [  192.168.1.2   ::      biba      ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[34m2023-10-09 19:22:05.702374 [  192.168.1.2   ::      biba      ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[34m2023-10-09 19:22:06.013269 [  192.168.1.2   ::      biba      ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[34m2023-10-09 19:22:06.323844 [  192.168.1.2   ::      biba      ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[34m2023-10-09 19:22:06.643330 [  192.168.1.2   ::      biba      ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[34m2023-10-09 19:22:06.942906 [  192.168.1.2   ::      biba      ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[34m2023-10-09 19:22:07.249539 [  192.168.1.2   ::      biba      ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[34m2023-10-09 19:22:07.554827 [  192.168.1.2   ::      biba      ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[34m2023-10-09 19:22:08.612342 [  192.168.1.2   ::      biba      ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[34m2023-10-09 19:22:09.401585 [  192.168.1.2   ::      biba      ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [PUT] /info - {"name":"boba"}[0m
+[34m2023-10-09 19:22:09.577570 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[34m2023-10-09 19:22:09.580568 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [    SMART_THING     ] :: New device name boba[0m
+[32m2023-10-09 19:22:11.579023 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[33m2023-10-09 19:22:11.711266 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[34m2023-10-09 19:22:11.711831 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-09 19:28:17.614660 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 200[0m
+[34m2023-10-09 19:39:19.950231 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.2[0m
+[34m2023-10-09 19:39:19.970444 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[34m2023-10-09 19:39:19.973147 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[34m2023-10-09 19:39:19.978487 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[34m2023-10-09 19:39:19.979498 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[34m2023-10-09 19:39:19.993366 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[34m2023-10-09 19:39:20.000195 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [state]:automode[0m
+[34m2023-10-09 19:39:20.002370 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test_url[0m
+[34m2023-10-09 19:39:20.014993 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[34m2023-10-09 19:39:20.015500 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[34m2023-10-09 19:39:20.017423 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[34m2023-10-09 19:39:20.028813 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[34m2023-10-09 19:39:20.029351 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[34m2023-10-09 19:39:20.032498 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [        main        ] :: Controller created[0m
+[34m2023-10-09 19:39:20.044191 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[34m2023-10-09 19:39:20.055144 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[34m2023-10-09 19:39:20.056108 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - open:Set louver open position[0m
+[34m2023-10-09 19:39:20.070835 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - close:Set louver close position[0m
+[34m2023-10-09 19:39:20.083408 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - middle:Set louver middle position[0m
+[34m2023-10-09 19:39:20.092021 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - bright:Set louver bright position[0m
+[34m2023-10-09 19:39:20.093032 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - delay:Automode update delay[0m
+[34m2023-10-09 19:39:20.103781 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - accuracy:Motor accuracy[0m
+[34m2023-10-09 19:39:20.115931 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_close:Light close value[0m
+[34m2023-10-09 19:39:20.116454 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_open:Light open value[0m
+[34m2023-10-09 19:39:20.128528 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_bright:Light bright value[0m
+[34m2023-10-09 19:39:20.139661 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for device state [automode] already exists![0m
+[34m2023-10-09 19:39:20.141349 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for device sate [automode][0m
+[34m2023-10-09 19:39:20.153299 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[34m2023-10-09 19:39:20.154879 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[34m2023-10-09 19:39:20.167616 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[34m2023-10-09 19:39:20.227820 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[34m2023-10-09 19:39:20.278436 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[34m2023-10-09 19:39:20.282630 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[34m2023-10-09 19:39:20.322289 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"dn":"boba","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"test":"false","test_value":"-30955","automode":"false"},"st":{"automode":"true"},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test_url","method":"POST","payload":"test_payload","trigger":"test_trigger","readonly":false,"type":"http_callback"}]}]}[0m
+[34m2023-10-09 19:39:20.382110 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [345]): "dn":"boba","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"test":"false","test_value":"-30955","automode":"false"},"st":{"automode":"true"},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test_url","method":"POST","payload":"test_payload","trigger":"test_trigger","readonly":false,"type":"http_callback"}]}][0m
+[34m2023-10-09 19:39:20.500016 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[34m2023-10-09 19:39:20.500451 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[34m2023-10-09 19:39:29.654166 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [     web_server     ] :: [GET] / -[0m
+[34m2023-10-09 19:39:30.008067 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[34m2023-10-09 19:39:30.286717 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[34m2023-10-09 19:39:30.554859 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[34m2023-10-09 19:39:30.826261 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[34m2023-10-09 19:39:31.100272 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[34m2023-10-09 19:39:31.370228 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[34m2023-10-09 19:39:31.645822 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[34m2023-10-09 19:39:31.913629 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[34m2023-10-09 19:39:34.462918 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[34m2023-10-09 19:39:35.749875 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[34m2023-10-09 19:39:35.755242 [  192.168.1.2   ::      boba      ][0m - [35m[WARNING] [ callbacks_manager  ] :: Can't find watcher for observable [position][0m
+[34m2023-10-09 19:39:36.781501 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[34m2023-10-09 19:39:36.781933 [  192.168.1.2   ::      boba      ][0m - [35m[WARNING] [ callbacks_manager  ] :: Can't find watcher for observable [light][0m
+[34m2023-10-09 19:39:38.317670 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[34m2023-10-09 19:39:38.328352 [  192.168.1.2   ::      boba      ][0m - [35m[WARNING] [ callbacks_manager  ] :: Can't find watcher for observable [wifi][0m
+[34m2023-10-09 19:39:39.110572 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[34m2023-10-09 19:39:39.111840 [  192.168.1.2   ::      boba      ][0m - [35m[WARNING] [ callbacks_manager  ] :: Can't find watcher for observable [led][0m
+[34m2023-10-09 19:39:39.898590 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[34m2023-10-09 19:39:39.905297 [  192.168.1.2   ::      boba      ][0m - [35m[WARNING] [ callbacks_manager  ] :: Can't find watcher for observable [position][0m
+[34m2023-10-09 19:39:40.675780 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[34m2023-10-09 19:39:48.057150 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [DELETE] /callbacks/delete -[0m
+[34m2023-10-09 19:39:48.058560 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Trying to delete observable [automode]'s callback № 1[0m
+[34m2023-10-09 19:39:48.070839 [  192.168.1.2   ::      boba      ][0m - [35m[WARNING] [ callbacks_manager  ] :: Callback № 1 of observable [automode] was deleted[0m
+[34m2023-10-09 19:39:48.083442 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[34m2023-10-09 19:39:48.212586 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[34m2023-10-09 19:39:48.477168 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[34m2023-10-09 19:39:51.290908 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[34m2023-10-09 19:39:51.292363 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[34m2023-10-09 19:39:51.303912 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[34m2023-10-09 19:39:51.310192 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value false[0m
+[34m2023-10-09 19:39:51.322520 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[34m2023-10-09 19:39:51.334008 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"dn":"boba","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"test":"false","test_value":"-30955","automode":"false"},"st":{"automode":"false"}}[0m
+[34m2023-10-09 19:39:51.354168 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [143]): "dn":"boba","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"test":"false","test_value":"-30955","automode":"false"},"st":{"automode":"false"}[0m
+[34m2023-10-09 19:39:51.366932 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[34m2023-10-09 19:39:57.971763 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[34m2023-10-09 19:41:17.203293 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [   config_handler   ] :: [POST] /config/add - {"light_bright":123,"light_open":45345,"light_close":123,"accuracy":23,"delay":5454}[0m
+[34m2023-10-09 19:41:17.203657 [  192.168.1.2   ::      boba      ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[34m2023-10-09 19:41:17.345138 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[34m2023-10-09 19:41:33.601447 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[34m2023-10-09 19:41:33.602692 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[34m2023-10-09 19:41:39.709950 [  192.168.1.2   ::      boba      ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [PUT] /info - {"name":"bobaa"}[0m
+[34m2023-10-09 19:41:39.710316 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[34m2023-10-09 19:41:39.868360 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[34m2023-10-09 19:41:39.869698 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [    SMART_THING     ] :: New device name bobaa[0m
+[34m2023-10-09 19:42:27.349006 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[34m2023-10-09 19:42:29.150907 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[34m2023-10-09 19:42:31.458043 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[34m2023-10-09 19:42:32.241262 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[34m2023-10-09 19:42:33.525595 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[34m2023-10-09 19:42:34.561527 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[34m2023-10-09 19:42:36.614373 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[34m2023-10-09 19:42:38.150314 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[34m2023-10-09 19:42:48.577854 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[34m2023-10-09 19:42:48.578163 [  192.168.1.2   ::      bobaa     ][0m - [35m[WARNING] [ callbacks_manager  ] :: Can't find watcher for observable [position][0m
+[32m2023-10-09 19:56:14.839300 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 200[0m
+[32m2023-10-10 14:10:10.579139 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed middle->closed.[0m
+[32m2023-10-10 14:10:10.590380 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[32m2023-10-10 14:10:10.602362 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=enable_auto ::[0m
+[33m2023-10-10 14:10:10.917211 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[33m2023-10-10 14:10:10.919272 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[33m2023-10-10 14:10:10.928349 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[33m2023-10-10 14:10:10.939779 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[33m2023-10-10 14:10:10.941353 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[33m2023-10-10 14:10:10.973155 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500}}[0m
+[33m2023-10-10 14:10:10.985267 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [103]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500}[0m
+[33m2023-10-10 14:10:11.099678 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-10 14:10:11.112001 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=enable_auto finished with code 200[0m
+[32m2023-10-10 14:18:05.735959 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed closed->middle.[0m
+[32m2023-10-10 14:18:05.747071 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[32m2023-10-10 14:18:05.758330 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=disable_auto ::[0m
+[33m2023-10-10 14:18:05.991356 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[33m2023-10-10 14:18:05.993371 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[33m2023-10-10 14:18:06.011668 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[33m2023-10-10 14:18:06.017637 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value false[0m
+[33m2023-10-10 14:18:06.020163 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[33m2023-10-10 14:18:06.032367 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}}[0m
+[32m2023-10-10 14:18:06.045727 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=disable_auto finished with code 200[0m
+[33m2023-10-10 14:18:06.053352 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [104]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}[0m
+[33m2023-10-10 14:18:06.067425 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-10 14:20:35.016515 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed middle->open.[0m
+[32m2023-10-10 14:20:35.028214 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[32m2023-10-10 14:20:35.029430 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[32m2023-10-10 14:20:35.539152 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed open->middle.[0m
+[32m2023-10-10 14:20:35.551145 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[32m2023-10-10 14:20:35.562751 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=disable_auto ::[0m
+[33m2023-10-10 14:20:35.780507 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[33m2023-10-10 14:20:35.781768 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[32m2023-10-10 14:20:35.839991 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=disable_auto finished with code 200[0m
+[32m2023-10-10 14:21:51.435701 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed middle->open.[0m
+[32m2023-10-10 14:21:51.447405 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[32m2023-10-10 14:21:51.448435 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[32m2023-10-10 14:21:51.704342 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed open->middle.[0m
+[32m2023-10-10 14:21:51.716435 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[32m2023-10-10 14:21:51.727664 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=disable_auto ::[0m
+[33m2023-10-10 14:21:52.198372 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[33m2023-10-10 14:21:52.199619 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[32m2023-10-10 14:21:52.247574 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=disable_auto finished with code 200[0m
+[32m2023-10-10 14:26:26.318806 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed middle->closed.[0m
+[32m2023-10-10 14:26:26.331623 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:http_callback[0m
+[32m2023-10-10 14:26:26.342811 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=enable_auto ::[0m
+[33m2023-10-10 14:26:26.570179 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[33m2023-10-10 14:26:26.571717 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[33m2023-10-10 14:26:26.580558 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[33m2023-10-10 14:26:26.592896 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[33m2023-10-10 14:26:26.594803 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[33m2023-10-10 14:26:26.617369 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500}}[0m
+[32m2023-10-10 14:26:26.618679 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=enable_auto finished with code 200[0m
+[33m2023-10-10 14:26:26.638838 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [103]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500}[0m
+[33m2023-10-10 14:26:26.735722 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-10 14:49:22.448475 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state position value changed closed->middle.[0m
+[32m2023-10-10 14:49:22.460474 [ 192.168.1.66   ::   main_louver  ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[32m2023-10-10 14:49:22.471733 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [PUT] http://192.168.1.104/action?action=disable_auto ::[0m
+[33m2023-10-10 14:49:22.710196 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[33m2023-10-10 14:49:22.711060 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[33m2023-10-10 14:49:22.719289 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[33m2023-10-10 14:49:22.731708 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value false[0m
+[33m2023-10-10 14:49:22.733190 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[32m2023-10-10 14:49:22.749119 [ 192.168.1.66   ::   main_louver  ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://192.168.1.104/action?action=disable_auto finished with code 200[0m
+[33m2023-10-10 14:49:22.756817 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}}[0m
+[33m2023-10-10 14:49:22.777693 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [104]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}[0m
+[33m2023-10-10 14:49:22.894493 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-10 18:01:45.124807 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 200[0m
+[32m2023-10-10 18:24:27.446388 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 200[0m
+[32m2023-10-10 18:44:18.287582 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 200[0m
+[32m2023-10-12 00:13:39.114376 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.2[0m
+[32m2023-10-12 00:13:39.131564 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 00:13:39.133997 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 00:13:39.149330 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 00:13:39.149991 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 00:13:39.151350 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 00:13:39.163060 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: There is not callbacks in settings[0m
+[32m2023-10-12 00:13:39.164171 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 00:13:39.172482 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 00:13:39.176954 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 00:13:39.178093 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 00:13:39.180430 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [        main        ] :: Controller created[0m
+[32m2023-10-12 00:13:39.192160 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 00:13:39.203489 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 00:13:39.204654 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - open:Set louver open position[0m
+[32m2023-10-12 00:13:39.217736 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - close:Set louver close position[0m
+[32m2023-10-12 00:13:39.227526 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - middle:Set louver middle position[0m
+[32m2023-10-12 00:13:39.240047 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - bright:Set louver bright position[0m
+[32m2023-10-12 00:13:39.250842 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - delay:Automode update delay[0m
+[32m2023-10-12 00:13:39.252670 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - accuracy:Motor accuracy[0m
+[32m2023-10-12 00:13:39.263577 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_close:Light close value[0m
+[32m2023-10-12 00:13:39.274887 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_open:Light open value[0m
+[32m2023-10-12 00:13:39.276411 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_bright:Light bright value[0m
+[32m2023-10-12 00:13:39.288848 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 00:13:39.301144 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 00:13:39.301310 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 00:13:39.302990 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[32m2023-10-12 00:13:39.306637 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 00:23:09.235095 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {
+	"compareType": "gte"
+}[0m
+[32m2023-10-12 00:23:09.237028 [  192.168.1.2   ::      bobaa     ][0m - [31m[ ERROR ] [  callback_builder  ] :: Observable object is missing![0m
+[32m2023-10-12 00:23:35.915297 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {
+	
+	"observable": {
+		"type": "state",
+		"name": "automode"
+	},
+	"callback": {
+		"compareType": "gte"
+	}
+}[0m
+[32m2023-10-12 00:23:35.916792 [  192.168.1.2   ::      bobaa     ][0m - [31m[ ERROR ] [ callbacks_manager  ] :: Id value in callback object is missing![0m
+[32m2023-10-12 00:23:48.628000 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {
+	
+	"observable": {
+		"type": "state",
+		"name": "automode"
+	},
+	"callback": {
+		"id": "0",
+		"compareType": "gte"
+	}
+}[0m
+[32m2023-10-12 00:23:48.629934 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Callback № 0 for observable [automode] was updated![0m
+[32m2023-10-12 00:23:48.674470 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"dn":"bobaa","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"test":"false","test_value":"-30955","automode":"false","light_bright":123,"light_open":45345,"light_close":123,"accuracy":23,"delay":5454},"st":{"automode":"<~"},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"false","readonly":false,"type":"http_callback","compareType":"gte"}]}]}[0m
+[32m2023-10-12 00:23:48.726424 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [434]): "dn":"bobaa","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"test":"false","test_value":"-30955","automode":"false","light_bright":123,"light_open":45345,"light_close":123,"accuracy":23,"delay":5454},"st":{"automode":"<~"},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"false","readonly":false,"type":"http_callback","compareType":"gte"}]}][0m
+[32m2023-10-12 00:23:48.829278 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 00:23:53.408640 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks -[0m
+[32m2023-10-12 00:24:01.152640 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.2[0m
+[32m2023-10-12 00:24:01.180407 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 00:24:01.182594 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 00:24:01.186179 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 00:24:01.189753 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 00:24:01.199377 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 00:24:01.213237 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [state]:automode[0m
+[32m2023-10-12 00:24:01.213522 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test3222[0m
+[32m2023-10-12 00:24:01.224905 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 00:24:01.226093 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 00:24:01.227327 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 00:24:01.238917 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 00:24:01.240140 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 00:24:01.242732 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [        main        ] :: Controller created[0m
+[32m2023-10-12 00:24:01.254164 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 00:24:01.265380 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 00:24:01.267207 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - open:Set louver open position[0m
+[32m2023-10-12 00:24:01.283695 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - close:Set louver close position[0m
+[32m2023-10-12 00:24:01.295131 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - middle:Set louver middle position[0m
+[32m2023-10-12 00:24:01.303916 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - bright:Set louver bright position[0m
+[32m2023-10-12 00:24:01.304200 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - delay:Automode update delay[0m
+[32m2023-10-12 00:24:01.315025 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - accuracy:Motor accuracy[0m
+[32m2023-10-12 00:24:01.325576 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_close:Light close value[0m
+[32m2023-10-12 00:24:01.337036 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_open:Light open value[0m
+[32m2023-10-12 00:24:01.338246 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_bright:Light bright value[0m
+[32m2023-10-12 00:24:01.350021 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for device state [automode] already exists![0m
+[32m2023-10-12 00:24:01.361331 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for device sate [automode][0m
+[32m2023-10-12 00:24:01.362899 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 00:24:01.364246 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 00:24:01.378387 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[32m2023-10-12 00:24:01.380813 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 00:24:01.490137 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 00:24:01.497806 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[32m2023-10-12 00:24:01.533167 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"dn":"bobaa","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"test":"false","test_value":"-30955","automode":"false","light_bright":123,"light_open":45345,"light_close":123,"accuracy":23,"delay":5454},"st":{"automode":"true"},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"false","readonly":false,"type":"http_callback","compareType":"gte"}]}]}[0m
+[32m2023-10-12 00:24:01.617213 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [434]): "dn":"bobaa","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"test":"false","test_value":"-30955","automode":"false","light_bright":123,"light_open":45345,"light_close":123,"accuracy":23,"delay":5454},"st":{"automode":"true"},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"false","readonly":false,"type":"http_callback","compareType":"gte"}]}][0m
+[32m2023-10-12 00:24:01.721310 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 00:24:01.724110 [  192.168.1.2   ::      bobaa     ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[32m2023-10-12 00:24:03.007128 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks -[0m
+[32m2023-10-12 00:24:50.520695 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {
+	
+	"observable": {
+		"type": "state",
+		"name": "automode"
+	},
+	"callback": {
+		"id": "1",
+		"compareType": "gte"
+	}
+}[0m
+[32m2023-10-12 00:24:50.524065 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Callback № 1 for observable [automode] was updated![0m
+[32m2023-10-12 00:24:50.635531 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 00:25:07.891512 [  192.168.1.2   ::      bobaa     ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [PUT] /info - {
+	"name": "booba"
+}[0m
+[32m2023-10-12 00:25:08.093481 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 00:25:08.094847 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [    SMART_THING     ] :: New device name booba[0m
+[32m2023-10-12 00:25:16.002157 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.2[0m
+[32m2023-10-12 00:25:16.030073 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 00:25:16.032093 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 00:25:16.035755 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 00:25:16.037162 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 00:25:16.048447 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 00:25:16.064400 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [state]:automode[0m
+[32m2023-10-12 00:25:16.064662 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test3222[0m
+[32m2023-10-12 00:25:16.073535 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 00:25:16.074734 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 00:25:16.076594 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 00:25:16.087961 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 00:25:16.089384 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 00:25:16.091405 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [        main        ] :: Controller created[0m
+[32m2023-10-12 00:25:16.103042 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 00:25:16.115046 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 00:25:16.120367 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - open:Set louver open position[0m
+[32m2023-10-12 00:25:16.128936 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - close:Set louver close position[0m
+[32m2023-10-12 00:25:16.141298 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - middle:Set louver middle position[0m
+[32m2023-10-12 00:25:16.150608 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - bright:Set louver bright position[0m
+[32m2023-10-12 00:25:16.151821 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - delay:Automode update delay[0m
+[32m2023-10-12 00:25:16.163130 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - accuracy:Motor accuracy[0m
+[32m2023-10-12 00:25:16.174501 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_close:Light close value[0m
+[32m2023-10-12 00:25:16.185817 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_open:Light open value[0m
+[32m2023-10-12 00:25:16.186981 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_bright:Light bright value[0m
+[32m2023-10-12 00:25:16.198780 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for device state [automode] already exists![0m
+[32m2023-10-12 00:25:16.210257 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for device sate [automode][0m
+[32m2023-10-12 00:25:16.211664 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 00:25:16.213134 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 00:25:16.275682 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[32m2023-10-12 00:25:16.276060 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 00:25:16.334118 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 00:25:16.347230 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[32m2023-10-12 00:25:16.392927 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"dn":"booba","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"test":"false","test_value":"-30955","automode":"false","light_bright":123,"light_open":45345,"light_close":123,"accuracy":23,"delay":5454},"st":{"automode":"true"},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"false","readonly":false,"type":"http_callback","compareType":"gte"}]}]}[0m
+[32m2023-10-12 00:25:16.464995 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [434]): "dn":"booba","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"test":"false","test_value":"-30955","automode":"false","light_bright":123,"light_open":45345,"light_close":123,"accuracy":23,"delay":5454},"st":{"automode":"true"},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"false","readonly":false,"type":"http_callback","compareType":"gte"}]}][0m
+[32m2023-10-12 00:25:16.583635 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 00:25:16.586497 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[32m2023-10-12 00:25:39.190159 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks -[0m
+[32m2023-10-12 00:27:34.062426 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.2[0m
+[32m2023-10-12 00:27:34.088943 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 00:27:34.090784 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 00:27:34.094138 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 00:27:34.105809 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 00:27:34.106857 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 00:27:34.118617 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [state]:automode[0m
+[32m2023-10-12 00:27:34.120478 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test3222[0m
+[32m2023-10-12 00:27:34.132488 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 00:27:34.133626 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 00:27:34.134831 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 00:27:34.146378 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 00:27:34.147536 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 00:27:34.177842 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [        main        ] :: Controller created[0m
+[32m2023-10-12 00:27:34.178488 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 00:27:34.178933 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 00:27:34.184059 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - open:Set louver open position[0m
+[32m2023-10-12 00:27:34.185358 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - close:Set louver close position[0m
+[32m2023-10-12 00:27:34.196732 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - middle:Set louver middle position[0m
+[32m2023-10-12 00:27:34.208014 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - bright:Set louver bright position[0m
+[32m2023-10-12 00:27:34.219203 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - delay:Automode update delay[0m
+[32m2023-10-12 00:27:34.220329 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - accuracy:Motor accuracy[0m
+[32m2023-10-12 00:27:34.231655 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_close:Light close value[0m
+[32m2023-10-12 00:27:34.243011 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_open:Light open value[0m
+[32m2023-10-12 00:27:34.257233 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_bright:Light bright value[0m
+[32m2023-10-12 00:27:34.257811 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for device state [automode] already exists![0m
+[32m2023-10-12 00:27:34.269460 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for device sate [automode][0m
+[32m2023-10-12 00:27:34.270865 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 00:27:34.284181 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 00:27:34.284532 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[32m2023-10-12 00:27:34.286858 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 00:27:34.392876 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 00:27:34.406006 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[32m2023-10-12 00:27:34.454881 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"dn":"booba","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"test":"false","test_value":"-30955","automode":"false","light_bright":123,"light_open":45345,"light_close":123,"accuracy":23,"delay":5454},"st":{"automode":"true"},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"false","readonly":false,"type":"http_callback","compareType":"gte"}]}]}[0m
+[32m2023-10-12 00:27:34.523855 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [434]): "dn":"booba","wf":{"ss":"PUK","ps":"donttouch","md":1},"cg":{"test":"false","test_value":"-30955","automode":"false","light_bright":123,"light_open":45345,"light_close":123,"accuracy":23,"delay":5454},"st":{"automode":"true"},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"false","readonly":false,"type":"http_callback","compareType":"gte"}]}][0m
+[32m2023-10-12 00:27:34.526516 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 00:27:34.531156 [  192.168.1.2   ::      booba     ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[32m2023-10-12 00:27:41.905442 [  192.168.1.2   ::      booba     ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks -[0m
+[33m2023-10-12 00:30:39.886105 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.104[0m
+[33m2023-10-12 00:30:39.912284 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[33m2023-10-12 00:30:39.914390 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[33m2023-10-12 00:30:39.919375 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[33m2023-10-12 00:30:39.930222 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[33m2023-10-12 00:30:39.931560 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[33m2023-10-12 00:30:39.942905 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: There is not callbacks in settings[0m
+[33m2023-10-12 00:30:39.943908 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[33m2023-10-12 00:30:39.955251 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[33m2023-10-12 00:30:39.956220 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[33m2023-10-12 00:30:39.957561 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[33m2023-10-12 00:30:39.970820 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Controller created[0m
+[33m2023-10-12 00:30:39.973021 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[33m2023-10-12 00:30:39.983745 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[33m2023-10-12 00:30:39.995533 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - open:Set louver open position[0m
+[33m2023-10-12 00:30:40.042532 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - close:Set louver close position[0m
+[33m2023-10-12 00:30:40.043118 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - middle:Set louver middle position[0m
+[33m2023-10-12 00:30:40.043310 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - bright:Set louver bright position[0m
+[33m2023-10-12 00:30:40.043500 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - delay:Automode update delay[0m
+[33m2023-10-12 00:30:40.043760 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - accuracy:Motor accuracy[0m
+[33m2023-10-12 00:30:40.053461 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_close:Light close value[0m
+[33m2023-10-12 00:30:40.064615 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_open:Light open value[0m
+[33m2023-10-12 00:30:40.065470 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_bright:Light bright value[0m
+[33m2023-10-12 00:30:40.077085 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[33m2023-10-12 00:30:40.088637 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[33m2023-10-12 00:30:40.090212 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[33m2023-10-12 00:30:40.091863 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[33m2023-10-12 00:30:40.096319 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[33m2023-10-12 00:31:47.716443 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.104[0m
+[33m2023-10-12 00:31:47.748049 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[33m2023-10-12 00:31:47.749282 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[33m2023-10-12 00:31:47.749455 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[33m2023-10-12 00:31:47.749663 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[33m2023-10-12 00:31:47.750296 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[33m2023-10-12 00:31:47.760592 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: There is not callbacks in settings[0m
+[33m2023-10-12 00:31:47.761712 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[33m2023-10-12 00:31:47.773050 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[33m2023-10-12 00:31:47.774450 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[33m2023-10-12 00:31:47.776873 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[33m2023-10-12 00:31:47.789633 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Controller created[0m
+[33m2023-10-12 00:31:47.790872 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[33m2023-10-12 00:31:47.802947 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[33m2023-10-12 00:31:47.814294 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - open:Set louver open position[0m
+[33m2023-10-12 00:31:47.826103 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - close:Set louver close position[0m
+[33m2023-10-12 00:31:47.837015 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - middle:Set louver middle position[0m
+[33m2023-10-12 00:31:47.838210 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - bright:Set louver bright position[0m
+[33m2023-10-12 00:31:47.849610 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - delay:Automode update delay[0m
+[33m2023-10-12 00:31:47.860960 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - accuracy:Motor accuracy[0m
+[33m2023-10-12 00:31:47.873548 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_close:Light close value[0m
+[33m2023-10-12 00:31:47.883528 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_open:Light open value[0m
+[33m2023-10-12 00:31:47.884803 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_bright:Light bright value[0m
+[33m2023-10-12 00:31:47.896845 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[33m2023-10-12 00:31:47.945580 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[33m2023-10-12 00:31:47.946189 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[33m2023-10-12 00:31:47.946461 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[33m2023-10-12 00:31:47.946915 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 01:04:23.928287 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {
+	"observable": {
+		"name": "button",
+		"type": "sensor"
+	},
+	"callbacks": [
+		{
+			"trigger": -1,
+			"compareType": "gte",
+			"id": 0
+		}
+	]
+}[0m
+[32m2023-10-12 01:04:23.940837 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [  callback_builder  ] :: Callback object is missing![0m
+[32m2023-10-12 01:04:34.409729 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {
+	"observable": {
+		"name": "button",
+		"type": "sensor"
+	},
+	"callback": 
+		{
+			"trigger": -1,
+			"compareType": "gte",
+			"id": 0
+		}
+}[0m
+[32m2023-10-12 01:04:34.421136 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ callbacks_manager  ] :: Callback 0 for observable [button] is readonly![0m
+[32m2023-10-12 01:04:44.401122 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks -[0m
+[32m2023-10-12 01:05:00.935065 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [POST] /callbacks/create - {
+	"observable": {
+		"type": "state",
+		"name": "automode"
+	},
+	"callback": {
+		"type": "http_callback",
+		"url": "test3222",
+		"method": "POST",
+		"trigger": "false",
+		"compareType": "eq"
+	}
+}[0m
+[32m2023-10-12 01:05:00.956703 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating callback from json: {
+	"observable": {
+		"type": "state",
+		"name": "automode"
+	},
+	"callback": {
+		"type": "http_callback",
+		"url": "test3222",
+		"method": "POST",
+		"trigger": "false",
+		"compareType": "eq"
+	}
+}[0m
+[32m2023-10-12 01:05:00.958327 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [state]:automode[0m
+[32m2023-10-12 01:05:00.971185 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback test3222[0m
+[32m2023-10-12 01:05:00.982383 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for device state [automode] already exists![0m
+[32m2023-10-12 01:05:00.983501 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for device sate [automode][0m
+[32m2023-10-12 01:05:01.017454 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"false","readonly":false,"type":"http_callback","compareType":"eq"}]}]}[0m
+[32m2023-10-12 01:05:01.059317 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [310]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"false","readonly":false,"type":"http_callback","compareType":"eq"}]}][0m
+[32m2023-10-12 01:05:01.077623 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 01:05:03.631138 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks -[0m
+[32m2023-10-12 01:05:31.638642 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [POST] /callbacks/create - {
+	"observable": {
+		"type": "sensor",
+		"name": "button"
+	},
+	"callback": {
+		"type": "http_callback",
+		"url": "test3222",
+		"method": "POST",
+		"trigger": "false",
+		"compareType": "eq"
+	}
+}[0m
+[32m2023-10-12 01:05:31.661761 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating callback from json: {
+	"observable": {
+		"type": "sensor",
+		"name": "button"
+	},
+	"callback": {
+		"type": "http_callback",
+		"url": "test3222",
+		"method": "POST",
+		"trigger": "false",
+		"compareType": "eq"
+	}
+}[0m
+[32m2023-10-12 01:05:31.663450 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [sensor]:button[0m
+[32m2023-10-12 01:05:31.675600 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback test3222[0m
+[32m2023-10-12 01:05:31.677173 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for sensor [button] already exists![0m
+[32m2023-10-12 01:05:31.688516 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for sensor [button][0m
+[32m2023-10-12 01:05:31.733220 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500},"cb":[{"observable":{"name":"button","type":"sensor"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":0,"readonly":false,"type":"http_callback","compareType":"eq"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"false","readonly":false,"type":"http_callback","compareType":"eq"}]}]}[0m
+[32m2023-10-12 01:05:31.784760 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [503]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500},"cb":[{"observable":{"name":"button","type":"sensor"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":0,"readonly":false,"type":"http_callback","compareType":"eq"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"false","readonly":false,"type":"http_callback","compareType":"eq"}]}][0m
+[32m2023-10-12 01:05:31.883686 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 01:05:38.249383 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 01:06:35.263872 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {
+	"observable": {
+		"name": "automode",
+		"type": "state"
+	},
+	"callback": {
+		"trigger": -1,
+		"compareType": "gte",
+		"id": 0
+	}
+}[0m
+[32m2023-10-12 01:06:35.266337 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Callback № 0 for observable [automode] was updated![0m
+[32m2023-10-12 01:06:35.322047 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500},"cb":[{"observable":{"name":"button","type":"sensor"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":0,"readonly":false,"type":"http_callback","compareType":"eq"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"-1","readonly":false,"type":"http_callback","compareType":"gte"}]}]}[0m
+[32m2023-10-12 01:06:35.373225 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [501]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500},"cb":[{"observable":{"name":"button","type":"sensor"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":0,"readonly":false,"type":"http_callback","compareType":"eq"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"-1","readonly":false,"type":"http_callback","compareType":"gte"}]}][0m
+[32m2023-10-12 01:06:35.483117 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 01:06:38.031884 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 01:06:49.047139 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.104[0m
+[32m2023-10-12 01:06:49.066033 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 01:06:49.066843 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 01:06:49.071943 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 01:06:49.073629 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 01:06:49.085885 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 01:06:49.096608 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [sensor]:button[0m
+[32m2023-10-12 01:06:49.098200 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test3222[0m
+[32m2023-10-12 01:06:49.110338 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 01:06:49.111645 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [state]:automode[0m
+[32m2023-10-12 01:06:49.123348 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test3222[0m
+[32m2023-10-12 01:06:49.135140 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 01:06:49.136290 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 01:06:49.147639 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 01:06:49.149115 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 01:06:49.152005 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 01:06:49.154370 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Controller created[0m
+[32m2023-10-12 01:06:49.203749 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 01:06:49.204009 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 01:06:49.204242 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - open:Set louver open position[0m
+[32m2023-10-12 01:06:49.204426 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - close:Set louver close position[0m
+[32m2023-10-12 01:06:49.204694 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - middle:Set louver middle position[0m
+[32m2023-10-12 01:06:49.213047 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - bright:Set louver bright position[0m
+[32m2023-10-12 01:06:49.224704 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - delay:Automode update delay[0m
+[32m2023-10-12 01:06:49.235755 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - accuracy:Motor accuracy[0m
+[32m2023-10-12 01:06:49.246948 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_close:Light close value[0m
+[32m2023-10-12 01:06:49.248076 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_open:Light open value[0m
+[32m2023-10-12 01:06:49.259620 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_bright:Light bright value[0m
+[32m2023-10-12 01:06:49.271192 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for device state [automode] already exists![0m
+[32m2023-10-12 01:06:49.276324 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for device sate [automode][0m
+[32m2023-10-12 01:06:49.286257 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for sensor [button] already exists![0m
+[32m2023-10-12 01:06:49.297762 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for sensor [button][0m
+[32m2023-10-12 01:06:49.299267 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 01:06:49.301035 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[32m2023-10-12 01:06:49.303929 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 01:06:49.413048 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 01:06:49.415730 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[32m2023-10-12 01:06:49.515919 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500},"cb":[{"observable":{"name":"button","type":"sensor"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":0,"readonly":false,"type":"http_callback","compareType":"eq"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"-1","readonly":false,"type":"http_callback","compareType":"gte"}]}]}[0m
+[32m2023-10-12 01:06:49.555420 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [501]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500},"cb":[{"observable":{"name":"button","type":"sensor"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":0,"readonly":false,"type":"http_callback","compareType":"eq"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"-1","readonly":false,"type":"http_callback","compareType":"gte"}]}][0m
+[32m2023-10-12 01:06:49.558853 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 01:06:49.571960 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[32m2023-10-12 01:06:50.862622 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 01:07:10.752828 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {
+	"observable": {
+		"name": "sensor",
+		"type": "button"
+	},
+	"callback": {
+		"trigger": -1,
+		"compareType": "gte",
+		"id": 0
+	}
+}[0m
+[32m2023-10-12 01:07:10.765219 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ callbacks_manager  ] :: Observable type [button] not supported![0m
+[32m2023-10-12 01:07:19.174975 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {
+	"observable": {
+		"name": "button",
+		"type": "sensor"
+	},
+	"callback": {
+		"trigger": -1,
+		"compareType": "gte",
+		"id": 0
+	}
+}[0m
+[32m2023-10-12 01:07:19.176897 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ callbacks_manager  ] :: Callback 0 for observable [button] is readonly![0m
+[32m2023-10-12 01:07:27.321654 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [PUT] /callbacks/update - {
+	"observable": {
+		"name": "button",
+		"type": "sensor"
+	},
+	"callback": {
+		"trigger": -1,
+		"compareType": "gte",
+		"id": 1
+	}
+}[0m
+[32m2023-10-12 01:07:27.334236 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Callback № 1 for observable [button] was updated![0m
+[32m2023-10-12 01:07:27.515128 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 01:07:30.835350 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 01:07:36.951761 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 1->0.[0m
+[32m2023-10-12 01:07:36.952636 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Trigger value present: 1[0m
+[32m2023-10-12 01:07:36.964691 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:lambda_callback[0m
+[32m2023-10-12 01:07:36.975636 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: No trigger value present, accepting[0m
+[32m2023-10-12 01:07:36.977017 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:07:37.032453 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:07:42.057186 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 0->1.[0m
+[32m2023-10-12 01:07:42.060515 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Trigger value present: 1[0m
+[32m2023-10-12 01:07:42.071690 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [        main        ] :: Digital sensor value changed to 1[0m
+[32m2023-10-12 01:07:42.072750 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[32m2023-10-12 01:07:42.084110 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: No trigger value present, accepting[0m
+[32m2023-10-12 01:07:42.085802 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-12 01:07:42.097454 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:07:42.109338 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value false[0m
+[32m2023-10-12 01:07:42.168763 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500},"cb":[{"observable":{"name":"button","type":"sensor"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":-1,"readonly":false,"type":"http_callback","compareType":"gte"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"-1","readonly":false,"type":"http_callback","compareType":"gte"}]}]}[0m
+[32m2023-10-12 01:07:42.201127 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:07:42.255265 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [504]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500},"cb":[{"observable":{"name":"button","type":"sensor"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":-1,"readonly":false,"type":"http_callback","compareType":"gte"}]},{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":"-1","readonly":false,"type":"http_callback","compareType":"gte"}]}][0m
+[32m2023-10-12 01:07:42.268097 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 01:07:42.269644 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [1]:http_callback[0m
+[32m2023-10-12 01:09:08.175616 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.104[0m
+[32m2023-10-12 01:09:08.199350 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 01:09:08.201241 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 01:09:08.205050 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 01:09:08.216333 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 01:09:08.217675 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 01:09:08.231782 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [sensor]:button[0m
+[32m2023-10-12 01:09:08.234365 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test3222[0m
+[32m2023-10-12 01:09:08.246005 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 01:09:08.247303 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [state]:automode[0m
+[32m2023-10-12 01:09:08.258910 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test3222[0m
+[32m2023-10-12 01:09:08.271015 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 01:09:08.272268 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 01:09:08.273521 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 01:09:08.285049 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 01:09:08.285919 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 01:09:08.288564 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Controller created[0m
+[32m2023-10-12 01:09:08.299994 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 01:09:08.311457 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 01:09:08.322986 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - open:Set louver open position[0m
+[32m2023-10-12 01:09:08.369788 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - close:Set louver close position[0m
+[32m2023-10-12 01:09:08.370296 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - middle:Set louver middle position[0m
+[32m2023-10-12 01:09:08.371075 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - bright:Set louver bright position[0m
+[32m2023-10-12 01:09:08.371211 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - delay:Automode update delay[0m
+[32m2023-10-12 01:09:08.371539 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - accuracy:Motor accuracy[0m
+[32m2023-10-12 01:09:08.380204 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_close:Light close value[0m
+[32m2023-10-12 01:09:08.381418 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_open:Light open value[0m
+[32m2023-10-12 01:09:08.392887 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_bright:Light bright value[0m
+[32m2023-10-12 01:09:08.404360 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for device state [automode] already exists![0m
+[32m2023-10-12 01:09:08.415746 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for device sate [automode][0m
+[32m2023-10-12 01:09:08.417101 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for sensor [button] already exists![0m
+[32m2023-10-12 01:09:08.428487 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for sensor [button][0m
+[32m2023-10-12 01:09:08.429700 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 01:09:08.442797 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[32m2023-10-12 01:09:08.446231 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 01:09:08.535781 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 01:09:08.548642 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:lambda_callback[0m
+[32m2023-10-12 01:09:08.552104 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:09:08.605748 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:09:11.363565 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 01:09:14.936843 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 1->0.[0m
+[32m2023-10-12 01:09:14.948241 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:lambda_callback[0m
+[32m2023-10-12 01:09:14.950962 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:09:14.999669 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:09:21.043844 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 0->1.[0m
+[32m2023-10-12 01:09:21.044632 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [        main        ] :: Digital sensor value changed to 1[0m
+[32m2023-10-12 01:09:21.056112 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[32m2023-10-12 01:09:21.068464 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:09:21.070368 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-12 01:09:21.093713 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Callback reject [0]:lambda_callback[0m
+[32m2023-10-12 01:09:21.105826 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:09:21.149764 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:09:21.199321 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:14:15.083620 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.104[0m
+[32m2023-10-12 01:14:15.099055 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 01:14:15.100555 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 01:14:15.103904 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 01:14:15.115645 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 01:14:15.116790 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 01:14:15.129394 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [sensor]:button[0m
+[32m2023-10-12 01:14:15.132017 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test3222[0m
+[32m2023-10-12 01:14:15.143546 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 01:14:15.154919 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [state]:automode[0m
+[32m2023-10-12 01:14:15.156467 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test3222[0m
+[32m2023-10-12 01:14:15.168324 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 01:14:15.169442 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 01:14:15.180749 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 01:14:15.182126 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 01:14:15.185528 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 01:14:15.187846 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Controller created[0m
+[32m2023-10-12 01:14:15.199519 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 01:14:15.217569 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 01:14:15.222504 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - open:Set louver open position[0m
+[32m2023-10-12 01:14:15.366915 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - close:Set louver close position[0m
+[32m2023-10-12 01:14:15.368823 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - middle:Set louver middle position[0m
+[32m2023-10-12 01:14:15.369179 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - bright:Set louver bright position[0m
+[32m2023-10-12 01:14:15.369528 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - delay:Automode update delay[0m
+[32m2023-10-12 01:14:15.369747 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - accuracy:Motor accuracy[0m
+[32m2023-10-12 01:14:15.370020 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_close:Light close value[0m
+[32m2023-10-12 01:14:15.370251 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_open:Light open value[0m
+[32m2023-10-12 01:14:15.370861 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - light_bright:Light bright value[0m
+[32m2023-10-12 01:14:15.371119 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for device state [automode] already exists![0m
+[32m2023-10-12 01:14:15.371362 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for device sate [automode][0m
+[32m2023-10-12 01:14:15.371623 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for sensor [button] already exists![0m
+[32m2023-10-12 01:14:15.371864 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for sensor [button][0m
+[32m2023-10-12 01:14:15.372127 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 01:14:15.372328 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[32m2023-10-12 01:14:15.372569 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 01:14:15.438269 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 01:14:15.449586 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback http_callback №1 for automode[0m
+[32m2023-10-12 01:14:15.451597 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:14:15.511271 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:14:22.052558 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 1->0.[0m
+[32m2023-10-12 01:14:22.064246 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback http_callback №1 for button[0m
+[32m2023-10-12 01:14:22.066253 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:14:22.117542 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:14:28.920433 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 0->1.[0m
+[32m2023-10-12 01:14:28.934410 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback lambda_callback №0 for button[0m
+[32m2023-10-12 01:14:28.934640 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [        main        ] :: Digital sensor value changed to 1[0m
+[32m2023-10-12 01:14:28.935551 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[32m2023-10-12 01:14:28.948102 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback http_callback №1 for button[0m
+[32m2023-10-12 01:14:28.959723 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-12 01:14:28.961094 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:14:28.973218 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback http_callback №1 for automode[0m
+[32m2023-10-12 01:14:28.993482 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:14:29.196405 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:14:29.234383 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:15:30.358837 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 01:16:02.593914 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 1->0.[0m
+[32m2023-10-12 01:16:02.605127 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback http_callback №1 for button[0m
+[32m2023-10-12 01:16:02.606700 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:16:02.656473 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:16:03.622241 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 0->1.[0m
+[32m2023-10-12 01:16:03.633461 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback lambda_callback №0 for button[0m
+[32m2023-10-12 01:16:03.634547 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [        main        ] :: Digital sensor value changed to 1[0m
+[32m2023-10-12 01:16:03.646682 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[32m2023-10-12 01:16:03.649397 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback http_callback №1 for button[0m
+[32m2023-10-12 01:16:03.662985 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 01:16:03.665756 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:16:03.680689 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback http_callback №1 for automode[0m
+[32m2023-10-12 01:16:03.697132 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:16:03.878786 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:16:03.894545 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:16:14.870836 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 1->0.[0m
+[32m2023-10-12 01:16:14.879839 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback http_callback №1 for button[0m
+[32m2023-10-12 01:16:14.881481 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:16:14.933332 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:16:15.444165 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 0->1.[0m
+[32m2023-10-12 01:16:15.444376 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback lambda_callback №0 for button[0m
+[32m2023-10-12 01:16:15.444482 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [        main        ] :: Digital sensor value changed to 1[0m
+[32m2023-10-12 01:16:15.444761 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode disabled[0m
+[32m2023-10-12 01:16:15.445043 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback http_callback №1 for button[0m
+[32m2023-10-12 01:16:15.445166 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-12 01:16:15.445534 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback http_callback №1 for automode[0m
+[32m2023-10-12 01:16:15.445679 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:16:15.451183 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:16:15.511843 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:16:15.699370 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:16:17.216023 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 1->0.[0m
+[32m2023-10-12 01:16:17.227328 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback http_callback №1 for button[0m
+[32m2023-10-12 01:16:17.228815 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:16:17.278208 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:16:17.738739 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 0->1.[0m
+[32m2023-10-12 01:16:17.748309 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback lambda_callback №0 for button[0m
+[32m2023-10-12 01:16:17.751172 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [        main        ] :: Digital sensor value changed to 1[0m
+[32m2023-10-12 01:16:17.761280 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ louver_controller  ] :: Automode enabled[0m
+[32m2023-10-12 01:16:17.764268 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback http_callback №1 for button[0m
+[32m2023-10-12 01:16:17.777807 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 01:16:17.779966 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:16:17.793487 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [      watcher       ] :: Calling callback http_callback №1 for automode[0m
+[32m2023-10-12 01:16:17.813284 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 01:16:17.861758 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:16:17.893064 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 01:16:23.924636 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks -[0m
+[32m2023-10-12 01:16:34.632398 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks -[0m
+[32m2023-10-12 01:17:09.450232 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [DELETE] /callbacks/delete -[0m
+[32m2023-10-12 01:17:09.462057 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Trying to delete observable [automode]'s callback № 1[0m
+[32m2023-10-12 01:17:09.463270 [ 192.168.1.104  ::    funny_man   ][0m - [35m[WARNING] [ callbacks_manager  ] :: Callback № 1 of observable [automode] was deleted[0m
+[32m2023-10-12 01:17:09.497225 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500},"cb":[{"observable":{"name":"button","type":"sensor"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":-1,"readonly":false,"type":"http_callback","compareType":"gte"}]}]}[0m
+[32m2023-10-12 01:17:09.538815 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [306]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500},"cb":[{"observable":{"name":"button","type":"sensor"},"callbacks":[{"url":"http://test3222","method":"POST","payload":"null","trigger":-1,"readonly":false,"type":"http_callback","compareType":"gte"}]}][0m
+[32m2023-10-12 01:17:09.637798 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m

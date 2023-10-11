@@ -10,7 +10,7 @@
 #define VALUE_DYNAMIC_PARAM "${value}"
 
 namespace Callback {
-    const String CALLBACKS_TEMPLATES_JSON = R"=====(
+    const String HTTP_CALLBACKS_TEMPLATES_JSON = R"=====(
     {
         "url": {
             "required": true
@@ -18,10 +18,10 @@ namespace Callback {
         "method": {
             "required": false,
             "values": [
-            "GET",
-            "POST",
-            "DELETE",
-            "PUT"
+                "GET",
+                "POST",
+                "DELETE",
+                "PUT"
             ]
         },
         "payload": {
@@ -87,8 +87,8 @@ namespace Callback {
             };
 
             static DynamicJsonDocument getTemplate() {
-                DynamicJsonDocument doc(MAX_CALLBACK_TEMAPLATE_SIZE);
-                deserializeJson(doc, CALLBACKS_TEMPLATES_JSON);
+                DynamicJsonDocument doc(MAX_CALLBACK_TEMPLATE_SIZE);
+                deserializeJson(doc, HTTP_CALLBACKS_TEMPLATES_JSON);
                 return doc;
             }
 
@@ -96,7 +96,7 @@ namespace Callback {
             bool _sending = false;
         private:
             String _url;
-            String _method = "GET";
+            String _method;
             String _payload;
             int16_t _lastResponseCode = 0;
             T * _currentValue;

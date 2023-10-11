@@ -74,7 +74,7 @@ namespace Callback {
             ->method(callback["method"])
             ->payload(callback["payload"])
             ->action(callback["action"])
-            ->threshold(callback["threshold"]);
+            ->compareType(callback["compareType"]);
         String trigger = callback["trigger"];
         if (strcmp(observableType, STATE_TYPE) == 0) {
             return addDeviceStateCallback(SmartThing.getDeviceState(name), builder.build<String>(trigger));
@@ -278,9 +278,8 @@ namespace Callback {
         if (callbackObject.containsKey("trigger")) {
             callback->setTriggerValue(callbackObject["trigger"]);
         }
-
-        if (callbackObject.containsKey("threshold")) {
-            callback->setThresholdValue(callbackObject["threshold"]);
+        if (callbackObject.containsKey("compareType")) {
+            callback->setCompareType(callbackObject["compareType"].as<String>());
         }
 
         callback->updateCustom(callbackObject);
@@ -416,8 +415,9 @@ namespace Callback {
     }
 
     DynamicJsonDocument CallbacksManager::getCallbacksTemplates() {
-        DynamicJsonDocument doc(MAX_CALLBACK_TEMAPLATE_SIZE * 2);
+        DynamicJsonDocument doc(MAX_CALLBACK_TEMPLATE_SIZE * 2);
         //<bruh>
+        doc["default"] = WatcherCallback<int>::getTemplate();
         doc[HTTP_CALLBACK_TAG] = HttpCallback<int>::getTemplate();
         doc[ACTION_CALLBACK_TAG] = ActionCallback<int>::getTemplate();
         return doc;

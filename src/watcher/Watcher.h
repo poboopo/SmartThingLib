@@ -24,8 +24,6 @@ class Watcher {
 
         virtual bool check() = 0;
         virtual const char * getObservableInfo() = 0;
-        // это находится здесь, тк у callback нет привязки к типу,а у Watcherов есть
-        virtual bool callbackAccept(Callback::WatcherCallback<T> * callback,  T &oldValue, T &newValue) = 0;
 
         DynamicJsonDocument getCallbacksJson() {
             return getCallbacksJson(false, false);
@@ -85,10 +83,9 @@ class Watcher {
 
         void callCallbacks(T &oldValue, T &value) {
             _callbacks.forEach([&](Callback::WatcherCallback<T> * current, int index) {
-                if (callbackAccept(current, oldValue, value)) {
+                if (current->accept(value)) {
+                    LOGGER.debug("watcher" , "Calling callback №%d [%s] for %s", index, current->type(), _observable->name);
                     current->call(&value);
-                } else {
-                    LOGGER.debug("watcher", "Callback reject [%d]:%s", index, current->type());
                 }
             });
         };

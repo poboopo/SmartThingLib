@@ -41,12 +41,7 @@ namespace Callback {
                 }
                 return false;
             };
-
-            bool callbackAccept(Callback::WatcherCallback<String> * callback, String &oldValue, String &value) {
-                return callback->triggerValue().isEmpty() || 
-                    (callback->triggerValue() != nullptr && strcmp(value.c_str(), callback->triggerValue().c_str()) == 0);
-            }
-
+            
             const char * getObservableInfo() {
                 return _observable->name;
             };

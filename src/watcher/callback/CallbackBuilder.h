@@ -14,7 +14,7 @@
 namespace Callback {
     class CallbackBuilder {
         public:
-            CallbackBuilder(): _readOnly(false), _threshold(-1){};
+            CallbackBuilder(): _readOnly(false), _compareType(CompareType::EQ) {};
 
             template<typename T>
             WatcherCallback<T> * build(T triggerValue) {
@@ -45,7 +45,7 @@ namespace Callback {
                     return nullptr;
                 }
 
-                callback->setThresholdValue(_threshold);
+                callback->setCompareType(_compareType);
 
                 return callback;
             }
@@ -96,11 +96,13 @@ namespace Callback {
                 _action = action;
                 return this;
             }
-            CallbackBuilder * threshold(int16_t value) {
-                _threshold = value;
+            CallbackBuilder * compareType(String compareType) {
+                if (compareType.isEmpty()) {
+                    return this;
+                }
+                _compareType = compareType;
                 return this;
             }
-            
         private:
             // LambdaCallback<int16_t>::CustomCallback * _callback;
             bool _readOnly;
@@ -109,7 +111,7 @@ namespace Callback {
             String _method;
             String _payload;
             String _action;
-            int16_t _threshold;
+            String _compareType;
     };
 }
 

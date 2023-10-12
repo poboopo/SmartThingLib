@@ -12,10 +12,9 @@
 
 /*
     Класс наблюдатель за объектами
+    T - тип данных, которые хранит в себе объект
 */
 
-// T - тип данных, которые хранит в себе объект
-// todo remove typename O and just use configurable object!
 template<typename T>
 class Watcher {
     public:

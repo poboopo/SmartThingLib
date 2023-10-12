@@ -258,3 +258,591 @@
 [32m2023-10-07 00:02:49.155284 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 200[0m
 [32m2023-10-07 00:05:56.236964 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 200[0m
 [33m2023-10-07 00:08:17.189409 [  192.168.1.2   ::  peepeepoopoo  ][0m - [31m[ ERROR ] [ louver_controller  ] :: Failed to define position for light value 600[0m
+[32m2023-10-12 19:38:35.624745 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.104[0m
+[32m2023-10-12 19:38:35.641382 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 19:38:35.644168 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 19:38:35.646988 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 19:38:35.671205 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 19:38:35.671465 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 19:38:35.672439 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [sensor]:button[0m
+[32m2023-10-12 19:38:35.674484 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test3222[0m
+[32m2023-10-12 19:38:35.686320 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 19:38:35.687262 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 19:38:35.698543 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 19:38:35.699768 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 19:38:35.711455 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 19:38:35.713404 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 19:38:35.724099 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 19:38:35.735813 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - test_setting:Test number value[0m
+[32m2023-10-12 19:38:35.747523 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 19:38:35.748369 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for sensor [button] already exists![0m
+[32m2023-10-12 19:38:35.760756 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for sensor [button][0m
+[32m2023-10-12 19:38:35.761991 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 19:38:35.762973 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 19:38:46.111840 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [     web_server     ] :: [GET] / -[0m
+[32m2023-10-12 19:38:46.448653 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-12 19:38:46.729530 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[32m2023-10-12 19:38:47.016461 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[32m2023-10-12 19:38:47.281439 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 19:38:47.576445 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[32m2023-10-12 19:38:47.836615 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 19:38:48.096289 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[32m2023-10-12 19:38:49.654339 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[32m2023-10-12 19:38:53.739360 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-12 19:38:56.572790 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[32m2023-10-12 19:38:58.108507 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 19:38:59.636478 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[32m2023-10-12 19:39:00.652412 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 19:39:01.941034 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-12 19:39:02.973415 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 19:40:17.640677 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 1->0.[0m
+[32m2023-10-12 19:40:17.640842 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Calling callback №1 [http_callback] for button[0m
+[32m2023-10-12 19:40:17.640938 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 19:40:17.714784 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 19:40:18.153368 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [   sensor_watcher   ] :: Sensor button value changed 0->1.[0m
+[32m2023-10-12 19:40:18.155094 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Calling callback №0 [lambda_callback] for button[0m
+[32m2023-10-12 19:40:18.158401 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [        main        ] :: Digital sensor value changed to 1[0m
+[32m2023-10-12 19:40:18.168053 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Calling callback №1 [http_callback] for button[0m
+[32m2023-10-12 19:40:18.169456 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-12 19:40:18.180729 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Sending request [POST] http://test3222 :: null[0m
+[32m2023-10-12 19:40:18.228098 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   http_callback    ] :: Request http://test3222 finished with code -1[0m
+[32m2023-10-12 19:41:56.575014 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.104[0m
+[32m2023-10-12 19:41:56.586038 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 19:41:56.587903 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 19:41:56.591243 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 19:41:56.602728 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 19:41:56.603837 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 19:41:56.615635 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [sensor]:button[0m
+[32m2023-10-12 19:41:56.617560 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test3222[0m
+[32m2023-10-12 19:41:56.629377 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 19:41:56.630933 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 19:41:56.641812 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 19:41:56.643387 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 19:41:56.654776 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 19:41:56.656046 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 19:41:56.667985 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 19:41:56.681008 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - test_setting:Test number value[0m
+[32m2023-10-12 19:41:56.682377 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 19:41:56.693850 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for sensor [button] already exists![0m
+[32m2023-10-12 19:41:56.704998 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for sensor [button][0m
+[32m2023-10-12 19:41:56.706522 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 19:41:56.707420 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 19:41:57.925628 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [     web_server     ] :: [GET] / -[0m
+[32m2023-10-12 19:41:58.250576 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-12 19:41:58.528657 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[32m2023-10-12 19:41:58.823135 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[32m2023-10-12 19:41:59.069474 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 19:41:59.346450 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[32m2023-10-12 19:41:59.641625 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 19:41:59.889193 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[32m2023-10-12 19:42:01.452402 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[32m2023-10-12 19:42:06.526813 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[32m2023-10-12 19:42:06.540336 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-12 19:42:08.322066 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-12 19:42:08.335623 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 19:42:10.114078 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 19:42:12.165293 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[32m2023-10-12 19:42:12.179627 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-12 19:42:13.200176 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 19:43:20.197596 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 19:43:35.943469 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 19:43:41.547448 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [DELETE] /callbacks/delete -[0m
+[32m2023-10-12 19:43:49.943167 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [DELETE] /callbacks/delete -[0m
+[32m2023-10-12 19:44:02.140241 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [DELETE] /callbacks/delete -[0m
+[32m2023-10-12 19:48:43.330278 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.104[0m
+[32m2023-10-12 19:48:43.357639 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 19:48:43.359401 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 19:48:43.362709 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 19:48:43.374310 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 19:48:43.375465 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 19:48:43.387126 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [sensor]:button[0m
+[32m2023-10-12 19:48:43.388954 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test3222[0m
+[32m2023-10-12 19:48:43.402928 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 19:48:43.412616 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 19:48:43.413859 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 19:48:43.415253 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 19:48:43.426773 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 19:48:43.428047 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 19:48:43.453166 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 19:48:43.453450 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - test_setting:Test number value[0m
+[32m2023-10-12 19:48:43.461852 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 19:48:43.464045 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for sensor [button] already exists![0m
+[32m2023-10-12 19:48:43.474444 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for sensor [button][0m
+[32m2023-10-12 19:48:43.475534 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 19:48:43.486781 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 19:48:56.126581 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [     web_server     ] :: [GET] / -[0m
+[32m2023-10-12 19:48:56.469795 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-12 19:48:56.720292 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[32m2023-10-12 19:48:57.009906 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[32m2023-10-12 19:48:57.261535 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 19:48:57.545032 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[32m2023-10-12 19:48:57.819595 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 19:48:58.094510 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[32m2023-10-12 19:48:58.387460 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[32m2023-10-12 19:49:04.220818 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 19:49:06.802917 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-12 19:49:08.589890 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 19:49:09.854391 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[32m2023-10-12 19:49:09.879828 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-12 19:49:10.901641 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 19:49:11.910912 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-12 19:49:11.925028 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 19:49:13.202644 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 19:49:26.073120 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.104[0m
+[32m2023-10-12 19:49:26.098480 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 19:49:26.100652 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 19:49:26.104134 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 19:49:26.116980 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 19:49:26.118345 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 19:49:26.129715 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [sensor]:button[0m
+[32m2023-10-12 19:49:26.131973 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test3222[0m
+[32m2023-10-12 19:49:26.143076 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 19:49:26.145229 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 19:49:26.156207 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 19:49:26.156828 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 19:49:26.168455 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 19:49:26.170786 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 19:49:26.181362 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 19:49:26.195613 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - test_setting:Test number value[0m
+[32m2023-10-12 19:49:26.206665 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 19:49:26.207126 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for sensor [button] already exists![0m
+[32m2023-10-12 19:49:26.216721 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for sensor [button][0m
+[32m2023-10-12 19:49:26.217816 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 19:49:26.229205 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 19:49:29.458167 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[32m2023-10-12 19:49:29.473427 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-12 19:49:37.602461 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-12 19:49:37.615603 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 19:50:15.942036 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 19:50:15.954578 [ 192.168.1.104  ::    funny_man   ][0m - [35m[WARNING] [ callbacks_manager  ] :: Can't find watcher for observable [wifi][0m
+[32m2023-10-12 19:50:17.242638 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 19:50:20.058483 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [DELETE] /callbacks/delete -[0m
+[32m2023-10-12 19:50:20.059889 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Trying to delete observable [button]'s callback № 1[0m
+[32m2023-10-12 19:50:20.075444 [ 192.168.1.104  ::    funny_man   ][0m - [35m[WARNING] [ callbacks_manager  ] :: Callback № 1 of observable [button] was deleted[0m
+[32m2023-10-12 19:50:20.085779 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[32m2023-10-12 19:50:20.097656 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}}[0m
+[32m2023-10-12 19:50:20.117888 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [104]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}[0m
+[32m2023-10-12 19:50:20.229713 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 19:50:20.480188 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 19:50:22.276077 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 19:50:30.676492 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 19:50:31.697990 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 19:50:31.699254 [ 192.168.1.104  ::    funny_man   ][0m - [35m[WARNING] [ callbacks_manager  ] :: Can't find watcher for observable [led][0m
+[32m2023-10-12 19:50:32.732586 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 19:51:10.805365 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [POST] /callbacks/create - {"observable":{"type":"state","name":"automode"},"callback":{"id":"new","type":"http_callback","trigger":"123","url":"test","method":"GET","payload":""}}[0m
+[32m2023-10-12 19:51:10.828450 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating callback from json: {"observable":{"type":"state","name":"automode"},"callback":{"id":"new","type":"http_callback","trigger":"123","url":"test","method":"GET","payload":""}}[0m
+[32m2023-10-12 19:51:10.839254 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [state]:automode[0m
+[32m2023-10-12 19:51:10.840794 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback test[0m
+[32m2023-10-12 19:51:10.852480 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for device state [automode] already exists![0m
+[32m2023-10-12 19:51:10.864395 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for device sate [automode][0m
+[32m2023-10-12 19:51:10.887935 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test","method":"GET","payload":"","trigger":"123","readonly":false,"type":"http_callback","compareType":"eq"}]}]}[0m
+[32m2023-10-12 19:51:10.928653 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [300]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test","method":"GET","payload":"","trigger":"123","readonly":false,"type":"http_callback","compareType":"eq"}]}][0m
+[32m2023-10-12 19:51:10.946212 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 19:51:11.239863 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 19:51:19.871794 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 19:51:21.433047 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[32m2023-10-12 19:51:21.433126 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-12 20:03:47.346039 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.104[0m
+[32m2023-10-12 20:03:47.363125 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 20:03:47.365611 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 20:03:47.368478 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 20:03:47.380072 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 20:03:47.381049 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 20:03:47.393496 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Creating new callback for [state]:automode[0m
+[32m2023-10-12 20:03:47.415218 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  callback_builder  ] :: Building new http callback http://test[0m
+[32m2023-10-12 20:03:47.415730 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 20:03:47.415967 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 20:03:47.419346 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 20:03:47.420631 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 20:03:47.432149 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 20:03:47.433355 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 20:03:47.444732 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 20:03:47.456144 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - test_setting:Test number value[0m
+[32m2023-10-12 20:03:47.467634 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Watcher for device state [automode] already exists![0m
+[32m2023-10-12 20:03:47.468715 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Added new callback for device sate [automode][0m
+[32m2023-10-12 20:03:47.480203 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 20:03:47.481190 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 20:03:47.492487 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 20:03:47.677892 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 20:03:47.689428 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Calling callback №0 [lambda_callback] for automode[0m
+[32m2023-10-12 20:03:47.690458 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[32m2023-10-12 20:03:47.737633 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test","method":"GET","payload":"","trigger":"123","readonly":false,"type":"http_callback","compareType":"eq"}]}]}[0m
+[32m2023-10-12 20:03:47.766859 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [299]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500},"cb":[{"observable":{"name":"automode","type":"state"},"callbacks":[{"url":"http://test","method":"GET","payload":"","trigger":"123","readonly":false,"type":"http_callback","compareType":"eq"}]}][0m
+[32m2023-10-12 20:03:47.870049 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 20:03:47.871607 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Led on[0m
+[32m2023-10-12 20:03:47.873005 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [     comparator     ] :: Compare true == 123[0m
+[32m2023-10-12 20:04:15.020357 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [DELETE] /callbacks/delete -[0m
+[32m2023-10-12 20:04:15.032541 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Trying to delete observable [automode]'s callback № 0[0m
+[32m2023-10-12 20:04:15.035216 [ 192.168.1.104  ::    funny_man   ][0m - [31m[ ERROR ] [      watcher       ] :: This callback is readonly![0m
+[32m2023-10-12 20:04:16.322965 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:04:19.897574 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [DELETE] /callbacks/delete -[0m
+[32m2023-10-12 20:04:19.908716 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: Trying to delete observable [automode]'s callback № 1[0m
+[32m2023-10-12 20:04:19.912244 [ 192.168.1.104  ::    funny_man   ][0m - [35m[WARNING] [ callbacks_manager  ] :: Callback № 1 of observable [automode] was deleted[0m
+[32m2023-10-12 20:04:19.921896 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[32m2023-10-12 20:04:20.064229 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 20:04:20.335017 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:04:23.399251 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:04:31.278630 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[32m2023-10-12 20:04:31.287292 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-12 20:04:31.300022 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Calling callback №0 [lambda_callback] for automode[0m
+[32m2023-10-12 20:04:31.300211 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value false[0m
+[32m2023-10-12 20:04:31.311239 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[32m2023-10-12 20:04:31.337942 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}}[0m
+[32m2023-10-12 20:04:31.349342 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [104]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}[0m
+[32m2023-10-12 20:04:31.476530 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 20:04:31.476699 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Led off[0m
+[32m2023-10-12 20:04:32.743389 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-12 20:04:32.743596 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 20:04:32.751972 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Calling callback №0 [lambda_callback] for automode[0m
+[32m2023-10-12 20:04:32.753084 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[32m2023-10-12 20:04:32.765406 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[32m2023-10-12 20:04:32.777461 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500}}[0m
+[32m2023-10-12 20:04:32.797606 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [103]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500}[0m
+[32m2023-10-12 20:04:32.812014 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 20:04:32.813864 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Led on[0m
+[32m2023-10-12 20:04:34.340093 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[32m2023-10-12 20:04:34.355440 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-12 20:04:34.366923 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Calling callback №0 [lambda_callback] for automode[0m
+[32m2023-10-12 20:04:34.368003 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value false[0m
+[32m2023-10-12 20:04:34.379528 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[32m2023-10-12 20:04:34.392662 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}}[0m
+[32m2023-10-12 20:04:34.415105 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [104]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500}[0m
+[32m2023-10-12 20:04:34.536736 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 20:04:34.536932 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Led off[0m
+[32m2023-10-12 20:04:44.421308 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [POST] /config/add - {"test_setting":123}[0m
+[32m2023-10-12 20:04:44.422656 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[32m2023-10-12 20:04:44.579672 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 20:04:45.601303 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[32m2023-10-12 20:04:58.816827 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/system -[0m
+[32m2023-10-12 20:04:59.086304 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/actions -[0m
+[32m2023-10-12 20:04:59.333763 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/config -[0m
+[32m2023-10-12 20:04:59.615297 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:05:00.149290 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:05:00.414121 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [OPTIONS] /sensors -[0m
+[32m2023-10-12 20:05:00.688812 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-12 20:05:00.968674 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[32m2023-10-12 20:05:01.241779 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[32m2023-10-12 20:05:01.522336 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:05:01.795814 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[32m2023-10-12 20:05:02.077852 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:05:02.359456 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[32m2023-10-12 20:05:02.631386 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [OPTIONS] /config -[0m
+[32m2023-10-12 20:05:02.900182 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[32m2023-10-12 20:05:13.859473 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:05:14.129678 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:06:00.813845 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:06:01.089420 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:06:38.645058 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:06:38.919438 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:06:48.835923 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:06:49.110179 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:06:49.386577 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:06:49.662757 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:06:51.460860 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:06:51.736180 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:07:37.702141 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:07:37.977410 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:07:38.252352 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:07:38.528252 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:07:39.583085 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:07:39.848563 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:08:13.859607 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:08:14.149638 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:08:14.413463 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:08:15.478836 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:08:17.187395 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:08:17.451647 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:11:07.965658 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:11:08.241313 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:11:08.506956 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:11:08.783113 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:11:11.848522 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:11:12.142988 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:16:06.986914 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:16:07.264252 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:16:07.539039 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:16:07.820803 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:21:45.845372 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:21:46.118732 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:21:46.393218 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:21:46.670111 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:23:03.811194 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:23:04.088938 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:23:04.364623 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:23:04.637745 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:23:06.437613 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:23:06.712499 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:23:20.193066 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:23:20.467882 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:23:20.752931 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:23:21.022878 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:25:10.171676 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:25:10.435255 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:25:10.709794 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:25:10.979541 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:25:41.432453 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:25:41.687266 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:25:41.960372 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:25:42.237972 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:26:19.551518 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:26:19.827306 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:26:20.102532 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:26:20.381676 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:27:11.676837 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:27:11.945086 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:27:12.218806 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:27:12.496189 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:27:20.404128 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:27:20.669545 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:27:20.669626 [ 192.168.1.104  ::    funny_man   ][0m - [35m[WARNING] [ callbacks_manager  ] :: Can't find watcher for observable [led][0m
+[32m2023-10-12 20:28:02.543807 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:28:02.819827 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:28:03.116174 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:28:03.365561 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:28:52.356172 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:28:52.612973 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:28:52.886526 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:28:53.164798 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:29:13.235819 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:29:13.509594 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:29:13.774249 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:29:14.052235 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:29:54.176255 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:29:54.469459 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:29:54.738130 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:29:55.006273 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:30:05.432806 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:30:05.699639 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:30:41.486019 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:30:41.781045 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:30:42.035134 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:30:42.297546 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:31:15.793796 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:31:16.067899 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:31:16.343840 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:31:16.623038 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:31:55.209656 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:31:55.482163 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:31:55.758036 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:31:56.052843 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:32:14.833122 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:32:15.105788 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:32:15.382328 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:32:15.679076 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:32:17.976132 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:32:18.244911 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:32:41.081447 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:32:41.356256 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:32:41.632201 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:32:41.908694 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:32:42.957961 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:32:43.210183 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:33:07.336434 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [     web_server     ] :: [GET] / -[0m
+[32m2023-10-12 20:33:07.669481 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-12 20:33:07.966124 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[32m2023-10-12 20:33:08.236545 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[32m2023-10-12 20:33:08.486304 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:33:08.792812 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[32m2023-10-12 20:33:09.054444 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:33:09.311095 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[32m2023-10-12 20:33:09.584167 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[32m2023-10-12 20:33:10.362714 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:33:10.377469 [ 192.168.1.104  ::    funny_man   ][0m - [35m[WARNING] [ callbacks_manager  ] :: Can't find watcher for observable [wifi][0m
+[32m2023-10-12 20:33:13.694920 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:34:11.331643 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:34:11.605208 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:34:11.880967 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:34:12.176139 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:34:13.950684 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:34:14.246169 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:34:23.649601 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:34:23.899664 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:34:24.173900 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:34:24.469435 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:34:25.481795 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:34:25.757046 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:35:00.789518 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:35:01.046183 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:35:01.318358 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:35:01.594634 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:35:03.138591 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:35:03.426521 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:35:35.651644 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:35:35.926086 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:35:36.198275 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:35:36.496144 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:35:41.832791 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:35:42.106189 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:35:42.372796 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:35:42.642989 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:35:44.432836 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:35:44.691844 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:35:52.078478 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:35:52.332604 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:35:54.640658 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:35:54.918081 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:35:56.965601 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:35:57.245194 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:36:13.258269 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:36:13.532270 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:36:13.826216 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:36:14.096108 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:36:23.737277 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:36:24.011014 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:36:24.285970 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:36:24.579457 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:36:28.135374 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/by/observable -[0m
+[32m2023-10-12 20:36:28.393376 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m
+[32m2023-10-12 20:36:28.919755 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:36:29.197084 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:36:37.087532 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:36:37.362771 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:36:38.669452 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:36:38.939881 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:37:01.020429 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:37:01.281919 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:37:01.558719 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:37:01.855389 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:37:14.791902 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:37:15.066822 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:37:15.345665 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:37:15.622555 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:37:16.659332 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:37:16.929302 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:37:18.980760 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:37:19.255562 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:37:34.530129 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/system -[0m
+[32m2023-10-12 20:37:34.796569 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/actions -[0m
+[32m2023-10-12 20:37:35.063343 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/config -[0m
+[32m2023-10-12 20:37:35.584421 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:37:35.858958 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:37:36.134935 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [OPTIONS] /sensors -[0m
+[32m2023-10-12 20:37:36.410217 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-12 20:37:36.689946 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[32m2023-10-12 20:37:36.964924 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[32m2023-10-12 20:37:37.249673 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[32m2023-10-12 20:37:37.513898 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:37:37.785084 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:37:38.061602 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[32m2023-10-12 20:37:38.331960 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [OPTIONS] /config -[0m
+[32m2023-10-12 20:37:38.605023 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[32m2023-10-12 20:38:33.946687 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/system -[0m
+[32m2023-10-12 20:38:34.246150 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/actions -[0m
+[32m2023-10-12 20:38:34.513064 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/config -[0m
+[32m2023-10-12 20:38:35.056542 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:38:35.322821 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:38:35.591206 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [OPTIONS] /sensors -[0m
+[32m2023-10-12 20:38:35.839567 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-12 20:38:36.123148 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[32m2023-10-12 20:38:36.397010 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[32m2023-10-12 20:38:36.676066 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[32m2023-10-12 20:38:36.956462 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:38:37.253846 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:38:37.502443 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[32m2023-10-12 20:38:37.775584 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [OPTIONS] /config -[0m
+[32m2023-10-12 20:38:38.049409 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[32m2023-10-12 20:38:44.162783 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/system -[0m
+[32m2023-10-12 20:38:44.442794 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/actions -[0m
+[32m2023-10-12 20:38:44.687041 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/config -[0m
+[32m2023-10-12 20:38:45.224474 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:38:45.501046 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:38:45.777189 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [OPTIONS] /sensors -[0m
+[32m2023-10-12 20:38:46.051853 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-12 20:38:46.332357 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[32m2023-10-12 20:38:46.622831 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[32m2023-10-12 20:38:46.876785 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[32m2023-10-12 20:38:47.172755 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:38:47.423069 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:38:47.703084 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[32m2023-10-12 20:38:47.979250 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [OPTIONS] /config -[0m
+[32m2023-10-12 20:38:48.244061 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[32m2023-10-12 20:39:10.877348 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/system -[0m
+[32m2023-10-12 20:39:11.124584 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/actions -[0m
+[32m2023-10-12 20:39:11.401753 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [OPTIONS] /info/config -[0m
+[32m2023-10-12 20:39:11.955828 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [OPTIONS] /callbacks/template -[0m
+[32m2023-10-12 20:39:12.230277 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [OPTIONS] /state -[0m
+[32m2023-10-12 20:39:12.497145 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [OPTIONS] /sensors -[0m
+[32m2023-10-12 20:39:12.773170 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-12 20:39:13.045575 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[32m2023-10-12 20:39:13.320436 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[32m2023-10-12 20:39:13.620355 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[32m2023-10-12 20:39:13.883603 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:39:14.166548 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:39:14.417061 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[32m2023-10-12 20:39:14.689776 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [OPTIONS] /config -[0m
+[32m2023-10-12 20:39:14.957563 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[32m2023-10-12 20:40:21.364506 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.104[0m
+[32m2023-10-12 20:40:21.379597 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 20:40:21.381447 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 20:40:21.384669 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 20:40:21.396343 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 20:40:21.397932 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 20:40:21.408894 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: There is not callbacks in settings[0m
+[32m2023-10-12 20:40:21.409924 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 20:40:21.421183 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 20:40:21.422415 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 20:40:21.424689 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 20:40:21.461715 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 20:40:21.462599 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 20:40:21.462985 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - test_setting:Test number value[0m
+[32m2023-10-12 20:40:21.463268 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 20:40:21.474687 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 20:40:21.475684 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 20:40:21.480713 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 20:40:30.829472 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [     web_server     ] :: [GET] / -[0m
+[32m2023-10-12 20:40:31.163177 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-12 20:40:31.459479 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[32m2023-10-12 20:40:31.729467 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[32m2023-10-12 20:40:31.976358 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[32m2023-10-12 20:40:32.262307 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:40:32.538273 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:40:32.811751 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[32m2023-10-12 20:40:33.106098 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[32m2023-10-12 20:40:37.162572 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:40:39.214591 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-12 20:40:40.245221 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - disable_auto[0m
+[32m2023-10-12 20:40:40.258457 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed true->false.[0m
+[32m2023-10-12 20:40:40.269952 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Calling callback №0 [lambda_callback] for automode[0m
+[32m2023-10-12 20:40:40.271035 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value false[0m
+[32m2023-10-12 20:40:40.283389 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[32m2023-10-12 20:40:40.295445 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500,"test_setting":123}}[0m
+[32m2023-10-12 20:40:40.315922 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [123]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"false"},"cg":{"test":1500,"test_setting":123}[0m
+[32m2023-10-12 20:40:40.330110 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 20:40:40.331367 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Led off[0m
+[32m2023-10-12 20:40:41.351569 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   action_handler   ] :: [PUT] /action - enable_auto[0m
+[32m2023-10-12 20:40:41.366101 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [device_state_watcher] :: Device state automode value changed false->true.[0m
+[32m2023-10-12 20:40:41.377886 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [      watcher       ] :: Calling callback №0 [lambda_callback] for automode[0m
+[32m2023-10-12 20:40:41.378924 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Automode callback called. New value true[0m
+[32m2023-10-12 20:40:41.390452 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Removed group cb from settings - it's empty[0m
+[32m2023-10-12 20:40:41.414630 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Parsed json: {"wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500,"test_setting":123}}[0m
+[32m2023-10-12 20:40:41.424288 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [  settings_manager  ] :: Saving settings (length [122]): "wf":{"ss":"PUK","ps":"donttouch","md":1},"dn":"funny_man","st":{"automode":"true"},"cg":{"test":1500,"test_setting":123}[0m
+[32m2023-10-12 20:40:41.520836 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  settings_manager  ] :: Settings saved[0m
+[32m2023-10-12 20:40:41.521463 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Led on[0m
+[32m2023-10-12 20:42:05.234207 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    SMART_THING     ] :: WiFi connected, local ip 192.168.1.104[0m
+[32m2023-10-12 20:42:05.260552 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Ota started[0m
+[32m2023-10-12 20:42:05.261894 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Multicaster created[0m
+[32m2023-10-12 20:42:05.265609 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: RestController started[0m
+[32m2023-10-12 20:42:05.282923 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ device_states_list ] :: Added new device state wifi[0m
+[32m2023-10-12 20:42:05.283114 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loading callbacks from settings...[0m
+[32m2023-10-12 20:42:05.290385 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [ callbacks_manager  ] :: There is not callbacks in settings[0m
+[32m2023-10-12 20:42:05.291362 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Callbacks loaded[0m
+[32m2023-10-12 20:42:05.302556 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Creating loop task[0m
+[32m2023-10-12 20:42:05.303773 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Loop task created[0m
+[32m2023-10-12 20:42:05.305872 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [    SMART_THING     ] :: Setup finished[0m
+[32m2023-10-12 20:42:05.317409 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - enable_auto:Enable automode[0m
+[32m2023-10-12 20:42:05.328667 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [action_handlers_list] :: Added new action handler - disable_auto:Disable automode[0m
+[32m2023-10-12 20:42:05.340177 [ 192.168.1.104  ::    funny_man   ][0m - [32m[ DEBUG ] [config_entries_list ] :: Added new config entry - test_setting:Test number value[0m
+[32m2023-10-12 20:42:05.341445 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for state [automode].[0m
+[32m2023-10-12 20:42:05.353452 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_manager  ] :: Registered new watcher for sensor [button].[0m
+[32m2023-10-12 20:42:05.354723 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Config proceed[0m
+[32m2023-10-12 20:42:05.365658 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [        main        ] :: Setup finished[0m
+[32m2023-10-12 20:42:17.483222 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [     web_server     ] :: [GET] / -[0m
+[32m2023-10-12 20:42:17.822262 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/system -[0m
+[32m2023-10-12 20:42:18.121640 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/actions -[0m
+[32m2023-10-12 20:42:18.387641 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /info/config -[0m
+[32m2023-10-12 20:42:18.637786 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [    wifi_handler    ] :: [GET] /wifi -[0m
+[32m2023-10-12 20:42:18.940294 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/template -[0m
+[32m2023-10-12 20:42:19.201496 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   state_handler    ] :: [GET] /state -[0m
+[32m2023-10-12 20:42:19.460238 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [  sensors_handler   ] :: [GET] /sensors -[0m
+[32m2023-10-12 20:42:19.733076 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [   config_handler   ] :: [GET] /config -[0m
+[32m2023-10-12 20:42:24.824070 [ 192.168.1.104  ::    funny_man   ][0m - [34m[ INFO  ] [ callbacks_handler  ] :: [GET] /callbacks/by/observable -[0m

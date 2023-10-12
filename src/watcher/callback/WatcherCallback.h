@@ -18,12 +18,18 @@ namespace Callback {
             "required": false
         },
         "compareType": {
-            "required": try,
+            "required": true,
             "values": [
                 "eq",
                 "gte",
                 "lte"
-            ]
+            ],
+            "default": "eq"
+        },
+        "triggerDisabled": {
+            "required": true,
+            "values": [true, false],
+            "default": true
         }
     }
     )=====";
@@ -41,11 +47,12 @@ namespace Callback {
             virtual void updateCustom(JsonObject doc) = 0;
 
             bool accept(T &value) {
-                return Comparator::compare(_compareType, value, _triggerValue);
+                return _triggerDisabled || Comparator::compare(_compareType, value, _triggerValue);
             }
 
             void addDefaultInfo(DynamicJsonDocument& doc) {
                 doc["trigger"] = _triggerValue;
+                doc["triggerDisabled"] = _triggerDisabled;
                 doc["readonly"] = _readonly;
                 doc["type"] = _type;
                 doc["compareType"] = compareTypeToString(_compareType);
@@ -56,6 +63,9 @@ namespace Callback {
             }
             void setCompareType(CompareType type) {
                 _compareType = type;
+            }
+            void triggerDisabled(bool disabled) {
+                _triggerDisabled = disabled;
             }
             void setTriggerValue(T triggerValue) {
                 _triggerValue = triggerValue;
@@ -78,6 +88,7 @@ namespace Callback {
         protected:
             const char * _type;
             T _triggerValue;
+            bool _triggerDisabled;
             bool _readonly;
             CompareType _compareType;
     };

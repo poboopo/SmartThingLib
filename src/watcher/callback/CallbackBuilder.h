@@ -14,7 +14,7 @@
 namespace Callback {
     class CallbackBuilder {
         public:
-            CallbackBuilder(): _readOnly(false), _compareType(CompareType::EQ) {};
+            CallbackBuilder(): _readOnly(false), _compareType(CompareType::EQ), _triggerDisabled(true) {};
 
             template<typename T>
             WatcherCallback<T> * build(T triggerValue) {
@@ -46,6 +46,7 @@ namespace Callback {
                 }
 
                 callback->setCompareType(_compareType);
+                callback->triggerDisabled(_triggerDisabled);
 
                 return callback;
             }
@@ -59,6 +60,10 @@ namespace Callback {
             // }
             CallbackBuilder * readOnly(bool isReadOnly) {
                 _readOnly = isReadOnly;
+                return this;
+            }
+            CallbackBuilder * triggerDisabled(bool disabled) {
+                _triggerDisabled = disabled;
                 return this;
             }
             CallbackBuilder * type(String type) {
@@ -112,6 +117,7 @@ namespace Callback {
             String _payload;
             String _action;
             String _compareType;
+            bool _triggerDisabled;
     };
 }
 

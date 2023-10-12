@@ -74,6 +74,7 @@ const String WEB_PAGE_MAIN = R"=====(
         window.onload = function() {
             loadDeviceInfo();
             loadWiFiSettings();
+            loadCallbackTemplates();
             loadState();
             loadSensors();
         };
@@ -111,7 +112,7 @@ const String WEB_PAGE_MAIN = R"=====(
                 return;
             }
             const type = document.getElementById("callback-types").value;
-            const template = this.callbackTemplates[type] || {};
+            const template = this.callbackTemplates[type];
             const additionalFields = Object.entries(template).reduce((acc, [key, _]) => {acc[key] = ""; return acc;}, {});
             callbacksBlock.prepend(
                 buildCallbackView(observableType, observable, {
@@ -206,7 +207,7 @@ const String WEB_PAGE_MAIN = R"=====(
             }
             const template = this.callbackTemplates[callbackType] || {};
             const reqPayload = {observable: {type: observableType, name: observable}};
-            const callbackInfo = {index, "type": callbackType};
+            const callbackInfo = {id: index, type: callbackType};
             
             callbackInfo["trigger"] = document.getElementById("callback_trigger_" + index).value;
 
@@ -257,7 +258,7 @@ const String WEB_PAGE_MAIN = R"=====(
             }
         }
         function deleteCallback(observableType, observable, index) {
-            const queryPart = "?observableType=" + observableType + "&name=" + observable + "&index=" + index;
+            const queryPart = "?observableType=" + observableType + "&name=" + observable + "&id=" + index;
             restRequest(
                 "DELETE",
                 "http://" + getHost() + "/callbacks/delete" + queryPart,
@@ -305,13 +306,23 @@ const String WEB_PAGE_MAIN = R"=====(
                     }
                 }
             )
+        }
+        function loadCallbackTemplates() {
             restRequest(
                 "GET",
                 "http://" + getHost() + "/callbacks/template",
                 null,
                 (response) => {
                     if (response) {
-                        this.callbackTemplates = JSON.parse(response);
+                        const templates = JSON.parse(response);
+                        const defaultTemp = templates["default"] || {};
+                        this.callbackTemplates = Object.entries(templates)
+                            .reduce((acc, [key, value]) => {
+                                if (key != "default") {
+                                    acc[key] = {...defaultTemp, ...value};
+                                }
+                                return acc;
+                            }, {});
                         const types = Object.keys(this.callbackTemplates);
                         if (!types) {
                             console.error("No callbacks templates were loaded");
@@ -641,7 +652,7 @@ const String WEB_PAGE_MAIN = R"=====(
             let input = null;
             if (inputInfo.values) {
                 input = document.createElement("select")
-                fillComboBox(input, inputInfo.values, inputInfo.value);
+                fillComboBox(input, inputInfo.values, inputInfo.value || inputInfo.default);
             } else {
                 input = document.createElement("input")
                 input.value = inputInfo.value;
@@ -681,7 +692,7 @@ const String WEB_PAGE_MAIN = R"=====(
                 }
                 valuesArray.forEach((data) => {
                     const option = document.createElement("option");
-                    if (typeof data == "string") {
+                    if (typeof data == "string" || typeof data == "boolean") {
                         option.innerHTML = data;
                         option.value = data;
                     } else {
@@ -703,17 +714,50 @@ const String WEB_PAGE_MAIN = R"=====(
         }
     </script>
     <style>
-        body {
-            background-color: aliceblue;
+        :root {
+            --vt-c-black: #181818;
+            --vt-c-black-soft: #222222;
+            --vt-c-black-mute: #282828;
+            --vt-c-text-light-1: var(--vt-c-indigo);
+            --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
+            --vt-c-text-dark-1: var(--vt-c-white);
+            --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+            --color-background: var(--vt-c-black);
+            --color-background-soft: var(--vt-c-black-soft);
+            --color-background-mute: var(--vt-c-black-mute);
+            --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
+            --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+
+            --color-border: var(--vt-c-divider-dark-2);
+            --color-border-hover: var(--vt-c-divider-dark-1);
+
+            --color-heading: var(--vt-c-text-dark-1);
+            --color-text: var(--vt-c-text-dark-2);
+
+            --color-button: hsla(160, 100%, 37%, 1);
+            --color-button-border: rgb(6, 144, 98);
         }
         * {
             border-radius: 20px;
+        }
+        body {
+            background-color: var(--color-background);
+            color: var(--color-text);
         }
         p, input, button, select, li, label, .loading-info {
             font-size: 50px;
         }
         h1 {
             font-size: 60px;
+        }
+        button {
+            background-color: var(--color-button); 
+            border: 0px solid var(--color-button-border);
+        }
+        input, select {
+            border:2px solid var(--color-border);
+            background-color: var(--vt-c-black-mute);
+            color: var(--color-text);
         }
         .header {
             font-size: 50px;
@@ -724,6 +768,7 @@ const String WEB_PAGE_MAIN = R"=====(
             left: 5px;
             padding: 5px;
             background-color: #04AA6D;
+            color: black;
             text-align: center;
             display: none;
         }
@@ -751,17 +796,13 @@ const String WEB_PAGE_MAIN = R"=====(
             }
         }
         .content-block {
-            background-color: azure;
+            background-color: var(--vt-c-black-soft);
             flex-basis: 500px;
             height: fit-content;
             padding: 10px;
-            border: 2px solid grey;
+            border: 2px solid var(--color-border);
             text-align: center;
             position: relative;
-        }
-        .content-block input {
-            border:2px solid grey;
-            background-color: azure;
         }
         .hidable {
             display: none;
@@ -770,11 +811,8 @@ const String WEB_PAGE_MAIN = R"=====(
             position: absolute;
             top: 5px;
             right: 5px;
-            background:rgb(107, 107, 240);
         }
         .btn-group button {
-            background-color: #04AA6D; 
-            border: 1px solid green;
             padding: 10px 24px;
             cursor: pointer;
             width: 100%;
@@ -793,7 +831,7 @@ const String WEB_PAGE_MAIN = R"=====(
         .config-block {
             display:flex;
             flex-direction:row;
-            border:2px solid grey;
+            border:2px solid var(--color-border);
         }
         .config-block input {
             flex-grow:2;
@@ -801,9 +839,6 @@ const String WEB_PAGE_MAIN = R"=====(
         }
         .config-block input:focus {
             outline: none;
-        }
-        .config-block button {
-            border:1px solid black;
         }
         .grid-view {
             display: grid;

@@ -1,6 +1,9 @@
 
 #ifndef COMPARATOR_H
 #define COMPARATOR_H
+#include "logs/BetterLogger.h"
+
+#define COMPARATOR_TAG "comparator"
 
 namespace Callback {
     enum CompareType {
@@ -43,39 +46,39 @@ namespace Callback {
             template<typename T>
             static bool compare(CompareType compareType, T &value, T &triggerValue) {
                 switch (compareType) {
-                    case EQ:
+                    case CompareType::EQ:
                         return eq(value, triggerValue);
-                    case GTE:
+                    case CompareType::GTE:
                         return gte(value, triggerValue);
-                    case LTE:
+                    case CompareType::LTE:
                         return lte(value, triggerValue);
                 }
                 return false;
             }
 
-            static bool isValidTrigger(int16_t triggerValue) {
-                return triggerValue > -1;
-            }
             static bool eq(int16_t &value, int16_t &triggerValue) {
+                LOGGER.debug(COMPARATOR_TAG, "Compare %d == %d", value, triggerValue);
                 return value == triggerValue;
             }
             static bool gte(int16_t &value, int16_t &triggerValue) {
+                LOGGER.debug(COMPARATOR_TAG, "Compare %d >= %d", value, triggerValue);
                 return value >= triggerValue;
             }
             static bool lte(int16_t &value, int16_t &triggerValue) {
+                LOGGER.debug(COMPARATOR_TAG, "Compare %d <= %d", value, triggerValue);
                 return value <= triggerValue;
             }
 
-            static bool isValidTrigger(String triggerValue) {
-                return !triggerValue.isEmpty();
-            }
             static bool eq(String &value, String &triggerValue) {
+                LOGGER.debug(COMPARATOR_TAG, "Compare %s == %s", value, triggerValue);
                 return value.equals(triggerValue);
             }
             static bool gte(String &value, String &triggerValue) {
+                LOGGER.debug(COMPARATOR_TAG, "Compare %s >= %s", value, triggerValue);
                 return value.length() >= triggerValue.length();
             }
             static bool lte(String &value, String &triggerValue) {
+                LOGGER.debug(COMPARATOR_TAG, "Compare %s <= %s", value, triggerValue);
                 return value.length() <= triggerValue.length();
             }
     };

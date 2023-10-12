@@ -74,7 +74,8 @@ namespace Callback {
             ->method(callback["method"])
             ->payload(callback["payload"])
             ->action(callback["action"])
-            ->compareType(callback["compareType"]);
+            ->compareType(callback["compareType"])
+            ->triggerDisabled(callback["triggerDisabled"]);
         String trigger = callback["trigger"];
         if (strcmp(observableType, STATE_TYPE) == 0) {
             return addDeviceStateCallback(SmartThing.getDeviceState(name), builder.build<String>(trigger));

@@ -96,13 +96,13 @@ class CallbacksRequestHandler: public RequestHandler {
             if (requestMethod == HTTP_DELETE && requestUri.equals("/callbacks/delete")) {
                 String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
                 String name = server.arg(CALLBACK_NAME_ARG);
-                String index = server.arg(CALLBACK_ID_ARG);
+                String id = server.arg(CALLBACK_ID_ARG);
 
-                if (type.isEmpty() || name.isEmpty() || index.isEmpty()) {
-                    server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type, name or index args are missing!"));
+                if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
+                    server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type, name or id args are missing!"));
                     return true;
                 }
-                if(SmartThing.getCallbacksManager()->deleteCallback(type.c_str(), name.c_str(), index.toInt())) {
+                if(SmartThing.getCallbacksManager()->deleteCallback(type.c_str(), name.c_str(), id.toInt())) {
                     SmartThing.getCallbacksManager()->saveCallbacksToSettings();
                     server.send(200);
                 } else {

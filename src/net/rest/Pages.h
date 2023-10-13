@@ -212,14 +212,18 @@ const String WEB_PAGE_MAIN = R"=====(
             callbackInfo["trigger"] = document.getElementById("callback_trigger_" + index).value;
 
             let valid = true;
-            Object.entries(template).forEach(([key, {required}]) => {
+            Object.entries(template).forEach(([key, {required, type}]) => {
                 const input = document.getElementById("callback_" + key + "_" + index);
                 if (input) {
                     const value = input.value;
                     if (!value && value != 0) {
                         valid += !required;
                     }
-                    callbackInfo[key] = value;
+                    if (type == "boolean"){
+                        callbackInfo[key] = value == "true";
+                    } else {
+                        callbackInfo[key] = value;
+                    }
                 }
             })
 
@@ -691,6 +695,7 @@ const String WEB_PAGE_MAIN = R"=====(
                     return;
                 }
                 valuesArray.forEach((data) => {
+                    console.log(data);
                     const option = document.createElement("option");
                     if (typeof data == "string" || typeof data == "boolean") {
                         option.innerHTML = data;

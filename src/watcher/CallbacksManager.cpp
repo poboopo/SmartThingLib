@@ -75,7 +75,7 @@ namespace Callback {
             ->payload(callback["payload"])
             ->action(callback["action"])
             ->compareType(callback["compareType"])
-            ->triggerDisabled(callback["triggerDisabled"]);
+            ->triggerDisabled(callback["triggerDisabled"].as<bool>());
         String trigger = callback["trigger"];
         if (strcmp(observableType, STATE_TYPE) == 0) {
             return addDeviceStateCallback(SmartThing.getDeviceState(name), builder.build<String>(trigger));
@@ -281,6 +281,9 @@ namespace Callback {
         }
         if (callbackObject.containsKey("compareType")) {
             callback->setCompareType(callbackObject["compareType"].as<String>());
+        }
+        if (callbackObject.containsKey("triggerDisabled")) {
+            callback->setTriggerDisabled(callbackObject["triggerDisabled"].as<bool>());
         }
 
         callback->updateCustom(callbackObject);

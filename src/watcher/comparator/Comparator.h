@@ -8,6 +8,7 @@
 namespace Callback {
     enum CompareType {
         EQ,
+        NEQ,
         GTE,
         LTE
     };
@@ -16,6 +17,8 @@ namespace Callback {
         switch(type) {
             case EQ:
                 return "eq";
+            case NEQ:
+                return "neq";
             case GTE:
                 return "gte";
             case LTE:
@@ -31,6 +34,9 @@ namespace Callback {
         }
         if (type.equals("eq")) {
             return CompareType::EQ;
+        } 
+        if (type.equals("neq")) {
+            return CompareType::NEQ;
         } 
         if (type.equals("gte")) {
             return CompareType::GTE;
@@ -48,6 +54,8 @@ namespace Callback {
                 switch (compareType) {
                     case CompareType::EQ:
                         return eq(value, triggerValue);
+                    case CompareType::NEQ:
+                        return neq(value, triggerValue);
                     case CompareType::GTE:
                         return gte(value, triggerValue);
                     case CompareType::LTE:
@@ -59,6 +67,10 @@ namespace Callback {
             static bool eq(int16_t &value, int16_t &triggerValue) {
                 LOGGER.debug(COMPARATOR_TAG, "Compare %d == %d", value, triggerValue);
                 return value == triggerValue;
+            }
+            static bool neq(int16_t &value, int16_t &triggerValue) {
+                LOGGER.debug(COMPARATOR_TAG, "Compare %d != %d", value, triggerValue);
+                return value != triggerValue;
             }
             static bool gte(int16_t &value, int16_t &triggerValue) {
                 LOGGER.debug(COMPARATOR_TAG, "Compare %d >= %d", value, triggerValue);
@@ -72,6 +84,10 @@ namespace Callback {
             static bool eq(String &value, String &triggerValue) {
                 LOGGER.debug(COMPARATOR_TAG, "Compare %s == %s", value, triggerValue);
                 return value.equals(triggerValue);
+            }
+            static bool neq(String &value, String &triggerValue) {
+                LOGGER.debug(COMPARATOR_TAG, "Compare %s != %s", value, triggerValue);
+                return !value.equals(triggerValue);
             }
             static bool gte(String &value, String &triggerValue) {
                 LOGGER.debug(COMPARATOR_TAG, "Compare %s >= %s", value, triggerValue);

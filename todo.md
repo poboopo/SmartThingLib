@@ -50,3 +50,4 @@
 
 - small fixes
     - append callbacks to the end of the list
+    - add callbacks via CallbackBuilder

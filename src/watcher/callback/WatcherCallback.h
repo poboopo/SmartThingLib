@@ -14,6 +14,12 @@
 namespace Callback {
     const String DEFAULT_CALLBACKS_TEMPLATES_JSON = R"=====(
     {
+        "triggerDisabled": {
+            "type": "boolean",
+            "required": true,
+            "values": [true, false],
+            "default": true
+        },
         "trigger": {
             "required": false
         },
@@ -21,15 +27,11 @@ namespace Callback {
             "required": true,
             "values": [
                 "eq",
+                "neq",
                 "gte",
                 "lte"
             ],
             "default": "eq"
-        },
-        "triggerDisabled": {
-            "required": true,
-            "values": [true, false],
-            "default": true
         }
     }
     )=====";
@@ -64,7 +66,7 @@ namespace Callback {
             void setCompareType(CompareType type) {
                 _compareType = type;
             }
-            void triggerDisabled(bool disabled) {
+            void setTriggerDisabled(bool disabled) {
                 _triggerDisabled = disabled;
             }
             void setTriggerValue(T triggerValue) {

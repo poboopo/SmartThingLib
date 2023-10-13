@@ -22,6 +22,9 @@ namespace Callback {
                     LOGGER.error(CALLBACK_BUILDER_TAG, "Callback type is missing! Can't build allback without it.");
                     return nullptr;
                 }
+
+                LOGGER.debug(CALLBACK_BUILDER_TAG, "Trying to build callback of type [%s]", _type.c_str());
+
                 WatcherCallback<T> * callback = nullptr;
                 if (_type.equals(HTTP_CALLBACK_TAG)) {
                     if (_url.isEmpty()) {
@@ -45,8 +48,10 @@ namespace Callback {
                     return nullptr;
                 }
 
+                LOGGER.debug(CALLBACK_BUILDER_TAG, "Compare type: %s", _compareType.c_str());
                 callback->setCompareType(_compareType);
-                callback->triggerDisabled(_triggerDisabled);
+                LOGGER.debug(CALLBACK_BUILDER_TAG, "Trigger disabled: %s", _triggerDisabled ? "true" : "false");
+                callback->setTriggerDisabled(_triggerDisabled);
 
                 return callback;
             }

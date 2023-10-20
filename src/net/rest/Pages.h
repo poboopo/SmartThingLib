@@ -469,7 +469,7 @@ const String WEB_PAGE_MAIN = R"=====(
 
             restRequest(
                 "POST",
-                "http://" + getHost() + "/config/add",
+                "http://" + getHost() + "/config/save",
                 Object.fromEntries(Object.entries(this.config).filter(([_, v]) => v)),
                 null,
                 "config"

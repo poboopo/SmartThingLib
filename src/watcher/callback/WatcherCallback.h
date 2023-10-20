@@ -53,10 +53,10 @@ namespace Callback {
             }
 
             void addDefaultInfo(DynamicJsonDocument& doc) {
-                doc["trigger"] = _triggerValue;
-                doc["triggerDisabled"] = _triggerDisabled;
                 doc["readonly"] = _readonly;
                 doc["type"] = _type;
+                doc["trigger"] = _triggerValue;
+                doc["triggerDisabled"] = _triggerDisabled;
                 doc["compareType"] = compareTypeToString(_compareType);
             }
 

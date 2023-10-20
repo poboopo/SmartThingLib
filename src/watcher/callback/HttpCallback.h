@@ -60,7 +60,6 @@ namespace Callback {
             DynamicJsonDocument toJson(bool shortJson) {
                 DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE);
                 if (!shortJson) {
-                    doc["caption"] = "http";
                     doc["lastResponseCode"] = _lastResponseCode;
                 }
                 doc["url"] = _url;

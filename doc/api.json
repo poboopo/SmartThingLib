@@ -111,10 +111,10 @@
         }
       }
     },
-    "/config/add": {
+    "/config/save": {
       "post": {
         "tags": ["Configuration"],
-        "description": "Add device configuration entries",
+        "description": "Save device configuration",
         "requestBody": {
           "content": {
             "application/json": {
@@ -274,6 +274,54 @@
               "application/json": {
                 "schema": {
                   "$ref": "#components/schemas/CallbacksList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/callbacks/by/id": {
+      "get": {
+        "tags": ["Callback"],
+        "description": "Get callback by id",
+        "parameters": [
+          {
+            "name": "observableType",
+            "in": "query",
+            "description": "Observable type",
+            "example": "sensor/state",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Observable name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Callback id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of callbacks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/Callback"
                 }
               }
             }
@@ -514,37 +562,37 @@
           "automode":"true"
         }
       },
+      "Callback" : {
+        "description": "Callback",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Callback id",
+            "type": "integer"
+          },
+          "caption": {
+            "description": "Callback caption",
+            "type": "string"
+          },
+          "trigger": {
+            "description": "Trigger value, when callback gonna ba called"
+          },
+          "readonly": {
+            "description": "Is callback readonly",
+            "type": "boolean"
+          },
+          "type": {
+            "description": "Callback type",
+            "type": "string",
+            "example": "lambda_callback/http_callback/action_callback"
+          }
+        }
+      },
       "CallbacksList": {
         "description": "Observable's object callbacks",
         "type": "array",
         "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "description": "Callback id",
-              "type": "integer"
-            },
-            "caption": {
-              "description": "Callback caption",
-              "type": "string"
-            },
-            "trigger": {
-              "description": "Trigger value, when callback gonna ba called"
-            },
-            "threshold": {
-              "description": "Only for sensors. Threshold for callback call",
-              "type": "integer"
-            },
-            "readonly": {
-              "description": "Is callback readonly",
-              "type": "boolean"
-            },
-            "type": {
-              "description": "Callback type",
-              "type": "string",
-              "example": "lambda_callback/http_callback/action_callback"
-            }
-          }
+          "$ref": "#components/schemas/Callback"
         }
       },
       "ObservablesCallbacks": {
@@ -612,10 +660,6 @@
               "trigger": {
                 "description": "Callback trigger value",
                 "type": "string"
-              },
-              "threshold": {
-                "description": "Only for sensors",
-                "type":"integer"
               }
             }
           }

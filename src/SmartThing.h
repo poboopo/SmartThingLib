@@ -91,6 +91,7 @@ class SmartThingClass {
         Configurable::Config::ConfigEntriesList _configEntriesList;
         Callback::CallbacksManager _callbacksManager;
         TaskHandle_t _loopTaskHandle = NULL;
+        void updateBroadCastMessage();
 
         // todo change to const * char?
         String _ip;

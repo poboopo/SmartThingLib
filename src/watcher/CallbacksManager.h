@@ -55,6 +55,7 @@ namespace Callback {
             void check();
             DynamicJsonDocument getWatchersInfo();
             DynamicJsonDocument getCallbacksJson(const char * type, const char * name);
+            DynamicJsonDocument getCallbackJsonById(const char * type, const char * name, int16_t id);
             
             void saveCallbacksToSettings();
 
@@ -82,6 +83,9 @@ namespace Callback {
 
             template<typename T>
             DynamicJsonDocument getCallbacksJsonFromList(List<Watcher<T>> * list, const char * name);
+
+            template<typename T>
+            DynamicJsonDocument getCallbackJsonFromList(List<Watcher<T>> * list, const char * name, int16_t id);
 
             template<typename T>
             bool deleteWatcherCallbackFromList(List<Watcher<T>> * list, const char * name, int16_t index);

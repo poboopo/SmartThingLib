@@ -38,7 +38,7 @@ class ConfigRequestHandler: public RequestHandler {
                 server.send(200, "application/json", response);
                 return true; 
             } 
-            if (requestMethod == HTTP_POST && requestUri.equals("/config/add")) {
+            if (requestMethod == HTTP_POST && requestUri.equals("/config/save")) {
                 if (body.length() == 0) {
                     server.send(400, "application/json", buildErrorJson("Body is missing"));
                     return true;

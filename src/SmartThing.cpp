@@ -12,10 +12,6 @@ bool SmartThingClass::wifiConnected() {
     return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
 }
 
-String buildBroadCastMessage(String ip, String name) {
-    return ip + "$" + name;
-}
-
 bool SmartThingClass::init(String type) {
     LOGGER.init();
     LOGGER.debug(SMART_THING_TAG, "Smart thing initialization started");
@@ -48,7 +44,7 @@ bool SmartThingClass::init(String type) {
         LOGGER.debug(SMART_THING_TAG, "Ota started");
 
         _multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
-        _broadcastMessage = buildBroadCastMessage(_ip, _name.c_str());
+        updateBroadCastMessage();
         LOGGER.debug(SMART_THING_TAG, "Multicaster created");
 
         _rest.addWifiupdatedHandler([&](){
@@ -176,8 +172,12 @@ void SmartThingClass::setName(String name) {
     // todo move from there
     STSettings.setDeviceName(name.c_str());
     STSettings.save();
-    _broadcastMessage = buildBroadCastMessage(_ip, _name);
+    updateBroadCastMessage();
     LOGGER.info(SMART_THING_TAG, "New device name %s", name.c_str());
+}
+
+void SmartThingClass::updateBroadCastMessage() {
+    _broadcastMessage = _ip + "$" + _type + "$" + _name;
 }
 
 DynamicJsonDocument SmartThingClass::getInfoDictionaries() {

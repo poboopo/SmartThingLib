@@ -59,6 +59,21 @@ class CallbacksRequestHandler: public RequestHandler {
                     server.send(200, JSON_CONTENT_TYPE, response);
                     return true;
                 }
+                if (requestUri.equals("/callbacks/by/id")) {
+                    String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
+                    String name = server.arg(CALLBACK_NAME_ARG);
+                    String id = server.arg(CALLBACK_ID_ARG);
+
+                    if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
+                        server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Type, name or id args are missing!"));
+                        return true;
+                    }
+                    DynamicJsonDocument doc = SmartThing.getCallbacksManager()->getCallbackJsonById(type.c_str(), name.c_str(), id.toInt());
+                    String response;
+                    serializeJson(doc, response);
+                    server.send(200, JSON_CONTENT_TYPE, response);
+                    return true;
+                }
                 DynamicJsonDocument doc = SmartThing.getCallbacksManager()->callbacksToJson(false, false);
                 String response;
                 serializeJson(doc, response);

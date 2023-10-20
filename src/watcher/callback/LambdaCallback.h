@@ -26,7 +26,6 @@ namespace Callback {
             };
             DynamicJsonDocument toJson(bool shortJson) {
                 DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE);
-                doc["caption"] = "lambda";
                 this->addDefaultInfo(doc);
                 return doc;
             };

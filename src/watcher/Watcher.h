@@ -28,6 +28,10 @@ class Watcher {
             return getCallbacksJson(false, false);
         }
 
+        Callback::WatcherCallback<T> * getCallbackById(int16_t id) {
+            return _callbacks.getByIndex(id);
+        }
+
         DynamicJsonDocument getCallbacksJson(bool ignoreReadOnly, bool shortJson) {
             DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size());
             _callbacks.forEach([&](Callback::WatcherCallback<T> * current, int index) {

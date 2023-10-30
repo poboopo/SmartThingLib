@@ -14,12 +14,6 @@
 namespace Callback {
     const String DEFAULT_CALLBACKS_TEMPLATES_JSON = R"=====(
     {
-        "triggerDisabled": {
-            "type": "boolean",
-            "required": true,
-            "values": [true, false],
-            "default": true
-        },
         "trigger": {
             "required": false
         },

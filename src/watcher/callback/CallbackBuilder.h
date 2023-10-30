@@ -55,14 +55,7 @@ namespace Callback {
 
                 return callback;
             }
-
-            // CallbackBuilder * callback(LambdaCallback::CustomCallback * callback) {
-            //     if (callback.isEmpty()) {
-            //         return this;
-            //     }
-            //     _callback = callback;
-            //     return this;
-            // }
+            
             CallbackBuilder * readOnly(bool isReadOnly) {
                 _readOnly = isReadOnly;
                 return this;
@@ -114,8 +107,8 @@ namespace Callback {
                 return this;
             }
         private:
-            // LambdaCallback<int16_t>::CustomCallback * _callback;
             bool _readOnly;
+            JsonObject _triggerValue;
             String _type;
             String _url;
             String _method;

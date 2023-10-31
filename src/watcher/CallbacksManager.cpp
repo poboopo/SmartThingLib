@@ -244,6 +244,10 @@ namespace Callback {
             LOGGER.error(CALLBACK_BUILDER_TAG, "Callback object is missing!");
             return false;
         }
+        if (!callbackObject.containsKey("id")) {
+            LOGGER.error(CALLBACK_BUILDER_TAG, "Callback id property is missing!");
+            return false;
+        }
 
         const char * name = observable["name"];
         const char * type = observable["type"];

@@ -68,7 +68,7 @@ class CallbacksRequestHandler: public RequestHandler {
                         server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Type, name or id args are missing!"));
                         return true;
                     }
-                    DynamicJsonDocument doc = SmartThing.getCallbacksManager()->getCallbackJsonById(type.c_str(), name.c_str(), id.toInt());
+                    DynamicJsonDocument doc = SmartThing.getCallbacksManager()->getCallbackJsonById(type.c_str(), name.c_str(), id);
                     String response;
                     serializeJson(doc, response);
                     server.send(200, JSON_CONTENT_TYPE, response);
@@ -117,7 +117,7 @@ class CallbacksRequestHandler: public RequestHandler {
                     server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type, name or id args are missing!"));
                     return true;
                 }
-                if(SmartThing.getCallbacksManager()->deleteCallback(type.c_str(), name.c_str(), id.toInt())) {
+                if(SmartThing.getCallbacksManager()->deleteCallback(type.c_str(), name.c_str(), id)) {
                     SmartThing.getCallbacksManager()->saveCallbacksToSettings();
                     server.send(200);
                 } else {

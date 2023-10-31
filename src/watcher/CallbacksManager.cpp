@@ -69,7 +69,8 @@ namespace Callback {
         LOGGER.debug(CALLBACKS_MANAGER_TAG, "Creating new callback for [%s]:%s", observableType, name);
 
         CallbackBuilder builder;
-        builder.type(callback["type"])
+        builder.id(callback["id"])
+            ->type(callback["type"])
             ->url(callback["url"])
             ->method(callback["method"])
             ->payload(callback["payload"])
@@ -176,9 +177,9 @@ namespace Callback {
         } else {
             LOGGER.debug(CALLBACKS_MANAGER_TAG, "Watcher for sensor [%s] already exists!", sensor->name);
 
-            watcher->addCallback(callback);
+            String id = watcher->addCallback(callback);
             _callbacksCount++;
-            LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for sensor [%s]", sensor->name);
+            LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for sensor [%s] id=%s", sensor->name, id.c_str());
         }
         return true;
     }
@@ -206,23 +207,23 @@ namespace Callback {
         } else {
             LOGGER.debug(CALLBACKS_MANAGER_TAG, "Watcher for device state [%s] already exists!", state->name);
 
-            watcher->addCallback(callback);
+            String id = watcher->addCallback(callback);
             _callbacksCount++;
-            LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for device sate [%s]", state->name);
+            LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for device sate [%s] id=%s", state->name, id.c_str());
         }
         return true;
     }
 
-    bool CallbacksManager::deleteCallback(const char * type, const char * name, int16_t index) {
+    bool CallbacksManager::deleteCallback(const char * type, const char * name, String id) {
         if (type == nullptr || strlen(type) == 0) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Type of observable is missing!");
             return false;
         }
 
         if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
-            return deleteWatcherCallbackFromList<int16_t>(&_sensorsWatchers, name, index);
+            return deleteWatcherCallbackFromList<int16_t>(&_sensorsWatchers, name, id);
         } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
-            return deleteWatcherCallbackFromList<String>(&_statesWatchers, name, index);
+            return deleteWatcherCallbackFromList<String>(&_statesWatchers, name, id);
         }
 
         LOGGER.error(CALLBACKS_MANAGER_TAG, "Type [%s] not supported", type);
@@ -267,14 +268,14 @@ namespace Callback {
             return false;
         }
         
-        int index = callbackObject["id"];
+        String id = callbackObject["id"];
 
-        WatcherCallback<T> * callback = getCallbackFromWatcherList(list, name, index);
+        WatcherCallback<T> * callback = getCallbackFromWatcherList(list, name, id);
         if (callback == nullptr) {
             return false;
         }
         if (callback->isReadonly()) {
-            LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback %d for observable [%s] is readonly!", index, name);
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback %s for observable [%s] is readonly!", id, name);
             return false;
         }
 
@@ -287,27 +288,27 @@ namespace Callback {
         }
 
         callback->updateCustom(callbackObject);
-        LOGGER.info(CALLBACKS_MANAGER_TAG, "Callback № %d for observable [%s] was updated!", index, name);
+        LOGGER.info(CALLBACKS_MANAGER_TAG, "Callback id=%s for observable [%s] was updated!", id, name);
         return true;
     }
 
     template<typename T>
-    WatcherCallback<T> * CallbacksManager::getCallbackFromWatcherList(List<Watcher<T>> * list, const char * name, int16_t callbackIndex) {
+    WatcherCallback<T> * CallbacksManager::getCallbackFromWatcherList(List<Watcher<T>> * list, const char * name, String id) {
         Watcher<T> * watcher = getWatcherByObservableName(list, name);
         if (watcher == nullptr) {
             LOGGER.warning(CALLBACKS_MANAGER_TAG, "Can't find watcher for observable %s", name);
             return nullptr;
         }
-        WatcherCallback<T> * callback = watcher->getCallback(callbackIndex);
+        WatcherCallback<T> * callback = watcher->getCallbackById(id);
         if (callback == nullptr) {
-            LOGGER.warning(CALLBACKS_MANAGER_TAG, "Can't find callback %d for observable [%s]", index, name);
+            LOGGER.warning(CALLBACKS_MANAGER_TAG, "Can't find callback id=%s for observable [%s]", index, name);
             return nullptr;
         }
         return callback;
     }
 
     template<typename T>
-    bool CallbacksManager::deleteWatcherCallbackFromList(List<Watcher<T>> * list, const char * name, int16_t index) {
+    bool CallbacksManager::deleteWatcherCallbackFromList(List<Watcher<T>> * list, const char * name, String id) {
         if (name == nullptr || strlen(name) == 0) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Name of observable is missing!");
             return false;
@@ -316,12 +317,12 @@ namespace Callback {
         if (watcher == nullptr) {
             return false;
         }
-        LOGGER.debug(CALLBACKS_MANAGER_TAG, "Trying to delete observable [%s]'s callback № %d", name, index);
-        if (!watcher->removeCallback(index)) {
+        LOGGER.debug(CALLBACKS_MANAGER_TAG, "Trying to delete observable [%s]'s callback № %s", name, id);
+        if (!watcher->removeCallback(id)) {
             return false;
         }
         _callbacksCount--;
-        LOGGER.warning(CALLBACKS_MANAGER_TAG, "Callback № %d of observable [%s] was deleted", index, name);
+        LOGGER.warning(CALLBACKS_MANAGER_TAG, "Callback № %s of observable [%s] was deleted", id, name);
         if (watcher->haveCallbacks()) {
             return true;
         }
@@ -376,7 +377,7 @@ namespace Callback {
         return doc;
     }
 
-    DynamicJsonDocument CallbacksManager::getCallbackJsonById(const char * type, const char * name, int16_t id) {
+    DynamicJsonDocument CallbacksManager::getCallbackJsonById(const char * type, const char * name, String id) {
         if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
             return getCallbackJsonFromList<int16_t>(&_sensorsWatchers, name, id);
         } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
@@ -389,13 +390,13 @@ namespace Callback {
     }
 
     template<typename T>
-    DynamicJsonDocument CallbacksManager::getCallbackJsonFromList(List<Watcher<T>> * list, const char * name, int16_t id) {
+    DynamicJsonDocument CallbacksManager::getCallbackJsonFromList(List<Watcher<T>> * list, const char * name, String id) {
         if (name == nullptr || strlen(name) == 0) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Name of observable is missing!");
         } else {
             Watcher<T> * watcher = getWatcherByObservableName(list, name);
             if (watcher != nullptr) {
-                WatcherCallback<T> * callback = watcher->getCallback(id);
+                WatcherCallback<T> * callback = watcher->getCallbackById(id);
                 if (callback != nullptr) {
                     DynamicJsonDocument doc = callback->toJson(false);
                     doc["id"] = id; //todo remove save to callback

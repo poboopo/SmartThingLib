@@ -35,7 +35,7 @@ namespace Callback {
     class WatcherCallback {
         public:
             WatcherCallback(const char * type, T triggerValue, bool readonly): 
-                _type(type), _triggerValue(triggerValue), _readonly(readonly), _compareType(EQ){};
+                _type(type), _triggerValue(triggerValue), _readonly(readonly), _compareType(EQ) {};
 
             // todo make value const
             virtual void call(T * value) = 0;
@@ -47,11 +47,19 @@ namespace Callback {
             }
 
             void addDefaultInfo(DynamicJsonDocument& doc) {
+                doc["id"] = _id; 
                 doc["readonly"] = _readonly;
                 doc["type"] = _type;
                 doc["trigger"] = _triggerValue;
                 doc["triggerDisabled"] = _triggerDisabled;
                 doc["compareType"] = compareTypeToString(_compareType);
+            }
+
+            void setId(String id) {
+                _id = id;
+            }
+            const String getId() const {
+                return _id;
             }
 
             void setCompareType(String type) {
@@ -82,6 +90,7 @@ namespace Callback {
                 return doc;
             }
         protected:
+            String _id;
             const char * _type;
             T _triggerValue;
             bool _triggerDisabled;

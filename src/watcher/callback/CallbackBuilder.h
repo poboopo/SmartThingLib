@@ -23,6 +23,7 @@ namespace Callback {
                     return nullptr;
                 }
 
+                LOGGER.debug(CALLBACK_BUILDER_TAG, "----------------------BUILDER-START----------------------");
                 LOGGER.debug(CALLBACK_BUILDER_TAG, "Trying to build callback of type [%s]", _type.c_str());
 
                 WatcherCallback<T> * callback = nullptr;
@@ -48,14 +49,27 @@ namespace Callback {
                     return nullptr;
                 }
 
+                if (!_id.isEmpty()) {
+                    LOGGER.debug(CALLBACK_BUILDER_TAG, "Callback id: %s", _id.c_str());
+                    callback->setId(_id);
+                } else {
+                    LOGGER.debug(CALLBACK_BUILDER_TAG, "Callback id is blank");
+                }
+
                 LOGGER.debug(CALLBACK_BUILDER_TAG, "Compare type: %s", _compareType.c_str());
                 callback->setCompareType(_compareType);
                 LOGGER.debug(CALLBACK_BUILDER_TAG, "Trigger disabled: %s", _triggerDisabled ? "true" : "false");
                 callback->setTriggerDisabled(_triggerDisabled);
+                LOGGER.debug(CALLBACK_BUILDER_TAG, "-----------------------BUILDER-END----------------------");
 
                 return callback;
             }
             
+            CallbackBuilder * id(String id) {
+                _id = id;
+                return this;
+            }
+
             CallbackBuilder * readOnly(bool isReadOnly) {
                 _readOnly = isReadOnly;
                 return this;
@@ -65,48 +79,31 @@ namespace Callback {
                 return this;
             }
             CallbackBuilder * type(String type) {
-                if (type.isEmpty()) {
-                    return this;
-                }
                 _type = type;
                 return this;
             }
             CallbackBuilder * url(String url) {
-                if (url.isEmpty()) {
-                    return this;
-                }
                 _url = url;
                 return this;
             }
             CallbackBuilder * method(String method) {
-                if (method.isEmpty()) {
-                    return this;
-                }
                 _method = method;
                 return this;
             }
             CallbackBuilder * payload(String payload) {
-                if (payload.isEmpty()) {
-                    return this;
-                }
                 _payload = payload;
                 return this;
             }
             CallbackBuilder * action(String action) {
-                if (action.isEmpty()) {
-                    return this;
-                }
                 _action = action;
                 return this;
             }
             CallbackBuilder * compareType(String compareType) {
-                if (compareType.isEmpty()) {
-                    return this;
-                }
                 _compareType = compareType;
                 return this;
             }
         private:
+            String _id;
             bool _readOnly;
             JsonObject _triggerValue;
             String _type;

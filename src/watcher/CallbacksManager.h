@@ -49,13 +49,13 @@ namespace Callback {
                 name - имя наблюдаемого объекта
                 index - индекс в списке callbackов для данного объекта
             */
-            bool deleteCallback(const char * type, const char * name, int16_t index);
+            bool deleteCallback(const char * type, const char * name, String id);
             bool updateCallback(const char * json);
 
             void check();
             DynamicJsonDocument getWatchersInfo();
             DynamicJsonDocument getCallbacksJson(const char * type, const char * name);
-            DynamicJsonDocument getCallbackJsonById(const char * type, const char * name, int16_t id);
+            DynamicJsonDocument getCallbackJsonById(const char * type, const char * name, String id);
             
             void saveCallbacksToSettings();
 
@@ -79,19 +79,16 @@ namespace Callback {
             Watcher<T> * getWatcherByObservableName(List<Watcher<T>> * list, const char * name);
 
             template<typename T>
-            WatcherCallback<T> * getCallbackFromWatcherList(List<Watcher<T>> * list, const char * name, int16_t callbackIndex);
+            WatcherCallback<T> * getCallbackFromWatcherList(List<Watcher<T>> * list, const char * name, String id);
 
             template<typename T>
             DynamicJsonDocument getCallbacksJsonFromList(List<Watcher<T>> * list, const char * name);
 
             template<typename T>
-            DynamicJsonDocument getCallbackJsonFromList(List<Watcher<T>> * list, const char * name, int16_t id);
+            DynamicJsonDocument getCallbackJsonFromList(List<Watcher<T>> * list, const char * name, String id);
 
             template<typename T>
-            bool deleteWatcherCallbackFromList(List<Watcher<T>> * list, const char * name, int16_t index);
-
-            template<typename T>
-            bool updateWatcherCallbackFromList(List<Watcher<T>> * list, const char * name, int16_t index, const char * json);
+            bool deleteWatcherCallbackFromList(List<Watcher<T>> * list, const char * name, String id);
 
             template<typename T>
             bool updateCallback(List<Watcher<T>> * list, const char * name, JsonObject callbackObject);

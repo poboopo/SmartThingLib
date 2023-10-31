@@ -9,6 +9,7 @@
 #include "configurable/ConfigurableObjects.h"
 
 #define WATCHER_INFO_DOC_SIZE 128
+#define WATCHER_TAG "watcher"
 
 /*
     Класс наблюдатель за объектами
@@ -19,7 +20,7 @@ template<typename T>
 class Watcher {
     public:
         Watcher(const Configurable::ConfigurableObject<T> * observable, Callback::WatcherCallback<T> * callback, T initialValue): 
-            _observable(observable), _callbacks(callback), _oldValue(initialValue) {};
+            _observable(observable), _callbacks(callback), _oldValue(initialValue), _callbackIdSequence(0) {};
 
         virtual bool check() = 0;
         virtual const char * getObservableInfo() = 0;
@@ -28,21 +29,13 @@ class Watcher {
             return getCallbacksJson(false, false);
         }
 
-        Callback::WatcherCallback<T> * getCallbackById(int16_t id) {
-            return _callbacks.getByIndex(id);
-        }
-
         DynamicJsonDocument getCallbacksJson(bool ignoreReadOnly, bool shortJson) {
             DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size());
-            _callbacks.forEach([&](Callback::WatcherCallback<T> * current, int index) {
+            _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
                 if (ignoreReadOnly && current->isReadonly()) {
                     return;
                 }
-                DynamicJsonDocument cb = current->toJson(shortJson);
-                if (!shortJson) {
-                    cb["id"] = index;
-                }
-                doc.add(cb);
+                doc.add(current->toJson(shortJson));
             });
             return doc;
         };
@@ -58,36 +51,61 @@ class Watcher {
             return doc;
         }
         
-        void addCallback(Callback::WatcherCallback<T> * callback) {
+        String addCallback(Callback::WatcherCallback<T> * callback) {
             if (callback != nullptr) {
+                if (callback->isReadonly()) {
+                    callback->setId("system");
+                }
+                if (callback->getId().isEmpty() || callback->getId().equals("New")) {
+                    const char * id = getNextCallbackId();
+                    if (id == nullptr) {
+                        LOGGER.error(WATCHER_TAG, "Failed to generate new id for callback");
+                        return "";
+                    }
+                    LOGGER.debug(WATCHER_TAG, "Generated new callback id: %s", id);
+                    callback->setId(id);
+                }
                 _callbacks.append(callback);
+                return callback->getId();
             }
+            return "";
         };
 
-        bool removeCallback(int16_t index) {
-            Callback::WatcherCallback<T> * callback = _callbacks.getByIndex(index);
+        bool removeCallback(String id) {
+            if (id.isEmpty()) {
+                LOGGER.error(WATCHER_TAG, "Failed to remove callback - id is missing!");
+                return false;
+            }
+            Callback::WatcherCallback<T> * callback = getCallbackById(id);
             if (callback == nullptr) {
+                LOGGER.error(WATCHER_TAG, "Failed to remove callback - can't find callback with id %s", id);
                 return false;
             }
             if (callback->isReadonly()) {
-                LOGGER.error("watcher", "This callback is readonly!");
+                LOGGER.error(WATCHER_TAG, "This callback is readonly!");
                 return false;
             }
             if (_callbacks.remove(callback)) {
                 delete(callback);
                 return true;
             }
+            LOGGER.error(WATCHER_TAG, "Failed to remove callback from list");
             return false;
         }
 
-        Callback::WatcherCallback<T> * getCallback(int16_t index) {
-            return _callbacks.getByIndex(index);
+        Callback::WatcherCallback<T> * getCallbackById(String id) {
+            if (id.isEmpty()) {
+                return nullptr;
+            }
+            return _callbacks.findValue([&](Callback::WatcherCallback<T> * callback) {
+                return callback->getId().equals(id);
+            });
         }
 
         void callCallbacks(T &oldValue, T &value) {
-            _callbacks.forEach([&](Callback::WatcherCallback<T> * current, int index) {
+            _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
                 if (current->accept(value)) {
-                    LOGGER.debug("watcher" , "Calling callback №%d [%s] for %s", index, current->type(), _observable->name);
+                    LOGGER.debug(WATCHER_TAG , "Calling callback [id=%s]", current->getId());
                     current->call(&value);
                 }
             });
@@ -108,5 +126,23 @@ class Watcher {
         const  Configurable::ConfigurableObject<T> * _observable;
         T _oldValue;
         List<Callback::WatcherCallback<T>> _callbacks;
+    private:
+        uint16_t _callbackIdSequence;
+
+        const char * getNextCallbackId() {
+            char * buff = new char[256];
+            bool res = false;
+            uint8_t attempts = 20;
+            while (!res && attempts != 0) {
+                sprintf(buff, "%s_%s_%u\0", _observable->type, _observable->name, _callbackIdSequence);
+                _callbackIdSequence++;
+                res = getCallbackById(buff) == nullptr;
+                attempts--;
+            }
+            if (attempts == 0) {
+                return nullptr;
+            }
+            return buff;
+        }
 };
 #endif

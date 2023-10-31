@@ -17,7 +17,7 @@
 
 #include "watcher/CallbacksManager.h"
 
-#define SMART_THING_VERSION 0.4
+#define SMART_THING_VERSION 0.5
 #define SMART_THING_TAG "SMART_THING"
 // Pins
 #define LED_PIN 14

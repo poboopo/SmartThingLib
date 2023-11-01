@@ -39,7 +39,7 @@ class SettingsManager {
         JsonObject getWiFi();
         void dropWifiCredits();
         
-        const char * getDeviceName();
+        String getDeviceName();
         void setDeviceName(const char * name);
 
         void setCallbacks(JsonArray doc);

@@ -172,7 +172,7 @@ void SettingsManager::setDeviceName(const char * name) {
     _settings[DEVICE_NAME] = name;
 }
 
-const char * SettingsManager::getDeviceName() {
+String SettingsManager::getDeviceName() {
     if (_settings.containsKey(DEVICE_NAME)) {
         return _settings[DEVICE_NAME];
     }

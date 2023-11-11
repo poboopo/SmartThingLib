@@ -56,7 +56,9 @@ class Watcher {
                 if (callback->isReadonly()) {
                     callback->setId("system");
                 }
-                if (callback->getId().isEmpty() || callback->getId().equals("New")) {
+                if (callback->getId().isEmpty() 
+                    || callback->getId().equals("New")
+                ) {
                     const char * id = getNextCallbackId();
                     if (id == nullptr) {
                         LOGGER.error(WATCHER_TAG, "Failed to generate new id for callback");
@@ -64,6 +66,9 @@ class Watcher {
                     }
                     LOGGER.debug(WATCHER_TAG, "Generated new callback id: %s", id);
                     callback->setId(id);
+                } else if (getCallbackById(callback->getId()) != nullptr) {
+                    LOGGER.error(WATCHER_TAG, "Callback with id=%s already exists!", callback->getId().c_str());
+                    return "";
                 }
                 _callbacks.append(callback);
                 return callback->getId();
@@ -102,11 +107,11 @@ class Watcher {
             });
         }
 
-        void callCallbacks(T &oldValue, T &value) {
+        void callCallbacks(T &value) {
             _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
                 if (current->accept(value)) {
                     LOGGER.debug(WATCHER_TAG , "Calling callback [id=%s]", current->getId());
-                    current->call(&value);
+                    current->call(value);
                 }
             });
         };

@@ -36,7 +36,7 @@ namespace Callback {
                     callback = new HttpCallback<T>(_url.c_str(), _method.c_str(), _payload.c_str(), triggerValue, _readOnly);
                 } else if (_type.equals(LAMBDA_CALLBACK_TAG)) {
                     LOGGER.debug(CALLBACK_BUILDER_TAG, "Building new lambda callback");
-                    callback = new LambdaCallback<T>([](T * v){}, triggerValue, _readOnly);
+                    callback = new LambdaCallback<T>([](T &v){}, triggerValue, _readOnly);
                 } else if (_type.equals(ACTION_CALLBACK_TAG)) {
                     if (_action.isEmpty()) {
                         LOGGER.error(CALLBACK_BUILDER_TAG, "Can't build callback of type %s without action!", _action.c_str());
@@ -49,7 +49,7 @@ namespace Callback {
                     return nullptr;
                 }
 
-                if (!_id.isEmpty()) {
+                if (!_id.isEmpty() && !_id.equals("null") && !_id.equals("New")) {
                     LOGGER.debug(CALLBACK_BUILDER_TAG, "Callback id: %s", _id.c_str());
                     callback->setId(_id);
                 } else {

@@ -34,7 +34,7 @@ namespace Callback {
                         "Device state %s value changed %s->%s.", 
                         _observable->name, _oldValue, newValue
                     );
-                    callCallbacks(_oldValue, newValue);
+                    callCallbacks(newValue);
 
                     _oldValue = newValue;
                     return true;

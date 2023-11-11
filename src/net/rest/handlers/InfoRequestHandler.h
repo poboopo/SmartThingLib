@@ -45,6 +45,10 @@ class InfoRequestHandler: public RequestHandler {
                     return true;
                 }
                 if (requestMethod == HTTP_PUT) {
+                    if (body.isEmpty()) {
+                        server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Body is missing!"));
+                        return true;
+                    }
                     DynamicJsonDocument jsDoc(64);
                     deserializeJson(jsDoc, body);
                     const char * newName = jsDoc["name"];

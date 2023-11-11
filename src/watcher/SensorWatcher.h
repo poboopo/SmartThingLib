@@ -28,7 +28,7 @@ namespace Callback {
                             "Sensor %s value changed %d->%d.", 
                             _observable->name, _oldValue, newValue
                         );
-                        callCallbacks(_oldValue, newValue);
+                        callCallbacks(newValue);
                         _oldValue = newValue;
                         return true;
                     }

@@ -38,7 +38,7 @@ try:
     while True:
         try:
             message = mainSocket.recv(4096).decode()
-            splitted = message.split("$")
+            splitted = message.split("_&_")
             if (len(splitted) == 1):
                 print(message)
                 continue

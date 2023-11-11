@@ -154,6 +154,7 @@ namespace Callback {
         return addDeviceStateCallback(state, watcherCallback);
     }
 
+    // todo resturn string id
     bool CallbacksManager::addSensorCallback(const Sensor * sensor, WatcherCallback<int16_t> * callback) {
         if (sensor == nullptr) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Sensor object is missing, skipping...");
@@ -168,19 +169,16 @@ namespace Callback {
             watcher = new SensorWatcher(sensor, callback);
             if (_sensorsWatchers.append(watcher) < 0) {
                 LOGGER.error(CALLBACKS_MANAGER_TAG, "Failed to register new watcher for sensor [%s].", sensor->name);
-                if (watcher != nullptr) {
-                    delete(watcher);
-                }
+                delete(watcher);
                 return false;
             }
             LOGGER.info(CALLBACKS_MANAGER_TAG, "Registered new watcher for sensor [%s].", sensor->name);
-        } else {
-            LOGGER.debug(CALLBACKS_MANAGER_TAG, "Watcher for sensor [%s] already exists!", sensor->name);
-
-            String id = watcher->addCallback(callback);
-            _callbacksCount++;
-            LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for sensor [%s] id=%s", sensor->name, id.c_str());
         }
+        LOGGER.debug(CALLBACKS_MANAGER_TAG, "Watcher for sensor [%s] already exists!", sensor->name);
+
+        watcher->addCallback(callback);
+        _callbacksCount++;
+        LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for sensor [%s] id=%s", sensor->name, callback->getId().c_str());
         return true;
     }
 
@@ -198,19 +196,16 @@ namespace Callback {
             watcher = new DeviceStateWatcher(state, callback);
             if (_statesWatchers.append(watcher) < 0) {
                 LOGGER.error(CALLBACKS_MANAGER_TAG, "Failed to register new watcher for state [%s].", state->name);
-                if (watcher != nullptr) {
-                    delete(watcher);
-                }
+                delete(watcher);
                 return false;
             }
             LOGGER.info(CALLBACKS_MANAGER_TAG, "Registered new watcher for state [%s].", state->name);
-        } else {
-            LOGGER.debug(CALLBACKS_MANAGER_TAG, "Watcher for device state [%s] already exists!", state->name);
-
-            String id = watcher->addCallback(callback);
-            _callbacksCount++;
-            LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for device sate [%s] id=%s", state->name, id.c_str());
         }
+        LOGGER.debug(CALLBACKS_MANAGER_TAG, "Watcher for device state [%s] already exists!", state->name);
+
+        watcher->addCallback(callback);
+        _callbacksCount++;
+        LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for device sate [%s] id=%s", state->name, callback->getId().c_str());
         return true;
     }
 

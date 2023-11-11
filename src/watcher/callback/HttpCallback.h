@@ -7,7 +7,7 @@
 #include "logs/BetterLogger.h"
 
 #define HTTP_CALLBACK_TAG "http_callback"
-#define VALUE_DYNAMIC_PARAM "${value}"
+#define VALUE_DYNAMIC_PARAM "${v}"
 
 namespace Callback {
     const String HTTP_CALLBACKS_TEMPLATES_JSON = R"=====(
@@ -44,11 +44,7 @@ namespace Callback {
                         _method = "GET";
                     }
                 };
-            void call(T * value) {
-                if (value == nullptr) {
-                    LOGGER.error(HTTP_CALLBACK_TAG, "Value is null!");
-                    return;
-                }
+            void call(T &value) {
                 _currentValue = value;
                 if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
                     createRequestTask();
@@ -98,7 +94,7 @@ namespace Callback {
             String _method;
             String _payload;
             int16_t _lastResponseCode = 0;
-            T * _currentValue;
+            T _currentValue;
 
             void createRequestTask() {
                 if (_sending) {
@@ -113,7 +109,7 @@ namespace Callback {
                         callback->_sending = false;
                         vTaskDelete(callback->_requestTask);
                     },
-                    HTTP_CALLBACK_TAG,
+                    _url.c_str(),
                     10000,
                     this,
                     1,
@@ -124,14 +120,15 @@ namespace Callback {
             void sendRequest() {
                 //probably bad realisation for memory
 
-                String valueStr = _currentValue != nullptr ? String(*_currentValue) : "";
+                String valueStr = String(_currentValue);
 
                 String urlCopy = _url;
                 String payloadCopy = _payload;
                 
+                LOGGER.debug(HTTP_CALLBACK_TAG, "Replacing ${v} with [%s]", valueStr.isEmpty() ? "empty value" : valueStr.c_str());
                 urlCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
                 payloadCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
-                LOGGER.info(HTTP_CALLBACK_TAG, "Sending request [%s] %s :: %s", _method.c_str(), urlCopy.c_str(), payloadCopy.c_str());
+                LOGGER.info(HTTP_CALLBACK_TAG, "Sending request [%s] %s[%s] :: %s", _method.c_str(), _url.c_str(), urlCopy.c_str(), payloadCopy.c_str());
                 
                 HTTPClient client;
                 client.setTimeout(2000);
@@ -140,6 +137,18 @@ namespace Callback {
                 client.end();
                 
                 LOGGER.info(HTTP_CALLBACK_TAG, "Request %s finished with code %d", urlCopy.c_str(), _lastResponseCode);
+            }
+
+            void sendSimpleRequest() {
+                LOGGER.info(HTTP_CALLBACK_TAG, "Sending simple request [%s] %s :: %s", _method.c_str(), _url.c_str(), _payload.c_str());
+                
+                HTTPClient client;
+                client.setTimeout(2000);
+                client.begin(_url);
+                _lastResponseCode = client.sendRequest(_method.c_str(), _payload.c_str());
+                client.end();
+                
+                LOGGER.info(HTTP_CALLBACK_TAG, "Request [%s] finished with code [%d]", _url.c_str(), _lastResponseCode);
             }
 
             void fixUrl() {

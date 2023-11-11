@@ -38,6 +38,7 @@ bool SmartThingClass::init(String type) {
 
     if (wifiConnected()) {
         LOGGER.connect(_ip.c_str(), _name.c_str());
+        delay(1000);
         LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
 
         ArduinoOTA.begin();
@@ -76,7 +77,7 @@ bool SmartThingClass::init(String type) {
     xTaskCreate(
         [](void* o){ static_cast<SmartThingClass*>(o)->loopRoutine(); },
         SMART_THING_TAG,
-        20000,
+        50000,
         this,
         1,
         &_loopTaskHandle

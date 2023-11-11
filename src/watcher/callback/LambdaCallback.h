@@ -11,17 +11,13 @@ namespace Callback {
     template<class T>
     class LambdaCallback: public WatcherCallback<T> {
         public:
-            typedef std::function<void(T *)>CustomCallback;
+            typedef std::function<void(T &value)>CustomCallback;
 
             LambdaCallback(CustomCallback customCallback, T triggerValue):
                 WatcherCallback<T>(LAMBDA_CALLBACK_TAG, triggerValue, true), _customCallback(customCallback) {};
             LambdaCallback(CustomCallback customCallback, T triggerValue, bool readOnly):
                 WatcherCallback<T>(LAMBDA_CALLBACK_TAG, triggerValue, readOnly), _customCallback(customCallback) {};
-            void call(T * value) {
-                if (value == nullptr) {
-                    LOGGER.error(LAMBDA_CALLBACK_TAG, "Value is null!");
-                    return;
-                }
+            void call(T &value) {
                 _customCallback(value);
             };
             DynamicJsonDocument toJson(bool shortJson) {

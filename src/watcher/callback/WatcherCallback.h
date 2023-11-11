@@ -38,7 +38,7 @@ namespace Callback {
                 _type(type), _triggerValue(triggerValue), _readonly(readonly), _compareType(EQ) {};
 
             // todo make value const
-            virtual void call(T * value) = 0;
+            virtual void call(T &value) = 0;
             virtual DynamicJsonDocument toJson(bool shortJson) = 0;
             virtual void updateCustom(JsonObject doc) = 0;
 

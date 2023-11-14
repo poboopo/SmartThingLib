@@ -19,8 +19,8 @@
 template<typename T>
 class Watcher {
     public:
-        Watcher(const Configurable::ConfigurableObject<T> * observable, Callback::WatcherCallback<T> * callback, T initialValue): 
-            _observable(observable), _callbacks(callback), _oldValue(initialValue), _callbackIdSequence(0) {};
+        Watcher(const Configurable::ConfigurableObject<T> * observable, T initialValue): 
+            _observable(observable), _oldValue(initialValue), _callbackIdSequence(0) {};
 
         virtual bool check() = 0;
         virtual const char * getObservableInfo() = 0;
@@ -30,9 +30,16 @@ class Watcher {
         }
 
         DynamicJsonDocument getCallbacksJson(bool ignoreReadOnly, bool shortJson) {
+            if (_callbacks.size() == 0) {
+                DynamicJsonDocument doc(1);
+                return doc;
+            }
             DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size());
             _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
-                if (ignoreReadOnly && current->isReadonly()) {
+                if (current ==nullptr || 
+                    ignoreReadOnly && current->isReadonly() ||
+                    current->getId().isEmpty()
+                ) {
                     return;
                 }
                 doc.add(current->toJson(shortJson));
@@ -41,10 +48,11 @@ class Watcher {
         };
 
         DynamicJsonDocument toJson(bool ignoreReadOnly, bool shortJson) {
-            DynamicJsonDocument callbacks = getCallbacksJson(ignoreReadOnly, shortJson);
-            if (callbacks.size() == 0) {
-                return callbacks;
+            if (_callbacks.size() == 0) {
+                DynamicJsonDocument doc(1);
+                return doc;
             }
+            DynamicJsonDocument callbacks = getCallbacksJson(ignoreReadOnly, shortJson);
             DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size() + 128);
             doc["observable"] = ((Configurable::ConfigurableObject<T> *) _observable)->toJson();
             doc["callbacks"] = callbacks;

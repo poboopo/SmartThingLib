@@ -15,8 +15,8 @@ using namespace Configurable::Sensor;
 namespace Callback {
     class DeviceStateWatcher: public Watcher<String> {
         public:
-            DeviceStateWatcher(const Configurable::DeviceState::DeviceState * deviceState, Callback::WatcherCallback<String> * callback): 
-                Watcher<String>(deviceState, callback, "") {};
+            DeviceStateWatcher(const Configurable::DeviceState::DeviceState * deviceState): 
+                Watcher<String>(deviceState, "") {};
             bool check() {
                 if (_observable == nullptr) {
                     return false;

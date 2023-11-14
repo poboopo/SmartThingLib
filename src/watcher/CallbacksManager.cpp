@@ -100,6 +100,12 @@ namespace Callback {
         int size = _callbacksCount * CALLBACK_INFO_DOC_SIZE + 
             (_statesWatchers.size() + _sensorsWatchers.size()) * WATCHER_INFO_DOC_SIZE;
 
+        if (size == 0) {
+            LOGGER.debug(CALLBACKS_MANAGER_TAG, "No callbacks, creating empty doc");
+            DynamicJsonDocument doc(1);
+            return doc;
+        }
+
         DynamicJsonDocument doc(size);
         _sensorsWatchers.forEach([&](Watcher<int16_t> * watcher){
             DynamicJsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
@@ -166,17 +172,21 @@ namespace Callback {
         }
         Watcher<int16_t> * watcher = getWatcher<int16_t>(&_sensorsWatchers, sensor);
         if (watcher == nullptr) {
-            watcher = new SensorWatcher(sensor, callback);
+            watcher = new SensorWatcher(sensor);
             if (_sensorsWatchers.append(watcher) < 0) {
                 LOGGER.error(CALLBACKS_MANAGER_TAG, "Failed to register new watcher for sensor [%s].", sensor->name);
                 delete(watcher);
                 return false;
             }
             LOGGER.info(CALLBACKS_MANAGER_TAG, "Registered new watcher for sensor [%s].", sensor->name);
+        } else {
+            LOGGER.debug(CALLBACKS_MANAGER_TAG, "Watcher for sensor [%s] already exists!", sensor->name);
         }
-        LOGGER.debug(CALLBACKS_MANAGER_TAG, "Watcher for sensor [%s] already exists!", sensor->name);
 
-        watcher->addCallback(callback);
+        if (watcher->addCallback(callback).isEmpty()) {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "Empty callback id -> failed to add callback");
+            return false;
+        }
         _callbacksCount++;
         LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for sensor [%s] id=%s", sensor->name, callback->getId().c_str());
         return true;
@@ -193,17 +203,21 @@ namespace Callback {
         }
         Watcher<String> * watcher = getWatcher<String>(&_statesWatchers, state);
         if (watcher == nullptr) {
-            watcher = new DeviceStateWatcher(state, callback);
+            watcher = new DeviceStateWatcher(state);
             if (_statesWatchers.append(watcher) < 0) {
                 LOGGER.error(CALLBACKS_MANAGER_TAG, "Failed to register new watcher for state [%s].", state->name);
                 delete(watcher);
                 return false;
             }
             LOGGER.info(CALLBACKS_MANAGER_TAG, "Registered new watcher for state [%s].", state->name);
+        } else {
+            LOGGER.debug(CALLBACKS_MANAGER_TAG, "Watcher for device state [%s] already exists!", state->name);
         }
-        LOGGER.debug(CALLBACKS_MANAGER_TAG, "Watcher for device state [%s] already exists!", state->name);
 
-        watcher->addCallback(callback);
+        if (watcher->addCallback(callback).isEmpty()) {
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "Empty callback id -> failed to add callback");
+            return false;
+        }
         _callbacksCount++;
         LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for device sate [%s] id=%s", state->name, callback->getId().c_str());
         return true;
@@ -449,8 +463,10 @@ namespace Callback {
     }
 
     void CallbacksManager::saveCallbacksToSettings() {
+        LOGGER.debug(CALLBACKS_MANAGER_TAG, "Generating callbacks json");
         STSettings.setCallbacks(callbacksToJson(true, true).as<JsonArray>());
         STSettings.save();
+        LOGGER.debug(CALLBACKS_MANAGER_TAG, "Callbacks were saved");
     }
 
     DynamicJsonDocument CallbacksManager::getCallbacksTemplates() {

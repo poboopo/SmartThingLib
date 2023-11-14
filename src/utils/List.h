@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include <functional>
-#include "logs/BetterLogger.h"
 
 template<typename T>
 class List {

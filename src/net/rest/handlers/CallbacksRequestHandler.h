@@ -8,7 +8,7 @@
 #include "SmartThing.h"
 #include "net/rest/handlers/HandlerUtils.h"
 
-#define CALLBACKS_RQ_PATH "/callbacks"
+#define CALLBACKS_RQ_PATH "/callback"
 #define CALLBACKS_RQ_TAG "callbacks_handler"
 
 #define CALLBACK_TYPE_ARG "type"
@@ -38,14 +38,14 @@ class CallbacksRequestHandler: public RequestHandler {
             
             server.sendHeader("Access-Control-Allow-Origin", "*");
             if (requestMethod == HTTP_GET) {
-                if (requestUri.equals("/callbacks/template")) {
+                if (requestUri.equals("/callback/template")) {
                     DynamicJsonDocument doc = SmartThing.getCallbacksManager()->getCallbacksTemplates();
                     String response;
                     serializeJson(doc, response);
                     server.send(200, JSON_CONTENT_TYPE, response);
                     return true;
                 }
-                if (requestUri.equals("/callbacks/by/observable")) {
+                if (requestUri.equals("/callback/by/observable")) {
                     String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
                     String name = server.arg(CALLBACK_NAME_ARG);
 
@@ -59,7 +59,7 @@ class CallbacksRequestHandler: public RequestHandler {
                     server.send(200, JSON_CONTENT_TYPE, response);
                     return true;
                 }
-                if (requestUri.equals("/callbacks/by/id")) {
+                if (requestUri.equals("/callback/by/id")) {
                     String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
                     String name = server.arg(CALLBACK_NAME_ARG);
                     String id = server.arg(CALLBACK_ID_ARG);
@@ -80,9 +80,9 @@ class CallbacksRequestHandler: public RequestHandler {
                 server.send(200, JSON_CONTENT_TYPE, response);
                 return true;
             }
-            if (requestMethod == HTTP_POST && requestUri.equals("/callbacks/create")) {
+            if (requestMethod == HTTP_POST) {
                 if (!server.hasArg("plain")) {
-                    server.send(400, JSON_CONTENT_TYPE, "Body is missin!");
+                    server.send(400, JSON_CONTENT_TYPE, "Body is missing!");
                     return true;
                 }
                 if (SmartThing.getCallbacksManager()->createCallbackFromJson(server.arg("plain").c_str())) {
@@ -93,7 +93,7 @@ class CallbacksRequestHandler: public RequestHandler {
                 }
                 return true;
             }
-            if (requestMethod == HTTP_PUT && requestUri.equals("/callbacks/update")) {
+            if (requestMethod == HTTP_PUT) {
                 String body = server.arg("plain");
                 if (body.isEmpty()) {
                     server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Body is missing!"));
@@ -108,7 +108,7 @@ class CallbacksRequestHandler: public RequestHandler {
                 }
                 return true;
             }
-            if (requestMethod == HTTP_DELETE && requestUri.equals("/callbacks/delete")) {
+            if (requestMethod == HTTP_DELETE) {
                 String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
                 String name = server.arg(CALLBACK_NAME_ARG);
                 String id = server.arg(CALLBACK_ID_ARG);

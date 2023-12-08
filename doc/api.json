@@ -109,9 +109,7 @@
             }
           }
         }
-      }
-    },
-    "/config/save": {
+      },
       "post": {
         "tags": ["Configuration"],
         "description": "Save device configuration",
@@ -129,9 +127,7 @@
             "description": "New device configuration entries added"
           }
         }
-      }
-    },
-    "/config/delete": {
+      },
       "delete": {
         "tags": ["Configuration"],
         "description": "Delete configuration value",
@@ -224,7 +220,7 @@
         }
       }
     },
-    "/callbacks": {
+    "/callback": {
       "get": {
         "tags": ["Callback"],
         "description": "Get all device callbacks",
@@ -240,9 +236,117 @@
             }
           }
         }
+      },
+
+      "post": {
+        "tags": ["Callback"],
+        "description": "Create new callback",
+        "requestBody": {
+          "description": "Callback info",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#components/schemas/CallbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Callback created"
+          },
+          "500": {
+            "description": "Failed to create callback",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Callback"],
+        "description": "Updates callback",
+        "requestBody": {
+          "description": "Callback info",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#components/schemas/CallbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Callback updated"
+          },
+          "500": {
+            "description": "Failed to update callback",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Callback"],
+        "description": "Delete observable's callback",
+        "parameters": [
+          {
+            "name": "observableType",
+            "description": "Observable type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "sensor/state"
+          },
+          {
+            "name": "name",
+            "description": "Observable name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "description": "Callback id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Callback deleted"
+          },
+          "500": {
+            "description": "Failed to delete callback",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
-    "/callbacks/by/observable": {
+    "/callback/by/observable": {
       "get": {
         "tags": ["Callback"],
         "description": "Get callbacks for observable object (sensor or state)",
@@ -273,7 +377,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/CallbacksList"
+                  "$ref": "#components/schemas/callbackList"
                 }
               }
             }
@@ -281,7 +385,7 @@
         }
       }
     },
-    "/callbacks/by/id": {
+    "/callback/by/id": {
       "get": {
         "tags": ["Callback"],
         "description": "Get callback by id",
@@ -329,126 +433,13 @@
         }
       }
     },
-    "/callbacks/template": {
+    "/callback/template": {
       "get": {
         "tags": ["Callback"],
         "description": "Get callbacks templates for creation",
         "responses": {
           "200": {
             "$ref": "#components/responses/CallbackTemplates"
-          }
-        }
-      }
-    },
-    "/callbacks/create": {
-      "post": {
-        "tags": ["Callback"],
-        "description": "Create new callback",
-        "requestBody": {
-          "description": "Callback info",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#components/schemas/CallbackRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Callback created"
-          },
-          "500": {
-            "description": "Failed to create callback",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/callbacks/update": {
-      "put": {
-        "tags": ["Callback"],
-        "description": "Updates callback",
-        "requestBody": {
-          "description": "Callback info",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#components/schemas/CallbackRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Callback updated"
-          },
-          "500": {
-            "description": "Failed to update callback",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/callbacks/delete": {
-      "delete": {
-        "tags": ["Callback"],
-        "description": "Delete observable's callback",
-        "parameters": [
-          {
-            "name": "observableType",
-            "description": "Observable type",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "sensor/state"
-          },
-          {
-            "name": "name",
-            "description": "Observable name",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "description": "Callback id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Callback deleted"
-          },
-          "500": {
-            "description": "Failed to delete callback",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#components/schemas/ErrorResponse"
-                }
-              }
-            }
           }
         }
       }
@@ -617,7 +608,7 @@
               }
             },
             "callbacks": {
-              "$ref": "#components/schemas/CallbacksList"
+              "$ref": "#components/schemas/callbackList"
             }
           }
         }

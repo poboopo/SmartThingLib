@@ -46,7 +46,7 @@ class BetterLogger {
             info(tag, "[%s] %s - %s", method, uri, body == nullptr ? "" : body);
         };
 
-        //bad realization, but i have no other ideas
+        //bad impl, but i have no other ideas
         template<typename... Args>
         void error(const char * tag, const char * format, Args... args) {
             #if defined(LOGGING_LEVEL_ERROR) || defined(LOGGING_LEVEL_WARN) || defined(LOGGING_LEVEL_INFO) || defined(LOGGING_LEVEL_DEBUG) || defined(LOGGING_LEVEL_ALL)

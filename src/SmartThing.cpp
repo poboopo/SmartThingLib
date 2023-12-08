@@ -84,6 +84,9 @@ bool SmartThingClass::init(String type) {
     );
     LOGGER.debug(SMART_THING_TAG, "Loop task created");
 
+    // Gateway integration
+    addConfigEntry("gateway", "Gateway IP", "string");
+
     LOGGER.debug(SMART_THING_TAG, "Setup finished");
     return true;
 }

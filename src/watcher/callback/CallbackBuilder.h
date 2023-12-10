@@ -56,6 +56,10 @@ namespace Callback {
                     LOGGER.debug(CALLBACK_BUILDER_TAG, "Callback id is blank");
                 }
 
+                if (_compareType.isEmpty()) {
+                    _compareType = "eq";
+                }
+
                 LOGGER.debug(CALLBACK_BUILDER_TAG, "Compare type: %s", _compareType.c_str());
                 callback->setCompareType(_compareType);
                 LOGGER.debug(CALLBACK_BUILDER_TAG, "Trigger disabled: %s", _triggerDisabled ? "true" : "false");

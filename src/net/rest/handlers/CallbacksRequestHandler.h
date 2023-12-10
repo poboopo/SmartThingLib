@@ -85,9 +85,10 @@ class CallbacksRequestHandler: public RequestHandler {
                     server.send(400, JSON_CONTENT_TYPE, "Body is missing!");
                     return true;
                 }
-                if (SmartThing.getCallbacksManager()->createCallbackFromJson(server.arg("plain").c_str())) {
+                String id = SmartThing.getCallbacksManager()->createCallbackFromJson(server.arg("plain").c_str());
+                if (!id.isEmpty()) {
                     SmartThing.getCallbacksManager()->saveCallbacksToSettings();
-                    server.send(201);
+                    server.send(201, JSON_CONTENT_TYPE, "{\"id\": \"" + id + "\"}");
                 } else {
                     server.send(500, JSON_CONTENT_TYPE, buildErrorJson("Failed to create watcher. Check logs for additional information."));
                 }

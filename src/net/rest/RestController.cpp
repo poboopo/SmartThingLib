@@ -68,7 +68,7 @@ void RestController::setupHandler() {
 
     _server.on("/health", HTTP_GET, [this]() {
         preHandleRequest();
-        _server.send(418, "text/html", "I am alive!!! :)");
+        _server.send(200, "text/html", "I am alive!!! :)");
     });
 
     _server.on("/", HTTP_GET, [this]() {

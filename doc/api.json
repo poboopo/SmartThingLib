@@ -35,7 +35,10 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "description": "Pairs of action system name and caption"
+                  "example": {
+                    "action_key1": "action caption 1",
+                    "action_key2": "action caption 2"
+                  }
                 }
               }
             }
@@ -51,7 +54,17 @@
           "200": {
             "description": "Device condifguration fields",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "config_key": {
+                      "caption": "Some caption",
+                      "type": "value type"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -440,6 +453,24 @@
         "responses": {
           "200": {
             "$ref": "#components/responses/CallbackTemplates"
+          }
+        }
+      }
+    },
+    "/metrics": {
+      "get": {
+        "tags": ["Utils"],
+        "description": "Get system metrics",
+        "responses": {
+          "200": {
+            "description": "Metrics object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
         }
       }

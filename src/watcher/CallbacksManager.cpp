@@ -27,10 +27,10 @@ namespace Callback {
         }
     }
 
-    bool CallbacksManager::createCallbackFromJson(const char * json) {
+    String CallbacksManager::createCallbackFromJson(const char * json) {
         if (json == nullptr) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Json is null!");
-            return false;
+            return "";
         }
         LOGGER.debug(CALLBACKS_MANAGER_TAG, "Creating callback from json: %s", json);
         
@@ -40,30 +40,30 @@ namespace Callback {
         return createCallback(doc["observable"], doc["callback"]);        
     }
 
-    bool CallbacksManager::createCallback(JsonObject observableInfo, JsonObject callback) {
+    String CallbacksManager::createCallback(JsonObject observableInfo, JsonObject callback) {
         if (observableInfo.size() == 0) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "ObservableInfo object is empty!");
-            return false;
+            return "";
         }
         if (callback.size() == 0) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback object is empty!");
-            return false;
+            return "";
         }
 
         if (!observableInfo.containsKey("type")) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "observable type value is missing!");
-            return false;
+            return "";
         }
         if (!observableInfo.containsKey("name")) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "observable name value is missing!");
-            return false;
+            return "";
         }
 
         const char * observableType = observableInfo["type"];
         const char * name = observableInfo["name"];
         if (observableType == nullptr || name == nullptr) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Parameters observableType or observable are missing!");
-            return false;
+            return "";
         }
 
         LOGGER.debug(CALLBACKS_MANAGER_TAG, "Creating new callback for [%s]:%s", observableType, name);
@@ -93,7 +93,7 @@ namespace Callback {
         }
 
         LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback for observable [%s] of type [%s] not supported. Supported types: state, sensor.", name, observableType);
-        return false;
+        return "";
     }
 
     DynamicJsonDocument CallbacksManager::callbacksToJson(bool ignoreReadOnly, bool shortJson) {
@@ -120,55 +120,55 @@ namespace Callback {
         return doc;
     }
 
-    bool CallbacksManager::addSensorCallback(const char * name, LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue) {
+    String CallbacksManager::addSensorCallback(const char * name, LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue) {
         const Sensor * sensor = SmartThing.getSensor(name);
         if (sensor == nullptr) {
             LOGGER.error(SMART_THING_TAG, "Can't find sensor with name [%s]. Not registered yet?", name);
-            return false;
+            return "";
         }
         LambdaCallback<int16_t> * watcherCallback = new LambdaCallback<int16_t>(callback, triggerValue);
         return addSensorCallback(sensor, watcherCallback);
     }
 
-    bool CallbacksManager::addSensorCallback(const char * name, const char * url, int16_t triggerValue, bool readonly) {
+    String CallbacksManager::addSensorCallback(const char * name, const char * url, int16_t triggerValue, bool readonly) {
         const Sensor * sensor = SmartThing.getSensor(name);
         if (sensor == nullptr) {
             LOGGER.error(SMART_THING_TAG, "Can't find sensor with name [%s]. Not registered yet?", name);
-            return false;
+            return "";
         }
         HttpCallback<int16_t> * watcherCallback = new HttpCallback<int16_t>(url, triggerValue, readonly);
         return addSensorCallback(sensor, watcherCallback);
     }
 
-    bool CallbacksManager::addDeviceStateCallback(const char * name, LambdaCallback<String>::CustomCallback callback, const char * triggerValue) {
+    String CallbacksManager::addDeviceStateCallback(const char * name, LambdaCallback<String>::CustomCallback callback, const char * triggerValue) {
         const DeviceState * state = SmartThing.getDeviceState(name);
         if (state == nullptr) {
             LOGGER.error(SMART_THING_TAG, "Can't find device state with name [%s]. Not registered yet?", name);
-            return false;
+            return "";
         }
         LambdaCallback<String> * watcherCallback = new LambdaCallback<String>(callback, triggerValue);
         return addDeviceStateCallback(state, watcherCallback);
     }
 
-    bool CallbacksManager::addDeviceStateCallback(const char * name, const char * url, const char * triggerValue, bool readonly) {
+    String CallbacksManager::addDeviceStateCallback(const char * name, const char * url, const char * triggerValue, bool readonly) {
         const DeviceState * state = SmartThing.getDeviceState(name);
         if (state == nullptr) {
             LOGGER.error(SMART_THING_TAG, "Can't find device state with name [%s]. Not registered yet?", name);
-            return false;
+            return "";
         }
         HttpCallback<String> * watcherCallback = new HttpCallback<String>(url, triggerValue, readonly);
         return addDeviceStateCallback(state, watcherCallback);
     }
 
     // todo resturn string id
-    bool CallbacksManager::addSensorCallback(const Sensor * sensor, WatcherCallback<int16_t> * callback) {
+    String CallbacksManager::addSensorCallback(const Sensor * sensor, WatcherCallback<int16_t> * callback) {
         if (sensor == nullptr) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Sensor object is missing, skipping...");
-            return false;
+            return "";
         }
         if (callback == nullptr) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback is missing, skipping...");
-            return false;
+            return "";
         }
         Watcher<int16_t> * watcher = getWatcher<int16_t>(&_sensorsWatchers, sensor);
         if (watcher == nullptr) {
@@ -176,7 +176,7 @@ namespace Callback {
             if (_sensorsWatchers.append(watcher) < 0) {
                 LOGGER.error(CALLBACKS_MANAGER_TAG, "Failed to register new watcher for sensor [%s].", sensor->name);
                 delete(watcher);
-                return false;
+                return "";
             }
             LOGGER.info(CALLBACKS_MANAGER_TAG, "Registered new watcher for sensor [%s].", sensor->name);
         } else {
@@ -185,21 +185,21 @@ namespace Callback {
 
         if (watcher->addCallback(callback).isEmpty()) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Empty callback id -> failed to add callback");
-            return false;
+            return "";
         }
         _callbacksCount++;
         LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for sensor [%s] id=%s", sensor->name, callback->getId().c_str());
-        return true;
+        return callback->getId();
     }
 
-    bool CallbacksManager::addDeviceStateCallback(const DeviceState * state, WatcherCallback<String> * callback) {
+    String CallbacksManager::addDeviceStateCallback(const DeviceState * state, WatcherCallback<String> * callback) {
         if (state == nullptr) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Device state object is missing, skipping...");
-            return false;
+            return "";
         }
         if (callback == nullptr) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback is missing, skipping...");
-            return false;
+            return "";
         }
         Watcher<String> * watcher = getWatcher<String>(&_statesWatchers, state);
         if (watcher == nullptr) {
@@ -207,7 +207,7 @@ namespace Callback {
             if (_statesWatchers.append(watcher) < 0) {
                 LOGGER.error(CALLBACKS_MANAGER_TAG, "Failed to register new watcher for state [%s].", state->name);
                 delete(watcher);
-                return false;
+                return "";
             }
             LOGGER.info(CALLBACKS_MANAGER_TAG, "Registered new watcher for state [%s].", state->name);
         } else {
@@ -216,17 +216,17 @@ namespace Callback {
 
         if (watcher->addCallback(callback).isEmpty()) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Empty callback id -> failed to add callback");
-            return false;
+            return "";
         }
         _callbacksCount++;
         LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new callback for device sate [%s] id=%s", state->name, callback->getId().c_str());
-        return true;
+        return callback->getId();
     }
 
     bool CallbacksManager::deleteCallback(const char * type, const char * name, String id) {
         if (type == nullptr || strlen(type) == 0) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Type of observable is missing!");
-            return false;
+            return "";
         }
 
         if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
@@ -236,7 +236,7 @@ namespace Callback {
         }
 
         LOGGER.error(CALLBACKS_MANAGER_TAG, "Type [%s] not supported", type);
-        return false;
+        return "";
     }
 
     bool CallbacksManager::updateCallback(const char * json) {

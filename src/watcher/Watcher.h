@@ -120,7 +120,7 @@ class Watcher {
         void callCallbacks(T &value) {
             _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
                 if (current->accept(value)) {
-                    LOGGER.debug(WATCHER_TAG , "Calling callback [id=%s]", current->getId());
+                    LOGGER.debug(WATCHER_TAG , "Calling callback [id=%d]", current->getId());
                     current->call(value);
                 }
             });

@@ -299,7 +299,6 @@ namespace Callback {
         }
         
         int id = callbackObject["id"];
-
         WatcherCallback<T> * callback = getCallbackFromWatcherList(list, name, id);
         if (callback == nullptr) {
             return false;
@@ -318,7 +317,7 @@ namespace Callback {
         }
 
         callback->updateCustom(callbackObject);
-        LOGGER.info(CALLBACKS_MANAGER_TAG, "Callback id=%s for observable [%s] was updated!", id, name);
+        LOGGER.info(CALLBACKS_MANAGER_TAG, "Callback id=%d for observable [%s] was updated!", id, name);
         return true;
     }
 
@@ -331,7 +330,7 @@ namespace Callback {
         }
         WatcherCallback<T> * callback = watcher->getCallbackById(id);
         if (callback == nullptr) {
-            LOGGER.warning(CALLBACKS_MANAGER_TAG, "Can't find callback id=%s for observable [%s]", index, name);
+            LOGGER.warning(CALLBACKS_MANAGER_TAG, "Can't find callback id=%d for observable [%s]", id, name);
             return nullptr;
         }
         return callback;

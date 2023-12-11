@@ -53,7 +53,7 @@ class CallbacksRequestHandler: public RequestHandler {
                         server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Observable type or name args are missing!"));
                         return true;
                     }
-                    DynamicJsonDocument doc = CallbacksManager.getCallbacksJson(type.c_str(), name.c_str());
+                    DynamicJsonDocument doc = CallbacksManager.getObservableCallbacksJson(type.c_str(), name.c_str());
                     String response;
                     serializeJson(doc, response);
                     server.send(200, JSON_CONTENT_TYPE, response);
@@ -74,7 +74,7 @@ class CallbacksRequestHandler: public RequestHandler {
                     server.send(200, JSON_CONTENT_TYPE, response);
                     return true;
                 }
-                DynamicJsonDocument doc = CallbacksManager.callbacksToJson(false, false);
+                DynamicJsonDocument doc = CallbacksManager.allCallbacksToJson(false, false);
                 String response;
                 serializeJson(doc, response);
                 server.send(200, JSON_CONTENT_TYPE, response);

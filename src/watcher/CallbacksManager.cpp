@@ -25,7 +25,7 @@ namespace Callback {
             JsonObject observable = callbacksInfo[i]["observable"];
             JsonArray callbacks = callbacksInfo[i]["callbacks"];
             for (int j = 0; j < callbacks.size(); j++) {
-                createCallback(observable, callbacks[j]);
+                createCallbackFromJson(observable, callbacks[j]);
             }
         }
     }
@@ -40,10 +40,10 @@ namespace Callback {
         DynamicJsonDocument doc(1024);
         deserializeJson(doc, json);
 
-        return createCallback(doc["observable"], doc["callback"]);        
+        return createCallbackFromJson(doc["observable"], doc["callback"]);        
     }
 
-    int CallbacksManagerClass::createCallback(JsonObject observableInfo, JsonObject callback) {
+    int CallbacksManagerClass::createCallbackFromJson(JsonObject observableInfo, JsonObject callback) {
         if (observableInfo.size() == 0) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "ObservableInfo object is empty!");
             return -1;
@@ -99,7 +99,7 @@ namespace Callback {
         return -1;
     }
 
-    DynamicJsonDocument CallbacksManagerClass::callbacksToJson(bool ignoreReadOnly, bool shortJson) {
+    DynamicJsonDocument CallbacksManagerClass::allCallbacksToJson(bool ignoreReadOnly, bool shortJson) {
         if (_callbacksCount == 0) {
             LOGGER.debug(CALLBACKS_MANAGER_TAG, "No callbacks, creating empty doc");
             DynamicJsonDocument doc(1);
@@ -378,11 +378,11 @@ namespace Callback {
         return doc;
     }
 
-    DynamicJsonDocument CallbacksManagerClass::getCallbacksJson(const char * type, const char * name) {
+    DynamicJsonDocument CallbacksManagerClass::getObservableCallbacksJson(const char * type, const char * name) {
         if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
-            return getCallbacksJsonFromList<int16_t>(&_sensorsWatchers, name);
+            return getObservableCallbacksJsonFromList<int16_t>(&_sensorsWatchers, name);
         } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
-            return getCallbacksJsonFromList<String>(&_statesWatchers, name);
+            return getObservableCallbacksJsonFromList<String>(&_statesWatchers, name);
 
         }
         LOGGER.error(CALLBACKS_MANAGER_TAG, "Type [%s] not supported", type);
@@ -391,13 +391,13 @@ namespace Callback {
     }
 
     template<typename T>
-    DynamicJsonDocument CallbacksManagerClass::getCallbacksJsonFromList(List<Watcher<T>> * list, const char * name) {
+    DynamicJsonDocument CallbacksManagerClass::getObservableCallbacksJsonFromList(List<Watcher<T>> * list, const char * name) {
         if (name == nullptr || strlen(name) == 0) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Name of observable is missing!");
         } else {
             Watcher<T> * watcher = getWatcherByObservableName(list, name);
             if (watcher != nullptr) {
-                return watcher->getCallbacksJson();
+                return watcher->getObservableCallbacksJson();
             } else {
                 LOGGER.warning(CALLBACKS_MANAGER_TAG, "Can't find watcher for observable [%s]", name);
             }
@@ -480,7 +480,7 @@ namespace Callback {
 
     void CallbacksManagerClass::saveCallbacksToSettings() {
         LOGGER.debug(CALLBACKS_MANAGER_TAG, "Saving callbacks");
-        STSettings.setCallbacks(callbacksToJson(true, true).as<JsonArray>());
+        STSettings.setCallbacks(allCallbacksToJson(true, true).as<JsonArray>());
         STSettings.save();
         LOGGER.debug(CALLBACKS_MANAGER_TAG, "Callbacks were saved");
     }

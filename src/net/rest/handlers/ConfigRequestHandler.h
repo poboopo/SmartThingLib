@@ -12,7 +12,7 @@
 
 class ConfigRequestHandler: public RequestHandler {
     public:
-        ConfigRequestHandler(RestController::HandlerFunction * configUpdatedHandler): 
+        ConfigRequestHandler(RestHandlerFunction * configUpdatedHandler): 
             _configUpdatedHandler(configUpdatedHandler) {};
 
         bool canHandle(HTTPMethod method, String uri) {
@@ -88,7 +88,7 @@ class ConfigRequestHandler: public RequestHandler {
             return false;
         }
     private:
-        RestController::HandlerFunction * _configUpdatedHandler;
+        RestHandlerFunction * _configUpdatedHandler;
 
         void callHandler() {
             if (_configUpdatedHandler != nullptr) {

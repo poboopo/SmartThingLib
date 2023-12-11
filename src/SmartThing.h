@@ -6,16 +6,18 @@
 
 #include "settings/SettingsManager.h"
 #include "logs/BetterLogger.h"
+#include "utils/LedIndicator.h"
+
 #include "net/socket/Multicaster.h"
 #include "net/rest/RestController.h"
-#include "utils/LedIndicator.h"
+
+#include "watcher/CallbacksManager.h"
 
 #include "configurable/SensorsList.h"
 #include "configurable/DeviceStatesList.h"
 #include "configurable/ActionsList.h"
 #include "configurable/ConfigEntriesList.h"
 
-#include "watcher/CallbacksManager.h"
 
 #define SMART_THING_VERSION 0.5
 #define SMART_THING_TAG "SMART_THING"
@@ -72,28 +74,21 @@ class SmartThingClass {
             return _deviceStatesList.size();
         }
 
-        RestController* getRestController() {
-            return &_rest;
-        }
-        Callback::CallbacksManager * getCallbacksManager() {
-            return &_callbacksManager;
-        }
         LedIndicator* getLed() {
             return &_led;
         }
     private:
         Multicaster _multicaster;
-        RestController _rest;
         LedIndicator _led;
+
         Configurable::Sensor::SensorsList _sensorsList;
         Configurable::DeviceState::DeviceStatesList _deviceStatesList;
         Configurable::Action::ActionsList _actionsList;
         Configurable::Config::ConfigEntriesList _configEntriesList;
-        Callback::CallbacksManager _callbacksManager;
+
         TaskHandle_t _loopTaskHandle = NULL;
         void updateBroadCastMessage();
 
-        // todo change to const * char?
         String _ip;
         String _name;
         String _type;

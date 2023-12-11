@@ -10,16 +10,18 @@
 
 #define WEB_SERVER_TAG "web_server"
 
-RestController::RestController(){};
-RestController::~RestController(){};
+RestControllerClass RestController;
 
-void RestController::begin() {
+RestControllerClass::RestControllerClass(){};
+RestControllerClass::~RestControllerClass(){};
+
+void RestControllerClass::begin() {
     setupHandler();
     _server.begin(SERVER_PORT);
     _setupFinished = true;
 }
 
-void RestController::reload() {
+void RestControllerClass::reload() {
     if (_setupFinished) {
         _setupFinished = false;
         _server.stop();
@@ -27,26 +29,26 @@ void RestController::reload() {
     begin();
 }
 
-void RestController::handle() {
+void RestControllerClass::handle() {
     if (_setupFinished) {
         _server.handleClient();
     }
 }
 
-void RestController::processRestHandlerResult(RestHandlerResult result) {
+void RestControllerClass::processRestHandlerResult(RestHandlerResult result) {
     LOGGER.info(WEB_SERVER_TAG, "Response code = %d", result.code);
     _server.send(result.code, result.contentType, result.body);
 }
 
-String RestController::getRequestBody() {
+String RestControllerClass::getRequestBody() {
     return _server.arg("plain");
 }
 
-String RestController::getRequestArg(String name) {
+String RestControllerClass::getRequestArg(String name) {
     return _server.arg(name);
 }
 
-void RestController::preHandleRequest() {
+void RestControllerClass::preHandleRequest() {
     LOGGER.logRequest(
         WEB_SERVER_TAG, 
         http_method_str(_server.method()),
@@ -57,7 +59,7 @@ void RestController::preHandleRequest() {
 }
 
 // add authorization?
-void RestController::setupHandler() {
+void RestControllerClass::setupHandler() {
     _server.addHandler(new ConfigRequestHandler(&_configUpdatedHandler));
     _server.addHandler(new WiFiRequesthandler(&_wifiUpdatedHandler));
     _server.addHandler(new InfoRequestHandler());
@@ -91,7 +93,7 @@ void RestController::setupHandler() {
         JsonObject counts = doc.createNestedObject("counts");
         counts["sensors"] = SmartThing.getSensorsCount();
         counts["states"] = SmartThing.getDeviceStatesCount();
-        counts["callbacks"] = SmartThing.getCallbacksManager()->getTotalCallbacksCount();
+        counts["callbacks"] = CallbacksManager.getTotalCallbacksCount();
         
         String response;
         serializeJson(doc, response);

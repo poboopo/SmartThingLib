@@ -48,7 +48,7 @@ bool SmartThingClass::init(String type) {
         updateBroadCastMessage();
         LOGGER.debug(SMART_THING_TAG, "Multicaster created");
 
-        _rest.addWifiupdatedHandler([&](){
+        RestController.addWifiupdatedHandler([&](){
             LOGGER.warning(SMART_THING_TAG, "WiFi updated, reloading wifi!");
             WiFi.disconnect();
             WiFi.mode(WIFI_MODE_NULL);
@@ -56,10 +56,10 @@ bool SmartThingClass::init(String type) {
             _ip = connectToWifi();
             LOGGER.info(SMART_THING_TAG, "WiFi reloaded");
             LOGGER.info(SMART_THING_TAG, "Reloading rest...");
-            _rest.reload();
+            RestController.reload();
             LOGGER.info(SMART_THING_TAG, "Rest reloaded");
         });
-        _rest.begin();
+        RestController.begin();
         LOGGER.debug(SMART_THING_TAG, "RestController started");
     } else {
         LOGGER.warning(SMART_THING_TAG, "WiFi not available, skipping all network setup");
@@ -70,7 +70,7 @@ bool SmartThingClass::init(String type) {
     });
 
     LOGGER.debug(SMART_THING_TAG, "Loading callbacks from settings...");
-    _callbacksManager.loadFromSettings();
+    CallbacksManager.loadFromSettings();
     LOGGER.debug(SMART_THING_TAG, "Callbacks loaded");
 
     LOGGER.debug(SMART_THING_TAG, "Creating loop task");
@@ -97,10 +97,10 @@ void SmartThingClass::loopRoutine() {
     for(;;) {
         if (wifiConnected()) {
             ArduinoOTA.handle();
-            _rest.handle();
+            RestController.handle();
             _multicaster.broadcast(_broadcastMessage.c_str());
         }
-        _callbacksManager.check();
+        CallbacksManager.check();
         vTaskDelay(xDelay);
     }
 }
@@ -210,7 +210,7 @@ DynamicJsonDocument SmartThingClass::getConfigInfo() {
 }
 
 DynamicJsonDocument SmartThingClass::getWatchersInfo() {
-    return _callbacksManager.getWatchersInfo();
+    return CallbacksManager.getWatchersInfo();
 }
 
 // add possible values?

@@ -22,6 +22,30 @@
             }
           }
         }
+      },
+      "put": {
+        "tags": ["Device information"],
+        "description": "Update device info (only name for now)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "New device name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Device info updated"
+          }
+        }
       }
     },
     "/info/actions": {

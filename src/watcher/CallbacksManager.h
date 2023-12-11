@@ -2,6 +2,8 @@
 #define WATCHERS_LIST_H
 
 #include <ArduinoJson.h>
+#include <functional>
+
 #include "watcher/Watcher.h"
 #include "watcher/SensorWatcher.h"
 #include "watcher/DeviceStateWatcher.h"
@@ -11,51 +13,24 @@
 #include "utils/List.h"
 
 namespace Callback {
-    class CallbacksManager {
+    class CallbacksManagerClass {
         public:
             void loadFromSettings();
-            String createCallbackFromJson(const char * json);
-            String createCallback(JsonObject observableInfo, JsonObject callbackInfo);
+            int createCallbackFromJson(const char * json);
+            int createCallback(JsonObject observableInfo, JsonObject callbackInfo);
             // replace with JsonArray?
             DynamicJsonDocument callbacksToJson(bool ignoreReadOnly, bool shortJson);
 
-            String addDeviceStateCallback(const char * name, LambdaCallback<String>::CustomCallback callback, const char * triggerValue);
-            String addDeviceStateCallback(const char * name, LambdaCallback<String>::CustomCallback callback) {
-                return addDeviceStateCallback(name, callback, nullptr);
-            };
-            String addDeviceStateCallback(const char * name, const char * url, const char * triggerValue, bool readonly);
-            String addDeviceStateCallback(const char * name, const char * url, const char * triggerValue) {
-                return addDeviceStateCallback(name, url, triggerValue, true);
-            }
-            String addDeviceStateCallback(const char * name, const char * url) {
-                return addDeviceStateCallback(name, url, nullptr, true);
-            };
-
-            String addSensorCallback(const char * name, LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue);
-            String addSensorCallback(const char * name, LambdaCallback<int16_t>::CustomCallback callback) {
-                return addSensorCallback(name, callback, -1);
-            };
-            String addSensorCallback(const char * name, const char * url, int16_t triggerValue, bool readonly);
-            String addSensorCallback(const char * name, const char * url, int16_t triggerValue) {
-                return addSensorCallback(name, url, triggerValue, true);
-            }
-            String addSensorCallback(const char * name, const char * url) {
-                return addSensorCallback(name, url, -1, true);
-            };
-            String addDeviceStateCallback(const Configurable::DeviceState::DeviceState * state, WatcherCallback<String> * callback);
-            String addSensorCallback(const Configurable::Sensor::Sensor * sensor, WatcherCallback<int16_t> * callback);
-            /*
-                type - тип наблюдаемого объекта (state, sensor)
-                name - имя наблюдаемого объекта
-                index - индекс в списке callbackов для данного объекта
-            */
-            bool deleteCallback(const char * type, const char * name, String id);
-            bool updateCallback(const char * json);
+            int addDeviceStateCallback(const char * name, LambdaCallback<String>::CustomCallback callback, const char * triggerValue);
+            int addSensorCallback(const char * name, LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue);
+            
+            bool deleteCallback(const char * type, const char * name, int id);
+            bool updateCallback(DynamicJsonDocument doc);
 
             void check();
             DynamicJsonDocument getWatchersInfo();
             DynamicJsonDocument getCallbacksJson(const char * type, const char * name);
-            DynamicJsonDocument getCallbackJsonById(const char * type, const char * name, String id);
+            DynamicJsonDocument getCallbackJsonById(const char * type, const char * name, int id);
             
             void saveCallbacksToSettings();
 
@@ -79,23 +54,37 @@ namespace Callback {
             Watcher<T> * getWatcherByObservableName(List<Watcher<T>> * list, const char * name);
 
             template<typename T>
-            WatcherCallback<T> * getCallbackFromWatcherList(List<Watcher<T>> * list, const char * name, String id);
+            WatcherCallback<T> * getCallbackFromWatcherList(List<Watcher<T>> * list, const char * name, int id);
 
             template<typename T>
             DynamicJsonDocument getCallbacksJsonFromList(List<Watcher<T>> * list, const char * name);
 
             template<typename T>
-            DynamicJsonDocument getCallbackJsonFromList(List<Watcher<T>> * list, const char * name, String id);
+            DynamicJsonDocument getCallbackJsonFromList(List<Watcher<T>> * list, const char * name, int id);
 
             template<typename T>
-            bool deleteWatcherCallbackFromList(List<Watcher<T>> * list, const char * name, String id);
+            bool deleteWatcherCallbackFromList(List<Watcher<T>> * list, const char * name, int id);
+
+            template<typename T>
+            int addCallback(const Configurable::ConfigurableObject<T> * obj, WatcherCallback<T> * callback);
 
             template<typename T>
             bool updateCallback(List<Watcher<T>> * list, const char * name, JsonObject callbackObject);
 
             template<typename T>
             void checkWatchers(List<Watcher<T>> * list);
+
+            template<typename T>
+            Watcher<T> * getWatcherOrCreate(const Configurable::ConfigurableObject<T> * obj);
+
+            template<typename T>
+            Watcher<T> * createWatcher(const Configurable::ConfigurableObject<T> * obj);
+
+            template<typename T>
+            List<Watcher<T>> * getWatchersList();
     };
 }
+
+extern Callback::CallbacksManagerClass CallbacksManager;
 
 #endif

@@ -12,7 +12,7 @@
 
 class WiFiRequesthandler: public RequestHandler {
     public:
-        WiFiRequesthandler(RestController::HandlerFunction * wifiUpdatedHandler): _wifiUpdatedHandler(wifiUpdatedHandler) {};
+        WiFiRequesthandler(RestHandlerFunction * wifiUpdatedHandler): _wifiUpdatedHandler(wifiUpdatedHandler) {};
 
         bool canHandle(HTTPMethod method, String uri) {
             return uri.startsWith(WIFI_RQ_PATH) && 
@@ -89,7 +89,7 @@ class WiFiRequesthandler: public RequestHandler {
             return false;
         }
     private:
-        RestController::HandlerFunction * _wifiUpdatedHandler;
+        RestHandlerFunction * _wifiUpdatedHandler;
 };
 
 #endif

@@ -14,22 +14,22 @@ struct RestHandlerResult{
     String body = "";
 };
 
-class RestController{
-    public:
-        RestController();
-        ~RestController();
+typedef std::function<void(void)> RestHandlerFunction;
 
-        typedef std::function<void(void)> HandlerFunction;
+class RestControllerClass{
+    public:
+        RestControllerClass();
+        ~RestControllerClass();
         void begin();
         void reload();
         
-        void addConfigUpdatedHandler(RestController::HandlerFunction hf) {
+        void addConfigUpdatedHandler(RestHandlerFunction hf) {
             _configUpdatedHandler = hf;
         }
-        void addWifiupdatedHandler(RestController::HandlerFunction hf) {
+        void addWifiupdatedHandler(RestHandlerFunction hf) {
             _wifiUpdatedHandler = hf;
         }
-        void addRestartHandler(RestController::HandlerFunction hf) {
+        void addRestartHandler(RestHandlerFunction hf) {
             _restartHandler = hf;
         }
 
@@ -47,14 +47,11 @@ class RestController{
 
         void processRestHandlerResult(RestHandlerResult result);\
 
-        HandlerFunction _configUpdatedHandler = [](){};
-        HandlerFunction _wifiUpdatedHandler = [](){};
-        HandlerFunction _restartHandler = [](){};
-
-        void handleConfigPost();
-        void handleConfigDelete();
-        void handleWiFiPost();
-        void handleWiFiGet();
+        RestHandlerFunction _configUpdatedHandler = [](){};
+        RestHandlerFunction _wifiUpdatedHandler = [](){};
+        RestHandlerFunction _restartHandler = [](){};
 };
+
+extern RestControllerClass RestController;
 
 #endif

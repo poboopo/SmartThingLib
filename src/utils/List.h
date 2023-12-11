@@ -72,6 +72,9 @@ class List {
         };
 
         void forEach(ForEachFunction forFunc) {
+            if (_count <= 0) {
+                return;
+            }
             Wrapper * current = _head;
             while (current != nullptr) {
                 forFunc(current->value);
@@ -80,6 +83,9 @@ class List {
         };
 
         void forEach(ForEachIndexFunction forFunc) {
+            if (_count <= 0) {
+                return;
+            }
             Wrapper * current = _head;
             int i = 0;
             while (current != nullptr) {

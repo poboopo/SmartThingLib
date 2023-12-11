@@ -35,7 +35,7 @@ namespace Callback {
     class WatcherCallback {
         public:
             WatcherCallback(const char * type, T triggerValue, bool readonly): 
-                _type(type), _triggerValue(triggerValue), _readonly(readonly), _compareType(EQ) {};
+               _id(-1), _type(type), _triggerValue(triggerValue), _readonly(readonly), _compareType(EQ) {};
 
             // todo make value const
             virtual void call(T &value) = 0;
@@ -55,10 +55,11 @@ namespace Callback {
                 doc["compareType"] = compareTypeToString(_compareType);
             }
 
-            void setId(String id) {
+            void setId(int id) {
                 _id = id;
             }
-            const String getId() const {
+
+            const int getId() const {
                 return _id;
             }
 
@@ -90,7 +91,7 @@ namespace Callback {
                 return doc;
             }
         protected:
-            String _id;
+            int _id;
             const char * _type;
             T _triggerValue;
             bool _triggerDisabled;

@@ -51,9 +51,10 @@ namespace Callback {
 
                 if (!_id.isEmpty() && !_id.equals("null") && !_id.equals("New")) {
                     LOGGER.debug(CALLBACK_BUILDER_TAG, "Callback id: %s", _id.c_str());
-                    callback->setId(_id);
+                    callback->setId(_id.toInt());
                 } else {
                     LOGGER.debug(CALLBACK_BUILDER_TAG, "Callback id is blank");
+                    callback->setId(-1);
                 }
 
                 if (_compareType.isEmpty()) {

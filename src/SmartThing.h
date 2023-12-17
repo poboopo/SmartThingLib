@@ -18,7 +18,6 @@
 #include "configurable/ActionsList.h"
 #include "configurable/ConfigEntriesList.h"
 
-
 #define SMART_THING_VERSION 0.5
 #define SMART_THING_TAG "SMART_THING"
 // Pins
@@ -30,6 +29,8 @@
 
 #define MULTICAST_GROUP "224.1.1.1"
 #define MULTICAST_PORT 7778
+
+#define WEB_PAGE
 
 #define DEVICE_NAME_LENGTH_MAX 15
 #define SMART_THING_LOOP_TASK_DELAY 250 //ms

@@ -11,9 +11,8 @@
 #define CALLBACKS_RQ_PATH "/callback"
 #define CALLBACKS_RQ_TAG "callbacks_handler"
 
-#define CALLBACK_TYPE_ARG "type"
 #define CALLBACK_NAME_ARG "name"
-#define CALLBACK_OBSERVABLE_TYPE "observableType"
+#define CALLBACK_OBSERVABLE_TYPE "type"
 #define CALLBACK_ID_ARG "id"
 
 class CallbacksRequestHandler: public RequestHandler {

@@ -87,7 +87,11 @@ class CallbacksRequestHandler: public RequestHandler {
                 int id = CallbacksManager.createCallbackFromJson(server.arg("plain").c_str());
                 if (id >= 0) {
                     CallbacksManager.saveCallbacksToSettings();
-                    server.send(201, JSON_CONTENT_TYPE, "{\"id\": \"" + String(id) + "\"}");
+                    DynamicJsonDocument doc(16);
+                    doc["id"] = id;
+                    String response;
+                    serializeJson(doc, response);
+                    server.send(201, JSON_CONTENT_TYPE, response);
                 } else {
                     server.send(500, JSON_CONTENT_TYPE, buildErrorJson("Failed to create callback. Check logs for additional information."));
                 }

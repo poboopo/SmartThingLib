@@ -102,7 +102,8 @@ namespace Callback {
     DynamicJsonDocument CallbacksManagerClass::allCallbacksToJson(bool ignoreReadOnly, bool shortJson) {
         if (_callbacksCount == 0) {
             LOGGER.debug(CALLBACKS_MANAGER_TAG, "No callbacks, creating empty doc");
-            DynamicJsonDocument doc(1);
+            DynamicJsonDocument doc(0);
+            doc.to<JsonArray>();
             return doc;
         }
 
@@ -395,8 +396,10 @@ namespace Callback {
         if (name == nullptr || strlen(name) == 0) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Name of observable is missing!");
         } else {
+            LOGGER.debug("123", "Searching for watcher");
             Watcher<T> * watcher = getWatcherByObservableName(list, name);
             if (watcher != nullptr) {
+                LOGGER.debug("123", "Got watcher");
                 return watcher->getObservableCallbacksJson();
             } else {
                 LOGGER.warning(CALLBACKS_MANAGER_TAG, "Can't find watcher for observable [%s]", name);

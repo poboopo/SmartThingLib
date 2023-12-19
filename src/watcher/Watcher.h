@@ -31,7 +31,8 @@ class Watcher {
 
         DynamicJsonDocument getObservableCallbacksJson(bool ignoreReadOnly, bool shortJson) {
             if (_callbacks.size() == 0) {
-                DynamicJsonDocument doc(1);
+                DynamicJsonDocument doc(0);
+                doc.to<JsonArray>();
                 return doc;
             }
             DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size());
@@ -49,7 +50,7 @@ class Watcher {
 
         DynamicJsonDocument toJson(bool ignoreReadOnly, bool shortJson) {
             if (_callbacks.size() == 0) {
-                DynamicJsonDocument doc(1);
+                DynamicJsonDocument doc(0);
                 return doc;
             }
             DynamicJsonDocument callbacks = getObservableCallbacksJson(ignoreReadOnly, shortJson);

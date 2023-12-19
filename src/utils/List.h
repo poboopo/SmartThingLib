@@ -72,7 +72,7 @@ class List {
         };
 
         void forEach(ForEachFunction forFunc) {
-            if (_count <= 0) {
+            if (_count == 0) {
                 return;
             }
             Wrapper * current = _head;
@@ -83,7 +83,7 @@ class List {
         };
 
         void forEach(ForEachIndexFunction forFunc) {
-            if (_count <= 0) {
+            if (_count == 0) {
                 return;
             }
             Wrapper * current = _head;
@@ -97,6 +97,9 @@ class List {
 
 // todo const?
         T * findValue(FindFunction findFunc) {
+            if (_count == 0) {
+                return nullptr;
+            }
             Wrapper * current = _head;
             while (current != nullptr) {
                 if (findFunc(current->value)) {
@@ -138,7 +141,7 @@ class List {
             return nullptr;
         }
 
-        int16_t size() {
+        size_t size() {
             return _count;
         }
     private:
@@ -150,7 +153,7 @@ class List {
         };
 
         Wrapper * _head;
-        int16_t _count;
+        size_t _count;
 };
 
 #endif

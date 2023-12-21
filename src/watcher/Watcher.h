@@ -31,15 +31,15 @@ class Watcher {
 
         DynamicJsonDocument getObservableCallbacksJson(bool ignoreReadOnly, bool shortJson) {
             if (_callbacks.size() == 0) {
+                LOGGER.debug(WATCHER_CALLBACK_TAG, "No callback's, creating empty array");
                 DynamicJsonDocument doc(0);
                 doc.to<JsonArray>();
                 return doc;
             }
             DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size());
             _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
-                if (current ==nullptr || 
-                    ignoreReadOnly && current->isReadonly() ||
-                    current->getId() < 0
+                if (current == nullptr || 
+                    ignoreReadOnly && current->isReadonly()
                 ) {
                     return;
                 }
@@ -102,7 +102,7 @@ class Watcher {
                 return false;
             }
             if (_callbacks.remove(callback)) {
-                delete(callback);
+                delete callback;
                 return true;
             }
             LOGGER.error(WATCHER_TAG, "Failed to remove callback from list");
@@ -120,7 +120,7 @@ class Watcher {
 
         void callCallbacks(T &value) {
             _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
-                if (current->accept(value)) {
+                if (current != nullptr  && current->accept(value)) {
                     LOGGER.debug(WATCHER_TAG , "Calling callback [id=%d]", current->getId());
                     current->call(value);
                 }

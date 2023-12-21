@@ -214,11 +214,11 @@ DynamicJsonDocument SmartThingClass::getWatchersInfo() {
 }
 
 // add possible values?
-bool SmartThingClass::addDeviceState(const char * name, Configurable::ConfigurableObject<const char *>::ValueGeneratorFunction function) {
+bool SmartThingClass::addDeviceState(const char * name, Configurable::ConfigurableObject<const char *>::ValueProviderFunction function) {
     return _deviceStatesList.add(name, function);
 }
 
-bool SmartThingClass::registerSensor(const char * name, Configurable::ConfigurableObject<int16_t>::ValueGeneratorFunction function) {
+bool SmartThingClass::registerSensor(const char * name, Configurable::ConfigurableObject<int16_t>::ValueProviderFunction function) {
     return _sensorsList.add(name, function);
 }
 bool SmartThingClass::registerDigitalSensor(const char * name, int pin) {

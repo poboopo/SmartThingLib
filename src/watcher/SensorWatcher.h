@@ -17,7 +17,7 @@ namespace Callback {
                 Watcher<int16_t>(sensor, -1) {};
             bool check() {
                 if (_observable != nullptr) {
-                    int16_t newValue = _observable->valueGenerator();
+                    int16_t newValue = _observable->valueProvider();
                     if (_oldValue == -1) {
                         _oldValue = newValue;
                         return false;

@@ -46,10 +46,10 @@ class SmartThingClass {
         const String getName();
         bool wifiConnected();
 
-        bool registerSensor(const char * name, Configurable::ConfigurableObject<int16_t>::ValueGeneratorFunction valueGenerator);
+        bool registerSensor(const char * name, Configurable::ConfigurableObject<int16_t>::ValueProviderFunction valueProvider);
         bool registerDigitalSensor(const char * name, int pin);
         bool registerAnalogSensor(const char * name, int pin);
-        bool addDeviceState(const char * name, Configurable::ConfigurableObject<const char *>::ValueGeneratorFunction valueGenerator);
+        bool addDeviceState(const char * name, Configurable::ConfigurableObject<const char *>::ValueProviderFunction valueProvider);
         bool addActionHandler(const char * action, const char * caption, Configurable::Action::ActionHandler handler);
         bool addActionHandler(const char * action, Configurable::Action::ActionHandler handler) {
             return addActionHandler(action, action, handler);

@@ -21,8 +21,7 @@ namespace Callback {
                 if (_observable == nullptr) {
                     return false;
                 }
-
-                String newValue = _observable->valueGenerator();
+                String newValue = _observable->valueProvider();
                 if (_oldValue.isEmpty()) {
                     _oldValue = newValue;
                     return false;

@@ -12,7 +12,6 @@ class List {
         typedef std::function<bool(T *)> FindFunction;
 
         List():_count(0), _head(nullptr){};
-        List(T * value):_head(new Wrapper(value)), _count(1){};
         ~List() {
             removeAll();
         };
@@ -26,7 +25,7 @@ class List {
             while (current != nullptr) {
                 temp = current;
                 current = current->next;
-                delete(temp);
+                delete temp;
             }
         }
 
@@ -37,12 +36,8 @@ class List {
 
             Wrapper * wrap = new Wrapper(value);
             wrap->next = _head;
-            if (_head != nullptr) {
-                _head->previous = wrap;
-            }
             _head = wrap;
-            _count++;
-            return _count - 1;
+            return _count++;
         };
 
         bool remove(T * value) {
@@ -50,23 +45,25 @@ class List {
                 return false;
             }
 
-            Wrapper * current = _head;
-            while (current != nullptr) {
-                if (value == current->value) {
-                    if (current->next != nullptr) {
-                        current->next->previous = current->previous;
-                        if (current->previous == nullptr) {
-                            _head = current->next;
-                        }
-                    }
-                    if (current->previous != nullptr) {
-                        current->previous->next = current->next;
-                    }
-                    delete(current);
+            Wrapper * temp = _head;
+            if (_head->value == value) {
+                _head = _head->next;
+                delete temp;
+                _count--;
+                return true;
+            }
+
+            temp = temp->next;
+            Wrapper * prev = _head;
+            while(temp != nullptr) {
+                if (temp->value == value) {
+                    prev->next = temp->next;
+                    delete temp;
                     _count--;
                     return true;
                 }
-                current = current->next;
+                prev = temp;
+                temp = temp->next;
             }
             return false;
         };
@@ -146,10 +143,9 @@ class List {
         }
     private:
         struct Wrapper {
-            Wrapper(T * v): value(v), next(nullptr), previous(nullptr) {};
+            Wrapper(T * v): value(v), next(nullptr) {};
             T * value;
             Wrapper * next;
-            Wrapper * previous;
         };
 
         Wrapper * _head;

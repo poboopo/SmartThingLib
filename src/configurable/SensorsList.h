@@ -12,8 +12,8 @@ namespace Configurable {
     namespace Sensor {
         class SensorsList: public List<Sensor> {
             public:
-                bool add(const char * name, Configurable::ConfigurableObject<int16_t>::ValueGeneratorFunction valueGenerator) {
-                    return add(name, TYPE_CUSTOM, valueGenerator);
+                bool add(const char * name, Configurable::ConfigurableObject<int16_t>::ValueProviderFunction valueProvider) {
+                    return add(name, TYPE_CUSTOM, valueProvider);
                 };
                 bool addDigital(const char * name, int pin) {
                     if (pin < 0) {
@@ -44,7 +44,7 @@ namespace Configurable {
                     DynamicJsonDocument doc(size() * 64);
                     forEach([&](Sensor * current) {
                         JsonObject sensorObj = doc.createNestedObject(current->name);
-                        sensorObj["value"] = current->valueGenerator();
+                        sensorObj["value"] = current->valueProvider();
                         sensorObj["type"] = Configurable::Sensor::sensorTypeName(current->type);
                     });
                     return doc;
@@ -55,21 +55,21 @@ namespace Configurable {
                     });
                 };
             private:
-                bool add(const char * name, SensorType type, Configurable::ConfigurableObject<int16_t>::ValueGeneratorFunction valueGenerator) {
+                bool add(const char * name, SensorType type, Configurable::ConfigurableObject<int16_t>::ValueProviderFunction valueProvider) {
                     if (findSensor(name) != nullptr) {
                         LOGGER.warning(SENSORS_LIST_TAG, "Sensor with name %s already exist! Skipping...", name);
                         return false;
                     }
                     Sensor * sensor = new Sensor();
                     sensor->name = name;
-                    sensor->valueGenerator = valueGenerator;
+                    sensor->valueProvider = valueProvider;
                     sensor->type = type;
                     if (append(sensor) > -1) {
                         LOGGER.debug(SENSORS_LIST_TAG, "Added new sensor %s", name);
                         return true;
                     } else {
                         if (sensor != nullptr) {
-                            delete(sensor);
+                            delete sensor;
                         }
                         LOGGER.error(SENSORS_LIST_TAG, "Failed to add new sensor %s", name);
                         return false;

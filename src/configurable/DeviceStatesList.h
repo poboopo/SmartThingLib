@@ -13,20 +13,20 @@ namespace Configurable {
     namespace DeviceState {
         class DeviceStatesList: public List<DeviceState> {
             public:
-                bool add(const char * name, Configurable::ConfigurableObject<const char *>::ValueGeneratorFunction valueGenerator) {
+                bool add(const char * name, Configurable::ConfigurableObject<const char *>::ValueProviderFunction valueProvider) {
                     if (findState(name) != nullptr) {
                         LOGGER.warning(DEVICE_STATES_LIST_TAG, "State with name %s already exist! Skipping...", name);
                         return false;
                     }
                     DeviceState * state = new DeviceState();
                     state->name = name;
-                    state->valueGenerator = valueGenerator;
+                    state->valueProvider = valueProvider;
                     if (append(state) > -1) {
                         LOGGER.debug(DEVICE_STATES_LIST_TAG, "Added new device state %s", name);
                         return true;
                     } else {
                         if (state != nullptr) {
-                            delete(state);
+                            delete state;
                         }
                         LOGGER.error(DEVICE_STATES_LIST_TAG, "Dailed to add new device state %s", name);
                         return false;
@@ -35,7 +35,7 @@ namespace Configurable {
                 DynamicJsonDocument getValues() {
                     DynamicJsonDocument doc(size() * 64);
                     forEach([&](DeviceState * current) {
-                        doc[current->name] = current->valueGenerator();
+                        doc[current->name] = current->valueProvider();
                     });
                     return doc;
                 };

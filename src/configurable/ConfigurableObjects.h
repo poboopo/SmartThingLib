@@ -14,12 +14,12 @@ namespace Configurable {
     struct ConfigurableObject {
         public:
             ConfigurableObject(const char * objType): type(objType){};
-            typedef std::function<T(void)> ValueGeneratorFunction;
+            typedef std::function<T(void)> ValueProviderFunction;
 
             const char * name;
             const char * type;
             
-            ValueGeneratorFunction valueGenerator;
+            ValueProviderFunction valueProvider;
 
             StaticJsonDocument<CONFIGURABLE_JS0N_SIZE> toJson() {
                 StaticJsonDocument<CONFIGURABLE_JS0N_SIZE> doc;

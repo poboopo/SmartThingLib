@@ -112,7 +112,7 @@ namespace Callback {
 
         if (size == 0) {
             LOGGER.debug(CALLBACKS_MANAGER_TAG, "DynamicJsonDocument size = 0, creating empty doc");
-            DynamicJsonDocument doc(1);
+            DynamicJsonDocument doc(0);
             return doc;
         }
 
@@ -213,7 +213,7 @@ namespace Callback {
                     obj->type,
                     obj->name
                 );
-                delete(watcher);
+                delete watcher;
                 return nullptr;
             }
             LOGGER.info(CALLBACKS_MANAGER_TAG, "Added new watcher for %s [%s]", obj->type, obj->name);
@@ -305,7 +305,7 @@ namespace Callback {
             return false;
         }
         if (callback->isReadonly()) {
-            LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback %s for observable [%s] is readonly!", id, name);
+            LOGGER.error(CALLBACKS_MANAGER_TAG, "Callback %d for observable [%s] is readonly!", id, name);
             return false;
         }
 
@@ -345,10 +345,7 @@ namespace Callback {
         }
         LOGGER.debug(CALLBACKS_MANAGER_TAG, "Trying to delete observable [%s]'s callback id=%d", name, id);
         Watcher<T> * watcher = getWatcherByObservableName(list, name);
-        if (watcher == nullptr) {
-            return false;
-        }
-        if (!watcher->removeCallback(id)) {
+        if (watcher == nullptr || !watcher->removeCallback(id)) {
             return false;
         }
         _callbacksCount--;
@@ -357,10 +354,11 @@ namespace Callback {
             return true;
         }
         LOGGER.debug(CALLBACKS_MANAGER_TAG, "No callbacks left for observable [%s], removing watcher!", name);
-        if (list->remove(watcher)) {
-            delete(watcher);
-            LOGGER.warning(CALLBACKS_MANAGER_TAG, "Watcher for observable [%s] removed!", name);
+        if (!list->remove(watcher)) {
+            return false;
         }
+        delete watcher;
+        LOGGER.warning(CALLBACKS_MANAGER_TAG, "Watcher for observable [%s] removed!", name);
         return true;
     }
 
@@ -396,10 +394,8 @@ namespace Callback {
         if (name == nullptr || strlen(name) == 0) {
             LOGGER.error(CALLBACKS_MANAGER_TAG, "Name of observable is missing!");
         } else {
-            LOGGER.debug("123", "Searching for watcher");
             Watcher<T> * watcher = getWatcherByObservableName(list, name);
             if (watcher != nullptr) {
-                LOGGER.debug("123", "Got watcher");
                 return watcher->getObservableCallbacksJson();
             } else {
                 LOGGER.warning(CALLBACKS_MANAGER_TAG, "Can't find watcher for observable [%s]", name);
@@ -430,9 +426,7 @@ namespace Callback {
             if (watcher != nullptr) {
                 WatcherCallback<T> * callback = watcher->getCallbackById(id);
                 if (callback != nullptr) {
-                    DynamicJsonDocument doc = callback->toJson(false);
-                    doc["id"] = id; //todo remove save to callback
-                    return doc;
+                    return callback->toJson(false);
                 } else {
                     LOGGER.warning(CALLBACKS_MANAGER_TAG, "Can't find callback with id [%d] in watcher for [%s]", id, name);
                 }

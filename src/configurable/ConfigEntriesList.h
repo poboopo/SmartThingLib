@@ -28,7 +28,7 @@ namespace Configurable {
                         return true;
                     } else {
                         if (entry != nullptr) {
-                            delete(entry);
+                            delete entry;
                         }
                         LOGGER.error(CONFIG_ENTRIES_LIST_TAG, "Failed to add new config entry - %s:%s", name, caption);
                         return false;

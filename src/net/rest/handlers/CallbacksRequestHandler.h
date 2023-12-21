@@ -87,6 +87,7 @@ class CallbacksRequestHandler: public RequestHandler {
                 int id = CallbacksManager.createCallbackFromJson(server.arg("plain").c_str());
                 if (id >= 0) {
                     CallbacksManager.saveCallbacksToSettings();
+                    //spritf fails, why?
                     DynamicJsonDocument doc(16);
                     doc["id"] = id;
                     String response;

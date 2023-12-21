@@ -40,7 +40,7 @@ namespace Configurable {
                         return true;
                     } else {
                         if (action != nullptr) {
-                            delete(action);
+                            delete action;
                         }
                         LOGGER.error(ACTIONS_LIST_TAG, "Failed to add new action handler - %s:%s", actionName, caption);
                         return false;

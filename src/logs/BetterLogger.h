@@ -2,14 +2,16 @@
 #define BetterLogger_H
 
 #include <Arduino.h>
-#include <freertos/semphr.h>
+#include <lwip/sockets.h>
 
-#include "net/socket/Multicaster.h"
+#define LOGGER_TAG "LOGGER"
 
-#define ENABLE_STATISTICS
+// #define MULTICAST_LOGGER
+#define TCP_LOGGER
 
-#define LOGGER_DEFAULT_GROUP "224.1.1.1"
-#define LOGGER_DEFAULT_PORT 7779
+// ip_&_name_&_level_&_tag_&_message
+#define LOGGER_MESSAGE_TEMPLATE "%s_&_%s_&_%s_&_%s_&_%s"
+#define STAT_LOG_TAG "STATISTICS"
 #define MAX_MESSAGE_LENGTH 2048
 
 // move to config?
@@ -19,19 +21,32 @@
 // #define LOGGING_LEVEL_DEBUG
 #define LOGGING_LEVEL_ALL
 
-
 // todo add websocker support?
 class BetterLogger {
     public:
-        BetterLogger();
-        ~BetterLogger();
+        BetterLogger() {};
+        ~BetterLogger() {
+            close(_sock);
+        }
 
-        void init();
+        void init() {
+            Serial.begin(115200);
+        }
+        void initNetConnection(String fullAddr, const char * myIp, const char * name) {
+            _name = name;
+            _ip = myIp;
+            _fullAddr = fullAddr;
 
-        void connect(const char * myIp, const char * name){
-            connect(myIp, name, LOGGER_DEFAULT_GROUP, LOGGER_DEFAULT_PORT);
-        };
-        void connect(const char * myIp, const char * name, const char * group, int port);
+            connectSocket();
+        }
+        void configUpdateHook(String fullAddr) {
+            if (_connected && _fullAddr.equals(fullAddr)) {
+                return;
+            }
+            _fullAddr = fullAddr;
+            warning(LOGGER_TAG, "Tcp server log address was updated");
+            connectSocket();
+        }
 
         void log(const char * level, const char * tag, const char * message);
         template<typename... Args>
@@ -71,14 +86,47 @@ class BetterLogger {
             log("DEBUG", tag, format, args...);
             #endif
         };
-        void statistics(); 
+        void statistics() {
+            info(STAT_LOG_TAG, "----------STATISTIC----------");
+            info(STAT_LOG_TAG, "Free/size heap: %u/%u", ESP.getFreeHeap(), ESP.getHeapSize());
+            info(STAT_LOG_TAG, "Min free/max alloc heap: %u/%u", ESP.getMinFreeHeap(), ESP.getMaxAllocHeap());
+            info(STAT_LOG_TAG, "--------STATISTIC-END--------");
+        }; 
     private:
-        Multicaster _multicaster;
-        SemaphoreHandle_t _mutex = xSemaphoreCreateMutex();
+        bool _connected = false;
+        int _sock;
+        struct sockaddr_in _saddr = { 0 };
+        String _fullAddr;
+
         const char * _ip = "NOT_CONNECTED";
         const char * _name = "no_name";
-        bool _connected = false;
-        bool _serialStarted = false;
+
+        void connectSocket();
+        bool parseAddressFromString() {
+            if (_fullAddr.isEmpty()) {
+                warning(LOGGER_TAG, "Empty tcp log server info");
+                return false;
+            }
+
+            int ind = _fullAddr.indexOf(":");
+            if (ind < 0) {
+                error(LOGGER_TAG, "Bad server fullAddr: %s", _fullAddr.c_str());
+                return false;
+            }
+
+            String ip = _fullAddr.substring(0, ind);
+            String port = _fullAddr.substring(ind + 1);
+            if (ip.isEmpty()) {
+                error(LOGGER_TAG, "Failed to parse server ip");
+            }
+            if (port.isEmpty()) {
+                error(LOGGER_TAG, "Failed to parse server port");
+            }
+            _saddr.sin_family = AF_INET;
+            _saddr.sin_port = htons(port.toInt());
+            _saddr.sin_addr.s_addr = inet_addr(ip.c_str());
+            return true;
+        };
 };
 
 extern BetterLogger LOGGER;

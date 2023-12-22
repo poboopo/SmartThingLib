@@ -57,7 +57,7 @@ class ConfigRequestHandler: public RequestHandler {
 
                 STSettings.save();
                 server.send(200);
-                callHandler();
+                callHooks();
                 return true; 
             } 
             if (requestMethod == HTTP_DELETE) {
@@ -78,7 +78,7 @@ class ConfigRequestHandler: public RequestHandler {
                     config.remove(name);
                     STSettings.save();
                     server.send(200);
-                    callHandler();
+                    callHooks();
                 } else {
                     LOGGER.error(CONFIG_LOG_TAG, "Failed to remove config %s - no such key", name);
                     server.send(404, "content/json", buildErrorJson("No such key"));
@@ -89,8 +89,8 @@ class ConfigRequestHandler: public RequestHandler {
         }
     private:
         RestHandlerFunction * _configUpdatedHandler;
-
-        void callHandler() {
+        void callHooks() {
+            LOGGER.configUpdateHook(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG]);
             if (_configUpdatedHandler != nullptr) {
                 (*_configUpdatedHandler)();
             }

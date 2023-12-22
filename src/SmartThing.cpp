@@ -37,9 +37,13 @@ bool SmartThingClass::init(String type) {
     _ip = connectToWifi();
 
     if (wifiConnected()) {
-        LOGGER.connect(_ip.c_str(), _name.c_str());
-        delay(1000);
         LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
+        delay(1000);
+        LOGGER.initNetConnection(
+            STSettings.getConfig()[LOGGER_ADDRESS_CONFIG],
+            _ip.c_str(),
+            _name.c_str()
+        );
 
         ArduinoOTA.begin();
         LOGGER.debug(SMART_THING_TAG, "Ota started");
@@ -57,7 +61,13 @@ bool SmartThingClass::init(String type) {
             LOGGER.info(SMART_THING_TAG, "WiFi reloaded");
             LOGGER.info(SMART_THING_TAG, "Reloading rest...");
             RestController.reload();
-            LOGGER.info(SMART_THING_TAG, "Rest reloaded");
+
+            LOGGER.info(SMART_THING_TAG, "Reconnecting logger");
+            LOGGER.initNetConnection(
+                STSettings.getConfig()[LOGGER_ADDRESS_CONFIG],
+                _ip.c_str(),
+                _name.c_str()
+            );
         });
         RestController.begin();
         LOGGER.debug(SMART_THING_TAG, "RestController started");
@@ -84,8 +94,7 @@ bool SmartThingClass::init(String type) {
     );
     LOGGER.debug(SMART_THING_TAG, "Loop task created");
 
-    // Gateway integration
-    addConfigEntry("gateway", "Gateway IP", "string");
+    addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)", "string");
 
     LOGGER.debug(SMART_THING_TAG, "Setup finished");
     return true;

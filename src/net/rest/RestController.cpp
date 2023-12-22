@@ -91,7 +91,7 @@ void RestControllerClass::setupHandler() {
         _server.send(200, "text/css", STYLE_PAGE_MAIN);
     });
     #else
-    _server.on("/health", HTTP_GET, [this]() {
+    _server.on("/", HTTP_GET, [this]() {
         preHandleRequest();
         _server.send(200, "text/plain", "Web control panel is not included in this build!");
     });

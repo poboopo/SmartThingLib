@@ -4,19 +4,30 @@ import socket
 import struct
 from datetime import datetime
 
+TCP = True
+PORT = 7779
+
 LOGGER_FILE = "logger.log"
 START_COLOR = "\033["
 END_COLOR = "\033[0m"
 
 ipColor = {}
-group = ("224.1.1.1", 7779)
 lastColorIndex = 2
 
-mainSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-mainSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-mainSocket.bind(group)
-mreq = struct.pack("4sl", socket.inet_aton(group[0]), socket.INADDR_ANY)
-mainSocket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+if (TCP):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(("192.168.2.114", PORT))
+    sock.listen()
+    print("Waiting for connection...")
+    conn, addr = sock.accept()
+    print(f"Got connection from {addr}")
+else:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.bind(("224.1.1.1", PORT))
+    mreq = struct.pack("4sl", socket.inet_aton(group[0]), socket.INADDR_ANY)
+    sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+    conn = sock
 
 logFile = open(LOGGER_FILE, "a")
 
@@ -37,7 +48,11 @@ try:
     print(f"{'':-<115}{END_COLOR}")
     while True:
         try:
-            message = mainSocket.recv(4096).decode()
+            data = conn.recv(4096)
+            if (not data):
+                print("Connection closed")
+                break
+            message = data.decode()
             splitted = message.split("_&_")
             if (len(splitted) == 1):
                 print(message)
@@ -63,5 +78,5 @@ try:
 except KeyboardInterrupt:
     print("leaving...")
 finally:
-    mainSocket.close()
+    sock.close()
     logFile.close()

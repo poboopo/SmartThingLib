@@ -3,10 +3,10 @@
 
 #include <typeinfo>
 
-#include "watcher/callback/LambdaCallback.h"
-#include "watcher/callback/HttpCallback.h"
-#include "watcher/callback/ActionCallback.h"
-#include "watcher/callback/WatcherCallback.h"
+#include "callbacks/impls/LambdaCallback.h"
+#include "callbacks/impls/HttpCallback.h"
+#include "callbacks/impls/ActionCallback.h"
+#include "callbacks/impls/WatcherCallback.h"
 #include "logs/BetterLogger.h"
 
 #define CALLBACK_BUILDER_TAG "callback_builder"

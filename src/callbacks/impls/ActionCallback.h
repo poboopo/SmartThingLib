@@ -1,7 +1,7 @@
 #ifndef ACTION_CALLBACK_H
 #define ACTION_CALLBACK_H
 
-#include "watcher/callback/WatcherCallback.h"
+#include "callbacks/impls/WatcherCallback.h"
 #include "logs/BetterLogger.h"
 #include "SmartThing.h"
 

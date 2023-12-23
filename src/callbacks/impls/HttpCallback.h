@@ -3,7 +3,7 @@
 
 #include <HTTPClient.h>
 
-#include "watcher/callback/WatcherCallback.h"
+#include "callbacks/impls/WatcherCallback.h"
 #include "logs/BetterLogger.h"
 
 #define HTTP_CALLBACK_TAG "http_callback"

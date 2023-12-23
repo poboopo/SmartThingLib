@@ -4,12 +4,12 @@
 #include <ArduinoJson.h>
 #include <functional>
 
-#include "watcher/Watcher.h"
-#include "watcher/SensorWatcher.h"
-#include "watcher/DeviceStateWatcher.h"
+#include "callbacks/watchers/Watcher.h"
+#include "callbacks/watchers/SensorWatcher.h"
+#include "callbacks/watchers/DeviceStateWatcher.h"
 #include "configurable/ConfigurableObjects.h"
-#include "watcher/callback/WatcherCallback.h"
-#include "watcher/callback/LambdaCallback.h"
+#include "callbacks/impls/WatcherCallback.h"
+#include "callbacks/impls/LambdaCallback.h"
 #include "utils/List.h"
 
 namespace Callback {

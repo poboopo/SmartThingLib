@@ -1,11 +1,11 @@
 #ifndef SENSOR_WATCHER_H
 #define SENSOR_WATCHER_H
 
-#include "watcher/Watcher.h"
-#include "watcher/callback/WatcherCallback.h"
+#include "callbacks/watchers/Watcher.h"
+#include "callbacks/impls/WatcherCallback.h"
 #include "configurable/ConfigurableObjects.h"
 #include "logs/BetterLogger.h"
-#include "watcher/callback/WatcherCallback.h"
+#include "callbacks/impls/WatcherCallback.h"
 
 #define SENSOR_WATCHER_TAG "sensor_watcher"
 #define SENSOR_WATCHER_TYPE "sensor"

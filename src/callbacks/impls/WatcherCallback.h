@@ -5,7 +5,7 @@
 
 #include <ArduinoJson.h>
 #include <functional>
-#include "watcher/comparator/Comparator.h"
+#include "callbacks/comparator/Comparator.h"
 #include "logs/BetterLogger.h"
 
 #define CALLBACK_INFO_DOC_SIZE 512

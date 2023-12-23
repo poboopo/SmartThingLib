@@ -1,13 +1,17 @@
-#include "watcher/CallbacksManager.h"
-#include "watcher/SensorWatcher.h"
-#include "watcher/DeviceStateWatcher.h"
+#include "callbacks/CallbacksManager.h"
+#include "callbacks/watchers/SensorWatcher.h"
+#include "callbacks/watchers/DeviceStateWatcher.h"
 #include "SmartThing.h"
-#include "watcher/callback/CallbackBuilder.h"
+#include "callbacks/builders/CallbackBuilder.h"
 #include "settings/SettingsManager.h"
+
+// #include <unordered_map>
 
 #define CALLBACKS_MANAGER_TAG "callbacks_manager"
 
 Callback::CallbacksManagerClass CallbacksManager;
+
+// std::unordered_map<int, int> m;
 
 namespace Callback {
     using namespace Configurable::Sensor;

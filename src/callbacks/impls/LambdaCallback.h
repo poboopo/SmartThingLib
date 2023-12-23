@@ -1,7 +1,7 @@
 #ifndef LAMBDA_CALLBACK_H
 #define LAMBDA_CALLBACK_H
 
-#include "watcher/callback/WatcherCallback.h"
+#include "callbacks/impls/WatcherCallback.h"
 #include "logs/BetterLogger.h"
 #include <functional>
 

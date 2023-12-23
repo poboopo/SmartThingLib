@@ -3,7 +3,7 @@
 
 #include <functional>
 #include <ArduinoJson.h>
-#include "watcher/callback/WatcherCallback.h"
+#include "callbacks/impls/WatcherCallback.h"
 #include "utils/List.h"
 #include "logs/BetterLogger.h"
 #include "configurable/ConfigurableObjects.h"

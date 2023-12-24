@@ -5,6 +5,7 @@
 
 #include "callbacks/builders/ActionCallbackBuilder.h"
 #include "callbacks/builders/HttpCallbackBuilder.h"
+#include "callbacks/builders/NotificationCallbackBuilder.h"
 #include "callbacks/impls/ActionCallback.h"
 #include "callbacks/impls/Callback.h"
 #include "callbacks/impls/HttpCallback.h"
@@ -31,6 +32,8 @@ class CallbacksFactory {
       callback = ActionCallbackBuilder::build<T>(doc, false);
     } else if (strcmp(type, HTTP_CALLBACK_TAG) == 0) {
       callback = HttpCallbackBuilder::build<T>(doc, false);
+    } else if (strcmp(type, NOTIFICATION_CALLBACK_TAG) == 0) {
+      callback = NotificationCallbackBuilder::build<T>(doc, false);
     } else {
       LOGGER.error(CALLBACKS_FACTORY_TAG, "Unkonwn callback type: %s", type);
     }
@@ -44,10 +47,11 @@ class CallbacksFactory {
   }
   static DynamicJsonDocument getTemplates() {
     //<bruh>
-    DynamicJsonDocument doc(MAX_CALLBACK_TEMPLATE_SIZE * 2);
+    DynamicJsonDocument doc(MAX_CALLBACK_TEMPLATE_SIZE * 4);
     doc["default"] = CallbackBuilder::getTemplate();
     doc[HTTP_CALLBACK_TAG] = HttpCallbackBuilder::getTemplate();
     doc[ACTION_CALLBACK_TAG] = ActionCallbackBuilder::getTemplate();
+    doc[NOTIFICATION_CALLBACK_TAG] = NotificationCallbackBuilder::getTemplate();
     return doc;
   }
 };

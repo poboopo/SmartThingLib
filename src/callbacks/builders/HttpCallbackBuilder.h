@@ -34,7 +34,7 @@ class HttpCallbackBuilder : public CallbackBuilder {
     callback->setMethod(method);
     LOGGER.debug(HTTP_CALLBACK_BUILDER_TAG,
                  "Http callback created: url=%s, method=%s, payload=%s", url,
-                 method == nullptr ? "-" : method,
+                 method == nullptr ? "GET" : method,
                  payload == nullptr ? "-" : payload);
 
     ::Callback::CallbackBuilder::defaultValues(callback, doc);

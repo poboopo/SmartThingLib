@@ -36,7 +36,7 @@ inline CompareType compareTypeFromString(String type, CompareType defValue) {
   if (type.equals("gte")) {
     return CompareType::GTE;
   }
-  if (type.equals("gte")) {
+  if (type.equals("lte")) {
     return CompareType::LTE;
   }
   return defValue;

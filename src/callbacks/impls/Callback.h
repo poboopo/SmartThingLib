@@ -4,7 +4,6 @@
 #define WATCHER_CALLBACK_TAG "watcher_callback"
 
 #include <ArduinoJson.h>
-
 #include <functional>
 
 #include "callbacks/comparator/Comparator.h"
@@ -12,6 +11,7 @@
 
 #define CALLBACK_INFO_DOC_SIZE 512
 #define MAX_CALLBACK_TEMPLATE_SIZE 1024
+#define VALUE_DYNAMIC_PARAM "${v}"
 
 namespace Callback {
 template <typename T>
@@ -19,9 +19,9 @@ template <typename T>
 class Callback {
  public:
   Callback(const char *type, bool readonly)
-      : _id(-1),
-        _type(type),
+      : _type(type),
         _readonly(readonly),
+        _id(-1),
         _compareType(EQ),
         _triggerDisabled(true){};
 

@@ -31,10 +31,13 @@ class CallbackBuilder {
  protected:
   template <typename T>
   static void defaultValues(Callback<T>* callback, JsonObject doc) {
-    const char* id = doc["id"];
-    if (id != nullptr && strlen(id) != 0) {
-      callback->setId(atoi(id));
-      LOGGER.debug(CALLBACK_BUILDER_TAG, "Callback id=%s", id);
+    if (doc.containsKey("id") && doc["id"].is<int>()) {
+      uint8_t id = doc["id"];
+      callback->setId(id);
+      LOGGER.debug(CALLBACK_BUILDER_TAG, "Id=%u", id);
+    } else {
+      callback->setId(-1);
+      LOGGER.debug(CALLBACK_BUILDER_TAG, "Id is empty");
     }
 
     const char* trigger = doc[CB_BUILDER_TRIGGER];

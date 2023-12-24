@@ -9,6 +9,7 @@
 #define PASSWORD_SETTING "ps"
 #define WIFI_MODE_SETTING "md"
 #define LOGGER_ADDRESS_CONFIG "laddr"
+#define GATEWAY_CONFIG "gtw"
 
 #define SETTINGS_MANAGER_TAG "settings_manager"
 #define JSON_DOC_SIZE 2048

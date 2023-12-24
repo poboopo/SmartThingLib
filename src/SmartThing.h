@@ -30,6 +30,8 @@
 #define WEB_PAGE
 
 #define DEVICE_NAME_LENGTH_MAX 15
+#define DEVICE_TYPE_LENGTH_MAX 15
+
 #define SMART_THING_LOOP_TASK_DELAY 250  // ms
 
 class SmartThingClass {
@@ -39,8 +41,9 @@ class SmartThingClass {
 
   bool init(String type);
   void setName(String name);
-  const String getType();
-  const String getName();
+  const char * getType();
+  const char * getName();
+  const char * getIp();
   bool wifiConnected();
 
   bool registerSensor(

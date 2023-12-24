@@ -7,7 +7,6 @@
 #include "logs/BetterLogger.h"
 
 #define HTTP_CALLBACK_TAG "http_callback"
-#define VALUE_DYNAMIC_PARAM "${v}"
 
 namespace Callback {
 template <typename T>
@@ -94,7 +93,7 @@ class HttpCallback : public Callback<T> {
     String payloadCopy = _payload;
 
     LOGGER.debug(HTTP_CALLBACK_TAG, "Replacing ${v} with [%s]",
-                 valueStr.isEmpty() ? "empty value" : valueStr.c_str());
+                 valueStr.isEmpty() ? "blank_value" : valueStr.c_str());
     urlCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
     payloadCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
     LOGGER.info(HTTP_CALLBACK_TAG, "Sending request [%s] %s[%s] :: %s",
@@ -104,6 +103,9 @@ class HttpCallback : public Callback<T> {
     HTTPClient client;
     client.setTimeout(2000);
     client.begin(urlCopy);
+    if (!payloadCopy.isEmpty()) {
+      client.addHeader("Content-Type", "application/json");
+    }
     _lastResponseCode =
         client.sendRequest(_method.c_str(), payloadCopy.c_str());
     client.end();

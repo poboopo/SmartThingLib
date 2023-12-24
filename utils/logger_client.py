@@ -9,6 +9,7 @@ import threading
 
 TCP = True
 PORT = 7779
+ADRESS = "192.168.2.114"
 
 LOGGER_FILE = "logger.log"
 START_COLOR = "\033["
@@ -45,7 +46,7 @@ def udp():
 
 def tcp():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind(("192.168.2.114", PORT))
+    sock.bind((ADRESS, PORT))
     sock.listen()
     print("Waiting for connection...")
     printHeader()

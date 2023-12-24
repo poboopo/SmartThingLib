@@ -1,7 +1,5 @@
 #include "SmartThing.h"
 
-#include "utils/StringUtils.h"
-
 using namespace Configurable;
 
 SmartThingClass SmartThing;
@@ -85,6 +83,7 @@ bool SmartThingClass::init(String type) {
   LOGGER.debug(SMART_THING_TAG, "Loop task created");
 
   addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)", "string");
+  addConfigEntry(GATEWAY_CONFIG, "Gateway address (ip:port)", "string");
 
   LOGGER.debug(SMART_THING_TAG, "Setup finished");
   return true;
@@ -266,6 +265,14 @@ const Configurable::Sensor::Sensor* SmartThingClass::getSensor(
   return _sensorsList.findSensor(name);
 }
 
-const String SmartThingClass::getType() { return SmartThingClass::_type; }
+const char * SmartThingClass::getType() { 
+  return _type.c_str(); 
+}
 
-const String SmartThingClass::getName() { return SmartThingClass::_name; }
+const char * SmartThingClass::getName() { 
+  return _name.c_str(); 
+}
+
+const char * SmartThingClass::getIp() {
+  return _ip.c_str();
+}

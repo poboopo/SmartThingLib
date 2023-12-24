@@ -5,7 +5,7 @@
 
 #include <ArduinoJson.h>
 #include <functional>
-#include "watcher/comparator/Comparator.h"
+#include "callbacks/comparator/Comparator.h"
 #include "logs/BetterLogger.h"
 
 #define CALLBACK_INFO_DOC_SIZE 512
@@ -32,10 +32,10 @@ namespace Callback {
 
     template<typename T>
     // template<ConfigurableObject<T> ????>
-    class WatcherCallback {
+    class Callback {
         public:
-            WatcherCallback(const char * type, T triggerValue, bool readonly): 
-               _id(-1), _type(type), _triggerValue(triggerValue), _readonly(readonly), _compareType(EQ) {};
+            Callback(const char * type, bool readonly): 
+               _id(-1), _type(type), _readonly(readonly), _compareType(EQ), _triggerDisabled(true) {};
 
             // todo make value const
             virtual void call(T &value) = 0;
@@ -51,18 +51,15 @@ namespace Callback {
                 doc["readonly"] = _readonly;
                 doc["type"] = _type;
                 doc["trigger"] = _triggerValue;
-                doc["triggerDisabled"] = _triggerDisabled;
                 doc["compareType"] = compareTypeToString(_compareType);
             }
 
             void setId(int id) {
                 _id = id;
             }
-
             const int getId() const {
                 return _id;
             }
-
             void setCompareType(String type) {
                 _compareType = compareTypeFromString(type, CompareType::EQ);
             }
@@ -74,6 +71,9 @@ namespace Callback {
             }
             void setTriggerValue(T triggerValue) {
                 _triggerValue = triggerValue;
+            }
+            void setReadOnly(bool readOnly) {
+                _readonly = readOnly;
             }
             bool isReadonly() {
                 return _readonly;

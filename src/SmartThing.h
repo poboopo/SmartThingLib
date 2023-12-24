@@ -11,7 +11,7 @@
 #include "net/socket/Multicaster.h"
 #include "net/rest/RestController.h"
 
-#include "watcher/CallbacksManager.h"
+#include "callbacks/CallbacksManager.h"
 
 #include "configurable/SensorsList.h"
 #include "configurable/DeviceStatesList.h"

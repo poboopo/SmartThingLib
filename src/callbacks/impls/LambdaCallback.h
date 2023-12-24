@@ -1,7 +1,7 @@
 #ifndef LAMBDA_CALLBACK_H
 #define LAMBDA_CALLBACK_H
 
-#include "watcher/callback/WatcherCallback.h"
+#include "callbacks/impls/Callback.h"
 #include "logs/BetterLogger.h"
 #include <functional>
 
@@ -9,14 +9,12 @@
 
 namespace Callback {
     template<class T>
-    class LambdaCallback: public WatcherCallback<T> {
+    class LambdaCallback: public Callback<T> {
         public:
             typedef std::function<void(T &value)>CustomCallback;
 
-            LambdaCallback(CustomCallback customCallback, T triggerValue):
-                WatcherCallback<T>(LAMBDA_CALLBACK_TAG, triggerValue, true), _customCallback(customCallback) {};
-            LambdaCallback(CustomCallback customCallback, T triggerValue, bool readOnly):
-                WatcherCallback<T>(LAMBDA_CALLBACK_TAG, triggerValue, readOnly), _customCallback(customCallback) {};
+            LambdaCallback(CustomCallback customCallback, bool readOnly):
+                Callback<T>(LAMBDA_CALLBACK_TAG, readOnly), _customCallback(customCallback) {};
             void call(T &value) {
                 _customCallback(value);
             };

@@ -3,8 +3,6 @@
 
 #include <WebServer.h>
 
-String buildErrorJson(String error) {
-    return "{\"error\": \"" + error + "\"}";
-}
+String buildErrorJson(String error) { return "{\"error\": \"" + error + "\"}"; }
 
 #endif

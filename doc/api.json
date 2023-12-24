@@ -8,7 +8,9 @@
   "paths": {
     "/info/system": {
       "get": {
-        "tags": ["Device information"],
+        "tags": [
+          "Device information"
+        ],
         "description": "Get device full information",
         "responses": {
           "200": {
@@ -24,7 +26,9 @@
         }
       },
       "put": {
-        "tags": ["Device information"],
+        "tags": [
+          "Device information"
+        ],
         "description": "Update device info (only name for now)",
         "requestBody": {
           "content": {
@@ -50,7 +54,9 @@
     },
     "/info/actions": {
       "get": {
-        "tags": ["Device information"],
+        "tags": [
+          "Device information"
+        ],
         "description": "Get device actions",
         "responses": {
           "200": {
@@ -72,7 +78,9 @@
     },
     "/info/config": {
       "get": {
-        "tags": ["Device information"],
+        "tags": [
+          "Device information"
+        ],
         "description": "Get device configuration fields",
         "responses": {
           "200": {
@@ -96,13 +104,15 @@
     },
     "/wifi": {
       "get": {
-        "tags": ["Configuration"],
+        "tags": [
+          "Configuration"
+        ],
         "description": "Get wifi configuration",
         "responses": {
           "200": {
             "description": "Wifi SSID and password",
             "content": {
-              "application/json":{
+              "application/json": {
                 "schema": {
                   "$ref": "#components/schemas/WifiInfo"
                 }
@@ -112,7 +122,9 @@
         }
       },
       "post": {
-        "tags": ["Configuration"],
+        "tags": [
+          "Configuration"
+        ],
         "description": "Update wifi configuration",
         "requestBody": {
           "content": {
@@ -132,7 +144,9 @@
     },
     "/config": {
       "get": {
-        "tags": ["Configuration"],
+        "tags": [
+          "Configuration"
+        ],
         "description": "Get device configuration",
         "responses": {
           "200": {
@@ -148,7 +162,9 @@
         }
       },
       "post": {
-        "tags": ["Configuration"],
+        "tags": [
+          "Configuration"
+        ],
         "description": "Save device configuration",
         "requestBody": {
           "content": {
@@ -166,7 +182,9 @@
         }
       },
       "delete": {
-        "tags": ["Configuration"],
+        "tags": [
+          "Configuration"
+        ],
         "description": "Delete configuration value",
         "parameters": [
           {
@@ -191,7 +209,9 @@
     },
     "/action": {
       "put": {
-        "tags": ["Actions"],
+        "tags": [
+          "Actions"
+        ],
         "description": "Perform device action",
         "parameters": [
           {
@@ -223,7 +243,9 @@
     },
     "/sensors": {
       "get": {
-        "tags": ["Sensors and states"],
+        "tags": [
+          "Sensors and states"
+        ],
         "description": "Get device sensors values",
         "responses": {
           "200": {
@@ -241,7 +263,9 @@
     },
     "/state": {
       "get": {
-        "tags": ["Sensors and states"],
+        "tags": [
+          "Sensors and states"
+        ],
         "description": "Get device states values",
         "responses": {
           "200": {
@@ -259,7 +283,9 @@
     },
     "/callback": {
       "get": {
-        "tags": ["Callback"],
+        "tags": [
+          "Callback"
+        ],
         "description": "Get all device callbacks",
         "responses": {
           "200": {
@@ -274,9 +300,10 @@
           }
         }
       },
-
       "post": {
-        "tags": ["Callback"],
+        "tags": [
+          "Callback"
+        ],
         "description": "Create new callback",
         "requestBody": {
           "description": "Callback info",
@@ -305,7 +332,9 @@
         }
       },
       "put": {
-        "tags": ["Callback"],
+        "tags": [
+          "Callback"
+        ],
         "description": "Updates callback",
         "requestBody": {
           "description": "Callback info",
@@ -334,7 +363,9 @@
         }
       },
       "delete": {
-        "tags": ["Callback"],
+        "tags": [
+          "Callback"
+        ],
         "description": "Delete observable's callback",
         "parameters": [
           {
@@ -385,7 +416,9 @@
     },
     "/callback/by/observable": {
       "get": {
-        "tags": ["Callback"],
+        "tags": [
+          "Callback"
+        ],
         "description": "Get callbacks for observable object (sensor or state)",
         "parameters": [
           {
@@ -424,7 +457,9 @@
     },
     "/callback/by/id": {
       "get": {
-        "tags": ["Callback"],
+        "tags": [
+          "Callback"
+        ],
         "description": "Get callback by id",
         "parameters": [
           {
@@ -472,7 +507,9 @@
     },
     "/callback/template": {
       "get": {
-        "tags": ["Callback"],
+        "tags": [
+          "Callback"
+        ],
         "description": "Get callbacks templates for creation",
         "responses": {
           "200": {
@@ -483,7 +520,9 @@
     },
     "/metrics": {
       "get": {
-        "tags": ["Utils"],
+        "tags": [
+          "Utils"
+        ],
         "description": "Get system metrics",
         "responses": {
           "200": {
@@ -587,9 +626,18 @@
           }
         },
         "example": {
-          "button": {"value": 1, "type": "digital"},
-          "position":{"value":0,"type":"custom"},
-          "light":{"value":0,"type":"analog"}
+          "button": {
+            "value": 1,
+            "type": "digital"
+          },
+          "position": {
+            "value": 0,
+            "type": "custom"
+          },
+          "light": {
+            "value": 0,
+            "type": "analog"
+          }
         }
       },
       "DeviceStates": {
@@ -602,13 +650,13 @@
           }
         },
         "example": {
-          "wifi":"connected",
-          "led":"on",
-          "position":"open",
-          "automode":"true"
+          "wifi": "connected",
+          "led": "on",
+          "position": "open",
+          "automode": "true"
         }
       },
-      "Callback" : {
+      "Callback": {
         "description": "Callback",
         "type": "object",
         "properties": {
@@ -671,12 +719,18 @@
       "CallbackRequest": {
         "description": "Create callback body",
         "type": "object",
-        "required": ["observable", "callback"],
+        "required": [
+          "observable",
+          "callback"
+        ],
         "properties": {
           "observable": {
             "description": "Observable info",
             "type": "object",
-            "required": ["type", "name"],
+            "required": [
+              "type",
+              "name"
+            ],
             "properties": {
               "type": {
                 "description": "Observable type",
@@ -692,7 +746,9 @@
           "callback": {
             "description": "Callback info. Only base fields, take others from template.",
             "type": "object",
-            "required": ["type"],
+            "required": [
+              "type"
+            ],
             "properties": {
               "id": {
                 "description": "Callback id. Just index in list.",
@@ -755,5 +811,3 @@
     }
   }
 }
-  
-  

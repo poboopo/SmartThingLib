@@ -1,267 +1,271 @@
 #include "SmartThing.h"
+
 #include "utils/StringUtils.h"
 
 using namespace Configurable;
 
 SmartThingClass SmartThing;
 
-SmartThingClass::SmartThingClass() {};
-SmartThingClass::~SmartThingClass() {};
+SmartThingClass::SmartThingClass(){};
+SmartThingClass::~SmartThingClass(){};
 
 bool SmartThingClass::wifiConnected() {
-    return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
+  return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
 }
 
 bool SmartThingClass::init(String type) {
-    LOGGER.init();
-    LOGGER.debug(SMART_THING_TAG, "Smart thing initialization started");
+  LOGGER.init();
+  LOGGER.debug(SMART_THING_TAG, "Smart thing initialization started");
 
-    STSettings.loadSettings();
-    LOGGER.debug(SMART_THING_TAG, "Settings manager loaded");
+  STSettings.loadSettings();
+  LOGGER.debug(SMART_THING_TAG, "Settings manager loaded");
 
-    _type = type;
-    _name = STSettings.getDeviceName();
-    if (_name.isEmpty()) {
-        _name = ESP.getChipModel();
-        STSettings.setDeviceName(_name.c_str());
-    }
-    LOGGER.debug(SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
+  _type = type;
+  _name = STSettings.getDeviceName();
+  if (_name.isEmpty()) {
+    _name = ESP.getChipModel();
+    STSettings.setDeviceName(_name.c_str());
+  }
+  LOGGER.debug(SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
 
-    pinMode(WIPE_BUTTON_PIN, INPUT_PULLUP);
-    _led.init(LED_PIN);
-    
-    if (!digitalRead(WIPE_BUTTON_PIN)) {
-        wipeSettings();
-    }
+  pinMode(WIPE_BUTTON_PIN, INPUT_PULLUP);
+  _led.init(LED_PIN);
 
-    _ip = connectToWifi();
+  if (!digitalRead(WIPE_BUTTON_PIN)) {
+    wipeSettings();
+  }
 
-    if (wifiConnected()) {
-        LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
-        delay(1000);
-        LOGGER.initNetConnection(
-            STSettings.getConfig()[LOGGER_ADDRESS_CONFIG],
-            _ip.c_str(),
-            _name.c_str()
-        );
+  _ip = connectToWifi();
 
-        ArduinoOTA.begin();
-        LOGGER.debug(SMART_THING_TAG, "Ota started");
+  if (wifiConnected()) {
+    LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
+    delay(1000);
+    LOGGER.initNetConnection(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG],
+                             _ip.c_str(), _name.c_str());
 
-        _multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
-        updateBroadCastMessage();
-        LOGGER.debug(SMART_THING_TAG, "Multicaster created");
+    ArduinoOTA.begin();
+    LOGGER.debug(SMART_THING_TAG, "Ota started");
 
-        RestController.addWifiupdatedHandler([&](){
-            LOGGER.warning(SMART_THING_TAG, "WiFi updated, reloading wifi!");
-            WiFi.disconnect();
-            WiFi.mode(WIFI_MODE_NULL);
-            delay(500);
-            _ip = connectToWifi();
-            LOGGER.info(SMART_THING_TAG, "WiFi reloaded");
-            LOGGER.info(SMART_THING_TAG, "Reloading rest...");
-            RestController.reload();
+    _multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
+    updateBroadCastMessage();
+    LOGGER.debug(SMART_THING_TAG, "Multicaster created");
 
-            LOGGER.info(SMART_THING_TAG, "Reconnecting logger");
-            LOGGER.initNetConnection(
-                STSettings.getConfig()[LOGGER_ADDRESS_CONFIG],
-                _ip.c_str(),
-                _name.c_str()
-            );
-        });
-        RestController.begin();
-        LOGGER.debug(SMART_THING_TAG, "RestController started");
-    } else {
-        LOGGER.warning(SMART_THING_TAG, "WiFi not available, skipping all network setup");
-    }
+    RestController.addWifiupdatedHandler([&]() {
+      LOGGER.warning(SMART_THING_TAG, "WiFi updated, reloading wifi!");
+      WiFi.disconnect();
+      WiFi.mode(WIFI_MODE_NULL);
+      delay(500);
+      _ip = connectToWifi();
+      LOGGER.info(SMART_THING_TAG, "WiFi reloaded");
+      LOGGER.info(SMART_THING_TAG, "Reloading rest...");
+      RestController.reload();
 
-    addDeviceState("wifi", [this]() {
-        return wifiConnected() ? "connected" : "disconnected";
+      LOGGER.info(SMART_THING_TAG, "Reconnecting logger");
+      LOGGER.initNetConnection(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG],
+                               _ip.c_str(), _name.c_str());
     });
+    RestController.begin();
+    LOGGER.debug(SMART_THING_TAG, "RestController started");
+  } else {
+    LOGGER.warning(SMART_THING_TAG,
+                   "WiFi not available, skipping all network setup");
+  }
 
-    LOGGER.debug(SMART_THING_TAG, "Loading callbacks from settings...");
-    CallbacksManager.loadFromSettings();
-    LOGGER.debug(SMART_THING_TAG, "Callbacks loaded");
+  addDeviceState("wifi", [this]() {
+    return wifiConnected() ? "connected" : "disconnected";
+  });
 
-    LOGGER.debug(SMART_THING_TAG, "Creating loop task");
-    xTaskCreate(
-        [](void* o){ static_cast<SmartThingClass*>(o)->loopRoutine(); },
-        SMART_THING_TAG,
-        50000,
-        this,
-        1,
-        &_loopTaskHandle
-    );
-    LOGGER.debug(SMART_THING_TAG, "Loop task created");
+  LOGGER.debug(SMART_THING_TAG, "Loading callbacks from settings...");
+  CallbacksManager.loadFromSettings();
+  LOGGER.debug(SMART_THING_TAG, "Callbacks loaded");
 
-    addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)", "string");
+  LOGGER.debug(SMART_THING_TAG, "Creating loop task");
+  xTaskCreate([](void* o) { static_cast<SmartThingClass*>(o)->loopRoutine(); },
+              SMART_THING_TAG, 50000, this, 1, &_loopTaskHandle);
+  LOGGER.debug(SMART_THING_TAG, "Loop task created");
 
-    LOGGER.debug(SMART_THING_TAG, "Setup finished");
-    return true;
+  addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)", "string");
+
+  LOGGER.debug(SMART_THING_TAG, "Setup finished");
+  return true;
 }
 
 void SmartThingClass::loopRoutine() {
-    const TickType_t xDelay = SMART_THING_LOOP_TASK_DELAY / portTICK_PERIOD_MS;
+  const TickType_t xDelay = SMART_THING_LOOP_TASK_DELAY / portTICK_PERIOD_MS;
 
-    for(;;) {
-        if (wifiConnected()) {
-            ArduinoOTA.handle();
-            RestController.handle();
-            _multicaster.broadcast(_broadcastMessage.c_str());
-        }
-        CallbacksManager.check();
-        vTaskDelay(xDelay);
+  for (;;) {
+    if (wifiConnected()) {
+      ArduinoOTA.handle();
+      RestController.handle();
+      _multicaster.broadcast(_broadcastMessage.c_str());
     }
+    CallbacksManager.check();
+    vTaskDelay(xDelay);
+  }
 }
 
 String SmartThingClass::connectToWifi() {
-    if (wifiConnected()) {
-        LOGGER.info(SMART_THING_TAG, "WiFi already connected");
-        return WiFi.localIP().toString();
-    }
-    JsonObject wifiConfig = STSettings.getWiFi();
-    const char * ssid = wifiConfig[SSID_SETTING];
-    const char * password = wifiConfig[PASSWORD_SETTING];
-    int mode = wifiConfig[WIFI_MODE_SETTING];
+  if (wifiConnected()) {
+    LOGGER.info(SMART_THING_TAG, "WiFi already connected");
+    return WiFi.localIP().toString();
+  }
+  JsonObject wifiConfig = STSettings.getWiFi();
+  const char* ssid = wifiConfig[SSID_SETTING];
+  const char* password = wifiConfig[PASSWORD_SETTING];
+  int mode = wifiConfig[WIFI_MODE_SETTING];
 
-    if (mode == WIFI_MODE_NULL || ssid == nullptr || strlen(ssid) == 0) {
-        LOGGER.warning(SMART_THING_TAG, "Ssid is blank or mode null -> creating setup AP with name %s", ESP.getChipModel());
-        WiFi.softAP(ESP.getChipModel());
-        delay(500);
-        LOGGER.info(SMART_THING_TAG, "WiFi started in soft AP mode");
-        return WiFi.softAPIP().toString();
+  if (mode == WIFI_MODE_NULL || ssid == nullptr || strlen(ssid) == 0) {
+    LOGGER.warning(
+        SMART_THING_TAG,
+        "Ssid is blank or mode null -> creating setup AP with name %s",
+        ESP.getChipModel());
+    WiFi.softAP(ESP.getChipModel());
+    delay(500);
+    LOGGER.info(SMART_THING_TAG, "WiFi started in soft AP mode");
+    return WiFi.softAPIP().toString();
+  } else {
+    if (mode == WIFI_MODE_AP) {
+      if (password != nullptr && strlen(password) >= 0) {
+        LOGGER.info(SMART_THING_TAG, "Creating AP point %s :: %s", ssid,
+                    password);
+        WiFi.softAP(ssid, password);
+      } else {
+        LOGGER.info(SMART_THING_TAG, "Creating AP point %s", ssid);
+        WiFi.softAP(ssid);
+      }
+      delay(500);
+      LOGGER.info(SMART_THING_TAG, "WiFi started in AP mode");
+      return WiFi.softAPIP().toString();
+    } else if (mode == WIFI_MODE_STA) {
+      LOGGER.debug(SMART_THING_TAG, "WiFi connecting to %s :: %s", ssid,
+                   password);
+      WiFi.begin(ssid, password);
+      long startTime = millis();
+      _led.blink();
+      while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {
+      }
+      _led.off();
+      if (WiFi.isConnected()) {
+        LOGGER.info(SMART_THING_TAG, "WiFi started in STA mode");
+        return WiFi.localIP().toString();
+      } else {
+        WiFi.disconnect();
+        return "";
+      }
     } else {
-        if (mode == WIFI_MODE_AP) {
-            if (password != nullptr && strlen(password) >= 0) {
-                LOGGER.info(SMART_THING_TAG, "Creating AP point %s :: %s", ssid, password);
-                WiFi.softAP(ssid, password);
-            } else {
-                LOGGER.info(SMART_THING_TAG, "Creating AP point %s", ssid);
-                WiFi.softAP(ssid);
-            }
-            delay(500);
-            LOGGER.info(SMART_THING_TAG, "WiFi started in AP mode");
-            return WiFi.softAPIP().toString();
-        } else if (mode == WIFI_MODE_STA) {
-            LOGGER.debug(SMART_THING_TAG, "WiFi connecting to %s :: %s", ssid, password);
-            WiFi.begin(ssid, password);
-            long startTime = millis();
-            _led.blink();
-            while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {}
-            _led.off();
-            if (WiFi.isConnected()) {
-                LOGGER.info(SMART_THING_TAG, "WiFi started in STA mode");
-                return WiFi.localIP().toString();
-            } else {
-                WiFi.disconnect();
-                return "";
-            }
-        } else {
-            LOGGER.error(SMART_THING_TAG, "Mode %d not supported!", mode);
-            return "";
-        }
+      LOGGER.error(SMART_THING_TAG, "Mode %d not supported!", mode);
+      return "";
     }
+  }
 }
 
 void SmartThingClass::wipeSettings() {
-    long started = millis();
-    LOGGER.warning(SMART_THING_TAG, "ALL SETTINGS WILL BE WIPED IN %d ms!!!", WIPE_BUTTON_TIME);
+  long started = millis();
+  LOGGER.warning(SMART_THING_TAG, "ALL SETTINGS WILL BE WIPED IN %d ms!!!",
+                 WIPE_BUTTON_TIME);
 
-    _led.on();
-    while (!digitalRead(WIPE_BUTTON_PIN) && millis() - started < WIPE_BUTTON_TIME) {}
-    if (!digitalRead(WIPE_BUTTON_PIN)) {
-        STSettings.dropAll();
-        STSettings.save();
-        LOGGER.warning(SMART_THING_TAG, "Settings were wiped!");
-    }
-    _led.off();
+  _led.on();
+  while (!digitalRead(WIPE_BUTTON_PIN) &&
+         millis() - started < WIPE_BUTTON_TIME) {
+  }
+  if (!digitalRead(WIPE_BUTTON_PIN)) {
+    STSettings.dropAll();
+    STSettings.save();
+    LOGGER.warning(SMART_THING_TAG, "Settings were wiped!");
+  }
+  _led.off();
 }
 
 void SmartThingClass::setName(String name) {
-    if (name == _name) {
-        return;
-    }
-    _name = name;
-    // todo move from there
-    STSettings.setDeviceName(name.c_str());
-    STSettings.save();
-    updateBroadCastMessage();
-    LOGGER.info(SMART_THING_TAG, "New device name %s", name.c_str());
+  if (name == _name) {
+    return;
+  }
+  _name = name;
+  // todo move from there
+  STSettings.setDeviceName(name.c_str());
+  STSettings.save();
+  updateBroadCastMessage();
+  LOGGER.info(SMART_THING_TAG, "New device name %s", name.c_str());
 }
 
 void SmartThingClass::updateBroadCastMessage() {
-    _broadcastMessage = _ip + "$" + _type + "$" + _name;
+  _broadcastMessage = _ip + "$" + _type + "$" + _name;
 }
 
 DynamicJsonDocument SmartThingClass::getInfoDictionaries() {
-    int size = _actionsList.size() + _configEntriesList.size();
+  int size = _actionsList.size() + _configEntriesList.size();
 
-    DynamicJsonDocument doc(size * 64);
-    doc["actions"] = _actionsList.toJson();
-    doc["config"] = _configEntriesList.toJson();
-    return doc;
+  DynamicJsonDocument doc(size * 64);
+  doc["actions"] = _actionsList.toJson();
+  doc["config"] = _configEntriesList.toJson();
+  return doc;
 }
 
 DynamicJsonDocument SmartThingClass::getDeviceStatesInfo() {
-    return _deviceStatesList.getValues();
+  return _deviceStatesList.getValues();
 }
 
 DynamicJsonDocument SmartThingClass::getSensorsValues() {
-    return _sensorsList.getValues();
+  return _sensorsList.getValues();
 }
 
 DynamicJsonDocument SmartThingClass::getActionsInfo() {
-    return _actionsList.toJson();
+  return _actionsList.toJson();
 }
 
 DynamicJsonDocument SmartThingClass::getConfigInfo() {
-    return _configEntriesList.toJson();
+  return _configEntriesList.toJson();
 }
 
 DynamicJsonDocument SmartThingClass::getWatchersInfo() {
-    return CallbacksManager.getWatchersInfo();
+  return CallbacksManager.getWatchersInfo();
 }
 
 // add possible values?
-bool SmartThingClass::addDeviceState(const char * name, Configurable::ConfigurableObject<const char *>::ValueProviderFunction function) {
-    return _deviceStatesList.add(name, function);
+bool SmartThingClass::addDeviceState(
+    const char* name,
+    Configurable::ConfigurableObject<const char*>::ValueProviderFunction
+        function) {
+  return _deviceStatesList.add(name, function);
 }
 
-bool SmartThingClass::registerSensor(const char * name, Configurable::ConfigurableObject<int16_t>::ValueProviderFunction function) {
-    return _sensorsList.add(name, function);
+bool SmartThingClass::registerSensor(
+    const char* name,
+    Configurable::ConfigurableObject<int16_t>::ValueProviderFunction function) {
+  return _sensorsList.add(name, function);
 }
-bool SmartThingClass::registerDigitalSensor(const char * name, int pin) {
-    pinMode(pin, INPUT_PULLUP);
-    return _sensorsList.addDigital(name, pin);
+bool SmartThingClass::registerDigitalSensor(const char* name, int pin) {
+  pinMode(pin, INPUT_PULLUP);
+  return _sensorsList.addDigital(name, pin);
 }
-bool SmartThingClass::registerAnalogSensor(const char * name, int pin) {
-    return _sensorsList.addAnalog(name, pin);
-}
-
-bool SmartThingClass::addActionHandler(const char * action, const char * caption, Action::ActionHandler handler) {
-    return _actionsList.add(action, caption, handler);
+bool SmartThingClass::registerAnalogSensor(const char* name, int pin) {
+  return _sensorsList.addAnalog(name, pin);
 }
 
-Action::ActionResult SmartThingClass::callAction(const char * action) {
-    return _actionsList.callAction(action);
+bool SmartThingClass::addActionHandler(const char* action, const char* caption,
+                                       Action::ActionHandler handler) {
+  return _actionsList.add(action, caption, handler);
 }
 
-bool SmartThingClass::addConfigEntry(const char * name, const char * caption, const char * type) {
-    return _configEntriesList.add(name, caption, type);
+Action::ActionResult SmartThingClass::callAction(const char* action) {
+  return _actionsList.callAction(action);
 }
 
-const Configurable::DeviceState::DeviceState * SmartThingClass::getDeviceState(const char * name) {
-    return _deviceStatesList.findState(name);
+bool SmartThingClass::addConfigEntry(const char* name, const char* caption,
+                                     const char* type) {
+  return _configEntriesList.add(name, caption, type);
 }
 
-const Configurable::Sensor::Sensor * SmartThingClass::getSensor(const char * name) {
-    return _sensorsList.findSensor(name);
+const Configurable::DeviceState::DeviceState* SmartThingClass::getDeviceState(
+    const char* name) {
+  return _deviceStatesList.findState(name);
 }
 
-const String SmartThingClass::getType() {
-    return SmartThingClass::_type;
+const Configurable::Sensor::Sensor* SmartThingClass::getSensor(
+    const char* name) {
+  return _sensorsList.findSensor(name);
 }
 
-const String SmartThingClass::getName() {
-    return SmartThingClass::_name;
-}
+const String SmartThingClass::getType() { return SmartThingClass::_type; }
+
+const String SmartThingClass::getName() { return SmartThingClass::_name; }

@@ -2,10 +2,10 @@
 #define DEVICE_STATE_WATCHER_H
 
 #include "callbacks/watchers/Watcher.h"
-#include "callbacks/impls/WatcherCallback.h"
+#include "callbacks/impls/Callback.h"
 #include "configurable/ConfigurableObjects.h"
 #include "logs/BetterLogger.h"
-#include "callbacks/impls/WatcherCallback.h"
+#include "callbacks/impls/Callback.h"
 
 #define DEVICE_STATE_WATCHER_TAG "device_state_watcher"
 

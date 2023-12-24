@@ -8,7 +8,7 @@
 #include "callbacks/watchers/SensorWatcher.h"
 #include "callbacks/watchers/DeviceStateWatcher.h"
 #include "configurable/ConfigurableObjects.h"
-#include "callbacks/impls/WatcherCallback.h"
+#include "callbacks/impls/Callback.h"
 #include "callbacks/impls/LambdaCallback.h"
 #include "utils/List.h"
 
@@ -16,19 +16,17 @@ namespace Callback {
     class CallbacksManagerClass {
         public:
             void loadFromSettings();
+            int createCallbackFromJson(const char * json);  
+            int createCallbackFromJson(JsonObject observableInfo, JsonObject callbackInfo);
 
             template<typename T>
-            int addCallback(const Configurable::ConfigurableObject<T> * obj, WatcherCallback<T> * callback);
-            int addDeviceStateCallback(const char * name, LambdaCallback<String>::CustomCallback callback, const char * triggerValue);
-            int addSensorCallback(const char * name, LambdaCallback<int16_t>::CustomCallback callback, int16_t triggerValue);
-            
+            int addCallback(const Configurable::ConfigurableObject<T> * obj, Callback<T> * callback);
             bool deleteCallback(const char * type, const char * name, int id);
             bool updateCallback(DynamicJsonDocument doc);
 
             void check();
+            
             DynamicJsonDocument getWatchersInfo();
-            int createCallbackFromJson(const char * json);
-            int createCallbackFromJson(JsonObject observableInfo, JsonObject callbackInfo);
             DynamicJsonDocument allCallbacksToJson(bool ignoreReadOnly, bool shortJson);
             DynamicJsonDocument getObservableCallbacksJson(const char * type, const char * name);
             DynamicJsonDocument getCallbackJsonById(const char * type, const char * name, int id);
@@ -55,7 +53,7 @@ namespace Callback {
             Watcher<T> * getWatcherByObservableName(List<Watcher<T>> * list, const char * name);
 
             template<typename T>
-            WatcherCallback<T> * getCallbackFromWatcherList(List<Watcher<T>> * list, const char * name, int id);
+            Callback<T> * getCallbackFromWatcherList(List<Watcher<T>> * list, const char * name, int id);
 
             template<typename T>
             DynamicJsonDocument getObservableCallbacksJsonFromList(List<Watcher<T>> * list, const char * name);
@@ -64,7 +62,7 @@ namespace Callback {
             DynamicJsonDocument getCallbackJsonFromList(List<Watcher<T>> * list, const char * name, int id);
 
             template<typename T>
-            bool deleteWatcherCallbackFromList(List<Watcher<T>> * list, const char * name, int id);
+            bool deleteCallbackFromList(List<Watcher<T>> * list, const char * name, int id);
 
             template<typename T>
             bool updateCallback(List<Watcher<T>> * list, const char * name, JsonObject callbackObject);

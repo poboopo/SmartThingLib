@@ -3,7 +3,7 @@
 
 #include <functional>
 #include <ArduinoJson.h>
-#include "callbacks/impls/WatcherCallback.h"
+#include "callbacks/impls/Callback.h"
 #include "utils/List.h"
 #include "logs/BetterLogger.h"
 #include "configurable/ConfigurableObjects.h"
@@ -37,7 +37,7 @@ class Watcher {
                 return doc;
             }
             DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE * _callbacks.size());
-            _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
+            _callbacks.forEach([&](Callback::Callback<T> * current) {
                 if (current == nullptr || 
                     ignoreReadOnly && current->isReadonly()
                 ) {
@@ -60,7 +60,7 @@ class Watcher {
             return doc;
         }
         
-        bool addCallback(Callback::WatcherCallback<T> * callback) {
+        bool addCallback(Callback::Callback<T> * callback) {
             if (callback == nullptr) {
                 LOGGER.error(WATCHER_TAG, "Callback is missing!");
                 return false;
@@ -92,7 +92,7 @@ class Watcher {
                 LOGGER.error(WATCHER_TAG, "Failed to remove callback - id negative!");
                 return false;
             }
-            Callback::WatcherCallback<T> * callback = getCallbackById(id);
+            Callback::Callback<T> * callback = getCallbackById(id);
             if (callback == nullptr) {
                 LOGGER.error(WATCHER_TAG, "Failed to remove callback - can't find callback with id %d", id);
                 return false;
@@ -109,17 +109,17 @@ class Watcher {
             return false;
         }
 
-        Callback::WatcherCallback<T> * getCallbackById(int id) {
+        Callback::Callback<T> * getCallbackById(int id) {
             if (id < 0) {
                 return nullptr;
             }
-            return _callbacks.findValue([&](Callback::WatcherCallback<T> * callback) {
+            return _callbacks.findValue([&](Callback::Callback<T> * callback) {
                 return callback->getId() == id;
             });
         }
 
         void callCallbacks(T &value) {
-            _callbacks.forEach([&](Callback::WatcherCallback<T> * current) {
+            _callbacks.forEach([&](Callback::Callback<T> * current) {
                 if (current != nullptr  && current->accept(value)) {
                     LOGGER.debug(WATCHER_TAG , "Calling callback [id=%d]", current->getId());
                     current->call(value);
@@ -141,7 +141,7 @@ class Watcher {
     protected:
         const  Configurable::ConfigurableObject<T> * _observable;
         T _oldValue;
-        List<Callback::WatcherCallback<T>> _callbacks;
+        List<Callback::Callback<T>> _callbacks;
     private:
         int _callbackIdSequence;
 

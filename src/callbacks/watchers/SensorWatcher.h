@@ -2,10 +2,10 @@
 #define SENSOR_WATCHER_H
 
 #include "callbacks/watchers/Watcher.h"
-#include "callbacks/impls/WatcherCallback.h"
+#include "callbacks/impls/Callback.h"
 #include "configurable/ConfigurableObjects.h"
 #include "logs/BetterLogger.h"
-#include "callbacks/impls/WatcherCallback.h"
+#include "callbacks/impls/Callback.h"
 
 #define SENSOR_WATCHER_TAG "sensor_watcher"
 #define SENSOR_WATCHER_TYPE "sensor"

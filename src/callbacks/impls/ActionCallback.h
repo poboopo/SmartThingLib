@@ -1,7 +1,7 @@
 #ifndef ACTION_CALLBACK_H
 #define ACTION_CALLBACK_H
 
-#include "callbacks/impls/WatcherCallback.h"
+#include "callbacks/impls/Callback.h"
 #include "logs/BetterLogger.h"
 #include "SmartThing.h"
 
@@ -9,10 +9,10 @@
 
 namespace Callback {
     template<class T>
-    class ActionCallback: public WatcherCallback<T> {
+    class ActionCallback: public Callback<T> {
         public:
-            ActionCallback(const char * action, T triggerValue, bool readOnly):
-            WatcherCallback<T>(ACTION_CALLBACK_TAG, triggerValue, readOnly), _action(action) {};
+            ActionCallback(const char * action, bool readOnly):
+            Callback<T>(ACTION_CALLBACK_TAG, readOnly), _action(action) {};
 
             void call(T &value) {
                 // replace ${value} in _action?

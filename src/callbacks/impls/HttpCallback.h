@@ -3,7 +3,7 @@
 
 #include <HTTPClient.h>
 
-#include "callbacks/impls/WatcherCallback.h"
+#include "callbacks/impls/Callback.h"
 #include "logs/BetterLogger.h"
 
 #define HTTP_CALLBACK_TAG "http_callback"
@@ -31,18 +31,11 @@ namespace Callback {
     )=====";
 
     template<typename T>
-    class HttpCallback: public WatcherCallback<T> {
+    class HttpCallback: public Callback<T> {
         public:
-            HttpCallback(const char * url, T triggerValue, bool readonly):
-                WatcherCallback<T>(HTTP_CALLBACK_TAG, triggerValue, readonly), _url(url), _method("GET") {
+            HttpCallback(const char * url, bool readonly):
+                Callback<T>(HTTP_CALLBACK_TAG, readonly), _url(url), _method("GET") {
                     fixUrl();
-                };
-            HttpCallback(const char * url, const char * method, const char * payload, T triggerValue, bool readonly):
-                WatcherCallback<T>(HTTP_CALLBACK_TAG, triggerValue, readonly), _url(url), _method(method), _payload(payload) {
-                    fixUrl();
-                    if (_method.isEmpty()) {
-                        _method = "GET";
-                    }
                 };
             void call(T &value) {
                 _currentValue = value;
@@ -85,6 +78,13 @@ namespace Callback {
                 DynamicJsonDocument doc(MAX_CALLBACK_TEMPLATE_SIZE);
                 deserializeJson(doc, HTTP_CALLBACKS_TEMPLATES_JSON);
                 return doc;
+            }
+
+            void setPayload(const char * payload) {
+                _payload = payload;
+            }
+            void setMethod(const char * method) {
+                _method = method;
             }
 
             TaskHandle_t _requestTask = NULL; // not safe

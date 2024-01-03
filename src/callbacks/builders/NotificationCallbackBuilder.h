@@ -46,7 +46,7 @@ class NotificationCallbackBuilder: public CallbackBuilder {
       JsonArray ar = type.createNestedArray("values");
       ar.add(NOTIFICATION_INFO);
       ar.add(NOTIFICATION_WARNING);
-      ar.add(NOTIFICATION_ALERT);
+      ar.add(NOTIFICATION_ERROR);
 
       return doc;
     }

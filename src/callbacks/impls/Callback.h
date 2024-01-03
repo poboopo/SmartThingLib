@@ -39,7 +39,11 @@ class Callback {
     doc["id"] = _id;
     doc["readonly"] = _readonly;
     doc["type"] = _type;
-    doc["trigger"] = _triggerValue;
+    if (_triggerDisabled) {
+      doc["trigger"] = nullptr;
+    } else {
+      doc["trigger"] = _triggerValue;
+    }
     doc["compareType"] = compareTypeToString(_compareType);
   }
 

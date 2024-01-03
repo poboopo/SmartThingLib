@@ -10,7 +10,7 @@
 
 #define NOTIFICATION_INFO "info"
 #define NOTIFICATION_WARNING "warning"
-#define NOTIFICATION_ALERT "alert"
+#define NOTIFICATION_ERROR "error"
 
 #define NOTIFIACTION_PATH "/notification"
 
@@ -38,9 +38,6 @@ class NotificationCallback : public Callback<T> {
       DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE);
       doc[MESSAGE_FIELD] = _message.c_str();
       doc[NOTIFICATION_TYPE_FIELD] = _notificationType.c_str();
-      if (!shortJson) {
-        doc["lastResponseCode"] = _lastResponseCode;
-      }
       this->addDefaultInfo(doc);
       return doc;
     }
@@ -72,7 +69,6 @@ class NotificationCallback : public Callback<T> {
     String _message;
     String _ip;
     String _notificationType;
-    int16_t _lastResponseCode = 0;
     T _currentValue;
 
     void createRequestTask() {
@@ -118,11 +114,10 @@ class NotificationCallback : public Callback<T> {
       client.setTimeout(2000);
       client.begin(url);
       client.addHeader("Content-Type", "application/json");
-      _lastResponseCode = client.sendRequest("POST", payload.c_str());
+      int code = client.sendRequest("POST", payload.c_str());
       client.end();
 
-      LOGGER.debug(NOTIFICATION_CALLBACK_TAG, "Notification send finished with code %d",
-                _lastResponseCode);
+      LOGGER.debug(NOTIFICATION_CALLBACK_TAG, "Notification send finished with code %d", code);
     }
 
 };

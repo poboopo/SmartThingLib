@@ -9,7 +9,7 @@
 #include "logs/BetterLogger.h"
 #include "net/rest/handlers/HandlerUtils.h"
 
-#define CALLBACKS_RQ_PATH "/callback"
+#define CALLBACKS_RQ_PATH "/callbacks"
 #define CALLBACKS_RQ_TAG "callbacks_handler"
 
 #define CALLBACK_NAME_ARG "name"
@@ -41,14 +41,14 @@ class CallbacksRequestHandler : public RequestHandler {
 
     server.sendHeader("Access-Control-Allow-Origin", "*");
     if (requestMethod == HTTP_GET) {
-      if (requestUri.equals("/callback/template")) {
+      if (requestUri.equals("/callbacks/templates")) {
         DynamicJsonDocument doc = Callback::CallbacksFactory::getTemplates();
         String response;
         serializeJson(doc, response);
         server.send(200, JSON_CONTENT_TYPE, response);
         return true;
       }
-      if (requestUri.equals("/callback/by/observable")) {
+      if (requestUri.equals("/callbacks/by/observable")) {
         String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
         String name = server.arg(CALLBACK_NAME_ARG);
 
@@ -65,7 +65,7 @@ class CallbacksRequestHandler : public RequestHandler {
         server.send(200, JSON_CONTENT_TYPE, response);
         return true;
       }
-      if (requestUri.equals("/callback/by/id")) {
+      if (requestUri.equals("/callbacks/by/id")) {
         String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
         String name = server.arg(CALLBACK_NAME_ARG);
         String id = server.arg(CALLBACK_ID_ARG);

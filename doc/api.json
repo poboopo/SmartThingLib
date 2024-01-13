@@ -281,7 +281,7 @@
         }
       }
     },
-    "/callback": {
+    "/callbacks": {
       "get": {
         "tags": [
           "Callback"
@@ -414,7 +414,7 @@
         }
       }
     },
-    "/callback/by/observable": {
+    "/callbacks/by/observable": {
       "get": {
         "tags": [
           "Callback"
@@ -447,7 +447,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/callbackList"
+                  "$ref": "#components/schemas/callbacksList"
                 }
               }
             }
@@ -455,7 +455,7 @@
         }
       }
     },
-    "/callback/by/id": {
+    "/callbacks/by/id": {
       "get": {
         "tags": [
           "Callback"
@@ -505,7 +505,7 @@
         }
       }
     },
-    "/callback/template": {
+    "/callbacks/templates": {
       "get": {
         "tags": [
           "Callback"
@@ -711,7 +711,7 @@
               }
             },
             "callbacks": {
-              "$ref": "#components/schemas/callbackList"
+              "$ref": "#components/schemas/callbacksList"
             }
           }
         }

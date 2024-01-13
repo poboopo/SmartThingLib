@@ -4,7 +4,6 @@
 
 #define GROUP_CONFIG "cg"
 #define GROUP_WIFI "wf"
-#define GROUP_STATE "st"
 #define DEVICE_NAME "dn"
 #define GROUP_CALLBACKS "cb"
 
@@ -89,7 +88,6 @@ void SettingsManager::removeIfEmpty(const char* group) {
 void SettingsManager::save() {
   removeIfEmpty(GROUP_WIFI);
   removeIfEmpty(GROUP_CONFIG);
-  removeIfEmpty(GROUP_STATE);
   removeIfEmpty(GROUP_CALLBACKS);
   _settings.garbageCollect();
 
@@ -163,10 +161,6 @@ void SettingsManager::dropConfig() {
   } else {
     LOGGER.debug(SETTINGS_MANAGER_TAG, "Config settings not exists");
   }
-}
-
-JsonObject SettingsManager::getState() {
-  return getOrCreateObject(GROUP_STATE);
 }
 
 JsonObject SettingsManager::getWiFi() { return getOrCreateObject(GROUP_WIFI); }

@@ -26,16 +26,18 @@ class HttpCallbackBuilder : public CallbackBuilder {
       LOGGER.error(HTTP_CALLBACK_BUILDER_TAG, "Url can't be blank!");
       return nullptr;
     }
-    const char* method = doc["method"];
+    String method = doc["method"];
+    if (method.isEmpty()) {
+      method = "GET";
+    }
     const char* payload = doc["payload"];
 
     HttpCallback<T>* callback = new HttpCallback<T>(url, readOnly);
     callback->setPayload(payload);
-    callback->setMethod(method);
+    callback->setMethod(method.c_str());
     LOGGER.debug(HTTP_CALLBACK_BUILDER_TAG,
                  "Http callback created: url=%s, method=%s, payload=%s", url,
-                 method == nullptr ? "GET" : method,
-                 payload == nullptr ? "-" : payload);
+                 method.c_str(), payload == nullptr ? "-" : payload);
 
     ::Callback::CallbackBuilder::defaultValues(callback, doc);
 

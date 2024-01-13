@@ -176,6 +176,8 @@ void SmartThingClass::wipeSettings() {
 }
 
 void SmartThingClass::setName(String name) {
+  name.trim();
+  name.replace(" ", "_");
   if (name == _name) {
     return;
   }

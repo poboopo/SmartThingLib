@@ -96,13 +96,12 @@ class HttpCallback : public Callback<T> {
                  valueStr.isEmpty() ? "blank_value" : valueStr.c_str());
     urlCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
     payloadCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
-    LOGGER.info(HTTP_CALLBACK_TAG, "Sending request [%s] %s[%s] :: %s",
-                _method.c_str(), _url.c_str(), urlCopy.c_str(),
-                payloadCopy.c_str());
+    LOGGER.info(HTTP_CALLBACK_TAG, "Sending request [%s] %s :: %s",
+                _method.c_str(), urlCopy.c_str(), payloadCopy.c_str());
 
     HTTPClient client;
     client.setTimeout(2000);
-    client.begin(urlCopy);
+    client.begin("http://" + urlCopy);
     if (!payloadCopy.isEmpty()) {
       client.addHeader("Content-Type", "application/json");
     }
@@ -114,23 +113,10 @@ class HttpCallback : public Callback<T> {
                 urlCopy.c_str(), _lastResponseCode);
   }
 
-  void sendSimpleRequest() {
-    LOGGER.info(HTTP_CALLBACK_TAG, "Sending simple request [%s] %s :: %s",
-                _method.c_str(), _url.c_str(), _payload.c_str());
-
-    HTTPClient client;
-    client.setTimeout(2000);
-    client.begin(_url);
-    _lastResponseCode = client.sendRequest(_method.c_str(), _payload.c_str());
-    client.end();
-
-    LOGGER.info(HTTP_CALLBACK_TAG, "Request [%s] finished with code [%d]",
-                _url.c_str(), _lastResponseCode);
-  }
-
   void fixUrl() {
-    if (!_url.startsWith("http")) {
-      _url = "http://" + _url;
+    _url.trim();
+    if (_url.startsWith("http://")) {
+      _url.remove(0, 7);
     }
   }
 };

@@ -6,7 +6,7 @@
 
 #define NOTIFICATION_CALLBACK_TAG "notification_callback"
 #define MESSAGE_FIELD "message"
-#define NOTIFICATION_TYPE_FIELD "notificationType"
+#define NOTIFICATION_TYPE_FIELD "ntfType"
 
 #define NOTIFICATION_INFO "info"
 #define NOTIFICATION_WARNING "warning"

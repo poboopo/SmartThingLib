@@ -37,8 +37,6 @@ class SettingsManager {
   JsonObject getConfig();
   void dropConfig();
 
-  JsonObject getState();
-
   JsonObject getWiFi();
   void dropWifiCredits();
 

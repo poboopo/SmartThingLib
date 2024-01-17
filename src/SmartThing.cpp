@@ -190,7 +190,7 @@ void SmartThingClass::setName(String name) {
 }
 
 void SmartThingClass::updateBroadCastMessage() {
-  _broadcastMessage = _ip + "$" + _type + "$" + _name;
+  _broadcastMessage = _ip + "$" + _type + "$" + _name + "$" + SMART_THING_VERSION;
 }
 
 DynamicJsonDocument SmartThingClass::getInfoDictionaries() {

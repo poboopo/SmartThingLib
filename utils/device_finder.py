@@ -20,8 +20,6 @@ def search():
     try:
         lastColorIndex = 1
         while searching:
-            # В будущем вероятнее всего будет передаваться не только ip
-            # Например еще может быть имя устройства, версия прошивки, тип устройства и т.п.
             ip = mainSocket.recv(4096).decode()
             if (ip and ip not in foundIps.keys()):
                 foundIps.update({ip: f"\033[9{lastColorIndex}m"})

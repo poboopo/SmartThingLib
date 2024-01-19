@@ -104,10 +104,7 @@ class NotificationCallback : public Callback<T> {
 
       String payload;
       serializeJson(doc, payload);
-      LOGGER.debug(NOTIFICATION_CALLBACK_TAG, "Notification payload: %s", payload.c_str());
-
       String url = "http://" + _ip + "/notification";
-
       LOGGER.debug(NOTIFICATION_CALLBACK_TAG, "Sending notification to [%s]:%s", url.c_str(), payload.c_str());
 
       HTTPClient client;

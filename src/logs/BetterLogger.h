@@ -10,7 +10,7 @@
 #define TCP_LOGGER
 
 // ip_&_name_&_level_&_tag_&_message
-#define LOGGER_MESSAGE_TEMPLATE "%s_&_%s_&_%s_&_%s_&_%s"
+#define LOGGER_MESSAGE_TEMPLATE "%s_&_%s_&_%s_&_%s_&_%s\n"
 #define STAT_LOG_TAG "STATISTICS"
 #define MAX_MESSAGE_LENGTH 2048
 

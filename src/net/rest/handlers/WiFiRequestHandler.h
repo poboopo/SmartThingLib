@@ -46,12 +46,12 @@ class WiFiRequesthandler : public RequestHandler {
       String response;
       serializeJson(jsonDoc, response);
 
-      server.send(200, JSON_CONTENT_TYPE, response);
+      server.send(200, CONTENT_TYPE_JSON, response);
       return true;
     }
     if (requestMethod == HTTP_POST) {
       if (body.length() == 0) {
-        server.send(400, "content/json", buildErrorJson("Body is missing"));
+        server.send(400, "content/json", ERROR_BODY_MISSING);
         return true;
       }
 

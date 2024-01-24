@@ -32,7 +32,7 @@ class StateRequestHandler : public RequestHandler {
       DynamicJsonDocument state = SmartThing.getDeviceStatesInfo();
       String response;
       serializeJson(state, response);
-      server.send(200, JSON_CONTENT_TYPE, response);
+      server.send(200, CONTENT_TYPE_JSON, response);
       return true;
     }
 

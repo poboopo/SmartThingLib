@@ -32,7 +32,7 @@ class SensorsRequestHandler : public RequestHandler {
       DynamicJsonDocument sensors = SmartThing.getSensorsValues();
       String response;
       serializeJson(sensors, response);
-      server.send(200, JSON_CONTENT_TYPE, response);
+      server.send(200, CONTENT_TYPE_JSON, response);
       return true;
     }
 

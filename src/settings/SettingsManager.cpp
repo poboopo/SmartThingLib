@@ -1,4 +1,5 @@
 #include "settings/SettingsManager.h"
+#include "SmartThing.h"
 
 #include <EEPROM.h>
 
@@ -85,7 +86,8 @@ void SettingsManager::removeIfEmpty(const char* group) {
   }
 }
 
-void SettingsManager::save() {
+bool SettingsManager::save() {
+  LOGGER.info(SETTINGS_MANAGER_TAG, "Saving settings");
   removeIfEmpty(GROUP_WIFI);
   removeIfEmpty(GROUP_CONFIG);
   removeIfEmpty(GROUP_CALLBACKS);
@@ -105,29 +107,31 @@ void SettingsManager::save() {
 
   if (data.length() > EEPROM_LOAD_SIZE) {
     LOGGER.error(SETTINGS_MANAGER_TAG,
-                 "Settings are too long! Expected less then %d, got %d",
+                 "Save failed, data are too long! Expected less then %d, got %d",
                  EEPROM_LOAD_SIZE, data.length());
-    return;
+    return false;
   }
 
   if (EEPROM.begin(EEPROM_LOAD_SIZE)) {
     // todo replace with write string?
-    LOGGER.debug(SETTINGS_MANAGER_TAG, "Saving settings (length [%u]): %s",
+    LOGGER.debug(SETTINGS_MANAGER_TAG, "Wrtining data to EEPROM (length [%u]): %s",
                  data.length(), data.c_str());
     for (int i = 0; i < data.length(); i++) {
       EEPROM.write(i, data.charAt(i));
     }
     EEPROM.commit();
     LOGGER.info(SETTINGS_MANAGER_TAG, "Settings saved");
+    return true;
   } else {
-    LOGGER.error(SETTINGS_MANAGER_TAG, "Failed to open EEPROM");
+    LOGGER.error(SETTINGS_MANAGER_TAG, "Save failed, can't open EEPROM");
+    return false;
   }
 }
 
 void SettingsManager::removeSetting(const char* name) {
   if (name == SSID_SETTING || name == PASSWORD_SETTING || name == GROUP_WIFI) {
     LOGGER.warning(SETTINGS_MANAGER_TAG,
-                   "U can't remove Wifi credits with this function! Use "
+                   "You can't remove Wifi credits with this function! Use "
                    "dropWifiCredits insted.");
     return;
   }
@@ -190,6 +194,61 @@ JsonArray SettingsManager::getCallbacks() {
 void SettingsManager::dropAllCallbacks() {
   _settings.remove(GROUP_CALLBACKS);
   _settings.garbageCollect();
+}
+
+const DynamicJsonDocument SettingsManager::exportSettings() {
+  DynamicJsonDocument doc(JSON_SETTINGS_DOC_SIZE);
+  doc[GROUP_CONFIG] = getConfig();
+  doc[GROUP_CALLBACKS] = getCallbacks();
+  doc[DEVICE_NAME] = getDeviceName();
+  return doc;
+}
+
+bool SettingsManager::importSettings(DynamicJsonDocument doc) {
+  if (doc.size() == 0) {
+    LOGGER.info(SETTINGS_MANAGER_TAG, "Empty settings json!");
+    return false;
+  }
+  bool res = true;
+  String old;
+  serializeJson(_settings, old);
+  LOGGER.debug(SETTINGS_MANAGER_TAG, "Old settings save: %s", old.c_str());
+
+  String name = doc[DEVICE_NAME];
+  if (!name.isEmpty()) {
+    if (name.length() > DEVICE_NAME_LENGTH_MAX) {
+      res = false;
+      LOGGER.error(SETTINGS_MANAGER_TAG, "Device name is too long! Max length: %d", DEVICE_NAME_LENGTH_MAX);
+    } else {
+      LOGGER.info(SETTINGS_MANAGER_TAG, "New name: %s", name.c_str());
+      _settings[DEVICE_NAME] = name;
+    }
+  }
+  
+  if (doc[GROUP_CONFIG].size() > 0 && !doc[GROUP_CONFIG].is<JsonObject>()) {
+    LOGGER.error(SETTINGS_MANAGER_TAG, "Expected %s to be JsonObject!", GROUP_CONFIG);
+    res = false;
+  } else {
+    _settings[GROUP_CONFIG] = doc[GROUP_CONFIG];
+  }
+  if (doc[GROUP_CALLBACKS].size() > 0 && !doc[GROUP_CALLBACKS].is<JsonArray>()) {
+    LOGGER.error(SETTINGS_MANAGER_TAG, "Expected %s to be JsonArray!", GROUP_CALLBACKS);
+    res = false;
+  } else {
+    _settings[GROUP_CALLBACKS] = doc[GROUP_CALLBACKS];
+  }
+
+  if (res) {
+    res = save();
+  }
+
+  if (!res) {
+    LOGGER.info(SETTINGS_MANAGER_TAG, "Import failed, rollback old settings");
+    deserializeJson(_settings, old);
+    save();
+  }
+
+  return res;
 }
 
 const DynamicJsonDocument SettingsManager::getAllSettings() {

@@ -7,11 +7,11 @@
 #include "settings/SettingsManager.h"
 
 #define SERVER_PORT 80
-#define JSON_CONTENT_TYPE "application/json"
+#define CONTENT_TYPE_JSON "application/json"
 
 struct RestHandlerResult {
   int code = 200;
-  String contentType = JSON_CONTENT_TYPE;
+  String contentType = CONTENT_TYPE_JSON;
   String body = "";
 };
 

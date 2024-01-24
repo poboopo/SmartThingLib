@@ -39,12 +39,12 @@ class ConfigRequestHandler : public RequestHandler {
       JsonObject config = STSettings.getConfig();
       String response;
       serializeJson(config, response);
-      server.send(200, "application/json", response);
+      server.send(200, CONTENT_TYPE_JSON, response);
       return true;
     }
     if (requestMethod == HTTP_POST) {
       if (body.length() == 0) {
-        server.send(400, "application/json", buildErrorJson("Body is missing"));
+        server.send(400, CONTENT_TYPE_JSON, ERROR_BODY_MISSING);
         return true;
       }
 

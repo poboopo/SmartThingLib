@@ -7,6 +7,7 @@
 #include "net/rest/handlers/SensorsRequestHandler.h"
 #include "net/rest/handlers/StateRequestHandler.h"
 #include "net/rest/handlers/WiFiRequestHandler.h"
+#include "net/rest/handlers/SettingsRequestHandler.h"
 
 #ifdef WEB_PAGE
 #include "net/rest/Pages.h"
@@ -66,6 +67,7 @@ void RestControllerClass::setupHandler() {
   _server.addHandler(new StateRequestHandler());
   _server.addHandler(new ActionRequestHandler());
   _server.addHandler(new CallbacksRequestHandler());
+  _server.addHandler(new SettingsRequestHandler());
 
   _server.on("/health", HTTP_GET, [this]() {
     preHandleRequest();
@@ -115,7 +117,7 @@ void RestControllerClass::setupHandler() {
     String response;
     serializeJson(doc, response);
 
-    _server.send(200, JSON_CONTENT_TYPE, response);
+    _server.send(200, CONTENT_TYPE_JSON, response);
   });
 
   _server.on("/restart", HTTP_PUT, [&]() {

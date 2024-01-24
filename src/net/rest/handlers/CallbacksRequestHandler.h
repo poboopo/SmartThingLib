@@ -45,7 +45,7 @@ class CallbacksRequestHandler : public RequestHandler {
         DynamicJsonDocument doc = Callback::CallbacksFactory::getTemplates();
         String response;
         serializeJson(doc, response);
-        server.send(200, JSON_CONTENT_TYPE, response);
+        server.send(200, CONTENT_TYPE_JSON, response);
         return true;
       }
       if (requestUri.equals("/callbacks/by/observable")) {
@@ -54,7 +54,7 @@ class CallbacksRequestHandler : public RequestHandler {
 
         if (type.isEmpty() || name.isEmpty()) {
           server.send(
-              400, JSON_CONTENT_TYPE,
+              400, CONTENT_TYPE_JSON,
               buildErrorJson("Observable type or name args are missing!"));
           return true;
         }
@@ -62,7 +62,7 @@ class CallbacksRequestHandler : public RequestHandler {
             type.c_str(), name.c_str());
         String response;
         serializeJson(doc, response);
-        server.send(200, JSON_CONTENT_TYPE, response);
+        server.send(200, CONTENT_TYPE_JSON, response);
         return true;
       }
       if (requestUri.equals("/callbacks/by/id")) {
@@ -71,7 +71,7 @@ class CallbacksRequestHandler : public RequestHandler {
         String id = server.arg(CALLBACK_ID_ARG);
 
         if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
-          server.send(400, JSON_CONTENT_TYPE,
+          server.send(400, CONTENT_TYPE_JSON,
                       buildErrorJson("Type, name or id args are missing!"));
           return true;
         }
@@ -79,19 +79,19 @@ class CallbacksRequestHandler : public RequestHandler {
             type.c_str(), name.c_str(), id.toInt());
         String response;
         serializeJson(doc, response);
-        server.send(200, JSON_CONTENT_TYPE, response);
+        server.send(200, CONTENT_TYPE_JSON, response);
         return true;
       }
       DynamicJsonDocument doc =
           CallbacksManager.allCallbacksToJson(false, false);
       String response;
       serializeJson(doc, response);
-      server.send(200, JSON_CONTENT_TYPE, response);
+      server.send(200, CONTENT_TYPE_JSON, response);
       return true;
     }
     if (requestMethod == HTTP_POST) {
       if (!server.hasArg("plain")) {
-        server.send(400, JSON_CONTENT_TYPE, "Body is missing!");
+        server.send(400, CONTENT_TYPE_JSON, "Body is missing!");
         return true;
       }
       int id =
@@ -103,9 +103,9 @@ class CallbacksRequestHandler : public RequestHandler {
         doc["id"] = id;
         String response;
         serializeJson(doc, response);
-        server.send(201, JSON_CONTENT_TYPE, response);
+        server.send(201, CONTENT_TYPE_JSON, response);
       } else {
-        server.send(500, JSON_CONTENT_TYPE,
+        server.send(500, CONTENT_TYPE_JSON,
                     buildErrorJson("Failed to create callback. Check logs for "
                                    "additional information."));
       }
@@ -114,7 +114,7 @@ class CallbacksRequestHandler : public RequestHandler {
     if (requestMethod == HTTP_PUT) {
       String body = server.arg("plain");
       if (body.isEmpty()) {
-        server.send(400, JSON_CONTENT_TYPE, buildErrorJson("Body is missing!"));
+        server.send(400, CONTENT_TYPE_JSON, buildErrorJson("Body is missing!"));
         return true;
       }
 
@@ -124,7 +124,7 @@ class CallbacksRequestHandler : public RequestHandler {
         CallbacksManager.saveCallbacksToSettings();
         server.send(200);
       } else {
-        server.send(500, JSON_CONTENT_TYPE,
+        server.send(500, CONTENT_TYPE_JSON,
                     buildErrorJson("Failed to update callback. Check logs for "
                                    "additional information."));
       }
@@ -137,7 +137,7 @@ class CallbacksRequestHandler : public RequestHandler {
 
       if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
         server.send(
-            400, JSON_CONTENT_TYPE,
+            400, CONTENT_TYPE_JSON,
             buildErrorJson("Observable type, name or id args are missing!"));
         return true;
       }
@@ -147,7 +147,7 @@ class CallbacksRequestHandler : public RequestHandler {
         CallbacksManager.saveCallbacksToSettings();
         server.send(200);
       } else {
-        server.send(500, JSON_CONTENT_TYPE,
+        server.send(500, CONTENT_TYPE_JSON,
                     buildErrorJson("Failed to delete callback. Check logs for "
                                    "additional information."));
       }

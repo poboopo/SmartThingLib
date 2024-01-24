@@ -72,7 +72,7 @@ class BetterLogger {
   void warning(const char* tag, const char* format, Args... args) {
 #if defined(LOGGING_LEVEL_WARN) || defined(LOGGING_LEVEL_INFO) || \
     defined(LOGGING_LEVEL_DEBUG) || defined(LOGGING_LEVEL_ALL)
-    log("WARNING", tag, format, args...);
+    log("WARN", tag, format, args...);
 #endif
   };
   template <typename... Args>

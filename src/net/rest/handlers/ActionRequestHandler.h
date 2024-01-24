@@ -35,7 +35,7 @@ class ActionRequestHandler : public RequestHandler {
     }
     if (requestMethod == HTTP_PUT) {
       if (action.isEmpty()) {
-        server.send(400, JSON_CONTENT_TYPE,
+        server.send(400, CONTENT_TYPE_JSON,
                     buildErrorJson("Parameter action is missing!"));
         return true;
       }
@@ -45,7 +45,7 @@ class ActionRequestHandler : public RequestHandler {
         server.send(200);
       } else {
         if (result.message != nullptr) {
-          server.send(500, JSON_CONTENT_TYPE, buildErrorJson(result.message));
+          server.send(500, CONTENT_TYPE_JSON, buildErrorJson(result.message));
         } else {
           server.send(500);
         }

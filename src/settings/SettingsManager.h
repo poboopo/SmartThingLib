@@ -12,12 +12,12 @@
 #define GATEWAY_CONFIG "gtw"
 
 #define SETTINGS_MANAGER_TAG "settings_manager"
-#define JSON_DOC_SIZE 2048
+#define JSON_SETTINGS_DOC_SIZE 2048
 #define EEPROM_LOAD_SIZE 2048
 
 class SettingsManager {
  private:
-  DynamicJsonDocument _settings = DynamicJsonDocument(JSON_DOC_SIZE);
+  DynamicJsonDocument _settings = DynamicJsonDocument(JSON_SETTINGS_DOC_SIZE);
   const char* loadFromEeprom();
   bool _loaded = false;
 
@@ -32,7 +32,7 @@ class SettingsManager {
   void loadSettings();
   void removeSetting(const char* name);
   void dropAll();
-  void save();
+  bool save();
 
   JsonObject getConfig();
   void dropConfig();
@@ -46,6 +46,9 @@ class SettingsManager {
   void setCallbacks(JsonArray doc);
   JsonArray getCallbacks();
   void dropAllCallbacks();
+
+  const DynamicJsonDocument exportSettings();
+  bool importSettings(DynamicJsonDocument doc);
 
   const DynamicJsonDocument getAllSettings();
   int16_t usage() { return _settings.memoryUsage(); }

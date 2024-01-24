@@ -43,12 +43,12 @@ class InfoRequestHandler : public RequestHandler {
 
         String result;
         serializeJson(jsonDoc, result);
-        server.send(200, JSON_CONTENT_TYPE, result);
+        server.send(200, CONTENT_TYPE_JSON, result);
         return true;
       }
       if (requestMethod == HTTP_PUT) {
         if (body.isEmpty()) {
-          server.send(400, JSON_CONTENT_TYPE,
+          server.send(400, CONTENT_TYPE_JSON,
                       buildErrorJson("Body is missing!"));
           return true;
         }
@@ -57,7 +57,7 @@ class InfoRequestHandler : public RequestHandler {
         const char* newName = jsDoc["name"];
         if (strlen(newName) == 0 || strlen(newName) > DEVICE_NAME_LENGTH_MAX) {
           server.send(
-              400, JSON_CONTENT_TYPE,
+              400, CONTENT_TYPE_JSON,
               buildErrorJson("Name is missing or too long (max 10 symbols)"));
           return true;
         }
@@ -71,14 +71,14 @@ class InfoRequestHandler : public RequestHandler {
       DynamicJsonDocument doc = SmartThing.getActionsInfo();
       String response;
       serializeJson(doc, response);
-      server.send(200, JSON_CONTENT_TYPE, response);
+      server.send(200, CONTENT_TYPE_JSON, response);
       return true;
     }
     if (requestUri.equals("/info/config") && requestMethod == HTTP_GET) {
       DynamicJsonDocument doc = SmartThing.getConfigInfo();
       String response;
       serializeJson(doc, response);
-      server.send(200, JSON_CONTENT_TYPE, response);
+      server.send(200, CONTENT_TYPE_JSON, response);
       return true;
     }
 

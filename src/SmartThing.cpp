@@ -183,7 +183,7 @@ void SmartThingClass::setName(String name) {
   }
   _name = name;
   // todo move from there
-  STSettings.setDeviceName(name.c_str());
+  STSettings.setDeviceName(_name.c_str());
   STSettings.save();
   updateBroadCastMessage();
   LOGGER.info(SMART_THING_TAG, "New device name %s", name.c_str());

@@ -1,19 +1,19 @@
-#ifndef HTTP_CALLBACK_H
-#define HTTP_CALLBACK_H
+#ifndef HTTP_HOOK_H
+#define HTTP_HOOK_H
 
 #include <HTTPClient.h>
 
-#include "callbacks/impls/Callback.h"
+#include "hooks/impls/Hook.h"
 #include "logs/BetterLogger.h"
 
-#define HTTP_CALLBACK_TAG "http_callback"
+#define HTTP_HOOK_TAG "http_hook"
 
-namespace Callback {
+namespace Hook {
 template <typename T>
-class HttpCallback : public Callback<T> {
+class HttpHook : public Hook<T> {
  public:
-  HttpCallback(const char *url, bool readonly)
-      : Callback<T>(HTTP_CALLBACK_TAG, readonly), _url(url), _method("GET") {
+  HttpHook(const char *url, bool readonly)
+      : Hook<T>(HTTP_HOOK_TAG, readonly), _url(url), _method("GET") {
     fixUrl();
   };
   void call(T &value) {
@@ -21,12 +21,12 @@ class HttpCallback : public Callback<T> {
     if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
       createRequestTask();
     } else {
-      LOGGER.error(HTTP_CALLBACK_TAG, "WiFi not connected!");
+      LOGGER.error(HTTP_HOOK_TAG, "WiFi not connected!");
     }
   };
 
   DynamicJsonDocument toJson(bool shortJson) {
-    DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE);
+    DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE);
     if (!shortJson) {
       doc["lastResponseCode"] = _lastResponseCode;
     }
@@ -41,17 +41,17 @@ class HttpCallback : public Callback<T> {
     if (doc.containsKey("url")) {
       _url = doc["url"].as<String>();
       fixUrl();
-      LOGGER.debug(HTTP_CALLBACK_TAG, "Callback's url was updated to %s",
+      LOGGER.debug(HTTP_HOOK_TAG, "Hook's url was updated to %s",
                    _url.c_str());
     }
     if (doc.containsKey("method")) {
       _method = doc["method"].as<String>();
-      LOGGER.debug(HTTP_CALLBACK_TAG, "Callback's method was updated to %s",
+      LOGGER.debug(HTTP_HOOK_TAG, "Hook's method was updated to %s",
                    _method.c_str());
     }
     if (doc.containsKey("payload")) {
       _payload = doc["payload"].as<String>();
-      LOGGER.debug(HTTP_CALLBACK_TAG, "Callback's payload was updated to %s",
+      LOGGER.debug(HTTP_HOOK_TAG, "Hook's payload was updated to %s",
                    _payload.c_str());
     }
   };
@@ -70,16 +70,16 @@ class HttpCallback : public Callback<T> {
 
   void createRequestTask() {
     if (_sending) {
-      LOGGER.warning(HTTP_CALLBACK_TAG, "Request task already exist! Skipping");
+      LOGGER.warning(HTTP_HOOK_TAG, "Request task already exist! Skipping");
       return;
     }
     xTaskCreate(
         [](void *o) {
-          HttpCallback *callback = static_cast<HttpCallback *>(o);
-          callback->_sending = true;
-          callback->sendRequest();
-          callback->_sending = false;
-          vTaskDelete(callback->_requestTask);
+          HttpHook *hook = static_cast<HttpHook *>(o);
+          hook->_sending = true;
+          hook->sendRequest();
+          hook->_sending = false;
+          vTaskDelete(hook->_requestTask);
         },
         _url.c_str(), 10000, this, 1, &_requestTask);
   }
@@ -92,11 +92,11 @@ class HttpCallback : public Callback<T> {
     String urlCopy = _url;
     String payloadCopy = _payload;
 
-    LOGGER.debug(HTTP_CALLBACK_TAG, "Replacing ${v} with [%s]",
+    LOGGER.debug(HTTP_HOOK_TAG, "Replacing ${v} with [%s]",
                  valueStr.isEmpty() ? "blank_value" : valueStr.c_str());
     urlCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
     payloadCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
-    LOGGER.info(HTTP_CALLBACK_TAG, "Sending request [%s] %s :: %s",
+    LOGGER.info(HTTP_HOOK_TAG, "Sending request [%s] %s :: %s",
                 _method.c_str(), urlCopy.c_str(), payloadCopy.c_str());
 
     HTTPClient client;
@@ -109,7 +109,7 @@ class HttpCallback : public Callback<T> {
         client.sendRequest(_method.c_str(), payloadCopy.c_str());
     client.end();
 
-    LOGGER.info(HTTP_CALLBACK_TAG, "Request %s finished with code %d",
+    LOGGER.info(HTTP_HOOK_TAG, "Request %s finished with code %d",
                 urlCopy.c_str(), _lastResponseCode);
   }
 
@@ -120,5 +120,5 @@ class HttpCallback : public Callback<T> {
     }
   }
 };
-}  // namespace Callback
+}  // namespace Hook
 #endif

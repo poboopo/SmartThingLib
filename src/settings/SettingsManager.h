@@ -43,9 +43,9 @@ class SettingsManager {
   const String getDeviceName();
   void setDeviceName(const char* name);
 
-  void setCallbacks(JsonArray doc);
-  JsonArray getCallbacks();
-  void dropAllCallbacks();
+  void setHooks(JsonArray doc);
+  JsonArray getHooks();
+  void dropAllHooks();
 
   const DynamicJsonDocument exportSettings();
   bool importSettings(DynamicJsonDocument doc);

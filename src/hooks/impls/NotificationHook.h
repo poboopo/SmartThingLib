@@ -1,10 +1,10 @@
-#ifndef NOTIFICATION_CALLBACK_H
-#define NOTIFICATIONS_CALLBACK_H
+#ifndef NOTIFICATION_HOOK_H
+#define NOTIFICATIONS_HOOK_H
 
-#include "callbacks/impls/Callback.h"
+#include "hooks/impls/Hook.h"
 #include "settings/SettingsManager.h"
 
-#define NOTIFICATION_CALLBACK_TAG "notification_callback"
+#define NOTIFICATION_HOOK_TAG "notification_hook"
 #define MESSAGE_FIELD "message"
 #define NOTIFICATION_TYPE_FIELD "ntfType"
 
@@ -14,28 +14,28 @@
 
 #define NOTIFIACTION_PATH "/notification"
 
-namespace Callback {
+namespace Hook {
 template <typename T>
-class NotificationCallback : public Callback<T> {
+class NotificationHook : public Hook<T> {
   public:
-    NotificationCallback(const char * message, bool readOnly)
-      : Callback<T>(NOTIFICATION_CALLBACK_TAG, readOnly), _message(message), _notificationType(NOTIFICATION_INFO) {};
+    NotificationHook(const char * message, bool readOnly)
+      : Hook<T>(NOTIFICATION_HOOK_TAG, readOnly), _message(message), _notificationType(NOTIFICATION_INFO) {};
 
     void call(T &value) {
       _ip = STSettings.getConfig()[GATEWAY_CONFIG].as<String>();
       if (_ip.isEmpty()) {
-        LOGGER.debug(NOTIFICATION_CALLBACK_TAG, "Gateway ip is missing!");
+        LOGGER.debug(NOTIFICATION_HOOK_TAG, "Gateway ip is missing!");
         return;
       }
       _currentValue = value;
       if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
         createRequestTask();
       } else {
-        LOGGER.error(HTTP_CALLBACK_TAG, "WiFi not connected!");
+        LOGGER.error(HTTP_HOOK_TAG, "WiFi not connected!");
       }
     }
     DynamicJsonDocument toJson(bool shortJson) {
-      DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE);
+      DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE);
       doc[MESSAGE_FIELD] = _message.c_str();
       doc[NOTIFICATION_TYPE_FIELD] = _notificationType.c_str();
       this->addDefaultInfo(doc);
@@ -77,11 +77,11 @@ class NotificationCallback : public Callback<T> {
       }
       xTaskCreate(
         [](void *o) {
-          NotificationCallback *callback = static_cast<NotificationCallback *>(o);
-          callback->_sending = true;
-          callback->sendRequest();
-          callback->_sending = false;
-          vTaskDelete(callback->_requestTask);
+          NotificationHook *hook = static_cast<NotificationHook *>(o);
+          hook->_sending = true;
+          hook->sendRequest();
+          hook->_sending = false;
+          vTaskDelete(hook->_requestTask);
         },
         "notification", 10000, this, 1, &_requestTask);
     }
@@ -105,7 +105,7 @@ class NotificationCallback : public Callback<T> {
       String payload;
       serializeJson(doc, payload);
       String url = "http://" + _ip + "/notification";
-      LOGGER.debug(NOTIFICATION_CALLBACK_TAG, "Sending notification to [%s]:%s", url.c_str(), payload.c_str());
+      LOGGER.debug(NOTIFICATION_HOOK_TAG, "Sending notification to [%s]:%s", url.c_str(), payload.c_str());
 
       HTTPClient client;
       client.setTimeout(2000);
@@ -114,7 +114,7 @@ class NotificationCallback : public Callback<T> {
       int code = client.sendRequest("POST", payload.c_str());
       client.end();
 
-      LOGGER.debug(NOTIFICATION_CALLBACK_TAG, "Notification send finished with code %d", code);
+      LOGGER.debug(NOTIFICATION_HOOK_TAG, "Notification send finished with code %d", code);
     }
 
 };

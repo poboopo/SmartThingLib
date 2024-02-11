@@ -1,24 +1,24 @@
-#ifndef WATCHER_CALLBACK_H
-#define WATCHER_CALLBACK_H
+#ifndef WATCHER_HOOK_H
+#define WATCHER_HOOK_H
 
-#define WATCHER_CALLBACK_TAG "watcher_callback"
+#define WATCHER_HOOK_TAG "watcher_hook"
 
 #include <ArduinoJson.h>
 #include <functional>
 
-#include "callbacks/comparator/Comparator.h"
+#include "hooks/comparator/Comparator.h"
 #include "logs/BetterLogger.h"
 
-#define CALLBACK_INFO_DOC_SIZE 512
-#define MAX_CALLBACK_TEMPLATE_SIZE 1024
+#define HOOK_INFO_DOC_SIZE 512
+#define MAX_HOOK_TEMPLATE_SIZE 1024
 #define VALUE_DYNAMIC_PARAM "${v}"
 
-namespace Callback {
+namespace Hook {
 template <typename T>
 // template<ConfigurableObject<T> ????>
-class Callback {
+class Hook {
  public:
-  Callback(const char *type, bool readonly)
+  Hook(const char *type, bool readonly)
       : _type(type),
         _readonly(readonly),
         _id(-1),
@@ -68,6 +68,6 @@ class Callback {
   bool _readonly;
   CompareType _compareType;
 };
-}  // namespace Callback
+}  // namespace Hook
 
 #endif

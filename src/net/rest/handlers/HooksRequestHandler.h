@@ -1,33 +1,33 @@
-#ifndef CALLBACKS_RQ_H
-#define CALLBACKS_RQ_H
+#ifndef HOOKS_RQ_H
+#define HOOKS_RQ_H
 
 #include <ArduinoJson.h>
 #include <WebServer.h>
 
 #include "SmartThing.h"
-#include "callbacks/builders/CallbacksFactory.h"
+#include "hooks/builders/HooksFactory.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/handlers/HandlerUtils.h"
 
-#define CALLBACKS_RQ_PATH "/callbacks"
-#define CALLBACKS_RQ_TAG "callbacks_handler"
+#define HOOKS_RQ_PATH "/hooks"
+#define HOOKS_RQ_TAG "hooks_handler"
 
-#define CALLBACK_NAME_ARG "name"
-#define CALLBACK_OBSERVABLE_TYPE "type"
-#define CALLBACK_ID_ARG "id"
+#define HOOK_NAME_ARG "name"
+#define HOOK_OBSERVABLE_TYPE "type"
+#define HOOK_ID_ARG "id"
 
-class CallbacksRequestHandler : public RequestHandler {
+class HooksRequestHandler : public RequestHandler {
  public:
-  CallbacksRequestHandler(){};
+  HooksRequestHandler(){};
   bool canHandle(HTTPMethod method, String uri) {
-    return uri.startsWith(CALLBACKS_RQ_PATH) &&
+    return uri.startsWith(HOOKS_RQ_PATH) &&
            (method == HTTP_GET || method == HTTP_PUT || method == HTTP_POST ||
             method == HTTP_DELETE || method == HTTP_OPTIONS);
   };
 
   bool handle(WebServer &server, HTTPMethod requestMethod, String requestUri) {
     String body = server.arg("plain");
-    LOGGER.logRequest(CALLBACKS_RQ_TAG, http_method_str(requestMethod),
+    LOGGER.logRequest(HOOKS_RQ_TAG, http_method_str(requestMethod),
                       requestUri.c_str(), body.c_str());
 
     if (requestMethod == HTTP_OPTIONS) {
@@ -41,16 +41,16 @@ class CallbacksRequestHandler : public RequestHandler {
 
     server.sendHeader("Access-Control-Allow-Origin", "*");
     if (requestMethod == HTTP_GET) {
-      if (requestUri.equals("/callbacks/templates")) {
-        DynamicJsonDocument doc = Callback::CallbacksFactory::getTemplates();
+      if (requestUri.equals("/hooks/templates")) {
+        DynamicJsonDocument doc = Hook::HooksFactory::getTemplates();
         String response;
         serializeJson(doc, response);
         server.send(200, CONTENT_TYPE_JSON, response);
         return true;
       }
-      if (requestUri.equals("/callbacks/by/observable")) {
-        String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
-        String name = server.arg(CALLBACK_NAME_ARG);
+      if (requestUri.equals("/hooks/by/observable")) {
+        String type = server.arg(HOOK_OBSERVABLE_TYPE);
+        String name = server.arg(HOOK_NAME_ARG);
 
         if (type.isEmpty() || name.isEmpty()) {
           server.send(
@@ -58,24 +58,24 @@ class CallbacksRequestHandler : public RequestHandler {
               buildErrorJson("Observable type or name args are missing!"));
           return true;
         }
-        DynamicJsonDocument doc = CallbacksManager.getObservableCallbacksJson(
+        DynamicJsonDocument doc = HooksManager.getObservableHooksJson(
             type.c_str(), name.c_str());
         String response;
         serializeJson(doc, response);
         server.send(200, CONTENT_TYPE_JSON, response);
         return true;
       }
-      if (requestUri.equals("/callbacks/by/id")) {
-        String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
-        String name = server.arg(CALLBACK_NAME_ARG);
-        String id = server.arg(CALLBACK_ID_ARG);
+      if (requestUri.equals("/hooks/by/id")) {
+        String type = server.arg(HOOK_OBSERVABLE_TYPE);
+        String name = server.arg(HOOK_NAME_ARG);
+        String id = server.arg(HOOK_ID_ARG);
 
         if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
           server.send(400, CONTENT_TYPE_JSON,
                       buildErrorJson("Type, name or id args are missing!"));
           return true;
         }
-        DynamicJsonDocument doc = CallbacksManager.getCallbackJsonById(
+        DynamicJsonDocument doc = HooksManager.getHookJsonById(
             type.c_str(), name.c_str(), id.toInt());
         String response;
         serializeJson(doc, response);
@@ -83,7 +83,7 @@ class CallbacksRequestHandler : public RequestHandler {
         return true;
       }
       DynamicJsonDocument doc =
-          CallbacksManager.allCallbacksToJson(false, false);
+          HooksManager.allHooksToJson(false, false);
       String response;
       serializeJson(doc, response);
       server.send(200, CONTENT_TYPE_JSON, response);
@@ -95,9 +95,9 @@ class CallbacksRequestHandler : public RequestHandler {
         return true;
       }
       int id =
-          CallbacksManager.createCallbackFromJson(server.arg("plain").c_str());
+          HooksManager.createHookFromJson(server.arg("plain").c_str());
       if (id >= 0) {
-        CallbacksManager.saveCallbacksToSettings();
+        HooksManager.saveHooksToSettings();
         // spritf fails, why?
         DynamicJsonDocument doc(16);
         doc["id"] = id;
@@ -106,7 +106,7 @@ class CallbacksRequestHandler : public RequestHandler {
         server.send(201, CONTENT_TYPE_JSON, response);
       } else {
         server.send(500, CONTENT_TYPE_JSON,
-                    buildErrorJson("Failed to create callback. Check logs for "
+                    buildErrorJson("Failed to create hook. Check logs for "
                                    "additional information."));
       }
       return true;
@@ -120,20 +120,20 @@ class CallbacksRequestHandler : public RequestHandler {
 
       DynamicJsonDocument doc(1024);
       deserializeJson(doc, body);
-      if (CallbacksManager.updateCallback(doc)) {
-        CallbacksManager.saveCallbacksToSettings();
+      if (HooksManager.updateHook(doc)) {
+        HooksManager.saveHooksToSettings();
         server.send(200);
       } else {
         server.send(500, CONTENT_TYPE_JSON,
-                    buildErrorJson("Failed to update callback. Check logs for "
+                    buildErrorJson("Failed to update hook. Check logs for "
                                    "additional information."));
       }
       return true;
     }
     if (requestMethod == HTTP_DELETE) {
-      String type = server.arg(CALLBACK_OBSERVABLE_TYPE);
-      String name = server.arg(CALLBACK_NAME_ARG);
-      String id = server.arg(CALLBACK_ID_ARG);
+      String type = server.arg(HOOK_OBSERVABLE_TYPE);
+      String name = server.arg(HOOK_NAME_ARG);
+      String id = server.arg(HOOK_ID_ARG);
 
       if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
         server.send(
@@ -142,13 +142,13 @@ class CallbacksRequestHandler : public RequestHandler {
         return true;
       }
 
-      if (CallbacksManager.deleteCallback(type.c_str(), name.c_str(),
+      if (HooksManager.deleteHook(type.c_str(), name.c_str(),
                                           id.toInt())) {
-        CallbacksManager.saveCallbacksToSettings();
+        HooksManager.saveHooksToSettings();
         server.send(200);
       } else {
         server.send(500, CONTENT_TYPE_JSON,
-                    buildErrorJson("Failed to delete callback. Check logs for "
+                    buildErrorJson("Failed to delete hook. Check logs for "
                                    "additional information."));
       }
       return true;

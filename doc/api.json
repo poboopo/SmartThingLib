@@ -281,19 +281,19 @@
         }
       }
     },
-    "/callbacks": {
+    "/hooks": {
       "get": {
         "tags": [
-          "Callback"
+          "Hook"
         ],
-        "description": "Get all device callbacks",
+        "description": "Get all device hooks",
         "responses": {
           "200": {
-            "description": "List of callbacks",
+            "description": "List of hooks",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/ObservablesCallbacks"
+                  "$ref": "#components/schemas/ObservablesHooks"
                 }
               }
             }
@@ -302,25 +302,25 @@
       },
       "post": {
         "tags": [
-          "Callback"
+          "Hook"
         ],
-        "description": "Create new callback",
+        "description": "Create new hook",
         "requestBody": {
-          "description": "Callback info",
+          "description": "Hook info",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#components/schemas/CallbackRequest"
+                "$ref": "#components/schemas/HookRequest"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Callback created"
+            "description": "Hook created"
           },
           "500": {
-            "description": "Failed to create callback",
+            "description": "Failed to create hook",
             "content": {
               "application/json": {
                 "schema": {
@@ -333,25 +333,25 @@
       },
       "put": {
         "tags": [
-          "Callback"
+          "Hook"
         ],
-        "description": "Updates callback",
+        "description": "Updates hook",
         "requestBody": {
-          "description": "Callback info",
+          "description": "Hook info",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#components/schemas/CallbackRequest"
+                "$ref": "#components/schemas/HookRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Callback updated"
+            "description": "Hook updated"
           },
           "500": {
-            "description": "Failed to update callback",
+            "description": "Failed to update hook",
             "content": {
               "application/json": {
                 "schema": {
@@ -364,9 +364,9 @@
       },
       "delete": {
         "tags": [
-          "Callback"
+          "Hook"
         ],
-        "description": "Delete observable's callback",
+        "description": "Delete observable's hook",
         "parameters": [
           {
             "name": "observableType",
@@ -389,7 +389,7 @@
           },
           {
             "name": "id",
-            "description": "Callback id",
+            "description": "Hook id",
             "required": true,
             "in": "query",
             "schema": {
@@ -399,10 +399,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Callback deleted"
+            "description": "Hook deleted"
           },
           "500": {
-            "description": "Failed to delete callback",
+            "description": "Failed to delete hook",
             "content": {
               "application/json": {
                 "schema": {
@@ -414,12 +414,12 @@
         }
       }
     },
-    "/callbacks/by/observable": {
+    "/hooks/by/observable": {
       "get": {
         "tags": [
-          "Callback"
+          "Hook"
         ],
-        "description": "Get callbacks for observable object (sensor or state)",
+        "description": "Get hooks for observable object (sensor or state)",
         "parameters": [
           {
             "name": "observableType",
@@ -443,11 +443,11 @@
         ],
         "responses": {
           "200": {
-            "description": "List of callbacks",
+            "description": "List of hooks",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/callbacksList"
+                  "$ref": "#components/schemas/hooksList"
                 }
               }
             }
@@ -455,12 +455,12 @@
         }
       }
     },
-    "/callbacks/by/id": {
+    "/hooks/by/id": {
       "get": {
         "tags": [
-          "Callback"
+          "Hook"
         ],
-        "description": "Get callback by id",
+        "description": "Get hook by id",
         "parameters": [
           {
             "name": "observableType",
@@ -484,7 +484,7 @@
           {
             "name": "id",
             "in": "query",
-            "description": "Callback id",
+            "description": "Hook id",
             "required": true,
             "schema": {
               "type": "string"
@@ -493,11 +493,11 @@
         ],
         "responses": {
           "200": {
-            "description": "List of callbacks",
+            "description": "List of hooks",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/Callback"
+                  "$ref": "#components/schemas/Hook"
                 }
               }
             }
@@ -505,15 +505,15 @@
         }
       }
     },
-    "/callbacks/templates": {
+    "/hooks/templates": {
       "get": {
         "tags": [
-          "Callback"
+          "Hook"
         ],
-        "description": "Get callbacks templates for creation",
+        "description": "Get hooks templates for creation",
         "responses": {
           "200": {
-            "$ref": "#components/responses/CallbackTemplates"
+            "$ref": "#components/responses/HookTemplates"
           }
         }
       }
@@ -656,41 +656,41 @@
           "automode": "true"
         }
       },
-      "Callback": {
-        "description": "Callback",
+      "Hook": {
+        "description": "Hook",
         "type": "object",
         "properties": {
           "id": {
-            "description": "Callback id",
+            "description": "Hook id",
             "type": "integer"
           },
           "caption": {
-            "description": "Callback caption",
+            "description": "Hook caption",
             "type": "string"
           },
           "trigger": {
-            "description": "Trigger value, when callback gonna ba called"
+            "description": "Trigger value, when hook gonna ba called"
           },
           "readonly": {
-            "description": "Is callback readonly",
+            "description": "Is hook readonly",
             "type": "boolean"
           },
           "type": {
-            "description": "Callback type",
+            "description": "Hook type",
             "type": "string",
-            "example": "lambda_callback/http_callback/action_callback"
+            "example": "lambda_hook/http_hook/action_hook"
           }
         }
       },
-      "CallbacksList": {
-        "description": "Observable's object callbacks",
+      "HooksList": {
+        "description": "Observable's object hooks",
         "type": "array",
         "items": {
-          "$ref": "#components/schemas/Callback"
+          "$ref": "#components/schemas/Hook"
         }
       },
-      "ObservablesCallbacks": {
-        "description": "List of all device callbacks",
+      "ObservablesHooks": {
+        "description": "List of all device hooks",
         "type": "array",
         "items": {
           "type": "object",
@@ -710,18 +710,18 @@
                 }
               }
             },
-            "callbacks": {
-              "$ref": "#components/schemas/callbacksList"
+            "hooks": {
+              "$ref": "#components/schemas/hooksList"
             }
           }
         }
       },
-      "CallbackRequest": {
-        "description": "Create callback body",
+      "HookRequest": {
+        "description": "Create hook body",
         "type": "object",
         "required": [
           "observable",
-          "callback"
+          "hook"
         ],
         "properties": {
           "observable": {
@@ -743,24 +743,24 @@
               }
             }
           },
-          "callback": {
-            "description": "Callback info. Only base fields, take others from template.",
+          "hook": {
+            "description": "Hook info. Only base fields, take others from template.",
             "type": "object",
             "required": [
               "type"
             ],
             "properties": {
               "id": {
-                "description": "Callback id. Just index in list.",
+                "description": "Hook id. Just index in list.",
                 "type": "integer"
               },
               "type": {
-                "description": "Callback type. Get it from template.",
+                "description": "Hook type. Get it from template.",
                 "type": "string",
-                "example": "http_callback/action_callback"
+                "example": "http_hook/action_hook"
               },
               "trigger": {
-                "description": "Callback trigger value",
+                "description": "Hook trigger value",
                 "type": "string"
               }
             }
@@ -769,12 +769,12 @@
       }
     },
     "responses": {
-      "CallbackTemplates": {
-        "description": "Callback templates response",
+      "HookTemplates": {
+        "description": "Hook templates response",
         "content": {
           "application/json": {
             "example": {
-              "http_callback": {
+              "http_hook": {
                 "url": {
                   "required": true
                 },
@@ -791,7 +791,7 @@
                   "required": false
                 }
               },
-              "action_callback": {
+              "action_hook": {
                 "action": {
                   "required": true,
                   "values": {

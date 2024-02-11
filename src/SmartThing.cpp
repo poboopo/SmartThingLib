@@ -73,9 +73,9 @@ bool SmartThingClass::init(String type) {
     return wifiConnected() ? "connected" : "disconnected";
   });
 
-  LOGGER.debug(SMART_THING_TAG, "Loading callbacks from settings...");
-  CallbacksManager.loadFromSettings();
-  LOGGER.debug(SMART_THING_TAG, "Callbacks loaded");
+  LOGGER.debug(SMART_THING_TAG, "Loading hooks from settings...");
+  HooksManager.loadFromSettings();
+  LOGGER.debug(SMART_THING_TAG, "Hooks loaded");
 
   LOGGER.debug(SMART_THING_TAG, "Creating loop task");
   xTaskCreate([](void* o) { static_cast<SmartThingClass*>(o)->loopRoutine(); },
@@ -98,7 +98,7 @@ void SmartThingClass::loopRoutine() {
       RestController.handle();
       _multicaster.broadcast(_broadcastMessage.c_str());
     }
-    CallbacksManager.check();
+    HooksManager.check();
     vTaskDelay(xDelay);
   }
 }
@@ -219,7 +219,7 @@ DynamicJsonDocument SmartThingClass::getConfigInfo() {
 }
 
 DynamicJsonDocument SmartThingClass::getWatchersInfo() {
-  return CallbacksManager.getWatchersInfo();
+  return HooksManager.getWatchersInfo();
 }
 
 // add possible values?

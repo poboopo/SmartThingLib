@@ -13,22 +13,22 @@
         - make sensors and states unique by name (as actions and config) +
         - fix web page + 
         - add watchers +
-        - add rest to create callback +
-        - put multiple callback for one object in one watcher +
-        - execute http callbacks async +
-        - add callback scenarios in web page +
+        - add rest to create hook +
+        - put multiple hook for one object in one watcher +
+        - execute http hooks async +
+        - add hook scenarios in web page +
         
     - v0.3
         - add settings compression LZ78 - [CANCELLED BCZ USLESS]
-        - add different http callback types support +
-        - add callabcks temaplate rest for callbacks creation (required fields) +
-        - save callbacks to settings +
+        - add different http hook types support +
+        - add callabcks temaplate rest for hooks creation (required fields) +
+        - save hooks to settings +
         - save state +
         - add statics rest +
-        - replace value in url in HTTP_CALLBACK +
+        - replace value in url in HTTP_HOOK +
 
     - v0.4
-        - add ActionCallback - call action from callback (+ web) +
+        - add ActionHook - call action from hook (+ web) +
         - todo SmartThing loop task routine - move to async +
         - add restart handler +
         - all handlers uri rework +
@@ -49,5 +49,5 @@
     - add search blink led - /blink
 
 - small fixes
-    - append callbacks to the end of the list
-    - add callbacks via CallbackBuilder
+    - append hooks to the end of the list
+    - add hooks via HookBuilder

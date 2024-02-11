@@ -5,7 +5,7 @@
 
 #define COMPARATOR_TAG "comparator"
 
-namespace Callback {
+namespace Hook {
 enum CompareType { EQ, NEQ, GTE, LTE };
 
 inline String compareTypeToString(CompareType type) {
@@ -93,5 +93,5 @@ class Comparator {
     return value.length() <= triggerValue.length();
   }
 };
-}  // namespace Callback
+}  // namespace Hook
 #endif

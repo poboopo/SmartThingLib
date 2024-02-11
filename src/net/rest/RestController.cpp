@@ -1,7 +1,7 @@
 #include "net/rest/RestController.h"
 
 #include "net/rest/handlers/ActionRequestHandler.h"
-#include "net/rest/handlers/CallbacksRequestHandler.h"
+#include "net/rest/handlers/HooksRequestHandler.h"
 #include "net/rest/handlers/ConfigRequestHandler.h"
 #include "net/rest/handlers/InfoRequestHandler.h"
 #include "net/rest/handlers/SensorsRequestHandler.h"
@@ -66,7 +66,7 @@ void RestControllerClass::setupHandler() {
   _server.addHandler(new SensorsRequestHandler());
   _server.addHandler(new StateRequestHandler());
   _server.addHandler(new ActionRequestHandler());
-  _server.addHandler(new CallbacksRequestHandler());
+  _server.addHandler(new HooksRequestHandler());
   _server.addHandler(new SettingsRequestHandler());
 
   _server.on("/health", HTTP_GET, [this]() {
@@ -112,7 +112,7 @@ void RestControllerClass::setupHandler() {
     JsonObject counts = doc.createNestedObject("counts");
     counts["sensors"] = SmartThing.getSensorsCount();
     counts["states"] = SmartThing.getDeviceStatesCount();
-    counts["callbacks"] = CallbacksManager.getTotalCallbacksCount();
+    counts["hooks"] = HooksManager.getTotalHooksCount();
 
     String response;
     serializeJson(doc, response);

@@ -1,27 +1,27 @@
-#ifndef ACTION_CALLBACK_H
-#define ACTION_CALLBACK_H
+#ifndef ACTION_HOOK_H
+#define ACTION_HOOK_H
 
 #include "SmartThing.h"
-#include "callbacks/impls/Callback.h"
+#include "hooks/impls/Hook.h"
 #include "logs/BetterLogger.h"
 
-#define ACTION_CALLBACK_TAG "action_callback"
+#define ACTION_HOOK_TAG "action_hook"
 
-namespace Callback {
+namespace Hook {
 template <class T>
-class ActionCallback : public Callback<T> {
+class ActionHook : public Hook<T> {
  public:
-  ActionCallback(const char *action, bool readOnly)
-      : Callback<T>(ACTION_CALLBACK_TAG, readOnly), _action(action){};
+  ActionHook(const char *action, bool readOnly)
+      : Hook<T>(ACTION_HOOK_TAG, readOnly), _action(action){};
 
   void call(T &value) {
     // replace ${value} in _action?
-    LOGGER.debug(ACTION_CALLBACK_TAG, "Calling action  %s", _action.c_str());
+    LOGGER.debug(ACTION_HOOK_TAG, "Calling action  %s", _action.c_str());
     SmartThing.callAction(_action.c_str());
   }
 
   DynamicJsonDocument toJson(bool shortJson) {
-    DynamicJsonDocument doc(CALLBACK_INFO_DOC_SIZE);
+    DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE);
     doc["action"] = _action.c_str();
     this->addDefaultInfo(doc);
     return doc;
@@ -31,11 +31,11 @@ class ActionCallback : public Callback<T> {
     if (obj.containsKey("action")) {
       String newAction = obj["action"].as<String>();
       if (newAction.isEmpty()) {
-        LOGGER.error(ACTION_CALLBACK_TAG, "Action is missing!");
+        LOGGER.error(ACTION_HOOK_TAG, "Action is missing!");
         return;
       }
       _action = newAction;
-      LOGGER.debug(ACTION_CALLBACK_TAG, "New callback action: %s",
+      LOGGER.debug(ACTION_HOOK_TAG, "New hook action: %s",
                    _action.c_str());
     }
   }
@@ -43,6 +43,6 @@ class ActionCallback : public Callback<T> {
  private:
   String _action;
 };
-}  // namespace Callback
+}  // namespace Hook
 
 #endif

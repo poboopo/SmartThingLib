@@ -6,7 +6,7 @@
 #define GROUP_CONFIG "cg"
 #define GROUP_WIFI "wf"
 #define DEVICE_NAME "dn"
-#define GROUP_CALLBACKS "cb"
+#define GROUP_HOOKS "cb"
 
 SettingsManager STSettings;
 
@@ -90,7 +90,7 @@ bool SettingsManager::save() {
   LOGGER.info(SETTINGS_MANAGER_TAG, "Saving settings");
   removeIfEmpty(GROUP_WIFI);
   removeIfEmpty(GROUP_CONFIG);
-  removeIfEmpty(GROUP_CALLBACKS);
+  removeIfEmpty(GROUP_HOOKS);
   _settings.garbageCollect();
 
   String data;
@@ -180,26 +180,26 @@ const String SettingsManager::getDeviceName() {
   return "";
 }
 
-void SettingsManager::setCallbacks(JsonArray doc) {
-  _settings[GROUP_CALLBACKS] = doc;
+void SettingsManager::setHooks(JsonArray doc) {
+  _settings[GROUP_HOOKS] = doc;
 }
 
-JsonArray SettingsManager::getCallbacks() {
-  if (_settings.containsKey(GROUP_CALLBACKS)) {
-    return _settings[GROUP_CALLBACKS];
+JsonArray SettingsManager::getHooks() {
+  if (_settings.containsKey(GROUP_HOOKS)) {
+    return _settings[GROUP_HOOKS];
   }
-  return _settings.createNestedArray(GROUP_CALLBACKS);
+  return _settings.createNestedArray(GROUP_HOOKS);
 }
 
-void SettingsManager::dropAllCallbacks() {
-  _settings.remove(GROUP_CALLBACKS);
+void SettingsManager::dropAllHooks() {
+  _settings.remove(GROUP_HOOKS);
   _settings.garbageCollect();
 }
 
 const DynamicJsonDocument SettingsManager::exportSettings() {
   DynamicJsonDocument doc(JSON_SETTINGS_DOC_SIZE);
   doc[GROUP_CONFIG] = getConfig();
-  doc[GROUP_CALLBACKS] = getCallbacks();
+  doc[GROUP_HOOKS] = getHooks();
   doc[DEVICE_NAME] = getDeviceName();
   return doc;
 }
@@ -231,11 +231,11 @@ bool SettingsManager::importSettings(DynamicJsonDocument doc) {
   } else {
     _settings[GROUP_CONFIG] = doc[GROUP_CONFIG];
   }
-  if (doc[GROUP_CALLBACKS].size() > 0 && !doc[GROUP_CALLBACKS].is<JsonArray>()) {
-    LOGGER.error(SETTINGS_MANAGER_TAG, "Expected %s to be JsonArray!", GROUP_CALLBACKS);
+  if (doc[GROUP_HOOKS].size() > 0 && !doc[GROUP_HOOKS].is<JsonArray>()) {
+    LOGGER.error(SETTINGS_MANAGER_TAG, "Expected %s to be JsonArray!", GROUP_HOOKS);
     res = false;
   } else {
-    _settings[GROUP_CALLBACKS] = doc[GROUP_CALLBACKS];
+    _settings[GROUP_HOOKS] = doc[GROUP_HOOKS];
   }
 
   if (res) {

@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <ArduinoOTA.h>
 
-#include "callbacks/CallbacksManager.h"
+#include "hooks/HooksManager.h"
 #include "configurable/ActionsList.h"
 #include "configurable/ConfigEntriesList.h"
 #include "configurable/DeviceStatesList.h"

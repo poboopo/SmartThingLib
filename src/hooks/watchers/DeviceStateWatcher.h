@@ -1,8 +1,8 @@
 #ifndef DEVICE_STATE_WATCHER_H
 #define DEVICE_STATE_WATCHER_H
 
-#include "callbacks/impls/Callback.h"
-#include "callbacks/watchers/Watcher.h"
+#include "hooks/impls/Hook.h"
+#include "hooks/watchers/Watcher.h"
 #include "configurable/ConfigurableObjects.h"
 #include "logs/BetterLogger.h"
 
@@ -11,7 +11,7 @@
 using namespace Configurable::Sensor;
 #define STATE_WATCHER_TYPE "state"
 
-namespace Callback {
+namespace Hook {
 class DeviceStateWatcher : public Watcher<String> {
  public:
   DeviceStateWatcher(const Configurable::DeviceState::DeviceState* deviceState)
@@ -30,7 +30,7 @@ class DeviceStateWatcher : public Watcher<String> {
       LOGGER.debug(DEVICE_STATE_WATCHER_TAG,
                    "Device state %s value changed %s->%s.", _observable->name,
                    _oldValue, newValue);
-      callCallbacks(newValue);
+      callHooks(newValue);
 
       _oldValue = newValue;
       return true;
@@ -40,6 +40,6 @@ class DeviceStateWatcher : public Watcher<String> {
 
   const char* getObservableInfo() { return _observable->name; };
 };
-}  // namespace Callback
+}  // namespace Hook
 
 #endif

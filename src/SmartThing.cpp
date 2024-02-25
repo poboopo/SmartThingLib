@@ -11,18 +11,19 @@ bool SmartThingClass::wifiConnected() {
   return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
 }
 
-bool SmartThingClass::init(String type) {
+bool SmartThingClass::init() {
   LOGGER.init();
   LOGGER.debug(SMART_THING_TAG, "Smart thing initialization started");
 
   STSettings.loadSettings();
   LOGGER.debug(SMART_THING_TAG, "Settings manager loaded");
 
-  _type = type;
-  _name = STSettings.getDeviceName();
   if (_name.isEmpty()) {
-    _name = ESP.getChipModel();
-    STSettings.setDeviceName(_name.c_str());
+    _name = STSettings.getDeviceName();
+    if (_name.isEmpty()) {
+      _name = ESP.getChipModel();
+      STSettings.setDeviceName(_name.c_str());
+    }
   }
   LOGGER.debug(SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
 
@@ -41,7 +42,6 @@ bool SmartThingClass::init(String type) {
     LOGGER.initNetConnection(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG],
                              _ip.c_str(), _name.c_str());
 
-    ArduinoOTA.begin();
     LOGGER.debug(SMART_THING_TAG, "Ota started");
 
     _multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
@@ -94,7 +94,6 @@ void SmartThingClass::loopRoutine() {
 
   for (;;) {
     if (wifiConnected()) {
-      ArduinoOTA.handle();
       RestController.handle();
       _multicaster.broadcast(_broadcastMessage.c_str());
     }
@@ -175,7 +174,7 @@ void SmartThingClass::wipeSettings() {
   _led.off();
 }
 
-void SmartThingClass::setName(String name) {
+void SmartThingClass::updateDeviceName(String name) {
   name.trim();
   name.replace(" ", "_");
   if (name == _name) {
@@ -230,16 +229,16 @@ bool SmartThingClass::addDeviceState(
   return _deviceStatesList.add(name, function);
 }
 
-bool SmartThingClass::registerSensor(
+bool SmartThingClass::addSensor(
     const char* name,
     Configurable::ConfigurableObject<int16_t>::ValueProviderFunction function) {
   return _sensorsList.add(name, function);
 }
-bool SmartThingClass::registerDigitalSensor(const char* name, int pin) {
+bool SmartThingClass::addDigitalSensor(const char* name, int pin) {
   pinMode(pin, INPUT_PULLUP);
   return _sensorsList.addDigital(name, pin);
 }
-bool SmartThingClass::registerAnalogSensor(const char* name, int pin) {
+bool SmartThingClass::addAnalogSensor(const char* name, int pin) {
   return _sensorsList.addAnalog(name, pin);
 }
 

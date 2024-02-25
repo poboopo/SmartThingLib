@@ -31,8 +31,8 @@ class InfoRequestHandler : public RequestHandler {
       server.send(200);
       return true;
     }
-    // todo remove requestUri.equals("/info")
-    if (requestUri.equals("/info/system") || requestUri.equals("/info")) {
+    
+    if (requestUri.equals("/info/system")) {
       if (requestMethod == HTTP_GET) {
         DynamicJsonDocument jsonDoc(256);
         jsonDoc["version"] = SMART_THING_VERSION;
@@ -62,7 +62,7 @@ class InfoRequestHandler : public RequestHandler {
           return true;
         }
 
-        SmartThing.setName(newName);
+        SmartThing.updateDeviceName(newName);
         server.send(200);
         return true;
       }

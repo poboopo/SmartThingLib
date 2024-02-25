@@ -2,7 +2,6 @@
 #define SMART_THING_H
 
 #include <Arduino.h>
-#include <ArduinoOTA.h>
 
 #include "hooks/HooksManager.h"
 #include "configurable/ActionsList.h"
@@ -39,19 +38,28 @@ class SmartThingClass {
   ~SmartThingClass();
   SmartThingClass();
 
-  bool init(String type);
-  void setName(String name);
+  bool init(String type) {
+    _type = type;
+    return init();
+  }
+  bool init(String type, String name) {
+    _type = type;
+    _name = name;
+    return init();
+  }
+
+  void updateDeviceName(String name);
   const char * getType();
   const char * getName();
   const char * getIp();
   bool wifiConnected();
 
-  bool registerSensor(
+  bool addSensor(
       const char* name,
       Configurable::ConfigurableObject<int16_t>::ValueProviderFunction
           valueProvider);
-  bool registerDigitalSensor(const char* name, int pin);
-  bool registerAnalogSensor(const char* name, int pin);
+  bool addDigitalSensor(const char* name, int pin);
+  bool addAnalogSensor(const char* name, int pin);
   bool addDeviceState(
       const char* name,
       Configurable::ConfigurableObject<const char*>::ValueProviderFunction
@@ -85,6 +93,8 @@ class SmartThingClass {
  private:
   Multicaster _multicaster;
   LedIndicator _led;
+
+  bool init();
 
   Configurable::Sensor::SensorsList _sensorsList;
   Configurable::DeviceState::DeviceStatesList _deviceStatesList;

@@ -18,12 +18,9 @@ bool SmartThingClass::init() {
   STSettings.loadSettings();
   LOGGER.debug(SMART_THING_TAG, "Settings manager loaded");
 
+  _name = STSettings.getDeviceName();
   if (_name.isEmpty()) {
-    _name = STSettings.getDeviceName();
-    if (_name.isEmpty()) {
-      _name = ESP.getChipModel();
-      STSettings.setDeviceName(_name.c_str());
-    }
+    _name = ESP.getChipModel();
   }
   LOGGER.debug(SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
 
@@ -247,7 +244,7 @@ bool SmartThingClass::addActionHandler(const char* action, const char* caption,
   return _actionsList.add(action, caption, handler);
 }
 
-Action::ActionResult SmartThingClass::callAction(const char* action) {
+ActionResult SmartThingClass::callAction(const char* action) {
   return _actionsList.callAction(action);
 }
 

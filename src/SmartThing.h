@@ -70,7 +70,7 @@ class SmartThingClass {
                         Configurable::Action::ActionHandler handler) {
     return addActionHandler(action, action, handler);
   };
-  Configurable::Action::ActionResult callAction(const char* action);
+  ActionResult callAction(const char* action);
   bool addConfigEntry(const char* name, const char* caption, const char* type);
 
   const Configurable::DeviceState::DeviceState* getDeviceState(

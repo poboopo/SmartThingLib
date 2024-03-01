@@ -9,8 +9,6 @@
 
 #define ACTIONS_LIST_TAG "action_handlers_list"
 
-namespace Configurable {
-namespace Action {
 struct ActionResult {
   ActionResult(){};
   ActionResult(bool successful) : successful(successful){};
@@ -20,6 +18,8 @@ struct ActionResult {
   const char* message = nullptr;
 };
 
+namespace Configurable {
+namespace Action {
 typedef std::function<ActionResult(void)> ActionHandler;
 
 struct Action {

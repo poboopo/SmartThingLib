@@ -1,5 +1,8 @@
 #include "SmartThing.h"
 
+#define WIPE_PIN 19
+#define WIPE_TIMEOUT 5000
+
 using namespace Configurable;
 
 SmartThingClass SmartThing;
@@ -24,10 +27,15 @@ bool SmartThingClass::init() {
   }
   LOGGER.debug(SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
 
-  pinMode(WIPE_BUTTON_PIN, INPUT_PULLUP);
+  LOGGER.debug(
+    SMART_THING_TAG,
+    "Wipe pin=%d, timeout=%d",
+    WIPE_PIN, WIPE_TIMEOUT
+  );
+  pinMode(WIPE_PIN, INPUT_PULLUP);
   _led.init(LED_PIN);
 
-  if (!digitalRead(WIPE_BUTTON_PIN)) {
+  if (!digitalRead(WIPE_PIN)) {
     wipeSettings();
   }
 
@@ -157,13 +165,13 @@ String SmartThingClass::connectToWifi() {
 void SmartThingClass::wipeSettings() {
   long started = millis();
   LOGGER.warning(SMART_THING_TAG, "ALL SETTINGS WILL BE WIPED IN %d ms!!!",
-                 WIPE_BUTTON_TIME);
+                 WIPE_TIMEOUT);
 
   _led.on();
-  while (!digitalRead(WIPE_BUTTON_PIN) &&
-         millis() - started < WIPE_BUTTON_TIME) {
+  while (!digitalRead(WIPE_PIN) &&
+         millis() - started < WIPE_TIMEOUT) {
   }
-  if (!digitalRead(WIPE_BUTTON_PIN)) {
+  if (!digitalRead(WIPE_PIN)) {
     STSettings.dropAll();
     STSettings.save();
     LOGGER.warning(SMART_THING_TAG, "Settings were wiped!");

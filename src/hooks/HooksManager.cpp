@@ -6,13 +6,9 @@
 #include "hooks/watchers/SensorWatcher.h"
 #include "settings/SettingsManager.h"
 
-// #include <unordered_map>
-
 #define HOOKS_MANAGER_TAG "hooks_manager"
 
 Hook::HooksManagerClass HooksManager;
-
-// std::unordered_map<int, int> m;
 
 namespace Hook {
 using namespace Configurable::Sensor;
@@ -79,6 +75,13 @@ int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
   LOGGER.error(HOOKS_MANAGER_TAG, "Unkown observable object type: %s",
                type);
   return -1;
+}
+
+int HooksManagerClass::addHook(const Configurable::Sensor::Sensor * sensor, Hook<int16_t> * hook) {
+  return addHook<int16_t>(sensor, hook);
+}
+int HooksManagerClass::addHook(const Configurable::DeviceState::DeviceState * state, Hook<String> * hook) {
+  return addHook<String>(state, hook);
 }
 
 template <class T>

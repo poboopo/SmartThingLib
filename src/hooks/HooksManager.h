@@ -21,9 +21,8 @@ class HooksManagerClass {
   int createHookFromJson(JsonObject observableInfo,
                              JsonObject hookInfo);
 
-  template <typename T>
-  int addHook(const Configurable::ConfigurableObject<T>* obj,
-                  Hook<T>* hook);
+  int addHook(const Configurable::Sensor::Sensor * sensor, Hook<int16_t> * hook);
+  int addHook(const Configurable::DeviceState::DeviceState * state, Hook<String> * hook);
   bool deleteHook(const char* type, const char* name, int id);
   bool updateHook(DynamicJsonDocument doc);
 
@@ -44,6 +43,10 @@ class HooksManagerClass {
   List<Watcher<int16_t>> _sensorsWatchers;
   List<Watcher<String>> _statesWatchers;
   int _hooksCount = 0;
+
+  template <typename T>
+  int addHook(const Configurable::ConfigurableObject<T>* obj,
+                  Hook<T>* hook);
 
   template <typename T>
   void collectInfo(List<Watcher<T>>* list, JsonArray* array);

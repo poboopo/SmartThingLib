@@ -34,7 +34,7 @@ void BetterLogger::connectSocket() {
 void BetterLogger::log(const char* level, const char* tag,
                        const char* message) {
   char formattedMessage[MAX_MESSAGE_LENGTH];
-  sprintf(formattedMessage, LOGGER_MESSAGE_TEMPLATE, _ip, _name, level, tag,
+  sprintf(formattedMessage, LOGGER_MESSAGE_TEMPLATE, _name, level, tag,
           message);
   Serial.println(formattedMessage);
 

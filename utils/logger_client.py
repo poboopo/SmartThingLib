@@ -38,7 +38,7 @@ def udp():
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
     printHeader()
     try:
-        recvMessages(sock)
+        recvMessages("", sock)
     except KeyboardInterrupt:
         print("leaving...")
     finally:
@@ -52,8 +52,8 @@ def tcp():
     printHeader()
     try:
         while(True):
-            conn, addr = sock.accept()
-            th = threading.Thread(target=recvMessages, args=[conn], daemon=True)
+            conn, (ip, port) = sock.accept()
+            th = threading.Thread(target=recvMessages, args=[ip, conn], daemon=True)
             th.start()
     except KeyboardInterrupt:
         print("leaving...")
@@ -65,7 +65,7 @@ def printHeader():
     print(f"{'TIMESTAMP': ^26} [{'IP': ^15} :: {'NAME': ^15}] - [{'LEVEL': ^7}] [{'TAG': ^20}] :: LOG MESSAGE")
     print(f"{'':-<115}{END_COLOR}")
 
-def recvMessages(conn):
+def recvMessages(ip, conn):
     global ipColor
     global lastColorIndex
     
@@ -82,11 +82,10 @@ def recvMessages(conn):
                     print(message)
                     continue
 
-                ip = splitted[0]
-                name = splitted[1]
-                logLevel = splitted[2]
-                tag = splitted[3]
-                messageCuted = splitted[4].strip()
+                name = splitted[0]
+                logLevel = splitted[1]
+                tag = splitted[2]
+                messageCuted = splitted[3].strip()
 
                 if (ip not in ipColor.keys()):
                     ipColor.update({ip: f"3{lastColorIndex}m"})

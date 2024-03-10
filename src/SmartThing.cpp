@@ -44,8 +44,7 @@ bool SmartThingClass::init() {
   if (wifiConnected()) {
     LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
     delay(1000);
-    LOGGER.initNetConnection(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG],
-                             _ip.c_str(), _name.c_str());
+    LOGGER.initNetConnection(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG], _name.c_str());
 
     LOGGER.debug(SMART_THING_TAG, "Ota started");
 
@@ -64,8 +63,7 @@ bool SmartThingClass::init() {
       RestController.reload();
 
       LOGGER.info(SMART_THING_TAG, "Reconnecting logger");
-      LOGGER.initNetConnection(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG],
-                               _ip.c_str(), _name.c_str());
+      LOGGER.initNetConnection(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG], _name.c_str());
     });
     RestController.begin();
     LOGGER.debug(SMART_THING_TAG, "RestController started");

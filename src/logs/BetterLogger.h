@@ -9,8 +9,8 @@
 // #define MULTICAST_LOGGER
 #define TCP_LOGGER
 
-// ip_&_name_&_level_&_tag_&_message
-#define LOGGER_MESSAGE_TEMPLATE "%s_&_%s_&_%s_&_%s_&_%s\n"
+// name_&_level_&_tag_&_message
+#define LOGGER_MESSAGE_TEMPLATE "%s_&_%s_&_%s_&_%s\n"
 #define STAT_LOG_TAG "STATISTICS"
 #define MAX_MESSAGE_LENGTH 2048
 
@@ -28,9 +28,8 @@ class BetterLogger {
   ~BetterLogger() { close(_sock); }
 
   void init() { Serial.begin(115200); }
-  void initNetConnection(String fullAddr, const char* myIp, const char* name) {
+  void initNetConnection(String fullAddr, const char* name) {
     _name = name;
-    _ip = myIp;
     _fullAddr = fullAddr;
 
     connectSocket();
@@ -103,7 +102,6 @@ class BetterLogger {
   struct sockaddr_in _saddr = {0};
   String _fullAddr;
 
-  const char* _ip = "NOT_CONNECTED";
   const char* _name = "no_name";
 
   void connectSocket();

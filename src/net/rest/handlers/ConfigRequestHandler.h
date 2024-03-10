@@ -53,8 +53,6 @@ class ConfigRequestHandler : public RequestHandler {
       JsonObject root = jsonDoc.as<JsonObject>();
       JsonObject config = STSettings.getConfig();
 
-      //  bad realisation
-      //  why i made it????
       for (JsonPair pair : root) {
         config[pair.key()] = pair.value();
       }

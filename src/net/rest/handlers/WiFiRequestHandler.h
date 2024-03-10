@@ -13,8 +13,7 @@
 
 class WiFiRequesthandler : public RequestHandler {
  public:
-  WiFiRequesthandler(RestHandlerFunction* wifiUpdatedHandler)
-      : _wifiUpdatedHandler(wifiUpdatedHandler){};
+  WiFiRequesthandler() {};
 
   bool canHandle(HTTPMethod method, String uri) {
     return uri.startsWith(WIFI_RQ_PATH) &&
@@ -89,16 +88,11 @@ class WiFiRequesthandler : public RequestHandler {
       wifiSettings[WIFI_MODE_SETTING] = mode;
       STSettings.save();
       server.send(200);
-      if (_wifiUpdatedHandler != nullptr) {
-        (*_wifiUpdatedHandler)();
-      }
+      ESP.restart();
       return true;
     }
     return false;
   }
-
- private:
-  RestHandlerFunction* _wifiUpdatedHandler;
 };
 
 #endif

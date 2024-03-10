@@ -35,6 +35,7 @@ bool SmartThingClass::init() {
   pinMode(WIPE_PIN, INPUT_PULLUP);
   _led.init(LED_PIN);
 
+  delay(50);
   if (!digitalRead(WIPE_PIN)) {
     wipeSettings();
   }
@@ -52,19 +53,6 @@ bool SmartThingClass::init() {
     updateBroadCastMessage();
     LOGGER.debug(SMART_THING_TAG, "Multicaster created");
 
-    RestController.addWifiupdatedHandler([&]() {
-      LOGGER.warning(SMART_THING_TAG, "WiFi updated, reloading wifi!");
-      WiFi.disconnect();
-      WiFi.mode(WIFI_MODE_NULL);
-      delay(500);
-      _ip = connectToWifi();
-      LOGGER.info(SMART_THING_TAG, "WiFi reloaded");
-      LOGGER.info(SMART_THING_TAG, "Reloading rest...");
-      RestController.reload();
-
-      LOGGER.info(SMART_THING_TAG, "Reconnecting logger");
-      LOGGER.initNetConnection(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG], _name.c_str());
-    });
     RestController.begin();
     LOGGER.debug(SMART_THING_TAG, "RestController started");
   } else {
@@ -86,6 +74,7 @@ bool SmartThingClass::init() {
   LOGGER.debug(SMART_THING_TAG, "Loop task created");
 
   addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)", "string");
+  // For notifications
   addConfigEntry(GATEWAY_CONFIG, "Gateway address (ip:port)", "string");
 
   LOGGER.debug(SMART_THING_TAG, "Setup finished");

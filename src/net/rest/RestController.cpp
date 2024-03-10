@@ -61,7 +61,7 @@ void RestControllerClass::preHandleRequest() {
 // add authorization?
 void RestControllerClass::setupHandler() {
   _server.addHandler(new ConfigRequestHandler(&_configUpdatedHandler));
-  _server.addHandler(new WiFiRequesthandler(&_wifiUpdatedHandler));
+  _server.addHandler(new WiFiRequesthandler());
   _server.addHandler(new InfoRequestHandler());
   _server.addHandler(new SensorsRequestHandler());
   _server.addHandler(new StateRequestHandler());

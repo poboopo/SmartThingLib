@@ -27,9 +27,6 @@ class RestControllerClass {
   void addConfigUpdatedHandler(RestHandlerFunction hf) {
     _configUpdatedHandler = hf;
   }
-  void addWifiupdatedHandler(RestHandlerFunction hf) {
-    _wifiUpdatedHandler = hf;
-  }
   void addRestartHandler(RestHandlerFunction hf) { _restartHandler = hf; }
 
   String getRequestBody();
@@ -48,7 +45,6 @@ class RestControllerClass {
   void processRestHandlerResult(RestHandlerResult result);
 
   RestHandlerFunction _configUpdatedHandler = []() {};
-  RestHandlerFunction _wifiUpdatedHandler = []() {};
   RestHandlerFunction _restartHandler = []() {};
 };
 

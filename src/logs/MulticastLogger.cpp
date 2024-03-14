@@ -30,16 +30,12 @@ void BetterLogger::connectSocket() {
   log("DEBUG", "LOGGER", "Connected to multicast group");
 }
 
-void BetterLogger::log(const char* level, const char* tag,
-                       const char* message) {
-  char formattedMessage[MAX_MESSAGE_LENGTH];
-  sprintf(formattedMessage, LOGGER_MESSAGE_TEMPLATE, _name, level, tag,
-          message);
-  Serial.println(formattedMessage);
+void BetterLogger::log(const char* message) {
+  Serial.println(message);
 
   // is it really necessary?
   if (_connected && _sock >= 0) {
-    int nbytes = sendto(_sock, formattedMessage, strlen(formattedMessage), 0,
+    int nbytes = sendto(_sock, message, strlen(message), 0,
                         (struct sockaddr*)&_saddr, sizeof(_saddr));
     if (nbytes < 0) {
       Serial.println("Failed to send message via socket. Closing connection.");

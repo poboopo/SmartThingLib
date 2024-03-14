@@ -31,16 +31,12 @@ void BetterLogger::connectSocket() {
   info(LOGGER_TAG, "Connected to tcp logging server");
 }
 
-void BetterLogger::log(const char* level, const char* tag,
-                       const char* message) {
-  char formattedMessage[MAX_MESSAGE_LENGTH];
-  sprintf(formattedMessage, LOGGER_MESSAGE_TEMPLATE, _name, level, tag,
-          message);
-  Serial.println(formattedMessage);
+void BetterLogger::log(const char* message) {
+  Serial.println(message);
 
   // is it really necessary?
   if (_connected && _sock > 0) {
-    int nbytes = send(_sock, formattedMessage, strlen(formattedMessage), 0);
+    int nbytes = send(_sock, message, strlen(message), 0);
     if (nbytes < 0) {
       Serial.println("Failed to send message via socket. Closing connection.");
       close(_sock);

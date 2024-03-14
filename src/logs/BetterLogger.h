@@ -10,7 +10,7 @@
 #define TCP_LOGGER
 
 // name_&_level_&_tag_&_message
-#define LOGGER_MESSAGE_TEMPLATE "%s_&_%s_&_%s_&_%s\n"
+#define LOGGER_MESSAGE_TEMPLATE "%s_&_%u_&_%s_&_%s\n"
 #define STAT_LOG_TAG "STATISTICS"
 #define MAX_MESSAGE_LENGTH 2048
 
@@ -43,14 +43,17 @@ class BetterLogger {
     connectSocket();
   }
 
-  void log(const char* level, const char* tag, const char* message);
+  void log(const char* message);
   template <typename... Args>
-  void log(const char* level, const char* tag, const char* format,
+  void log(uint8_t level, const char* tag, const char* format,
            Args... args) {
     // TODO fix long args will cause core panic
     char message[MAX_MESSAGE_LENGTH];
     sprintf(message, format, args...);
-    log(level, tag, message);
+    char formattedMessage[MAX_MESSAGE_LENGTH];
+    sprintf(formattedMessage, LOGGER_MESSAGE_TEMPLATE, _name, level, tag,
+            message);
+    log(formattedMessage);
   }
 
   void logRequest(const char* tag, const char* method, const char* uri,
@@ -64,27 +67,27 @@ class BetterLogger {
 #if defined(LOGGING_LEVEL_ERROR) || defined(LOGGING_LEVEL_WARN) || \
     defined(LOGGING_LEVEL_INFO) || defined(LOGGING_LEVEL_DEBUG) || \
     defined(LOGGING_LEVEL_ALL)
-    log("ERROR", tag, format, args...);
+    log(40, tag, format, args...);
 #endif
   };
   template <typename... Args>
   void warning(const char* tag, const char* format, Args... args) {
 #if defined(LOGGING_LEVEL_WARN) || defined(LOGGING_LEVEL_INFO) || \
     defined(LOGGING_LEVEL_DEBUG) || defined(LOGGING_LEVEL_ALL)
-    log("WARN", tag, format, args...);
+    log(30, tag, format, args...);
 #endif
   };
   template <typename... Args>
   void info(const char* tag, const char* format, Args... args) {
 #if defined(LOGGING_LEVEL_INFO) || defined(LOGGING_LEVEL_DEBUG) || \
     defined(LOGGING_LEVEL_ALL)
-    log("INFO", tag, format, args...);
+    log(20, tag, format, args...);
 #endif
   };
   template <typename... Args>
   void debug(const char* tag, const char* format, Args... args) {
 #if defined(LOGGING_LEVEL_DEBUG) || defined(LOGGING_LEVEL_ALL)
-    log("DEBUG", tag, format, args...);
+    log(10, tag, format, args...);
 #endif
   };
   void statistics() {

@@ -20,13 +20,14 @@ lastColorIndex = 2
 logFile = open(LOGGER_FILE, "a")
 
 def colorByLevel(logLevel):
-    if logLevel == "ERROR":
+    print(logLevel)
+    if logLevel == 40:
         return "31m"
-    if logLevel == "WARNING":
+    if logLevel == 30:
         return "35m"
-    if logLevel == "INFO":
+    if logLevel == 20:
         return "34m"
-    if logLevel == "DEBUG":
+    if logLevel == 10:
         return "32m"
     return "30"
 
@@ -92,7 +93,7 @@ def recvMessages(ip, conn):
                     lastColorIndex += 1
 
                 formatedMessage = f"{START_COLOR + ipColor[ip]}{datetime.now()} [{ip: ^15} :: {name: ^15}]{END_COLOR} - "
-                formatedMessage += f"{START_COLOR + colorByLevel(logLevel)}[{logLevel: ^7}] [{tag: ^20}] :: {messageCuted}{END_COLOR}"
+                formatedMessage += f"{START_COLOR + colorByLevel(logLevel)}[{str(logLevel): ^2}] [{tag: ^20}] :: {messageCuted}{END_COLOR}"
                 print(formatedMessage)
                 logFile.write(formatedMessage + '\n')
                 logFile.flush()

@@ -29,25 +29,16 @@
 
     - v0.4
         - add ActionHook - call action from hook (+ web) +
-        - todo SmartThing loop task routine - move to async +
+        - SmartThing loop task routine - move to async +
         - add restart handler +
         - all handlers uri rework +
         - rework log message format - just use : or $ to separate data +
-        - add import export config - [DENIED JUST USE CONFIG/ADD AND GET CONFIG]
 
 - backlog
     - tuya, zigbee integration
-    - store sensors values
-    - add tests
+    - store sensors values -
+    - add tests +
     - add multiple values support for trigger value
-    - add message broker support in logger
-    - add different templates support on logger?
+    - add message broker support in logger -
+    - add different templates support on logger? -
     - fix logger message length
-    - ОПИШИ АРХИТЕКТУРУ
-    - wifi network scan
-    - add authorization???
-    - add search blink led - /blink
-
-- small fixes
-    - append hooks to the end of the list
-    - add hooks via HookBuilder

@@ -47,7 +47,6 @@ const char* SettingsManager::loadFromEeprom() {
     String data = "{";
     uint8_t val;
     bool completed = false;
-    // todo replace with readString?
     for (int i = 0; i < EEPROM_LOAD_SIZE; i++) {
       val = EEPROM.read(i);
       if (isAscii(val)) {
@@ -58,7 +57,6 @@ const char* SettingsManager::loadFromEeprom() {
         data += (char)val;
       }
     }
-    EEPROM.commit();
 
     if (!completed) {
       LOGGER.error(SETTINGS_MANAGER_TAG,
@@ -113,7 +111,6 @@ bool SettingsManager::save() {
   }
 
   if (EEPROM.begin(EEPROM_LOAD_SIZE)) {
-    // todo replace with write string?
     LOGGER.debug(SETTINGS_MANAGER_TAG, "Wrtining data to EEPROM (length [%u]): %s",
                  data.length(), data.c_str());
     for (int i = 0; i < data.length(); i++) {

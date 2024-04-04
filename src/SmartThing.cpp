@@ -132,14 +132,14 @@ String SmartThingClass::connectToWifi() {
       WiFi.begin(ssid, password);
       long startTime = millis();
       _led.blink();
-      while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {
-      }
+      while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {}
       _led.off();
       if (WiFi.isConnected()) {
         LOGGER.info(SMART_THING_TAG, "WiFi started in STA mode");
         return WiFi.localIP().toString();
       } else {
         WiFi.disconnect();
+        LOGGER.error(SMART_THING_TAG, "Failed to connect to Wifi (%s::%s)", ssid, password);
         return "";
       }
     } else {

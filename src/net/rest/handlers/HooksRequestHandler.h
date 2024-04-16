@@ -42,7 +42,13 @@ class HooksRequestHandler : public RequestHandler {
     server.sendHeader("Access-Control-Allow-Origin", "*");
     if (requestMethod == HTTP_GET) {
       if (requestUri.equals("/hooks/templates")) {
-        DynamicJsonDocument doc = Hook::HooksFactory::getTemplates();
+        String type = server.arg(HOOK_OBSERVABLE_TYPE);
+        if (type.isEmpty()) {
+          server.send(400, CONTENT_TYPE_JSON,
+                      buildErrorJson("Type parameter are missing!"));
+          return true;
+        }
+        DynamicJsonDocument doc = Hook::HooksFactory::getTemplates(type.c_str());
         String response;
         serializeJson(doc, response);
         server.send(200, CONTENT_TYPE_JSON, response);

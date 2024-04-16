@@ -13,6 +13,13 @@
 #define MAX_HOOK_TEMPLATE_SIZE 1024
 #define VALUE_DYNAMIC_PARAM "${v}"
 
+/**
+ * TODO
+ * Переделать таким образом, что бы для сенсоров и состояний был отдельный шаблон
+ * Таким образом разделить логику сранения значений (сделать так же проверку при установке типа сравнения)
+ * Для сенсоров добавить трешхолд
+ * Вынести так же получение шаблона сюда (у сенсоров и состояний будут разные шаблоны)
+*/
 namespace Hook {
 template <typename T>
 // template<ConfigurableObject<T> ????>
@@ -57,7 +64,6 @@ class Hook {
   void setTriggerValue(T triggerValue) { _triggerValue = triggerValue; }
   void setReadOnly(bool readOnly) { _readonly = readOnly; }
   bool isReadonly() { return _readonly; }
-  const T triggerValue() const { return _triggerValue; }
   const char *type() const { return _type; }
 
  protected:

@@ -10,9 +10,12 @@
 
 #define HOOK_BUILDER_TAG "cb_builder"
 
-#define DEFAULT_HOOKS_TEMPLATES_JSON                                  \
+#define DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON                                  \
   "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true," \
   "\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}"
+#define DEFAULT_STATES_HOOKS_TEMPLATES_JSON                                  \
+  "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true," \
+  "\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}"
 
 namespace Hook {
 class HookBuilder {
@@ -22,9 +25,15 @@ class HookBuilder {
     LOGGER.error(HOOK_BUILDER_TAG, "Base build method call!");
     return nullptr;
   };
-  static DynamicJsonDocument getTemplate() {
+  static DynamicJsonDocument getTemplate(const char * type) {
     DynamicJsonDocument doc(MAX_HOOK_TEMPLATE_SIZE);
-    deserializeJson(doc, DEFAULT_HOOKS_TEMPLATES_JSON);
+    if (strcmp(type, SENSOR_TYPE) == 0) {
+      deserializeJson(doc, DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON);
+    } else if (strcmp(type, STATE_TYPE) == 0) {
+      deserializeJson(doc, DEFAULT_STATES_HOOKS_TEMPLATES_JSON);
+    } else {
+      deserializeJson(doc, "{}");
+    }
     return doc;
   }
 

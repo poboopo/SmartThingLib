@@ -45,10 +45,9 @@ class HooksFactory {
                  "-----------------------BUILDER-END----------------------");
     return hook;
   }
-  static DynamicJsonDocument getTemplates() {
-    //<bruh>
+  static DynamicJsonDocument getTemplates(const char * type) {
     DynamicJsonDocument doc(MAX_HOOK_TEMPLATE_SIZE * 4);
-    doc["default"] = HookBuilder::getTemplate();
+    doc["default"] = HookBuilder::getTemplate(type);
     doc[HTTP_HOOK_TAG] = HttpHookBuilder::getTemplate();
     doc[ACTION_HOOK_TAG] = ActionHookBuilder::getTemplate();
     doc[NOTIFICATION_HOOK_TAG] = NotificationHookBuilder::getTemplate();

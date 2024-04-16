@@ -85,12 +85,10 @@ class Comparator {
     return !value.equals(triggerValue);
   }
   static bool gte(String &value, String &triggerValue) {
-    LOGGER.debug(COMPARATOR_TAG, "Compare %s >= %s", value, triggerValue);
-    return value.length() >= triggerValue.length();
+    return false;
   }
   static bool lte(String &value, String &triggerValue) {
-    LOGGER.debug(COMPARATOR_TAG, "Compare %s <= %s", value, triggerValue);
-    return value.length() <= triggerValue.length();
+    return false;
   }
 };
 }  // namespace Hook

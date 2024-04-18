@@ -21,7 +21,7 @@ namespace Hook {
         SmartThing.callAction(_action.c_str());
       }
 
-      void addCustomJsonValues(DynamicJsonDocument doc, boolean shortJson) {
+      void addCustomJsonValues(JsonDocument &doc, boolean shortJson) {
         doc["action"] = _action.c_str();
       };
 

@@ -35,7 +35,7 @@ namespace Hook {
         }
 
         LOGGER.debug(HOOKS_FACTORY_TAG,
-                    "----------------------BUILDER-START----------------------");
+                    "-----------------------BUILD-START-----------------------");
         LOGGER.debug(HOOKS_FACTORY_TAG, "Building hook type=%s", type);
 
         Hook<T>* hook = nullptr;
@@ -49,7 +49,9 @@ namespace Hook {
           LOGGER.error(HOOKS_FACTORY_TAG, "Unkonwn hook type: %s", type);
         }
         if (hook == nullptr) {
-          LOGGER.error(HOOKS_FACTORY_TAG, "Build failed");
+
+        LOGGER.debug(HOOKS_FACTORY_TAG,
+                    "-----------------------BUILD-FAILED---------------------");
           return nullptr;
         }
 
@@ -62,25 +64,27 @@ namespace Hook {
           LOGGER.debug(HOOKS_FACTORY_TAG, "Id is empty");
         }
 
-        const char* trigger = doc[CB_BUILDER_TRIGGER];
-        if (trigger == nullptr || strlen(trigger) == 0) {
-          hook->setTriggerDisabled(true);
-
+        String trigger = doc[CB_BUILDER_TRIGGER];
+        if (trigger.isEmpty()) {
+          hook->disableTrigger();
           LOGGER.debug(HOOKS_FACTORY_TAG, "Trigger disabled");
         } else {
-          hook->setTriggerDisabled(false);
+          hook->enableTrigger();
           hook->setTriggerValue(doc[CB_BUILDER_TRIGGER].as<T>());
-          String compare = doc[CB_BUILDER_COMPARE];
-          hook->setCompareType(compare);
+          
+          LOGGER.debug(HOOKS_FACTORY_TAG, "Trigger=%s", trigger.c_str());
+        }
 
-          LOGGER.debug(HOOKS_FACTORY_TAG, "Trigger=%s, compareType=%s", trigger,
-                      compare.c_str());
+        String compare = doc[CB_BUILDER_COMPARE];
+        if (!compare.isEmpty()) {
+          hook->setCompareType(compare);
+          LOGGER.debug(HOOKS_FACTORY_TAG, "compareType=%s", compare.c_str());
         }
 
         setTypeSpecificValues(hook, doc);
 
         LOGGER.debug(HOOKS_FACTORY_TAG,
-                    "-----------------------BUILDER-END----------------------");
+                    "------------------------BUILD-END-----------------------");
         return hook;
       }
 

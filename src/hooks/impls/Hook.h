@@ -25,10 +25,12 @@ namespace Hook {
             _triggerDisabled(true){};
 
       // todo make value const
-      virtual bool accept(T &value) { return false; };
+      virtual bool accept(T &value) = 0;
       virtual void call(T &value) = 0;
       virtual void updateCustom(JsonObject doc) {};
-      virtual void addCustomJsonValues(DynamicJsonDocument doc, boolean shortJson) {};
+      virtual void addCustomJsonValues(JsonDocument &doc, boolean shortJson) {};
+      virtual void disableTrigger() { _triggerDisabled = true; };
+      virtual void enableTrigger() { _triggerDisabled = false; };
 
       virtual DynamicJsonDocument toJson(bool shortJson) {
         DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE);
@@ -52,7 +54,6 @@ namespace Hook {
         _compareType = compareTypeFromString(type, CompareType::EQ);
       }
       void setCompareType(CompareType type) { _compareType = type; }
-      void setTriggerDisabled(bool disabled) { _triggerDisabled = disabled; }
       void setTriggerValue(T triggerValue) { _triggerValue = triggerValue; }
       void setReadOnly(bool readOnly) { _readonly = readOnly; }
       bool isReadonly() { return _readonly; }
@@ -94,6 +95,7 @@ namespace Hook {
             return false;
         }
       }
+      
       DynamicJsonDocument toJson(bool shortJson) {
         DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE);
         doc["id"] = _id;
@@ -110,6 +112,15 @@ namespace Hook {
         addCustomJsonValues(doc, shortJson);
         return doc;
       }
+
+      void disableTrigger() {
+        _triggerDisabled = true;
+        _triggerValue = 0;
+      }
+      void enableTrigger() {
+        _triggerDisabled = false;
+      }
+
       void setThreshold(int16_t threshold) {
         _threshold = threshold;
       }
@@ -133,6 +144,15 @@ namespace Hook {
             return false;
         }
       }
+
+      void disableTrigger() {
+        _triggerDisabled = true;
+        _triggerValue = "";
+      }
+      void enableTrigger() {
+        _triggerDisabled = false;
+      }
+
   };
 }  // namespace Hook
 

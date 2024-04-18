@@ -36,7 +36,7 @@ class NotificationHook : public T {
       }
     }
 
-    void addCustomJsonValues(DynamicJsonDocument doc, boolean shortJson) {
+    void addCustomJsonValues(JsonDocument &doc, boolean shortJson) {
       doc[MESSAGE_FIELD] = _message.c_str();
       doc[NOTIFICATION_TYPE_FIELD] = _notificationType.c_str();
     }

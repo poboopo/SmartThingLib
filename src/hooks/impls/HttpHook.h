@@ -26,7 +26,7 @@ class HttpHook : public T {
     }
   };
 
-  void addCustomJsonValues(DynamicJsonDocument doc, boolean shortJson) {
+  void addCustomJsonValues(JsonDocument &doc, boolean shortJson) {
     if (!shortJson) {
       doc["lastResponseCode"] = _lastResponseCode;
     }

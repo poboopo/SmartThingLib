@@ -35,13 +35,12 @@ class NotificationHook : public T {
         LOGGER.error(HTTP_HOOK_TAG, "WiFi not connected!");
       }
     }
-    DynamicJsonDocument toJson(bool shortJson) {
-      DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE);
+
+    void addCustomJsonValues(DynamicJsonDocument doc, boolean shortJson) {
       doc[MESSAGE_FIELD] = _message.c_str();
       doc[NOTIFICATION_TYPE_FIELD] = _notificationType.c_str();
-      this->addDefaultInfo(doc);
-      return doc;
     }
+
     void updateCustom(JsonObject obj) {
       if (obj.containsKey(MESSAGE_FIELD)) {
         _message = obj[MESSAGE_FIELD].as<String>();

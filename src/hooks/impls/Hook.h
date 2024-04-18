@@ -27,13 +27,11 @@ namespace Hook {
       // todo make value const
       virtual bool accept(T &value) { return false; };
       virtual void call(T &value) = 0;
-      virtual void updateCustom(JsonObject doc) = 0;
-      // todo swap with addDefaultInfo
-      // first create json with base info, then add custom fields from hooks
-      virtual DynamicJsonDocument toJson(bool shortJson) = 0;
+      virtual void updateCustom(JsonObject doc) {};
+      virtual void addCustomJsonValues(DynamicJsonDocument doc, boolean shortJson) {};
 
-// todo dunno if this gonna be overritten by SensorHook
-      virtual void addDefaultInfo(DynamicJsonDocument &doc) {
+      virtual DynamicJsonDocument toJson(bool shortJson) {
+        DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE);
         doc["id"] = _id;
         doc["readonly"] = _readonly;
         doc["type"] = _type;
@@ -43,6 +41,9 @@ namespace Hook {
           doc["trigger"] = _triggerValue;
         }
         doc["compareType"] = compareTypeToString(_compareType);
+
+        addCustomJsonValues(doc, shortJson);
+        return doc;
       }
 
       void setId(int id) { _id = id; }
@@ -93,7 +94,8 @@ namespace Hook {
             return false;
         }
       }
-      void addDefaultInfo(DynamicJsonDocument &doc) {
+      DynamicJsonDocument toJson(bool shortJson) {
+        DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE);
         doc["id"] = _id;
         doc["readonly"] = _readonly;
         doc["type"] = _type;
@@ -104,6 +106,9 @@ namespace Hook {
         }
         doc["threshold"] = _threshold;
         doc["compareType"] = compareTypeToString(_compareType);
+
+        addCustomJsonValues(doc, shortJson);
+        return doc;
       }
       void setThreshold(int16_t threshold) {
         _threshold = threshold;

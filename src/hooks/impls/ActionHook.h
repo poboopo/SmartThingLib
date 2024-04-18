@@ -21,12 +21,9 @@ namespace Hook {
         SmartThing.callAction(_action.c_str());
       }
 
-      DynamicJsonDocument toJson(bool shortJson) {
-        DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE);
+      void addCustomJsonValues(DynamicJsonDocument doc, boolean shortJson) {
         doc["action"] = _action.c_str();
-        this->addDefaultInfo(doc);
-        return doc;
-      }
+      };
 
       void updateCustom(JsonObject obj) {
         if (obj.containsKey("action")) {

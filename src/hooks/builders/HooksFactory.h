@@ -16,8 +16,8 @@
 #define CB_BUILDER_COMPARE "compareType"
 
 #define DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON                                  \
-  "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true," \
-  "\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}, \"threshold\":{\"required\":false}}"
+  "{\"threshold\":{\"required\":false},\"trigger\":{\"required\":false},\"compareType\":{\"required\":true," \
+  "\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}"
 #define DEFAULT_STATES_HOOKS_TEMPLATES_JSON                                  \
   "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true," \
   "\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}"

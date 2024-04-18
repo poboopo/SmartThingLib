@@ -19,12 +19,6 @@ class LambdaHook : public T {
       : T(LAMBDA_HOOK_TAG, readOnly),
         _customHook(customHook){};
   void call(V &value) { _customHook(value); };
-  DynamicJsonDocument toJson(bool shortJson) {
-    DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE);
-    this->addDefaultInfo(doc);
-    return doc;
-  };
-  void updateCustom(JsonObject doc){};
 
  private:
   CustomHook _customHook;

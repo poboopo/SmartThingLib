@@ -26,16 +26,13 @@ class HttpHook : public T {
     }
   };
 
-  DynamicJsonDocument toJson(bool shortJson) {
-    DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE);
+  void addCustomJsonValues(DynamicJsonDocument doc, boolean shortJson) {
     if (!shortJson) {
       doc["lastResponseCode"] = _lastResponseCode;
     }
     doc["url"] = _url;
     doc["method"] = _method;
     doc["payload"] = _payload;
-    this->addDefaultInfo(doc);
-    return doc;
   };
 
   void updateCustom(JsonObject doc) {

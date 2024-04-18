@@ -1,16 +1,15 @@
 #ifndef ACTION_HOOK_BUILDER_H
 #define ACTION_HOOK_BUILDER_H
 
-#include "HookBuilder.h"
 #include "hooks/impls/ActionHook.h"
 #include "logs/BetterLogger.h"
 
 #define ACTION_HOOK_BUILDER_TAG "action_cb_builder"
 
 namespace Hook {
-class ActionHookBuilder : public HookBuilder {
+class ActionHookBuilder {
  public:
-  template <typename T>
+  template <class B, typename T>
   static Hook<T>* build(JsonObject doc, bool readOnly) {
     if (doc.size() == 0) {
       LOGGER.error(ACTION_HOOK_BUILDER_TAG, "Json document is empty!");
@@ -22,11 +21,9 @@ class ActionHookBuilder : public HookBuilder {
       return nullptr;
     }
 
-    ActionHook<T>* hook = new ActionHook<T>(action, readOnly);
+    ActionHook<B, T>* hook = new ActionHook<B, T>(action, readOnly);
     LOGGER.debug(ACTION_HOOK_BUILDER_TAG,
                  "Action hook created: action=%s", action);
-
-    ::Hook::HookBuilder::defaultValues(hook, doc);
 
     return hook;
   }

@@ -19,7 +19,7 @@ inline String compareTypeToString(CompareType type) {
     case LTE:
       return "lte";
     default:
-      return "error";
+      return "";
   }
 }
 
@@ -41,55 +41,5 @@ inline CompareType compareTypeFromString(String type, CompareType defValue) {
   }
   return defValue;
 }
-
-class Comparator {
- public:
-  template <typename T>
-  static bool compare(CompareType compareType, T &value, T &triggerValue) {
-    switch (compareType) {
-      case CompareType::EQ:
-        return eq(value, triggerValue);
-      case CompareType::NEQ:
-        return neq(value, triggerValue);
-      case CompareType::GTE:
-        return gte(value, triggerValue);
-      case CompareType::LTE:
-        return lte(value, triggerValue);
-    }
-    return false;
-  }
-
-  static bool eq(int16_t &value, int16_t &triggerValue) {
-    LOGGER.debug(COMPARATOR_TAG, "Compare %d == %d", value, triggerValue);
-    return value == triggerValue;
-  }
-  static bool neq(int16_t &value, int16_t &triggerValue) {
-    LOGGER.debug(COMPARATOR_TAG, "Compare %d != %d", value, triggerValue);
-    return value != triggerValue;
-  }
-  static bool gte(int16_t &value, int16_t &triggerValue) {
-    LOGGER.debug(COMPARATOR_TAG, "Compare %d >= %d", value, triggerValue);
-    return value >= triggerValue;
-  }
-  static bool lte(int16_t &value, int16_t &triggerValue) {
-    LOGGER.debug(COMPARATOR_TAG, "Compare %d <= %d", value, triggerValue);
-    return value <= triggerValue;
-  }
-
-  static bool eq(String &value, String &triggerValue) {
-    LOGGER.debug(COMPARATOR_TAG, "Compare %s == %s", value, triggerValue);
-    return value.equals(triggerValue);
-  }
-  static bool neq(String &value, String &triggerValue) {
-    LOGGER.debug(COMPARATOR_TAG, "Compare %s != %s", value, triggerValue);
-    return !value.equals(triggerValue);
-  }
-  static bool gte(String &value, String &triggerValue) {
-    return false;
-  }
-  static bool lte(String &value, String &triggerValue) {
-    return false;
-  }
-};
 }  // namespace Hook
 #endif

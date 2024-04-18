@@ -66,10 +66,10 @@ int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
 
   if (strcmp(type, STATE_TYPE) == 0) {
     return addHook<String>(SmartThing.getDeviceState(name),
-                               HooksFactory::build<String>(hook));
+                               HooksFactory::build<StateHook, String>(hook));
   } else if (strcmp(type, SENSOR_TYPE) == 0) {
     return addHook<int16_t>(SmartThing.getSensor(name),
-                                HooksFactory::build<int16_t>(hook));
+                                HooksFactory::build<SensorHook, int16_t>(hook));
   }
 
   LOGGER.error(HOOKS_MANAGER_TAG, "Unkown observable object type: %s",
@@ -192,22 +192,22 @@ bool HooksManagerClass::updateHook(DynamicJsonDocument doc) {
   JsonObject hookObject = doc["hook"];
 
   if (observable.size() == 0) {
-    LOGGER.error(HOOK_BUILDER_TAG, "Observable object is missing!");
+    LOGGER.error(HOOKS_MANAGER_TAG, "Observable object is missing!");
     return false;
   }
   if (hookObject.size() == 0) {
-    LOGGER.error(HOOK_BUILDER_TAG, "Hook object is missing!");
+    LOGGER.error(HOOKS_MANAGER_TAG, "Hook object is missing!");
     return false;
   }
   if (!hookObject.containsKey("id")) {
-    LOGGER.error(HOOK_BUILDER_TAG, "Hook id property is missing!");
+    LOGGER.error(HOOKS_MANAGER_TAG, "Hook id property is missing!");
     return false;
   }
 
   const char *name = observable["name"];
   const char *type = observable["type"];
   if (name == nullptr || type == nullptr) {
-    LOGGER.error(HOOK_BUILDER_TAG, "Observable name or type is missing!");
+    LOGGER.error(HOOKS_MANAGER_TAG, "Observable name or type is missing!");
     return false;
   }
 
@@ -221,6 +221,7 @@ bool HooksManagerClass::updateHook(DynamicJsonDocument doc) {
   return false;
 }
 
+// todo more logs with info?
 template <typename T>
 bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
                                            const char *name,
@@ -244,6 +245,7 @@ bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
 
   if (hookObject.containsKey("trigger")) {
     hook->setTriggerValue(hookObject["trigger"]);
+    // todo looks bad
     hook->setTriggerDisabled(
         hookObject["trigger"].as<String>().isEmpty());
   }
@@ -252,9 +254,22 @@ bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
   }
 
   hook->updateCustom(hookObject);
+  updateTypeSpecificHookValues(hook, hookObject);
+
   LOGGER.info(HOOKS_MANAGER_TAG,
               "Hook id=%d for observable [%s] was updated!", id, name);
   return true;
+}
+
+template<>
+void HooksManagerClass::updateTypeSpecificHookValues(Hook<int16_t> * hook, JsonObject hookObject) {
+  if (hookObject.containsKey("threshold")) {
+    ((SensorHook *) hook)->setThreshold(hookObject["threshold"]);
+  }
+}
+
+template<>
+void HooksManagerClass::updateTypeSpecificHookValues(Hook<String> * hook, JsonObject hookObject) {
 }
 
 template <typename T>

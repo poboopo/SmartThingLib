@@ -93,7 +93,6 @@ bool SettingsManager::save() {
 
   String data;
   serializeJson(_settings, data);
-  LOGGER.debug(SETTINGS_MANAGER_TAG, "Parsed json: %s", data.c_str());
 
   if (data == "null") {
     data.clear();

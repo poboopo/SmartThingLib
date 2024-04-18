@@ -2,6 +2,7 @@
 #define HTTP_HOOK_H
 
 #include <HTTPClient.h>
+#include <type_traits>
 
 #include "hooks/impls/Hook.h"
 #include "logs/BetterLogger.h"
@@ -9,14 +10,14 @@
 #define HTTP_HOOK_TAG "http_hook"
 
 namespace Hook {
-template <typename T>
-class HttpHook : public Hook<T> {
+template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
+class HttpHook : public T {
  public:
   HttpHook(const char *url, bool readonly)
-      : Hook<T>(HTTP_HOOK_TAG, readonly), _url(url), _method("GET") {
+      : T(HTTP_HOOK_TAG, readonly), _url(url), _method("GET") {
     fixUrl();
   };
-  void call(T &value) {
+  void call(V &value) {
     _currentValue = value;
     if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
       createRequestTask();
@@ -66,7 +67,7 @@ class HttpHook : public Hook<T> {
   String _method;
   String _payload;
   int16_t _lastResponseCode = 0;
-  T _currentValue;
+  V _currentValue;
 
   void createRequestTask() {
     if (_sending) {

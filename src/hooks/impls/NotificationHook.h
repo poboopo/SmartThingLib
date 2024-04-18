@@ -1,6 +1,7 @@
 #ifndef NOTIFICATION_HOOK_H
 #define NOTIFICATIONS_HOOK_H
 
+#include <type_traits>
 #include "hooks/impls/Hook.h"
 #include "settings/SettingsManager.h"
 
@@ -15,13 +16,13 @@
 #define NOTIFIACTION_PATH "/notification"
 
 namespace Hook {
-template <typename T>
-class NotificationHook : public Hook<T> {
+template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
+class NotificationHook : public T {
   public:
     NotificationHook(const char * message, bool readOnly)
-      : Hook<T>(NOTIFICATION_HOOK_TAG, readOnly), _message(message), _notificationType(NOTIFICATION_INFO) {};
+      : T(NOTIFICATION_HOOK_TAG, readOnly), _message(message), _notificationType(NOTIFICATION_INFO) {};
 
-    void call(T &value) {
+    void call(V &value) {
       _ip = STSettings.getConfig()[GATEWAY_CONFIG].as<String>();
       if (_ip.isEmpty()) {
         LOGGER.debug(NOTIFICATION_HOOK_TAG, "Gateway ip is missing!");
@@ -69,7 +70,7 @@ class NotificationHook : public Hook<T> {
     String _message;
     String _ip;
     String _notificationType;
-    T _currentValue;
+    V _currentValue;
 
     void createRequestTask() {
       if (_sending) {

@@ -1,15 +1,14 @@
 #ifndef NOTIFICATION_HOOK_BUILDER_H
 #define NOTIFICATION_HOOK_BUILDER_H
 
-#include "HookBuilder.h"
 #include "hooks/impls/NotificationHook.h"
 
 #define NOTIFICATION_HOOK_BUILDER_TAG "notification_cb_builder"
 
 namespace Hook {
-class NotificationHookBuilder: public HookBuilder {
+class NotificationHookBuilder {
   public:
-    template <typename T>
+    template <class B, typename T>
     static Hook<T>* build(JsonObject doc, bool readOnly) {
       if (doc.size() == 0) {
         LOGGER.error(NOTIFICATION_HOOK_BUILDER_TAG, "Json document is empty!");
@@ -21,7 +20,7 @@ class NotificationHookBuilder: public HookBuilder {
         return nullptr;
       }
 
-      NotificationHook<T> * hook = new NotificationHook<T>(message, readOnly);
+      NotificationHook<B, T> * hook = new NotificationHook<B, T>(message, readOnly);
       const char * type = doc[NOTIFICATION_TYPE_FIELD];
       if (type != nullptr && strlen(type) > 0) {
         hook->setNotificationType(type);
@@ -32,8 +31,6 @@ class NotificationHookBuilder: public HookBuilder {
         hook->getNoticationType().c_str(),
         message
       );
-
-      ::Hook::HookBuilder::defaultValues(hook, doc);
 
       return hook;
     }

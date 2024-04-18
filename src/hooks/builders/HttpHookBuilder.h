@@ -1,7 +1,6 @@
 #ifndef HTTP_HOOK_BUILDER_H
 #define HTTP_HOOK_BUILDER_H
 
-#include "HookBuilder.h"
 #include "hooks/impls/HttpHook.h"
 #include "logs/BetterLogger.h"
 
@@ -13,9 +12,9 @@
   "{\"required\": false}}"
 
 namespace Hook {
-class HttpHookBuilder : public HookBuilder {
+class HttpHookBuilder {
  public:
-  template <typename T>
+  template <class B, typename T>
   static Hook<T>* build(JsonObject doc, bool readOnly) {
     if (doc.size() == 0) {
       LOGGER.error(HTTP_HOOK_BUILDER_TAG, "Json document is empty!");
@@ -32,14 +31,12 @@ class HttpHookBuilder : public HookBuilder {
     }
     const char* payload = doc["payload"];
 
-    HttpHook<T>* hook = new HttpHook<T>(url, readOnly);
+    HttpHook<B, T>* hook = new HttpHook<B, T>(url, readOnly);
     hook->setPayload(payload);
     hook->setMethod(method.c_str());
     LOGGER.debug(HTTP_HOOK_BUILDER_TAG,
                  "Http hook created: url=%s, method=%s, payload=%s", url,
                  method.c_str(), payload == nullptr ? "-" : payload);
-
-    ::Hook::HookBuilder::defaultValues(hook, doc);
 
     return hook;
   }

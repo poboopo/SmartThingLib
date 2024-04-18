@@ -245,7 +245,7 @@ bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
 
   if (hookObject.containsKey("trigger")) {
     String trigger = hookObject["trigger"].as<String>();
-    if (trigger.isEmpty()) {
+    if (trigger.isEmpty() || trigger.equals("null")) {
       hook->disableTrigger();
       LOGGER.debug(HOOKS_MANAGER_TAG, "Trigger disabled");
     } else {

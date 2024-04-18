@@ -65,7 +65,7 @@ namespace Hook {
         }
 
         String trigger = doc[CB_BUILDER_TRIGGER];
-        if (trigger.isEmpty()) {
+        if (trigger.isEmpty() || trigger.equals("null")) {
           hook->disableTrigger();
           LOGGER.debug(HOOKS_FACTORY_TAG, "Trigger disabled");
         } else {

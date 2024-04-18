@@ -42,3 +42,5 @@
     - add message broker support in logger -
     - add different templates support on logger? -
     - fix logger message length
+
+- DynamicJsonDocument -> JsonDocument

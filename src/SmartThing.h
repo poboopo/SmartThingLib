@@ -75,12 +75,13 @@ class SmartThingClass {
       const char* name);
   const Configurable::Sensor::Sensor* getSensor(const char* name);
 
-  DynamicJsonDocument getInfoDictionaries();
   DynamicJsonDocument getSensorsValues();
   DynamicJsonDocument getDeviceStatesInfo();
   DynamicJsonDocument getActionsInfo();
   DynamicJsonDocument getConfigInfo();
   DynamicJsonDocument getWatchersInfo();
+
+  int16_t getActionsCount() { return _actionsList.size(); }
 
   int16_t getSensorsCount() { return _sensorsList.size(); }
 

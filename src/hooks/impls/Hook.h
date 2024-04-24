@@ -70,13 +70,8 @@ namespace Hook {
 
   class SensorHook: public Hook<int16_t> {
     public:
-      SensorHook(const char *type, bool readonly): Hook<int16_t>(type, readonly), _previousValue(0), _threshold(0) /*todo req?*/ {};
+      SensorHook(const char *type, bool readonly): Hook<int16_t>(type, readonly) {};
       bool accept(int16_t &value) {
-        if (firstCall) {
-          _previousValue = value;
-          firstCall = false;
-        }
-
         if (abs(value - _previousValue) < _threshold) {
           return false;
         }
@@ -131,7 +126,6 @@ namespace Hook {
     private:
       int16_t _threshold;
       int16_t _previousValue;
-      bool firstCall = true;
   };
   class StateHook: public Hook<String> {
     public:

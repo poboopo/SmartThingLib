@@ -184,15 +184,6 @@ void SmartThingClass::updateBroadCastMessage() {
   _broadcastMessage = _ip + "$" + _type + "$" + _name + "$" + SMART_THING_VERSION;
 }
 
-DynamicJsonDocument SmartThingClass::getInfoDictionaries() {
-  int size = _actionsList.size() + _configEntriesList.size();
-
-  DynamicJsonDocument doc(size * 64);
-  doc["actions"] = _actionsList.toJson();
-  doc["config"] = _configEntriesList.toJson();
-  return doc;
-}
-
 DynamicJsonDocument SmartThingClass::getDeviceStatesInfo() {
   return _deviceStatesList.getValues();
 }

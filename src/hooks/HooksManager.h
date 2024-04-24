@@ -1,5 +1,5 @@
-#ifndef WATCHERS_LIST_H
-#define WATCHERS_LIST_H
+#ifndef HOOKS_MANAGER_H
+#define HOOKS_MANAGER_H
 
 #include <ArduinoJson.h>
 

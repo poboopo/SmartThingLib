@@ -92,7 +92,9 @@ namespace Hook {
         DynamicJsonDocument doc(MAX_HOOK_TEMPLATE_SIZE * 4);
         doc["default"] = getDefaultTemplate(type);
         doc[HTTP_HOOK_TAG] = HttpHookBuilder::getTemplate();
-        doc[ACTION_HOOK_TAG] = ActionHookBuilder::getTemplate();
+        if (SmartThing.getActionsCount() > 0) {
+          doc[ACTION_HOOK_TAG] = ActionHookBuilder::getTemplate();
+        }
         doc[NOTIFICATION_HOOK_TAG] = NotificationHookBuilder::getTemplate();
         return doc;
       }

@@ -1,13 +1,13 @@
 // Enable and disable features
 
-#define ENABLE_WEB_PAGE 0
+#define ENABLE_WEB_PAGE 1
 
 #define ENABLE_ACTIONS 1
 
 #define ENABLE_SENSORS 1
 #define ENABLE_STATES 1
 
-#define ENABLE_HOOKS 0
+#define ENABLE_HOOKS 1
 
 #define ENABLE_LOGGER 1
 #define TCP_LOGGER 1

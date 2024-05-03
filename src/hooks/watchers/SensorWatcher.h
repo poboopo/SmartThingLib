@@ -1,6 +1,9 @@
 #ifndef SENSOR_WATCHER_H
 #define SENSOR_WATCHER_H
 
+#include "Features.h"
+#if ENABLE_SENSORS 
+
 #include "hooks/impls/Hook.h"
 #include "hooks/watchers/Watcher.h"
 #include "configurable/ConfigurableObjects.h"
@@ -36,4 +39,5 @@ class SensorWatcher : public Watcher<int16_t> {
 };
 }  // namespace Hook
 
+#endif
 #endif

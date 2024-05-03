@@ -13,8 +13,9 @@
 #include "net/socket/Multicaster.h"
 #include "settings/SettingsManager.h"
 #include "utils/LedIndicator.h"
+#include "Features.h"
 
-#define SMART_THING_VERSION "0.5"
+#define SMART_THING_VERSION "0.6"
 #define SMART_THING_TAG "SMART_THING"
 // Pins
 #define LED_PIN 13
@@ -23,8 +24,6 @@
 
 #define MULTICAST_GROUP "224.1.1.1"
 #define MULTICAST_PORT 7778
-
-#define WEB_PAGE
 
 #define DEVICE_NAME_LENGTH_MAX 15
 #define DEVICE_TYPE_LENGTH_MAX 15
@@ -52,16 +51,29 @@ class SmartThingClass {
   const char * getIp();
   bool wifiConnected();
 
+  #if ENABLE_SENSORS
   bool addSensor(
       const char* name,
       Configurable::ConfigurableObject<int16_t>::ValueProviderFunction
           valueProvider);
   bool addDigitalSensor(const char* name, int pin);
   bool addAnalogSensor(const char* name, int pin);
-  bool addDeviceState(
-      const char* name,
-      Configurable::ConfigurableObject<const char*>::ValueProviderFunction
-          valueProvider);
+  const Configurable::Sensor::Sensor* getSensor(const char* name);
+  DynamicJsonDocument getSensorsValues();
+  int16_t getSensorsCount();
+  #endif
+
+  #if ENABLE_STATES
+  bool addDeviceState(const char* name, Configurable::ConfigurableObject<const char*>::ValueProviderFunction valueProvider);
+
+  const Configurable::DeviceState::DeviceState* getDeviceState(
+      const char* name);
+  DynamicJsonDocument getDeviceStatesInfo();
+
+  int16_t getDeviceStatesCount();
+  #endif
+
+  #if ENABLE_ACTIONS
   bool addActionHandler(const char* action, const char* caption,
                         Configurable::Action::ActionHandler handler);
   bool addActionHandler(const char* action,
@@ -69,35 +81,32 @@ class SmartThingClass {
     return addActionHandler(action, action, handler);
   };
   ActionResult callAction(const char* action);
+  int16_t getActionsCount();
+  DynamicJsonDocument getActionsInfo();
+  #endif
+  
+  DynamicJsonDocument getConfigInfo();
   bool addConfigEntry(const char* name, const char* caption, const char* type);
 
-  const Configurable::DeviceState::DeviceState* getDeviceState(
-      const char* name);
-  const Configurable::Sensor::Sensor* getSensor(const char* name);
-
-  DynamicJsonDocument getSensorsValues();
-  DynamicJsonDocument getDeviceStatesInfo();
-  DynamicJsonDocument getActionsInfo();
-  DynamicJsonDocument getConfigInfo();
-  DynamicJsonDocument getWatchersInfo();
-
-  int16_t getActionsCount() { return _actionsList.size(); }
-
-  int16_t getSensorsCount() { return _sensorsList.size(); }
-
-  int16_t getDeviceStatesCount() { return _deviceStatesList.size(); }
-
   LedIndicator* getLed() { return &_led; }
-
  private:
   Multicaster _multicaster;
   LedIndicator _led;
 
   bool init();
 
+  #if ENABLE_SENSORS
   Configurable::Sensor::SensorsList _sensorsList;
+  #endif
+
+  #if ENABLE_STATES
   Configurable::DeviceState::DeviceStatesList _deviceStatesList;
+  #endif
+
+  #if ENABLE_ACTIONS
   Configurable::Action::ActionsList _actionsList;
+  #endif
+
   Configurable::Config::ConfigEntriesList _configEntriesList;
 
   TaskHandle_t _loopTaskHandle = NULL;

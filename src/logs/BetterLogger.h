@@ -1,48 +1,47 @@
 #ifndef BetterLogger_H
 #define BetterLogger_H
 
+#include "Features.h"
 #include <Arduino.h>
 #include <lwip/sockets.h>
 
 #define LOGGER_TAG "LOGGER"
-
-// #define MULTICAST_LOGGER
-#define TCP_LOGGER
 
 // name_&_level_&_tag_&_message
 #define LOGGER_MESSAGE_TEMPLATE "%s_&_%u_&_%s_&_%s\n"
 #define STAT_LOG_TAG "STATISTICS"
 #define MAX_MESSAGE_LENGTH 2048
 
-// move to config?
-// #define LOGGING_LEVEL_ERROR
-// #define LOGGING_LEVEL_WARN
-// #define LOGGING_LEVEL_INFO
-// #define LOGGING_LEVEL_DEBUG
-#define LOGGING_LEVEL_ALL
-
-// todo add websocker support?
 class BetterLogger {
  public:
   BetterLogger(){};
-  ~BetterLogger() { close(_sock); }
+  ~BetterLogger() { 
+    #if ENABLE_LOGGER
+    close(_sock);
+    #endif
+  }
 
   void init() { Serial.begin(115200); }
   void initNetConnection(String fullAddr, const char* name) {
+    #if ENABLE_LOGGER
     _name = name;
     _fullAddr = fullAddr;
 
     connectSocket();
+    #endif
   }
   void configUpdateHook(String fullAddr) {
+    #if ENABLE_LOGGER
     if (_connected && _fullAddr.equals(fullAddr)) {
       return;
     }
     _fullAddr = fullAddr;
     warning(LOGGER_TAG, "Tcp server log address was updated");
     connectSocket();
+    #endif
   }
 
+  #if ENABLE_LOGGER
   void log(const char* message);
   template <typename... Args>
   void log(uint8_t level, const char* tag, const char* format,
@@ -55,6 +54,12 @@ class BetterLogger {
             message);
     log(formattedMessage);
   }
+  #else
+    void log(const char* message){}
+    template <typename... Args>
+    void log(uint8_t level, const char* tag, const char* format, Args... args) {
+    }
+  #endif
 
   void logRequest(const char* tag, const char* method, const char* uri,
                   const char* body) {
@@ -64,29 +69,25 @@ class BetterLogger {
   // bad impl, but i have no other ideas
   template <typename... Args>
   void error(const char* tag, const char* format, Args... args) {
-#if defined(LOGGING_LEVEL_ERROR) || defined(LOGGING_LEVEL_WARN) || \
-    defined(LOGGING_LEVEL_INFO) || defined(LOGGING_LEVEL_DEBUG) || \
-    defined(LOGGING_LEVEL_ALL)
+#if LOGGING_LEVEL_ERROR || LOGGING_LEVEL_WARN || LOGGING_LEVEL_INFO || LOGGING_LEVEL_DEBUG
     log(40, tag, format, args...);
 #endif
   };
   template <typename... Args>
   void warning(const char* tag, const char* format, Args... args) {
-#if defined(LOGGING_LEVEL_WARN) || defined(LOGGING_LEVEL_INFO) || \
-    defined(LOGGING_LEVEL_DEBUG) || defined(LOGGING_LEVEL_ALL)
+#if LOGGING_LEVEL_WARN || LOGGING_LEVEL_INFO || LOGGING_LEVEL_DEBUG
     log(30, tag, format, args...);
 #endif
   };
   template <typename... Args>
   void info(const char* tag, const char* format, Args... args) {
-#if defined(LOGGING_LEVEL_INFO) || defined(LOGGING_LEVEL_DEBUG) || \
-    defined(LOGGING_LEVEL_ALL)
+#if LOGGING_LEVEL_INFO || LOGGING_LEVEL_DEBUG
     log(20, tag, format, args...);
 #endif
   };
   template <typename... Args>
   void debug(const char* tag, const char* format, Args... args) {
-#if defined(LOGGING_LEVEL_DEBUG) || defined(LOGGING_LEVEL_ALL)
+#if LOGGING_LEVEL_DEBUG
     log(10, tag, format, args...);
 #endif
   };
@@ -100,6 +101,7 @@ class BetterLogger {
   };
 
  private:
+  #if ENABLE_LOGGER
   bool _connected = false;
   int _sock;
   struct sockaddr_in _saddr = {0};
@@ -108,6 +110,7 @@ class BetterLogger {
   const char* _name = "no_name";
 
   void connectSocket();
+
   bool parseAddressFromString() {
     if (_fullAddr.isEmpty()) {
       warning(LOGGER_TAG, "Empty tcp log server info");
@@ -133,6 +136,7 @@ class BetterLogger {
     _saddr.sin_addr.s_addr = inet_addr(ip.c_str());
     return true;
   };
+  #endif
 };
 
 extern BetterLogger LOGGER;

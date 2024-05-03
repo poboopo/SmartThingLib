@@ -6,6 +6,7 @@
 #include <ArduinoJson.h>
 #include <functional>
 
+#include "Features.h"
 #include "hooks/comparator/Comparator.h"
 #include "logs/BetterLogger.h"
 
@@ -68,6 +69,7 @@ namespace Hook {
       CompareType _compareType;
   };
 
+  #if ENABLE_SENSORS
   class SensorHook: public Hook<int16_t> {
     public:
       SensorHook(const char *type, bool readonly): Hook<int16_t>(type, readonly) {};
@@ -127,6 +129,7 @@ namespace Hook {
       int16_t _threshold;
       int16_t _previousValue;
   };
+  #endif
   class StateHook: public Hook<String> {
     public:
       StateHook(const char *type, bool readonly): Hook<String>(type, readonly) {};

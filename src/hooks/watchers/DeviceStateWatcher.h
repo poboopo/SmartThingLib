@@ -1,6 +1,9 @@
 #ifndef DEVICE_STATE_WATCHER_H
 #define DEVICE_STATE_WATCHER_H
 
+#include "Features.h"
+#if ENABLE_STATES
+
 #include "hooks/impls/Hook.h"
 #include "hooks/watchers/Watcher.h"
 #include "configurable/ConfigurableObjects.h"
@@ -8,7 +11,6 @@
 
 #define DEVICE_STATE_WATCHER_TAG "device_state_watcher"
 
-using namespace Configurable::Sensor;
 #define STATE_WATCHER_TYPE "state"
 
 namespace Hook {
@@ -42,4 +44,5 @@ class DeviceStateWatcher : public Watcher<String> {
 };
 }  // namespace Hook
 
+#endif
 #endif

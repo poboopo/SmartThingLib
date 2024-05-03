@@ -1,11 +1,15 @@
 #ifndef DEVICE_STATES_LIST_H
 #define DEVICE_STATES_LIST_H
 
+#include "Features.h"
+#if ENABLE_STATES
+
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
 #include <functional>
 
+#include "logs/BetterLogger.h"
 #include "configurable/ConfigurableObjects.h"
 #include "utils/List.h"
 
@@ -53,4 +57,5 @@ class DeviceStatesList : public List<DeviceState> {
 }  // namespace DeviceState
 }  // namespace Configurable
 
+#endif
 #endif

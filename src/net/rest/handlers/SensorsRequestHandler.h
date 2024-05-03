@@ -1,6 +1,9 @@
 #ifndef SENSORS_RQ_H
 #define SENSORS_RQ_H
 
+#include "Features.h"
+#if ENABLE_SENSORS 
+
 #include <WebServer.h>
 
 #include "SmartThing.h"
@@ -40,4 +43,5 @@ class SensorsRequestHandler : public RequestHandler {
   };
 };
 
+#endif
 #endif

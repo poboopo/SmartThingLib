@@ -1,11 +1,15 @@
 #ifndef ACTIONS_LIST_H
 #define ACTIONS_LIST_H
 
+#include "Features.h"
+#if ENABLE_ACTIONS 
+
 #include <ArduinoJson.h>
 
 #include <functional>
 
 #include "utils/List.h"
+#include "logs/BetterLogger.h"
 
 #define ACTIONS_LIST_TAG "action_handlers_list"
 
@@ -78,5 +82,6 @@ class ActionsList : public List<Action> {
 };
 }  // namespace Action
 }  // namespace Configurable
+#endif
 
 #endif

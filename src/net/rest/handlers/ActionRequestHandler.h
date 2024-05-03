@@ -1,6 +1,10 @@
 #ifndef ACTION_RQ_H
 #define ACTION_RQ_H
 
+#include "Features.h"
+
+#if ENABLE_ACTIONS 
+
 #include <WebServer.h>
 
 #include "SmartThing.h"
@@ -56,5 +60,7 @@ class ActionRequestHandler : public RequestHandler {
     return false;
   };
 };
+
+#endif
 
 #endif

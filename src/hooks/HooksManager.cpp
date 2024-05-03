@@ -1,5 +1,7 @@
 #include "hooks/HooksManager.h"
 
+#if ENABLE_HOOKS 
+
 #include "SmartThing.h"
 #include "hooks/builders/HooksFactory.h"
 #include "hooks/watchers/DeviceStateWatcher.h"
@@ -11,8 +13,12 @@
 Hook::HooksManagerClass HooksManager;
 
 namespace Hook {
+#if ENABLE_SENSORS
 using namespace Configurable::Sensor;
+#endif
+#if ENABLE_STATES
 using namespace Configurable::DeviceState;
+#endif
 using Configurable::ConfigurableObject;
 
 void HooksManagerClass::loadFromSettings() {
@@ -64,24 +70,22 @@ int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
     return -1;
   }
 
+  #if ENABLE_STATES
   if (strcmp(type, STATE_TYPE) == 0) {
     return addHook<String>(SmartThing.getDeviceState(name),
                                HooksFactory::build<StateHook, String>(hook));
-  } else if (strcmp(type, SENSOR_TYPE) == 0) {
+  }
+  #endif
+  #if ENABLE_SENSORS 
+  if (strcmp(type, SENSOR_TYPE) == 0) {
     return addHook<int16_t>(SmartThing.getSensor(name),
                                 HooksFactory::build<SensorHook, int16_t>(hook));
   }
+  #endif
 
   LOGGER.error(HOOKS_MANAGER_TAG, "Unkown observable object type: %s",
                type);
   return -1;
-}
-
-int HooksManagerClass::addHook(const Configurable::Sensor::Sensor * sensor, Hook<int16_t> * hook) {
-  return addHook<int16_t>(sensor, hook);
-}
-int HooksManagerClass::addHook(const Configurable::DeviceState::DeviceState * state, Hook<String> * hook) {
-  return addHook<String>(state, hook);
 }
 
 template <class T>
@@ -148,12 +152,7 @@ Watcher<T> *HooksManagerClass::getWatcherOrCreate(
   return watcher;
 }
 
-template <>
-Watcher<int16_t> *HooksManagerClass::createWatcher(
-    const ConfigurableObject<int16_t> *obj) {
-  return new SensorWatcher((Sensor *)obj);
-}
-
+#if ENABLE_STATES
 template <>
 Watcher<String> *HooksManagerClass::createWatcher(
     const ConfigurableObject<String> *obj) {
@@ -161,14 +160,30 @@ Watcher<String> *HooksManagerClass::createWatcher(
 }
 
 template <>
+List<Watcher<String>> *HooksManagerClass::getWatchersList() {
+  return &_statesWatchers;
+}
+
+int HooksManagerClass::addHook(const Configurable::DeviceState::DeviceState * state, Hook<String> * hook) {
+  return addHook<String>(state, hook);
+}
+#endif
+
+#if ENABLE_SENSORS 
+template <>
+Watcher<int16_t> *HooksManagerClass::createWatcher(const ConfigurableObject<int16_t> *obj) {
+  return new SensorWatcher((Sensor *)obj);
+}
+
+template <>
 List<Watcher<int16_t>> *HooksManagerClass::getWatchersList() {
   return &_sensorsWatchers;
 }
 
-template <>
-List<Watcher<String>> *HooksManagerClass::getWatchersList() {
-  return &_statesWatchers;
+int HooksManagerClass::addHook(const Configurable::Sensor::Sensor * sensor, Hook<int16_t> * hook) {
+  return addHook<int16_t>(sensor, hook);
 }
+#endif
 
 bool HooksManagerClass::deleteHook(const char *type, const char *name,
                                            int id) {
@@ -177,11 +192,16 @@ bool HooksManagerClass::deleteHook(const char *type, const char *name,
     return -1;
   }
 
+  #if ENABLE_SENSORS
   if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
     return deleteHookFromList<int16_t>(&_sensorsWatchers, name, id);
-  } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
+  } 
+  #endif
+  #if ENABLE_STATES
+  if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
     return deleteHookFromList<String>(&_statesWatchers, name, id);
   }
+  #endif
 
   LOGGER.error(HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
   return -1;
@@ -211,11 +231,16 @@ bool HooksManagerClass::updateHook(DynamicJsonDocument doc) {
     return false;
   }
 
+  #if ENABLE_SENSORS
   if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
     return updateHook<int16_t>(&_sensorsWatchers, name, hookObject);
-  } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
+  }
+  #endif
+  #if ENABLE_STATES
+  if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
     return updateHook<String>(&_statesWatchers, name, hookObject);
   }
+  #endif
   LOGGER.error(HOOKS_MANAGER_TAG, "Observable type [%s] not supported!",
                type);
   return false;
@@ -269,6 +294,7 @@ bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
   return true;
 }
 
+#if ENABLE_SENSORS 
 template<>
 void HooksManagerClass::updateTypeSpecificHookValues(Hook<int16_t> * hook, JsonObject hookObject) {
   if (hookObject.containsKey("threshold")) {
@@ -277,6 +303,7 @@ void HooksManagerClass::updateTypeSpecificHookValues(Hook<int16_t> * hook, JsonO
     LOGGER.debug(HOOKS_MANAGER_TAG, "New threshold=%d", threshold);
   }
 }
+#endif
 
 template<>
 void HooksManagerClass::updateTypeSpecificHookValues(Hook<String> * hook, JsonObject hookObject) {
@@ -355,12 +382,16 @@ void HooksManagerClass::collectInfo(List<Watcher<T>> *list,
 }
 
 void HooksManagerClass::check() {
+  #if ENABLE_SENSORS 
   if (_sensorsWatchers.size() > 0) {
     checkWatchers<int16_t>(&_sensorsWatchers);
   }
+  #endif
+  #if ENABLE_STATES
   if (_statesWatchers.size() > 0) {
     checkWatchers<String>(&_statesWatchers);
   }
+  #endif
 }
 
 template <typename T>
@@ -384,9 +415,15 @@ DynamicJsonDocument HooksManagerClass::allHooksToJson(
     return doc;
   }
 
-  int size = _hooksCount * HOOK_INFO_DOC_SIZE +
-             (_statesWatchers.size() + _sensorsWatchers.size()) *
-                 WATCHER_INFO_DOC_SIZE;
+  int watchersCount = 0;
+  #if ENABLE_SENSORS 
+  watchersCount += _sensorsWatchers.size();
+  #endif
+  #if ENABLE_STATES
+  watchersCount += _statesWatchers.size();
+  #endif
+
+  int size = _hooksCount * HOOK_INFO_DOC_SIZE + watchersCount * WATCHER_INFO_DOC_SIZE;
 
   if (size == 0) {
     LOGGER.debug(HOOKS_MANAGER_TAG,
@@ -398,6 +435,7 @@ DynamicJsonDocument HooksManagerClass::allHooksToJson(
   LOGGER.debug(HOOKS_MANAGER_TAG, "DynamicJsonDoc size for hooks = %d",
                size);
   DynamicJsonDocument doc(size);
+  #if ENABLE_SENSORS 
   _sensorsWatchers.forEach([&](Watcher<int16_t> *watcher) {
     if (watcher == nullptr) {
       return;
@@ -405,6 +443,8 @@ DynamicJsonDocument HooksManagerClass::allHooksToJson(
     DynamicJsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
     if (wjs.size() > 0) doc.add(wjs);
   });
+  #endif
+  #if ENABLE_STATES
   _statesWatchers.forEach([&](Watcher<String> *watcher) {
     if (watcher == nullptr) {
       return;
@@ -412,33 +452,42 @@ DynamicJsonDocument HooksManagerClass::allHooksToJson(
     DynamicJsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
     if (wjs.size() > 0) doc.add(wjs);
   });
+  #endif
   return doc;
 }
 
 DynamicJsonDocument HooksManagerClass::getWatchersInfo() {
   DynamicJsonDocument doc(1024);
+  #if ENABLE_SENSORS 
   if (_sensorsWatchers.size() > 0) {
     LOGGER.debug(HOOKS_MANAGER_TAG,
                  "Collecting info from sensors watchers");
     JsonArray array = doc.createNestedArray(SENSOR_WATCHER_TYPE);
     collectInfo<int16_t>(&_sensorsWatchers, &array);
   }
+  #endif
+  #if ENABLE_STATES
   if (_statesWatchers.size() > 0) {
     LOGGER.debug(HOOKS_MANAGER_TAG,
                  "Collecting info from device state watchers");
     JsonArray array = doc.createNestedArray(STATE_WATCHER_TYPE);
     collectInfo<String>(&_statesWatchers, &array);
   }
+  #endif
   return doc;
 }
 
-DynamicJsonDocument HooksManagerClass::getObservableHooksJson(
-    const char *type, const char *name) {
+DynamicJsonDocument HooksManagerClass::getObservableHooksJson(const char *type, const char *name) {
+  #if ENABLE_SENSORS 
   if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
     return getObservableHooksJsonFromList<int16_t>(&_sensorsWatchers, name);
-  } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
+  } 
+  #endif
+  #if ENABLE_STATES
+  if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
     return getObservableHooksJsonFromList<String>(&_statesWatchers, name);
   }
+  #endif
   LOGGER.error(HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
   DynamicJsonDocument doc(4);
   return doc;
@@ -465,11 +514,16 @@ DynamicJsonDocument HooksManagerClass::getObservableHooksJsonFromList(
 DynamicJsonDocument HooksManagerClass::getHookJsonById(const char *type,
                                                                const char *name,
                                                                int id) {
+  #if ENABLE_SENSORS 
   if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
     return getHookJsonFromList<int16_t>(&_sensorsWatchers, name, id);
-  } else if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
+  } 
+  #endif
+  #if ENABLE_STATES
+  if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
     return getHookJsonFromList<String>(&_statesWatchers, name, id);
   }
+  #endif
   LOGGER.error(HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
   DynamicJsonDocument doc(4);
   return doc;
@@ -500,3 +554,5 @@ DynamicJsonDocument HooksManagerClass::getHookJsonFromList(
   return doc;
 }
 }  // namespace Hook
+
+#endif

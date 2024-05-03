@@ -68,10 +68,14 @@ class InfoRequestHandler : public RequestHandler {
       }
     }
     if (requestUri.equals("/info/actions") && requestMethod == HTTP_GET) {
+      #if ENABLE_ACTIONS 
       DynamicJsonDocument doc = SmartThing.getActionsInfo();
       String response;
       serializeJson(doc, response);
       server.send(200, CONTENT_TYPE_JSON, response);
+      #else
+      server.send(400, CONTENT_TYPE_JSON, buildErrorJson("Actions feature disabled"));
+      #endif
       return true;
     }
     if (requestUri.equals("/info/config") && requestMethod == HTTP_GET) {

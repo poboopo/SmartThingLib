@@ -1,13 +1,8 @@
 #include "logs/BetterLogger.h"
 
-#ifdef MULTICAST_LOGGER
-
-#define LOGGER_DEFAULT_GROUP "224.1.1.1"
-#define LOGGER_DEFAULT_PORT 7779
+#if ENABLE_LOGGER && LOGGER_TYPE == MULTICAST_LOGGER
 
 BetterLogger LOGGER;
-
-void BetterLogger::configUpdateHook() {}
 
 void BetterLogger::connectSocket() {
   if (!parseAddressFromString()) {

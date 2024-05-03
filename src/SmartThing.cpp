@@ -60,20 +60,26 @@ bool SmartThingClass::init() {
                    "WiFi not available, skipping all network setup");
   }
 
+  #if ENABLE_STATES
   addDeviceState("wifi", [this]() {
     return wifiConnected() ? "connected" : "disconnected";
   });
+  #endif
 
+  #if ENABLE_HOOKS 
   LOGGER.debug(SMART_THING_TAG, "Loading hooks from settings...");
   HooksManager.loadFromSettings();
   LOGGER.debug(SMART_THING_TAG, "Hooks loaded");
+  #endif
 
   LOGGER.debug(SMART_THING_TAG, "Creating loop task");
   xTaskCreate([](void* o) { static_cast<SmartThingClass*>(o)->loopRoutine(); },
               SMART_THING_TAG, 50000, this, 1, &_loopTaskHandle);
   LOGGER.debug(SMART_THING_TAG, "Loop task created");
 
+  #if ENABLE_LOGGER
   addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)", "string");
+  #endif
   // For notifications
   addConfigEntry(GATEWAY_CONFIG, "Gateway address (ip:port)", "string");
 
@@ -89,7 +95,9 @@ void SmartThingClass::loopRoutine() {
       RestController.handle();
       _multicaster.broadcast(_broadcastMessage.c_str());
     }
+    #if ENABLE_HOOKS 
     HooksManager.check();
+    #endif
     vTaskDelay(xDelay);
   }
 }
@@ -184,27 +192,39 @@ void SmartThingClass::updateBroadCastMessage() {
   _broadcastMessage = _ip + "$" + _type + "$" + _name + "$" + SMART_THING_VERSION;
 }
 
-DynamicJsonDocument SmartThingClass::getDeviceStatesInfo() {
-  return _deviceStatesList.getValues();
-}
-
-DynamicJsonDocument SmartThingClass::getSensorsValues() {
-  return _sensorsList.getValues();
-}
-
-DynamicJsonDocument SmartThingClass::getActionsInfo() {
-  return _actionsList.toJson();
-}
-
 DynamicJsonDocument SmartThingClass::getConfigInfo() {
   return _configEntriesList.toJson();
 }
 
-DynamicJsonDocument SmartThingClass::getWatchersInfo() {
-  return HooksManager.getWatchersInfo();
+#if ENABLE_SENSORS 
+DynamicJsonDocument SmartThingClass::getSensorsValues() {
+  return _sensorsList.getValues();
 }
 
-// add possible values?
+int16_t SmartThingClass::getSensorsCount() { return _sensorsList.size(); }
+
+bool SmartThingClass::addSensor(
+    const char* name,
+    Configurable::ConfigurableObject<int16_t>::ValueProviderFunction function) {
+  return _sensorsList.add(name, function);
+}
+
+bool SmartThingClass::addDigitalSensor(const char* name, int pin) {
+  pinMode(pin, INPUT_PULLUP);
+  return _sensorsList.addDigital(name, pin);
+}
+
+bool SmartThingClass::addAnalogSensor(const char* name, int pin) {
+  return _sensorsList.addAnalog(name, pin);
+}
+
+const Configurable::Sensor::Sensor* SmartThingClass::getSensor(
+    const char* name) {
+  return _sensorsList.findSensor(name);
+}
+#endif
+
+#if ENABLE_STATES
 bool SmartThingClass::addDeviceState(
     const char* name,
     Configurable::ConfigurableObject<const char*>::ValueProviderFunction
@@ -212,19 +232,25 @@ bool SmartThingClass::addDeviceState(
   return _deviceStatesList.add(name, function);
 }
 
-bool SmartThingClass::addSensor(
-    const char* name,
-    Configurable::ConfigurableObject<int16_t>::ValueProviderFunction function) {
-  return _sensorsList.add(name, function);
-}
-bool SmartThingClass::addDigitalSensor(const char* name, int pin) {
-  pinMode(pin, INPUT_PULLUP);
-  return _sensorsList.addDigital(name, pin);
-}
-bool SmartThingClass::addAnalogSensor(const char* name, int pin) {
-  return _sensorsList.addAnalog(name, pin);
+DynamicJsonDocument SmartThingClass::getDeviceStatesInfo() {
+  return _deviceStatesList.getValues();
 }
 
+const Configurable::DeviceState::DeviceState* SmartThingClass::getDeviceState(
+    const char* name) {
+  return _deviceStatesList.findState(name);
+}
+
+int16_t SmartThingClass::getDeviceStatesCount() {
+  return _deviceStatesList.size();
+}
+
+#endif
+
+#if ENABLE_ACTIONS 
+DynamicJsonDocument SmartThingClass::getActionsInfo() {
+  return _actionsList.toJson();
+}
 bool SmartThingClass::addActionHandler(const char* action, const char* caption,
                                        Action::ActionHandler handler) {
   return _actionsList.add(action, caption, handler);
@@ -234,19 +260,14 @@ ActionResult SmartThingClass::callAction(const char* action) {
   return _actionsList.callAction(action);
 }
 
+int16_t SmartThingClass::getActionsCount() {
+  return _actionsList.size();
+}
+#endif
+
 bool SmartThingClass::addConfigEntry(const char* name, const char* caption,
                                      const char* type) {
   return _configEntriesList.add(name, caption, type);
-}
-
-const Configurable::DeviceState::DeviceState* SmartThingClass::getDeviceState(
-    const char* name) {
-  return _deviceStatesList.findState(name);
-}
-
-const Configurable::Sensor::Sensor* SmartThingClass::getSensor(
-    const char* name) {
-  return _sensorsList.findSensor(name);
 }
 
 const char * SmartThingClass::getType() { 

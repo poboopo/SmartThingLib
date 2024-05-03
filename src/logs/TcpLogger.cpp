@@ -1,7 +1,7 @@
 #include "logs/BetterLogger.h"
 #include "settings/SettingsManager.h"
 
-#ifdef TCP_LOGGER
+#if ENABLE_LOGGER && LOGGER_TYPE == TCP_LOGGER
 
 BetterLogger LOGGER;
 

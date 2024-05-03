@@ -95,10 +95,12 @@ class ConfigRequestHandler : public RequestHandler {
  private:
   RestHandlerFunction* _configUpdatedHandler;
   void callHooks() {
+    #if ENABLE_LOGGER
     LOGGER.configUpdateHook(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG]);
     if (_configUpdatedHandler != nullptr) {
       (*_configUpdatedHandler)();
     }
+    #endif
   }
 };
 

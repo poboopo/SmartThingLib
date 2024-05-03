@@ -1,6 +1,10 @@
 #ifndef ACTION_HOOK_H
 #define ACTION_HOOK_H
 
+#include "Features.h"
+
+#if ENABLE_ACTIONS 
+
 #include <type_traits>
 #include "SmartThing.h"
 #include "hooks/impls/Hook.h"
@@ -42,5 +46,7 @@ namespace Hook {
       String _action;
   };
 }  // namespace Hook
+
+#endif
 
 #endif

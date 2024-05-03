@@ -1,6 +1,9 @@
 #ifndef HOOKS_MANAGER_H
 #define HOOKS_MANAGER_H
 
+#include "Features.h"
+#if ENABLE_HOOKS 
+
 #include <ArduinoJson.h>
 
 #include <functional>
@@ -21,8 +24,12 @@ class HooksManagerClass {
   int createHookFromJson(JsonObject observableInfo,
                              JsonObject hookInfo);
 
+  #if ENABLE_SENSORS
   int addHook(const Configurable::Sensor::Sensor * sensor, Hook<int16_t> * hook);
+  #endif
+  #if ENABLE_STATES
   int addHook(const Configurable::DeviceState::DeviceState * state, Hook<String> * hook);
+  #endif
   bool deleteHook(const char* type, const char* name, int id);
   bool updateHook(DynamicJsonDocument doc);
 
@@ -40,8 +47,14 @@ class HooksManagerClass {
   int16_t getTotalHooksCount() { return _hooksCount; }
 
  private:
+  #if ENABLE_SENSORS 
   List<Watcher<int16_t>> _sensorsWatchers;
+  #endif
+
+  #if ENABLE_STATES
   List<Watcher<String>> _statesWatchers;
+  #endif
+
   int _hooksCount = 0;
 
   template <typename T>
@@ -97,5 +110,7 @@ class HooksManagerClass {
 }  // namespace Hook
 
 extern Hook::HooksManagerClass HooksManager;
+
+#endif
 
 #endif

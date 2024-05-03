@@ -1,6 +1,9 @@
 #ifndef HOOKS_RQ_H
 #define HOOKS_RQ_H
 
+#include "Features.h"
+#if ENABLE_HOOKS 
+
 #include <ArduinoJson.h>
 #include <WebServer.h>
 
@@ -163,5 +166,6 @@ class HooksRequestHandler : public RequestHandler {
     return false;
   };
 };
+#endif
 
 #endif

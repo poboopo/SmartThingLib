@@ -1,6 +1,10 @@
 #ifndef ACTION_HOOK_BUILDER_H
 #define ACTION_HOOK_BUILDER_H
 
+#include "Features.h"
+
+#if ENABLE_ACTIONS 
+
 #include "hooks/impls/ActionHook.h"
 #include "logs/BetterLogger.h"
 
@@ -36,5 +40,6 @@ class ActionHookBuilder {
   }
 };
 }  // namespace Hook
+#endif
 
 #endif

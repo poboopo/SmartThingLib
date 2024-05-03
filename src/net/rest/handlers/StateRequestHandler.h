@@ -1,6 +1,9 @@
 #ifndef STATE_RQ_H
 #define STATE_RQ_H
 
+#include "Features.h"
+#if ENABLE_STATES
+
 #include <WebServer.h>
 
 #include "SmartThing.h"
@@ -40,4 +43,5 @@ class StateRequestHandler : public RequestHandler {
   };
 };
 
+#endif
 #endif

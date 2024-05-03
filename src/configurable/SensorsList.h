@@ -1,9 +1,13 @@
 #ifndef SENSORS_LIST_H
 #define SENSORS_LIST_H
 
+#include "Features.h"
+#if ENABLE_SENSORS 
+
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
+#include "logs/BetterLogger.h"
 #include "configurable/ConfigurableObjects.h"
 #include "utils/List.h"
 
@@ -86,5 +90,7 @@ class SensorsList : public List<Sensor> {
 };
 }  // namespace Sensor
 }  // namespace Configurable
+
+#endif
 
 #endif

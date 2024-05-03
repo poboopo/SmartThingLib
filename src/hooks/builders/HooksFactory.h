@@ -3,6 +3,7 @@
 
 #include <ArduinoJson.h>
 
+#include "Features.h"
 #include "hooks/builders/ActionHookBuilder.h"
 #include "hooks/builders/HttpHookBuilder.h"
 #include "hooks/builders/NotificationHookBuilder.h"
@@ -39,9 +40,12 @@ namespace Hook {
         LOGGER.debug(HOOKS_FACTORY_TAG, "Building hook type=%s", type);
 
         Hook<T>* hook = nullptr;
+        #if ENABLE_ACTIONS 
         if (strcmp(type, ACTION_HOOK_TAG) == 0) {
           hook = ActionHookBuilder::build<B, T>(doc, false);
-        } else if (strcmp(type, HTTP_HOOK_TAG) == 0) {
+        } else 
+        #endif
+        if (strcmp(type, HTTP_HOOK_TAG) == 0) {
           hook = HttpHookBuilder::build<B, T>(doc, false);
         } else if (strcmp(type, NOTIFICATION_HOOK_TAG) == 0) {
           hook = NotificationHookBuilder::build<B, T>(doc, false);
@@ -91,10 +95,12 @@ namespace Hook {
       static DynamicJsonDocument getTemplates(const char * type) {
         DynamicJsonDocument doc(MAX_HOOK_TEMPLATE_SIZE * 4);
         doc["default"] = getDefaultTemplate(type);
-        doc[HTTP_HOOK_TAG] = HttpHookBuilder::getTemplate();
+        #if ENABLE_ACTIONS
         if (SmartThing.getActionsCount() > 0) {
           doc[ACTION_HOOK_TAG] = ActionHookBuilder::getTemplate();
         }
+        #endif
+        doc[HTTP_HOOK_TAG] = HttpHookBuilder::getTemplate();
         doc[NOTIFICATION_HOOK_TAG] = NotificationHookBuilder::getTemplate();
         return doc;
       }
@@ -111,6 +117,7 @@ namespace Hook {
         }
         return doc;
       }
+      #if ENABLE_SENSORS
       static void setTypeSpecificValues(Hook<int16_t> * hook, JsonObject doc) {
         if (doc.containsKey("threshold")) {
           int16_t threshold = doc["threshold"];
@@ -118,6 +125,7 @@ namespace Hook {
           LOGGER.debug(HOOKS_FACTORY_TAG, "Threshold=%d", threshold);
         }
       }
+      #endif
       static void setTypeSpecificValues(Hook<String> * hook, JsonObject doc) {
       }
   };

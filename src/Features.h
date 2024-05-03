@@ -1,0 +1,20 @@
+// Enable and disable features
+
+#define ENABLE_WEB_PAGE 0
+
+#define ENABLE_ACTIONS 1
+
+#define ENABLE_SENSORS 1
+#define ENABLE_STATES 1
+
+#define ENABLE_HOOKS 0
+
+#define ENABLE_LOGGER 1
+#define TCP_LOGGER 1
+#define MULTICAST_LOGGER 2
+#define LOGGER_TYPE TCP_LOGGER
+
+#define LOGGING_LEVEL_ERROR 0
+#define LOGGING_LEVEL_WARN 0
+#define LOGGING_LEVEL_INFO 0
+#define LOGGING_LEVEL_DEBUG 1

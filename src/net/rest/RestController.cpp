@@ -1,5 +1,6 @@
 #include "net/rest/RestController.h"
 
+#include "Features.h"
 #include "net/rest/handlers/ActionRequestHandler.h"
 #include "net/rest/handlers/HooksRequestHandler.h"
 #include "net/rest/handlers/ConfigRequestHandler.h"
@@ -8,10 +9,7 @@
 #include "net/rest/handlers/StateRequestHandler.h"
 #include "net/rest/handlers/WiFiRequestHandler.h"
 #include "net/rest/handlers/SettingsRequestHandler.h"
-
-#ifdef WEB_PAGE
 #include "net/rest/Pages.h"
-#endif
 
 #define WEB_SERVER_TAG "web_server"
 
@@ -58,23 +56,30 @@ void RestControllerClass::preHandleRequest() {
   _server.sendHeader("Access-Control-Allow-Origin", "*");
 }
 
-// add authorization?
 void RestControllerClass::setupHandler() {
   _server.addHandler(new ConfigRequestHandler(&_configUpdatedHandler));
   _server.addHandler(new WiFiRequesthandler());
   _server.addHandler(new InfoRequestHandler());
+  #if ENABLE_SENSORS
   _server.addHandler(new SensorsRequestHandler());
+  #endif
+  #if ENABLE_STATES
   _server.addHandler(new StateRequestHandler());
+  #endif
+  #if ENABLE_ACTIONS
   _server.addHandler(new ActionRequestHandler());
+  #endif
+  #if ENABLE_HOOKS
   _server.addHandler(new HooksRequestHandler());
+  #endif
   _server.addHandler(new SettingsRequestHandler());
 
   _server.on("/health", HTTP_GET, [this]() {
     preHandleRequest();
-    _server.send(200, "text/html", "I am alive!!! :)");
+    _server.send(200, "text/plain", "I am alive!!! :)");
   });
 
-#ifdef WEB_PAGE
+#if ENABLE_WEB_PAGE
   _server.on("/", HTTP_GET, [this]() {
     preHandleRequest();
     _server.send(200, "text/html", WEB_PAGE_MAIN);
@@ -92,14 +97,28 @@ void RestControllerClass::setupHandler() {
 #else
   _server.on("/", HTTP_GET, [this]() {
     preHandleRequest();
-    _server.send(200, "text/plain",
-                 "Web control panel is not included in this build!");
+    _server.send(200, "text/plain", "Web control panel is not included in this build!");
   });
 #endif
 
+  _server.on("/features", HTTP_GET, [this]() {
+    preHandleRequest();
+    DynamicJsonDocument doc(2048);
+    doc["web"] = ENABLE_WEB_PAGE == 1;
+    doc["actions"] = ENABLE_ACTIONS == 1;
+    doc["sensors"] = ENABLE_SENSORS == 1;
+    doc["states"] = ENABLE_STATES == 1;
+    doc["hooks"] = ENABLE_HOOKS == 1;
+    doc["logger"] = ENABLE_LOGGER == 1;
+    
+    String response;
+    serializeJson(doc, response);
+    _server.send(200, CONTENT_TYPE_JSON, response);
+  });
+
   _server.on("/metrics", HTTP_GET, [this]() {
     preHandleRequest();
-    DynamicJsonDocument doc(4096);
+    DynamicJsonDocument doc(2048);
     doc["uptime"] = millis();
 
     JsonObject obj = doc.createNestedObject("heap");
@@ -110,13 +129,18 @@ void RestControllerClass::setupHandler() {
     obj["settingsUsage"] = STSettings.usage();
 
     JsonObject counts = doc.createNestedObject("counts");
+    #if ENABLE_SENSORS
     counts["sensors"] = SmartThing.getSensorsCount();
+    #endif
+    #if ENABLE_STATES
     counts["states"] = SmartThing.getDeviceStatesCount();
+    #endif
+    #if ENABLE_HOOKS
     counts["hooks"] = HooksManager.getTotalHooksCount();
+    #endif
 
     String response;
     serializeJson(doc, response);
-
     _server.send(200, CONTENT_TYPE_JSON, response);
   });
 

@@ -1,4 +1,4 @@
-#ifdef WEB_PAGE
+#if ENABLE_WEB_PAGE 
 const char* WEB_PAGE_MAIN = R"=====(<!DOCTYPE html>
 <html lang="en">
   <head>

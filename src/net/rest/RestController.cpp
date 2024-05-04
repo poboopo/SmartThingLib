@@ -128,6 +128,7 @@ void RestControllerClass::setupHandler() {
     obj["maxAlloc"] = ESP.getMaxAllocHeap();
     obj["settingsUsage"] = STSettings.usage();
 
+    #if ENABLE_SENSORS || ENABLE_STATES || ENABLE_HOOKS
     JsonObject counts = doc.createNestedObject("counts");
     #if ENABLE_SENSORS
     counts["sensors"] = SmartThing.getSensorsCount();
@@ -137,6 +138,7 @@ void RestControllerClass::setupHandler() {
     #endif
     #if ENABLE_HOOKS
     counts["hooks"] = HooksManager.getTotalHooksCount();
+    #endif
     #endif
 
     String response;

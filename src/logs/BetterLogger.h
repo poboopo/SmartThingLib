@@ -7,8 +7,14 @@
 
 #define LOGGER_TAG "LOGGER"
 
+#if LOGGER_TYPE == SERIAL_LOGGER
+// [name][level][tag]message
+#define LOGGER_MESSAGE_TEMPLATE "[%s][%u][%s]%s"
+#else
 // name_&_level_&_tag_&_message
 #define LOGGER_MESSAGE_TEMPLATE "%s_&_%u_&_%s_&_%s\n"
+#endif
+
 #define STAT_LOG_TAG "STATISTICS"
 #define MAX_MESSAGE_LENGTH 2048
 
@@ -22,22 +28,22 @@ class BetterLogger {
   }
 
   void init() { Serial.begin(115200); }
-  void initNetConnection(String fullAddr, const char* name) {
+  void initConnection(String fullAddr, const char* name) {
     #if ENABLE_LOGGER
     _name = name;
     _fullAddr = fullAddr;
 
-    connectSocket();
+    connectToServer();
     #endif
   }
   void configUpdateHook(String fullAddr) {
-    #if ENABLE_LOGGER
+    #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
     if (_connected && _fullAddr.equals(fullAddr)) {
       return;
     }
     _fullAddr = fullAddr;
-    warning(LOGGER_TAG, "Tcp server log address was updated");
-    connectSocket();
+    warning(LOGGER_TAG, "Server log address was updated");
+    connectToServer();
     #endif
   }
 
@@ -109,7 +115,7 @@ class BetterLogger {
 
   const char* _name = "no_name";
 
-  void connectSocket();
+  void connectToServer();
 
   bool parseAddressFromString() {
     if (_fullAddr.isEmpty()) {

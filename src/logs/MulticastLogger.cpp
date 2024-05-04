@@ -4,7 +4,7 @@
 
 BetterLogger LOGGER;
 
-void BetterLogger::connectSocket() {
+void BetterLogger::connect() {
   if (!parseAddressFromString()) {
     return;
   }

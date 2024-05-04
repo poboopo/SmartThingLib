@@ -45,7 +45,7 @@ bool SmartThingClass::init() {
   if (wifiConnected()) {
     LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
     delay(1000);
-    LOGGER.initNetConnection(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG], _name.c_str());
+    LOGGER.initConnection(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG], _name.c_str());
 
     LOGGER.debug(SMART_THING_TAG, "Ota started");
 
@@ -77,7 +77,7 @@ bool SmartThingClass::init() {
               SMART_THING_TAG, 50000, this, 1, &_loopTaskHandle);
   LOGGER.debug(SMART_THING_TAG, "Loop task created");
 
-  #if ENABLE_LOGGER
+  #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
   addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)", "string");
   #endif
   // For notifications

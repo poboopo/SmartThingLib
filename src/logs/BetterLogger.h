@@ -75,26 +75,26 @@ class BetterLogger {
   // bad impl, but i have no other ideas
   template <typename... Args>
   void error(const char* tag, const char* format, Args... args) {
-#if LOGGING_LEVEL_ERROR || LOGGING_LEVEL_WARN || LOGGING_LEVEL_INFO || LOGGING_LEVEL_DEBUG
-    log(40, tag, format, args...);
+#if LOGGING_LEVEL == LOGGING_LEVEL_ERROR || LOGGING_LEVEL == LOGGING_LEVEL_WARN || LOGGING_LEVEL == LOGGING_LEVEL_INFO || LOGGING_LEVEL == LOGGING_LEVEL_DEBUG
+    log(LOGGING_LEVEL_ERROR, tag, format, args...);
 #endif
   };
   template <typename... Args>
   void warning(const char* tag, const char* format, Args... args) {
-#if LOGGING_LEVEL_WARN || LOGGING_LEVEL_INFO || LOGGING_LEVEL_DEBUG
-    log(30, tag, format, args...);
+#if LOGGING_LEVEL == LOGGING_LEVEL_WARN || LOGGING_LEVEL == LOGGING_LEVEL_INFO || LOGGING_LEVEL == LOGGING_LEVEL_DEBUG
+    log(LOGGING_LEVEL_WARN, tag, format, args...);
 #endif
   };
   template <typename... Args>
   void info(const char* tag, const char* format, Args... args) {
-#if LOGGING_LEVEL_INFO || LOGGING_LEVEL_DEBUG
-    log(20, tag, format, args...);
+#if LOGGING_LEVEL == LOGGING_LEVEL_INFO || LOGGING_LEVEL == LOGGING_LEVEL_DEBUG
+    log(LOGGING_LEVEL_INFO, tag, format, args...);
 #endif
   };
   template <typename... Args>
   void debug(const char* tag, const char* format, Args... args) {
-#if LOGGING_LEVEL_DEBUG
-    log(10, tag, format, args...);
+#if LOGGING_LEVEL == LOGGING_LEVEL_DEBUG
+    log(LOGGING_LEVEL_DEBUG, tag, format, args...);
 #endif
   };
   void statistics() {

@@ -126,9 +126,18 @@ class Watcher {
   }
 
   void callHooks(T &value) {
-    _hooks.forEach([&](Hook::Hook<T> *current) {
+    if (_hooks.size() == 0) {
+      return;
+    }
+    _hooks.forEach([&, this](Hook::Hook<T> *current) {
       if (current != nullptr && current->accept(value)) {
-        LOGGER.debug(WATCHER_TAG, "Calling hook [id=%d]", current->getId());
+        LOGGER.debug(
+          WATCHER_TAG,
+          "Calling hook [id=%d] for observable [%s]%s",
+          current->getId(),
+          _observable->type,
+          _observable->name
+        );
         current->call(value);
       }
     });

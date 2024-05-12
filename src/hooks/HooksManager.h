@@ -34,6 +34,7 @@ class HooksManagerClass {
   bool updateHook(DynamicJsonDocument doc);
 
   void check();
+  boolean callHook(const char * type, const char * name, int id, String value);
 
   DynamicJsonDocument getWatchersInfo();
   DynamicJsonDocument allHooksToJson(bool ignoreReadOnly, bool shortJson);
@@ -96,6 +97,9 @@ class HooksManagerClass {
 
   template <typename T>
   void checkWatchers(List<Watcher<T>>* list);
+
+  template <typename T>
+  boolean callWatcherHook(List<Watcher<T>>* list, const char * name, int id, T value, boolean emptyValue);
 
   template <typename T>
   Watcher<T>* getWatcherOrCreate(

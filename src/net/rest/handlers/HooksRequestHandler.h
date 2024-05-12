@@ -19,6 +19,7 @@
 #define HOOK_OBSERVABLE_TYPE "type"
 #define HOOK_ID_ARG "id"
 
+// todo cut off first /hooks?
 class HooksRequestHandler : public RequestHandler {
  public:
   HooksRequestHandler(){};
@@ -91,8 +92,25 @@ class HooksRequestHandler : public RequestHandler {
         server.send(200, CONTENT_TYPE_JSON, response);
         return true;
       }
-      DynamicJsonDocument doc =
-          HooksManager.allHooksToJson(false, false);
+      if (requestUri.equals("/hooks/test")) {
+        String type = server.arg(HOOK_OBSERVABLE_TYPE);
+        String name = server.arg(HOOK_NAME_ARG);
+        String id = server.arg(HOOK_ID_ARG);
+        String value = server.arg("value");
+
+        if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
+          server.send(400, CONTENT_TYPE_JSON,
+                      buildErrorJson("Type, name or id args are missing!"));
+          return true;
+        }
+        if (HooksManager.callHook(type.c_str(), name.c_str(), id.toInt(), value)) {
+          server.send(200);
+        } else {
+          server.send(500);
+        }
+        return true;
+      }
+      DynamicJsonDocument doc = HooksManager.allHooksToJson(false, false);
       String response;
       serializeJson(doc, response);
       server.send(200, CONTENT_TYPE_JSON, response);

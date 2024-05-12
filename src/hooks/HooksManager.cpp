@@ -399,6 +399,62 @@ void HooksManagerClass::checkWatchers(List<Watcher<T>> *list) {
   list->forEach([](Watcher<T> *current) { current->check(); });
 }
 
+boolean HooksManagerClass::callHook(const char * type, const char * name, int id, String value) {
+  if (strlen(type) == 0 || strlen(name) == 0) {
+    LOGGER.error(HOOKS_MANAGER_TAG, "Empty type or name!");
+    return false;
+  }
+  boolean emptyValue = value.isEmpty();
+  LOGGER.info(
+    HOOKS_MANAGER_TAG,
+    "Trying to call hook type=%s, name=%s, id=%d, value=%s",
+    type,
+    name,
+    id,
+    emptyValue ? "" : value.c_str()
+  );
+  #if ENABLE_SENSORS
+  if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
+    return callWatcherHook<int16_t>(&_sensorsWatchers, name, id, emptyValue ? 0 : value.toInt(), emptyValue);
+  }
+  #endif
+  #if ENABLE_STATES
+  if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
+    return callWatcherHook<String>(&_statesWatchers, name, id, value, emptyValue);
+  }
+  #endif
+  LOGGER.error(HOOKS_MANAGER_TAG, "Type %s not supported!", type);
+  return false;
+}
+
+template <typename T>
+boolean HooksManagerClass::callWatcherHook(List<Watcher<T>>* list, const char * name, int id, T value, boolean emptyValue) {
+  Watcher<T> * watcher = getWatcherByObservableName(list, name);
+  if (watcher == nullptr) {
+    LOGGER.error(HOOKS_MANAGER_TAG, "Can't find watcher for observable with name=%s", name);
+    return false;
+  }
+  Hook<T> * hook = watcher->getHookById(id);
+  if (hook == nullptr) {
+    LOGGER.error(HOOKS_MANAGER_TAG, "Can't find hook for observable %s by id=%d", name, id);
+    return false;
+  }
+  const Observable::ObservableObject<T> * obs = watcher->getObservable();
+  if (obs == nullptr) {
+    LOGGER.error(HOOKS_MANAGER_TAG, "OBSERVABLE NULLPTR! HOW???");
+    return false;
+  }
+  if (emptyValue) {
+    LOGGER.info(HOOKS_MANAGER_TAG, "Extracting value and calling hook");
+    T v = obs->valueProvider();
+    hook->call(v);
+  } else {
+    LOGGER.info(HOOKS_MANAGER_TAG, "Calling hook with provided value");
+    hook->call(value);
+  }
+  return true;
+}
+
 void HooksManagerClass::saveHooksToSettings() {
   LOGGER.debug(HOOKS_MANAGER_TAG, "Saving hooks");
   STSettings.setHooks(allHooksToJson(true, true).as<JsonArray>());

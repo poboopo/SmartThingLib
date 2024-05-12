@@ -8,7 +8,7 @@
 
 #define CONFIG_ENTRIES_LIST_TAG "config_entries_list"
 
-namespace Configurable {
+namespace Observable {
 namespace Config {
 struct ConfigEntry {
   ConfigEntry(const char* n, const char* c, const char* t)
@@ -57,6 +57,6 @@ class ConfigEntriesList : public List<ConfigEntry> {
   };
 };
 }  // namespace Config
-}  // namespace Configurable
+}  // namespace Observable
 
 #endif

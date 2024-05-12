@@ -14,6 +14,7 @@
 #define MAX_HOOK_TEMPLATE_SIZE 1024
 #define VALUE_DYNAMIC_PARAM "${v}"
 
+// todo store hook pointer?
 namespace Hook {
   template <typename T>
   class Hook {
@@ -130,6 +131,7 @@ namespace Hook {
       int16_t _previousValue;
   };
   #endif
+  #if ENABLE_STATES
   class StateHook: public Hook<String> {
     public:
       StateHook(const char *type, bool readonly): Hook<String>(type, readonly) {};
@@ -156,6 +158,7 @@ namespace Hook {
       }
 
   };
+  #endif
 }  // namespace Hook
 
 #endif

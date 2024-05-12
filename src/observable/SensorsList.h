@@ -8,17 +8,17 @@
 #include <ArduinoJson.h>
 
 #include "logs/BetterLogger.h"
-#include "configurable/ConfigurableObjects.h"
+#include "observable/ObservableObjects.h"
 #include "utils/List.h"
 
 #define SENSORS_LIST_TAG "sensors_list"
 
-namespace Configurable {
+namespace Observable {
 namespace Sensor {
 class SensorsList : public List<Sensor> {
  public:
   bool add(const char* name,
-           Configurable::ConfigurableObject<int16_t>::ValueProviderFunction
+           Observable::ObservableObject<int16_t>::ValueProviderFunction
                valueProvider) {
     return add(name, TYPE_CUSTOM, valueProvider);
   };
@@ -54,7 +54,7 @@ class SensorsList : public List<Sensor> {
     forEach([&](Sensor* current) {
       JsonObject sensorObj = doc.createNestedObject(current->name);
       sensorObj["value"] = current->valueProvider();
-      sensorObj["type"] = Configurable::Sensor::sensorTypeName(current->type);
+      sensorObj["type"] = Observable::Sensor::sensorTypeName(current->type);
     });
     return doc;
   };
@@ -65,7 +65,7 @@ class SensorsList : public List<Sensor> {
 
  private:
   bool add(const char* name, SensorType type,
-           Configurable::ConfigurableObject<int16_t>::ValueProviderFunction
+           Observable::ObservableObject<int16_t>::ValueProviderFunction
                valueProvider) {
     if (findSensor(name) != nullptr) {
       LOGGER.warning(SENSORS_LIST_TAG,
@@ -89,7 +89,7 @@ class SensorsList : public List<Sensor> {
   };
 };
 }  // namespace Sensor
-}  // namespace Configurable
+}  // namespace Observable
 
 #endif
 

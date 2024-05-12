@@ -10,17 +10,17 @@
 #include <functional>
 
 #include "logs/BetterLogger.h"
-#include "configurable/ConfigurableObjects.h"
+#include "observable/ObservableObjects.h"
 #include "utils/List.h"
 
 #define DEVICE_STATES_LIST_TAG "device_states_list"
 
-namespace Configurable {
+namespace Observable {
 namespace DeviceState {
 class DeviceStatesList : public List<DeviceState> {
  public:
   bool add(const char *name,
-           Configurable::ConfigurableObject<const char *>::ValueProviderFunction
+           Observable::ObservableObject<const char *>::ValueProviderFunction
                valueProvider) {
     if (findState(name) != nullptr) {
       LOGGER.warning(DEVICE_STATES_LIST_TAG,
@@ -55,7 +55,7 @@ class DeviceStatesList : public List<DeviceState> {
   };
 };
 }  // namespace DeviceState
-}  // namespace Configurable
+}  // namespace Observable
 
 #endif
 #endif

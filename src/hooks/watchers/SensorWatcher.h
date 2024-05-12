@@ -6,7 +6,7 @@
 
 #include "hooks/impls/Hook.h"
 #include "hooks/watchers/Watcher.h"
-#include "configurable/ConfigurableObjects.h"
+#include "observable/ObservableObjects.h"
 #include "logs/BetterLogger.h"
 
 #define SENSOR_WATCHER_TAG "sensor_watcher"
@@ -15,7 +15,7 @@
 namespace Hook {
 class SensorWatcher : public Watcher<int16_t> {
  public:
-  SensorWatcher(const Configurable::Sensor::Sensor* sensor)
+  SensorWatcher(const Observable::Sensor::Sensor* sensor)
       : Watcher<int16_t>(sensor, -1){};
   bool check() {
     if (_observable != nullptr) {

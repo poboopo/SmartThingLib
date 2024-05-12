@@ -6,7 +6,7 @@
 
 #include "hooks/impls/Hook.h"
 #include "hooks/watchers/Watcher.h"
-#include "configurable/ConfigurableObjects.h"
+#include "observable/ObservableObjects.h"
 #include "logs/BetterLogger.h"
 
 #define DEVICE_STATE_WATCHER_TAG "device_state_watcher"
@@ -16,7 +16,7 @@
 namespace Hook {
 class DeviceStateWatcher : public Watcher<String> {
  public:
-  DeviceStateWatcher(const Configurable::DeviceState::DeviceState* deviceState)
+  DeviceStateWatcher(const Observable::DeviceState::DeviceState* deviceState)
       : Watcher<String>(deviceState, ""){};
   bool check() {
     if (_observable == nullptr) {

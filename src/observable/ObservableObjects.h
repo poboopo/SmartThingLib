@@ -11,11 +11,11 @@
 
 #define CONFIGURABLE_JS0N_SIZE 64
 
-namespace Configurable {
+namespace Observable {
   template <class T>
-  struct ConfigurableObject {
+  struct ObservableObject {
   public:
-    ConfigurableObject(const char* objType) : type(objType){};
+    ObservableObject(const char* objType) : type(objType){};
     typedef std::function<T(void)> ValueProviderFunction;
 
     const char* name;
@@ -46,9 +46,9 @@ namespace Sensor {
     return "type_not_found_how";
   };
 
-  struct Sensor : public ConfigurableObject<int16_t> {
+  struct Sensor : public ObservableObject<int16_t> {
   public:
-    Sensor() : ConfigurableObject<int16_t>(SENSOR_TYPE){};
+    Sensor() : ObservableObject<int16_t>(SENSOR_TYPE){};
     int pin;
     SensorType type;
   };
@@ -57,11 +57,11 @@ namespace Sensor {
 
 #if ENABLE_STATES
 namespace DeviceState {
-  struct DeviceState : public ConfigurableObject<String> {
-    DeviceState() : ConfigurableObject<String>(STATE_TYPE){};
+  struct DeviceState : public ObservableObject<String> {
+    DeviceState() : ObservableObject<String>(STATE_TYPE){};
   };
 }  // namespace DeviceState
 #endif
-}  // namespace Configurable
+}  // namespace Observable
 
 #endif

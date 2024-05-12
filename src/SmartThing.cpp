@@ -3,7 +3,7 @@
 #define WIPE_PIN 19
 #define WIPE_TIMEOUT 5000
 
-using namespace Configurable;
+using namespace Observable;
 
 SmartThingClass SmartThing;
 
@@ -205,7 +205,7 @@ int16_t SmartThingClass::getSensorsCount() { return _sensorsList.size(); }
 
 bool SmartThingClass::addSensor(
     const char* name,
-    Configurable::ConfigurableObject<int16_t>::ValueProviderFunction function) {
+    Observable::ObservableObject<int16_t>::ValueProviderFunction function) {
   return _sensorsList.add(name, function);
 }
 
@@ -218,7 +218,7 @@ bool SmartThingClass::addAnalogSensor(const char* name, int pin) {
   return _sensorsList.addAnalog(name, pin);
 }
 
-const Configurable::Sensor::Sensor* SmartThingClass::getSensor(
+const Observable::Sensor::Sensor* SmartThingClass::getSensor(
     const char* name) {
   return _sensorsList.findSensor(name);
 }
@@ -227,7 +227,7 @@ const Configurable::Sensor::Sensor* SmartThingClass::getSensor(
 #if ENABLE_STATES
 bool SmartThingClass::addDeviceState(
     const char* name,
-    Configurable::ConfigurableObject<const char*>::ValueProviderFunction
+    Observable::ObservableObject<const char*>::ValueProviderFunction
         function) {
   return _deviceStatesList.add(name, function);
 }
@@ -236,7 +236,7 @@ DynamicJsonDocument SmartThingClass::getDeviceStatesInfo() {
   return _deviceStatesList.getValues();
 }
 
-const Configurable::DeviceState::DeviceState* SmartThingClass::getDeviceState(
+const Observable::DeviceState::DeviceState* SmartThingClass::getDeviceState(
     const char* name) {
   return _deviceStatesList.findState(name);
 }

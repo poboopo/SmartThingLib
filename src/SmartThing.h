@@ -4,10 +4,10 @@
 #include <Arduino.h>
 
 #include "hooks/HooksManager.h"
-#include "configurable/ActionsList.h"
-#include "configurable/ConfigEntriesList.h"
-#include "configurable/DeviceStatesList.h"
-#include "configurable/SensorsList.h"
+#include "observable/ActionsList.h"
+#include "observable/ConfigEntriesList.h"
+#include "observable/DeviceStatesList.h"
+#include "observable/SensorsList.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
 #include "net/socket/Multicaster.h"
@@ -54,19 +54,19 @@ class SmartThingClass {
   #if ENABLE_SENSORS
   bool addSensor(
       const char* name,
-      Configurable::ConfigurableObject<int16_t>::ValueProviderFunction
+      Observable::ObservableObject<int16_t>::ValueProviderFunction
           valueProvider);
   bool addDigitalSensor(const char* name, int pin);
   bool addAnalogSensor(const char* name, int pin);
-  const Configurable::Sensor::Sensor* getSensor(const char* name);
+  const Observable::Sensor::Sensor* getSensor(const char* name);
   DynamicJsonDocument getSensorsValues();
   int16_t getSensorsCount();
   #endif
 
   #if ENABLE_STATES
-  bool addDeviceState(const char* name, Configurable::ConfigurableObject<const char*>::ValueProviderFunction valueProvider);
+  bool addDeviceState(const char* name, Observable::ObservableObject<const char*>::ValueProviderFunction valueProvider);
 
-  const Configurable::DeviceState::DeviceState* getDeviceState(
+  const Observable::DeviceState::DeviceState* getDeviceState(
       const char* name);
   DynamicJsonDocument getDeviceStatesInfo();
 
@@ -75,9 +75,9 @@ class SmartThingClass {
 
   #if ENABLE_ACTIONS
   bool addActionHandler(const char* action, const char* caption,
-                        Configurable::Action::ActionHandler handler);
+                        Observable::Action::ActionHandler handler);
   bool addActionHandler(const char* action,
-                        Configurable::Action::ActionHandler handler) {
+                        Observable::Action::ActionHandler handler) {
     return addActionHandler(action, action, handler);
   };
   ActionResult callAction(const char* action);
@@ -96,18 +96,18 @@ class SmartThingClass {
   bool init();
 
   #if ENABLE_SENSORS
-  Configurable::Sensor::SensorsList _sensorsList;
+  Observable::Sensor::SensorsList _sensorsList;
   #endif
 
   #if ENABLE_STATES
-  Configurable::DeviceState::DeviceStatesList _deviceStatesList;
+  Observable::DeviceState::DeviceStatesList _deviceStatesList;
   #endif
 
   #if ENABLE_ACTIONS
-  Configurable::Action::ActionsList _actionsList;
+  Observable::Action::ActionsList _actionsList;
   #endif
 
-  Configurable::Config::ConfigEntriesList _configEntriesList;
+  Observable::Config::ConfigEntriesList _configEntriesList;
 
   TaskHandle_t _loopTaskHandle = NULL;
   void updateBroadCastMessage();

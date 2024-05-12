@@ -14,12 +14,12 @@ Hook::HooksManagerClass HooksManager;
 
 namespace Hook {
 #if ENABLE_SENSORS
-using namespace Configurable::Sensor;
+using namespace Observable::Sensor;
 #endif
 #if ENABLE_STATES
-using namespace Configurable::DeviceState;
+using namespace Observable::DeviceState;
 #endif
-using Configurable::ConfigurableObject;
+using Observable::ObservableObject;
 
 void HooksManagerClass::loadFromSettings() {
   JsonArray hooksInfo = STSettings.getHooks();
@@ -89,11 +89,11 @@ int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
 }
 
 template <class T>
-int HooksManagerClass::addHook(const ConfigurableObject<T> *obj,
+int HooksManagerClass::addHook(const ObservableObject<T> *obj,
                                        Hook<T> *hook) {
   if (obj == nullptr) {
     LOGGER.error(HOOKS_MANAGER_TAG,
-                 "Configurable object is missing, skipping...");
+                 "Observable object is missing, skipping...");
     return -1;
   }
   if (hook == nullptr) {
@@ -119,9 +119,9 @@ int HooksManagerClass::addHook(const ConfigurableObject<T> *obj,
 
 template <typename T>
 Watcher<T> *HooksManagerClass::getWatcherOrCreate(
-    const ConfigurableObject<T> *obj) {
+    const ObservableObject<T> *obj) {
   if (obj == nullptr || obj->type == nullptr) {
-    LOGGER.error(HOOKS_MANAGER_TAG, "Configurable object is missing");
+    LOGGER.error(HOOKS_MANAGER_TAG, "Observable object is missing");
     return nullptr;
   }
 
@@ -155,7 +155,7 @@ Watcher<T> *HooksManagerClass::getWatcherOrCreate(
 #if ENABLE_STATES
 template <>
 Watcher<String> *HooksManagerClass::createWatcher(
-    const ConfigurableObject<String> *obj) {
+    const ObservableObject<String> *obj) {
   return new DeviceStateWatcher((DeviceState *)obj);
 }
 
@@ -164,14 +164,14 @@ List<Watcher<String>> *HooksManagerClass::getWatchersList() {
   return &_statesWatchers;
 }
 
-int HooksManagerClass::addHook(const Configurable::DeviceState::DeviceState * state, Hook<String> * hook) {
+int HooksManagerClass::addHook(const Observable::DeviceState::DeviceState * state, Hook<String> * hook) {
   return addHook<String>(state, hook);
 }
 #endif
 
 #if ENABLE_SENSORS 
 template <>
-Watcher<int16_t> *HooksManagerClass::createWatcher(const ConfigurableObject<int16_t> *obj) {
+Watcher<int16_t> *HooksManagerClass::createWatcher(const ObservableObject<int16_t> *obj) {
   return new SensorWatcher((Sensor *)obj);
 }
 
@@ -180,7 +180,7 @@ List<Watcher<int16_t>> *HooksManagerClass::getWatchersList() {
   return &_sensorsWatchers;
 }
 
-int HooksManagerClass::addHook(const Configurable::Sensor::Sensor * sensor, Hook<int16_t> * hook) {
+int HooksManagerClass::addHook(const Observable::Sensor::Sensor * sensor, Hook<int16_t> * hook) {
   return addHook<int16_t>(sensor, hook);
 }
 #endif
@@ -360,7 +360,7 @@ bool HooksManagerClass::deleteHookFromList(List<Watcher<T>> *list,
 
 template <typename T>
 Watcher<T> *HooksManagerClass::getWatcher(
-    List<Watcher<T>> *list, const ConfigurableObject<T> *observable) {
+    List<Watcher<T>> *list, const ObservableObject<T> *observable) {
   return list->findValue([observable](Watcher<T> *current) {
     return current->getObservable() == observable;
   });

@@ -6,7 +6,7 @@
 #include <functional>
 
 #include "hooks/impls/Hook.h"
-#include "configurable/ConfigurableObjects.h"
+#include "observable/ObservableObjects.h"
 #include "logs/BetterLogger.h"
 #include "utils/List.h"
 
@@ -21,7 +21,7 @@
 template <typename T>
 class Watcher {
  public:
-  Watcher(const Configurable::ConfigurableObject<T> *observable, T initialValue)
+  Watcher(const Observable::ObservableObject<T> *observable, T initialValue)
       : _observable(observable),
         _oldValue(initialValue),
         _hookIdSequence(0){};
@@ -59,7 +59,7 @@ class Watcher {
         getObservableHooksJson(ignoreReadOnly, shortJson);
     DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE * _hooks.size() + 128);
     doc["observable"] =
-        ((Configurable::ConfigurableObject<T> *)_observable)->toJson();
+        ((Observable::ObservableObject<T> *)_observable)->toJson();
     doc["hooks"] = hooks;
     return doc;
   }
@@ -134,7 +134,7 @@ class Watcher {
     });
   };
 
-  const Configurable::ConfigurableObject<T> *getObservable() {
+  const Observable::ObservableObject<T> *getObservable() {
     return _observable;
   };
 
@@ -143,7 +143,7 @@ class Watcher {
   uint8_t hooksCount() { return _hooks.size(); }
 
  protected:
-  const Configurable::ConfigurableObject<T> *_observable;
+  const Observable::ObservableObject<T> *_observable;
   T _oldValue;
   List<Hook::Hook<T>> _hooks;
 

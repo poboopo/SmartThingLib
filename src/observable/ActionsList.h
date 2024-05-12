@@ -22,7 +22,7 @@ struct ActionResult {
   const char* message = nullptr;
 };
 
-namespace Configurable {
+namespace Observable {
 namespace Action {
 typedef std::function<ActionResult(void)> ActionHandler;
 
@@ -81,7 +81,7 @@ class ActionsList : public List<Action> {
   }
 };
 }  // namespace Action
-}  // namespace Configurable
+}  // namespace Observable
 #endif
 
 #endif

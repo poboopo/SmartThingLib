@@ -2,59 +2,52 @@
 #define REST_CONTROLLER_H
 
 #include <WebServer.h>
+
 #include "logs/BetterLogger.h"
 #include "settings/SettingsManager.h"
 
 #define SERVER_PORT 80
-#define JSON_CONTENT_TYPE "application/json"
+#define CONTENT_TYPE_JSON "application/json"
 
-struct RestHandlerResult{
-    int code = 200;
-    String contentType = JSON_CONTENT_TYPE;
-    String body = "";
+struct RestHandlerResult {
+  int code = 200;
+  String contentType = CONTENT_TYPE_JSON;
+  String body = "";
 };
 
-class RestController{
-    public:
-        RestController();
-        ~RestController();
+typedef std::function<void(void)> RestHandlerFunction;
 
-        typedef std::function<void(void)> HandlerFunction;
-        void begin();
-        void reload();
-        
-        void addConfigUpdatedHandler(RestController::HandlerFunction hf) {
-            _configUpdatedHandler = hf;
-        }
-        void addWifiupdatedHandler(RestController::HandlerFunction hf) {
-            _wifiUpdatedHandler = hf;
-        }
-        void addRestartHandler(RestController::HandlerFunction hf) {
-            _restartHandler = hf;
-        }
+class RestControllerClass {
+ public:
+  RestControllerClass();
+  ~RestControllerClass();
+  void begin();
+  void reload();
 
-        String getRequestBody();
-        String getRequestArg(String name);
-        WebServer * getWebServer() { return &_server; };
+  void addConfigUpdatedHandler(RestHandlerFunction hf) {
+    _configUpdatedHandler = hf;
+  }
+  void addRestartHandler(RestHandlerFunction hf) { _restartHandler = hf; }
 
-        void handle();
-    private:
-        bool _setupFinished = false;
-        WebServer _server;
+  String getRequestBody();
+  String getRequestArg(String name);
+  WebServer* getWebServer() { return &_server; };
 
-        void setupHandler();
-        void preHandleRequest();
+  void handle();
 
-        void processRestHandlerResult(RestHandlerResult result);\
+ private:
+  bool _setupFinished = false;
+  WebServer _server;
 
-        HandlerFunction _configUpdatedHandler = [](){};
-        HandlerFunction _wifiUpdatedHandler = [](){};
-        HandlerFunction _restartHandler = [](){};
+  void setupHandler();
+  void preHandleRequest();
 
-        void handleConfigPost();
-        void handleConfigDelete();
-        void handleWiFiPost();
-        void handleWiFiGet();
+  void processRestHandlerResult(RestHandlerResult result);
+
+  RestHandlerFunction _configUpdatedHandler = []() {};
+  RestHandlerFunction _restartHandler = []() {};
 };
+
+extern RestControllerClass RestController;
 
 #endif

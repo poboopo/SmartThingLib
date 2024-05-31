@@ -146,7 +146,7 @@ void RestControllerClass::setupHandler() {
     _server.send(200, CONTENT_TYPE_JSON, response);
   });
 
-  _server.on("/restart", HTTP_PUT, [&]() {
+  _server.on("/restart", HTTP_GET, [&]() {
     preHandleRequest();
 
     _server.send(200);

@@ -12,7 +12,7 @@
 
 #define HOOK_INFO_DOC_SIZE 512
 #define MAX_HOOK_TEMPLATE_SIZE 1024
-#define VALUE_DYNAMIC_PARAM "${v}"
+#define VALUE_DYNAMIC_PARAM "{v}"
 
 // todo store hook pointer?
 namespace Hook {

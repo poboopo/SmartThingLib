@@ -90,7 +90,7 @@ class HttpHook : public T {
     String urlCopy = _url;
     String payloadCopy = _payload;
 
-    LOGGER.debug(HTTP_HOOK_TAG, "Replacing ${v} with [%s]",
+    LOGGER.debug(HTTP_HOOK_TAG, "Replacing {v} with [%s]",
                  valueStr.isEmpty() ? "blank_value" : valueStr.c_str());
     urlCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
     payloadCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);

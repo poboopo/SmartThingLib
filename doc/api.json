@@ -369,7 +369,7 @@
         "description": "Delete observable's hook",
         "parameters": [
           {
-            "name": "observableType",
+            "name": "type",
             "description": "Observable type",
             "in": "query",
             "required": true,
@@ -422,7 +422,7 @@
         "description": "Get hooks for observable object (sensor or state)",
         "parameters": [
           {
-            "name": "observableType",
+            "name": "type",
             "in": "query",
             "description": "Observable type",
             "example": "sensor/state",
@@ -463,7 +463,7 @@
         "description": "Get hook by id",
         "parameters": [
           {
-            "name": "observableType",
+            "name": "type",
             "in": "query",
             "description": "Observable type",
             "example": "sensor/state",
@@ -514,6 +514,64 @@
         "responses": {
           "200": {
             "$ref": "#components/responses/HookTemplates"
+          }
+        }
+      }
+    },
+    "/hooks/test": {
+      "get": {
+        "tags": [
+          "Hook"
+        ],
+        "description": "Test hook call",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Observable type",
+            "example": "sensor/state",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Observable name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Hook id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "value",
+            "description": "Value to pass in hook",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hook called successfully"
+          },
+          "400": {
+            "description": "Missing parameters"
+          },
+          "500": {
+            "description": "Hook call failed"
           }
         }
       }

@@ -79,9 +79,11 @@ bool SmartThingClass::init() {
 
   #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
   addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)", "string");
+  #if ENABLE_STATES
   addDeviceState("logger", []() {
     return LOGGER.isConnected() ? "connected" : "disconnected";
   });
+  #endif
   #endif
   // For notifications
   addConfigEntry(GATEWAY_CONFIG, "Gateway address (ip:port)", "string");

@@ -15,7 +15,7 @@
 #include "utils/LedIndicator.h"
 #include "Features.h"
 
-#define SMART_THING_VERSION "0.6"
+#define SMART_THING_VERSION "0.7"
 #define SMART_THING_TAG "SMART_THING"
 // Pins
 #define LED_PIN 13

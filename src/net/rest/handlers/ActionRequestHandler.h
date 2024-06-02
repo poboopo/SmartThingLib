@@ -14,7 +14,7 @@
 #define ACTION_RQ_PATH "/action"
 #define ACTION_RQ_TAG "action_handler"
 
-using namespace Observable::Action;
+using namespace Action;
 
 class ActionRequestHandler : public RequestHandler {
  public:

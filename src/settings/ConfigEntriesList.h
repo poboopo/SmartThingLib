@@ -8,7 +8,6 @@
 
 #define CONFIG_ENTRIES_LIST_TAG "config_entries_list"
 
-namespace Observable {
 namespace Config {
 struct ConfigEntry {
   ConfigEntry(const char* n, const char* c, const char* t)
@@ -49,14 +48,18 @@ class ConfigEntriesList : public List<ConfigEntry> {
     });
     return doc;
   }
-
+  bool haveConfigEntry(const char * name) {
+    return findConfigEntry(name) != nullptr;
+  }
  private:
   const ConfigEntry* findConfigEntry(const char* name) {
+    if (strlen(name) == 0) {
+      return nullptr;
+    }
     return findValue(
         [&](ConfigEntry* current) { return strcmp(current->name, name) == 0; });
   };
 };
 }  // namespace Config
-}  // namespace Observable
 
 #endif

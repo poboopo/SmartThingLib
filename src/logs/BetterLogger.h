@@ -36,6 +36,9 @@ class BetterLogger {
     connectToServer();
     #endif
   }
+  bool isConnected() {
+    return _connected;
+  }
   void configUpdateHook(String fullAddr) {
     #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
     if (_connected && _fullAddr.equals(fullAddr)) {

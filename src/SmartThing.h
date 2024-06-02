@@ -4,8 +4,8 @@
 #include <Arduino.h>
 
 #include "hooks/HooksManager.h"
-#include "observable/ActionsList.h"
-#include "observable/ConfigEntriesList.h"
+#include "ActionsList.h"
+#include "settings/ConfigEntriesList.h"
 #include "observable/DeviceStatesList.h"
 #include "observable/SensorsList.h"
 #include "logs/BetterLogger.h"
@@ -75,9 +75,9 @@ class SmartThingClass {
 
   #if ENABLE_ACTIONS
   bool addActionHandler(const char* action, const char* caption,
-                        Observable::Action::ActionHandler handler);
+                        Action::ActionHandler handler);
   bool addActionHandler(const char* action,
-                        Observable::Action::ActionHandler handler) {
+                        Action::ActionHandler handler) {
     return addActionHandler(action, action, handler);
   };
   ActionResult callAction(const char* action);
@@ -85,7 +85,10 @@ class SmartThingClass {
   DynamicJsonDocument getActionsInfo();
   #endif
   
-  DynamicJsonDocument getConfigInfo();
+  DynamicJsonDocument getConfigInfoJson();
+  Config::ConfigEntriesList getConfigInfo() {
+    return _configEntriesList;
+  }
   bool addConfigEntry(const char* name, const char* caption, const char* type);
 
   LedIndicator* getLed() { return &_led; }
@@ -94,20 +97,6 @@ class SmartThingClass {
   LedIndicator _led;
 
   bool init();
-
-  #if ENABLE_SENSORS
-  Observable::Sensor::SensorsList _sensorsList;
-  #endif
-
-  #if ENABLE_STATES
-  Observable::DeviceState::DeviceStatesList _deviceStatesList;
-  #endif
-
-  #if ENABLE_ACTIONS
-  Observable::Action::ActionsList _actionsList;
-  #endif
-
-  Observable::Config::ConfigEntriesList _configEntriesList;
 
   TaskHandle_t _loopTaskHandle = NULL;
   void updateBroadCastMessage();
@@ -121,6 +110,21 @@ class SmartThingClass {
   String connectToWifi();
 
   void loopRoutine();
+
+  private:
+    #if ENABLE_SENSORS
+    Observable::Sensor::SensorsList _sensorsList;
+    #endif
+
+    #if ENABLE_STATES
+    Observable::DeviceState::DeviceStatesList _deviceStatesList;
+    #endif
+
+    #if ENABLE_ACTIONS
+    Action::ActionsList _actionsList;
+    #endif
+
+    Config::ConfigEntriesList _configEntriesList;
 };
 
 extern SmartThingClass SmartThing;

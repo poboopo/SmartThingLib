@@ -79,7 +79,7 @@ class InfoRequestHandler : public RequestHandler {
       return true;
     }
     if (requestUri.equals("/info/config") && requestMethod == HTTP_GET) {
-      DynamicJsonDocument doc = SmartThing.getConfigInfo();
+      DynamicJsonDocument doc = SmartThing.getConfigInfoJson();
       String response;
       serializeJson(doc, response);
       server.send(200, CONTENT_TYPE_JSON, response);

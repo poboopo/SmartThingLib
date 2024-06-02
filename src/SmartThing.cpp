@@ -195,7 +195,7 @@ void SmartThingClass::updateBroadCastMessage() {
   _broadcastMessage = _ip + "$" + _type + "$" + _name + "$" + SMART_THING_VERSION;
 }
 
-DynamicJsonDocument SmartThingClass::getConfigInfo() {
+DynamicJsonDocument SmartThingClass::getConfigInfoJson() {
   return _configEntriesList.toJson();
 }
 

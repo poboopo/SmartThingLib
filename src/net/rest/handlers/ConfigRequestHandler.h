@@ -43,21 +43,20 @@ class ConfigRequestHandler : public RequestHandler {
       return true;
     }
     if (requestMethod == HTTP_POST) {
-      if (body.length() == 0) {
-        server.send(400, CONTENT_TYPE_JSON, ERROR_BODY_MISSING);
-        return true;
+      Config::ConfigEntriesList entriesList = SmartThing.getConfigInfo();
+      if (entriesList.size() != 0) {
+        DynamicJsonDocument jsonDoc(1024);
+        deserializeJson(jsonDoc, body);
+        JsonObject root = jsonDoc.as<JsonObject>();
+        JsonObject config = STSettings.getConfig();
+
+        for (JsonPair pair : root) {
+          if (entriesList.haveConfigEntry(pair.key().c_str())) {
+            config[pair.key()] = pair.value();
+          }
+        }
+        STSettings.save();
       }
-
-      DynamicJsonDocument jsonDoc(1024);
-      deserializeJson(jsonDoc, body);
-      JsonObject root = jsonDoc.as<JsonObject>();
-      JsonObject config = STSettings.getConfig();
-
-      for (JsonPair pair : root) {
-        config[pair.key()] = pair.value();
-      }
-
-      STSettings.save();
       server.send(200);
       callHooks();
       return true;

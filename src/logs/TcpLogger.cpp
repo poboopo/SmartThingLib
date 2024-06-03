@@ -22,7 +22,7 @@ void BetterLogger::connectToServer() {
     return;
   }
 
-  // move to async task
+  // todo make non blocking
   if (connect(_sock, (struct sockaddr*)&_saddr, sizeof(_saddr)) < 0) {
     error(LOGGER_TAG, "Connection failed");
     return;

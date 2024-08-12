@@ -1,1 +1,7 @@
 SmarThingLib - библиотека для разработка IOT устройств на базе ESP32.
+
+Для работы требуется ArduinoJson
+```
+lib_deps = 
+	bblanchon/ArduinoJson@^6.20.1
+```

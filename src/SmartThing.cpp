@@ -45,13 +45,14 @@ bool SmartThingClass::init() {
   if (wifiConnected()) {
     LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
     delay(1000);
-    LOGGER.initConnection(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG], _name.c_str());
+    LOGGER.init(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG], _name.c_str());
 
-    LOGGER.debug(SMART_THING_TAG, "Ota started");
-
-    _multicaster.init(MULTICAST_GROUP, MULTICAST_PORT);
-    updateBroadCastMessage();
-    LOGGER.debug(SMART_THING_TAG, "Multicaster created");
+    if (_beaconUdp.beginMulticast(MULTICAST_GROUP, MULTICAST_PORT)) {
+      updateBroadCastMessage();
+      LOGGER.debug(SMART_THING_TAG, "Beacon udp created");
+    } else {
+      LOGGER.error(SMART_THING_TAG, "Failed to create beacn udp");
+    }
 
     RestController.begin();
     LOGGER.debug(SMART_THING_TAG, "RestController started");
@@ -98,13 +99,20 @@ void SmartThingClass::loopRoutine() {
   for (;;) {
     if (wifiConnected()) {
       RestController.handle();
-      _multicaster.broadcast(_broadcastMessage.c_str());
+      sendBeacon();
     }
     #if ENABLE_HOOKS 
     HooksManager.check();
     #endif
     vTaskDelay(xDelay);
   }
+}
+
+// todo move to different async task
+void SmartThingClass::sendBeacon() {
+  _beaconUdp.beginMulticastPacket();
+  _beaconUdp.write((uint8_t *) _broadcastMessage.c_str(), _broadcastMessage.length());
+  _beaconUdp.endPacket();
 }
 
 String SmartThingClass::connectToWifi() {

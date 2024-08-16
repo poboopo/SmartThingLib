@@ -36,7 +36,7 @@ void SettingsManager::clear() {
     for (int i = 0; i < EEPROM_LOAD_SIZE; i++) {
       EEPROM.write(i, 0);
     }
-    LOGGER.warning(SETTINGS_MANAGER_TAG, "EEprom clear");
+    LOGGER.warning(SETTINGS_MANAGER_TAG, "EEPROM clear");
   } else {
     LOGGER.error(SETTINGS_MANAGER_TAG, "Failed to open EEPROM");
   }
@@ -61,14 +61,15 @@ const char* SettingsManager::loadFromEeprom() {
     if (!completed) {
       LOGGER.error(SETTINGS_MANAGER_TAG,
                    "Settings string not completed. Missing \\n ?");
-      LOGGER.error(SETTINGS_MANAGER_TAG, "%s", data.c_str());
+      // LOGGER.error(SETTINGS_MANAGER_TAG, "%s", data.c_str());
       return "";
     }
 
     data += "}";
 
-    LOGGER.debug(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]",
-                 data.c_str(), data.length());
+    // LOGGER.debug(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]",
+    //              data.c_str(), data.length());
+    LOGGER.debug(SETTINGS_MANAGER_TAG, "Loaded from eeprom data length=%u", data.length());
     return data.c_str();
   } else {
     LOGGER.error(SETTINGS_MANAGER_TAG, "Failed to open EEPROM");
@@ -110,8 +111,8 @@ bool SettingsManager::save() {
   }
 
   if (EEPROM.begin(EEPROM_LOAD_SIZE)) {
-    LOGGER.debug(SETTINGS_MANAGER_TAG, "Wrtining data to EEPROM (length [%u]): %s",
-                 data.length(), data.c_str());
+    LOGGER.debug(SETTINGS_MANAGER_TAG, "Wrtining data to EEPROM (length [%u])",
+                 data.length());
     for (int i = 0; i < data.length(); i++) {
       EEPROM.write(i, data.charAt(i));
     }
@@ -208,7 +209,7 @@ bool SettingsManager::importSettings(DynamicJsonDocument doc) {
   bool res = true;
   String old;
   serializeJson(_settings, old);
-  LOGGER.debug(SETTINGS_MANAGER_TAG, "Old settings save: %s", old.c_str());
+  LOGGER.debug(SETTINGS_MANAGER_TAG, "Old settings save length=%u", old.length());
 
   String name = doc[DEVICE_NAME];
   if (!name.isEmpty()) {

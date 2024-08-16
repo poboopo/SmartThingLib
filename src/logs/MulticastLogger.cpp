@@ -4,40 +4,20 @@
 
 BetterLogger LOGGER;
 
-void BetterLogger::connectToServer() {
-  if (!parseAddressFromString()) {
-    return;
-  }
-  if (_sock >= 0) {
-    close(_sock);
-    _connected = false;
-  }
-  info(LOGGER_TAG, "Connecting to %s via udp multicast", _fullAddr.c_str());
-
-  _sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-  if (_sock < 0) {
-    close(_sock);
-    Serial.println("Socket creation failed");
-    return;
-  }
-
-  _connected = true;
-  log("DEBUG", "LOGGER", "Connected to multicast group");
+bool BetterLogger::connect(const char * ip, int port) {
+  IPAddress address;
+  address.fromString(ip);
+  return _udp.beginMulticast(address, port);
 }
 
-void BetterLogger::log(const char* message) {
-  Serial.println(message);
+void BetterLogger::disconnect() {
+  _udp.stop();
+}
 
-  // is it really necessary?
-  if (_connected && _sock >= 0) {
-    int nbytes = sendto(_sock, message, strlen(message), 0,
-                        (struct sockaddr*)&_saddr, sizeof(_saddr));
-    if (nbytes < 0) {
-      Serial.println("Failed to send message via socket. Closing connection.");
-      close(_sock);
-      _sock = -1;
-      _connected = false;
-    }
-  }
+size_t BetterLogger::sendRemote(const char* message) {
+  _udp.beginMulticastPacket();
+  size_t sent = _udp.write((uint8_t *) message, strlen(message));
+  _udp.endPacket();
+  return sent;
 }
 #endif

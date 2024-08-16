@@ -3,7 +3,6 @@
 
 #include "Features.h"
 #include <Arduino.h>
-#include <lwip/sockets.h>
 
 #define LOGGER_TAG "LOGGER"
 
@@ -15,6 +14,13 @@
 #define LOGGER_MESSAGE_TEMPLATE "%s_&_%u_&_%s_&_%s\n"
 #endif
 
+#if LOGGER_TYPE == MULTICAST_LOGGER
+#include <WiFiUdp.h>
+#endif
+#if LOGGER_TYPE == TCP_LOGGER
+#include <WiFiClient.h>
+#endif
+
 #define STAT_LOG_TAG "STATISTICS"
 #define MAX_MESSAGE_LENGTH 2048
 
@@ -22,36 +28,51 @@ class BetterLogger {
  public:
   BetterLogger(){};
   ~BetterLogger() { 
-    #if ENABLE_LOGGER
-    close(_sock);
+    #if LOGGER_TYPE != SERIAL_LOGGER
+    disconnect();
     #endif
   }
 
   void init() { Serial.begin(115200); }
-  void initConnection(String fullAddr, const char* name) {
-    #if ENABLE_LOGGER
+  void init(String fullAddr, const char* name) {
     _name = name;
+    #if LOGGER_TYPE != SERIAL_LOGGER
     _fullAddr = fullAddr;
 
-    connectToServer();
+    parseAddressAndConnect();
     #endif
   }
   bool isConnected() {
+    #if LOGGER_TYPE == SERIAL_LOGGER
+    return true;
+    #else
     return _connected;
+    #endif
   }
-  void configUpdateHook(String fullAddr) {
+  void updateAddress(String fullAddr) {
     #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
     if (_connected && _fullAddr.equals(fullAddr)) {
       return;
     }
     _fullAddr = fullAddr;
     warning(LOGGER_TAG, "Server log address was updated");
-    connectToServer();
+    parseAddressAndConnect();
     #endif
   }
 
   #if ENABLE_LOGGER
-  void log(const char* message);
+  void log(const char* message) {
+    Serial.println(message);
+    #if LOGGER_TYPE != SERIAL_LOGGER
+    if (_connected) {
+      if (sendRemote(message) < 0) {
+        _connected = false;
+        error(LOGGER_TAG, "Failed to send message to remote, closing connection");
+      }
+    }
+    #endif
+  }
+
   template <typename... Args>
   void log(uint8_t level, const char* tag, const char* format,
            Args... args) {
@@ -110,40 +131,54 @@ class BetterLogger {
   };
 
  private:
-  #if ENABLE_LOGGER
+  const char* _name = "no_name";
+  #if LOGGER_TYPE != SERIAL_LOGGER
   bool _connected = false;
-  int _sock;
-  struct sockaddr_in _saddr = {0};
   String _fullAddr;
 
-  const char* _name = "no_name";
+  #if LOGGER_TYPE == MULTICAST_LOGGER
+  WiFiUDP _udp;
+  #endif
+  #if LOGGER_TYPE == TCP_LOGGER
+  WiFiClient _tcp;
+  #endif
 
-  void connectToServer();
+  size_t sendRemote(const char * message);
+  bool connect(const char * ip, int port);
+  void disconnect();
 
-  bool parseAddressFromString() {
+  void parseAddressAndConnect() {
     if (_fullAddr.isEmpty()) {
       warning(LOGGER_TAG, "Empty tcp log server info");
-      return false;
+      return;
     }
 
     int ind = _fullAddr.indexOf(":");
     if (ind < 0) {
-      error(LOGGER_TAG, "Bad server fullAddr: %s", _fullAddr.c_str());
-      return false;
+      error(LOGGER_TAG, "Bad server fullAddr: %s, need ip:port", _fullAddr.c_str());
+      return;
     }
 
     String ip = _fullAddr.substring(0, ind);
     String port = _fullAddr.substring(ind + 1);
     if (ip.isEmpty()) {
       error(LOGGER_TAG, "Failed to parse server ip");
+      return;
     }
     if (port.isEmpty()) {
       error(LOGGER_TAG, "Failed to parse server port");
+      return;
     }
-    _saddr.sin_family = AF_INET;
-    _saddr.sin_port = htons(port.toInt());
-    _saddr.sin_addr.s_addr = inet_addr(ip.c_str());
-    return true;
+
+    info(LOGGER_TAG, "Trying to connect to logger server [%s, %s]", ip.c_str(), port.c_str());
+    disconnect();
+    _connected = false;
+    if (connect(ip.c_str(), port.toInt())) {
+      _connected = true;
+      info(LOGGER_TAG, "Logger connected!");
+    } else {
+      error(LOGGER_TAG, "Failed to connect");
+    }
   };
   #endif
 };

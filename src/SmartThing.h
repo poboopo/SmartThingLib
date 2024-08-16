@@ -2,6 +2,7 @@
 #define SMART_THING_H
 
 #include <Arduino.h>
+#include <WiFiUdp.h>
 
 #include "hooks/HooksManager.h"
 #include "ActionsList.h"
@@ -10,7 +11,6 @@
 #include "observable/SensorsList.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
-#include "net/socket/Multicaster.h"
 #include "settings/SettingsManager.h"
 #include "utils/LedIndicator.h"
 #include "Features.h"
@@ -22,7 +22,7 @@
 
 #define WIFI_SETUP_TIMEOUT 10000
 
-#define MULTICAST_GROUP "224.1.1.1"
+#define MULTICAST_GROUP IPAddress(224, 1, 1, 1)
 #define MULTICAST_PORT 7778
 
 #define DEVICE_NAME_LENGTH_MAX 15
@@ -86,15 +86,15 @@ class SmartThingClass {
   #endif
   
   DynamicJsonDocument getConfigInfoJson();
-  Config::ConfigEntriesList getConfigInfo() {
-    return _configEntriesList;
+  Config::ConfigEntriesList * getConfigInfo() {
+    return &_configEntriesList;
   }
   bool addConfigEntry(const char* name, const char* caption, const char* type);
 
   LedIndicator* getLed() { return &_led; }
  private:
-  Multicaster _multicaster;
   LedIndicator _led;
+  WiFiUDP _beaconUdp;
 
   bool init();
 
@@ -110,21 +110,21 @@ class SmartThingClass {
   String connectToWifi();
 
   void loopRoutine();
+  void sendBeacon();
 
-  private:
-    #if ENABLE_SENSORS
-    Observable::Sensor::SensorsList _sensorsList;
-    #endif
+  #if ENABLE_SENSORS
+  Observable::Sensor::SensorsList _sensorsList;
+  #endif
 
-    #if ENABLE_STATES
-    Observable::DeviceState::DeviceStatesList _deviceStatesList;
-    #endif
+  #if ENABLE_STATES
+  Observable::DeviceState::DeviceStatesList _deviceStatesList;
+  #endif
 
-    #if ENABLE_ACTIONS
-    Action::ActionsList _actionsList;
-    #endif
+  #if ENABLE_ACTIONS
+  Action::ActionsList _actionsList;
+  #endif
 
-    Config::ConfigEntriesList _configEntriesList;
+  Config::ConfigEntriesList _configEntriesList;
 };
 
 extern SmartThingClass SmartThing;

@@ -8,8 +8,8 @@ import threading
 # connect to udp via param
 
 TCP = True
-PORT = 7779
-ADRESS = "192.168.2.114"
+PORT = 7778
+ADRESS = "192.168.1.12"
 
 LOGGER_FILE = "logger.log"
 START_COLOR = "\033["
@@ -34,8 +34,8 @@ def colorByLevel(logLevel):
 def udp():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind(("224.1.1.1", PORT))
-    mreq = struct.pack("4sl", socket.inet_aton(group[0]), socket.INADDR_ANY)
+    sock.bind(("224.1.1.2", 7778))
+    mreq = struct.pack("4sl", socket.inet_aton('224.1.1.2'), socket.INADDR_ANY)
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
     printHeader()
     try:
@@ -104,4 +104,5 @@ def recvMessages(ip, conn):
 
 if __name__ == "__main__":
     tcp()
+    # udp()
     logFile.close()

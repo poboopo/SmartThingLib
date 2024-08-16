@@ -3,10 +3,12 @@
 
 #include <WebServer.h>
 
+#include "SmartThing.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
 #include "net/rest/handlers/HandlerUtils.h"
 #include "settings/SettingsManager.h"
+#include "settings/ConfigEntriesList.h"
 
 #define CONFIG_PATH "/config"
 #define CONFIG_LOG_TAG "config_handler"
@@ -43,15 +45,15 @@ class ConfigRequestHandler : public RequestHandler {
       return true;
     }
     if (requestMethod == HTTP_POST) {
-      Config::ConfigEntriesList entriesList = SmartThing.getConfigInfo();
-      if (entriesList.size() != 0) {
+      Config::ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
+      if (entriesList->size() != 0) {
         DynamicJsonDocument jsonDoc(1024);
         deserializeJson(jsonDoc, body);
         JsonObject root = jsonDoc.as<JsonObject>();
         JsonObject config = STSettings.getConfig();
 
         for (JsonPair pair : root) {
-          if (entriesList.haveConfigEntry(pair.key().c_str())) {
+          if (entriesList->haveConfigEntry(pair.key().c_str())) {
             config[pair.key()] = pair.value();
           }
         }
@@ -95,11 +97,11 @@ class ConfigRequestHandler : public RequestHandler {
   RestHandlerFunction* _configUpdatedHandler;
   void callHooks() {
     #if ENABLE_LOGGER
-    LOGGER.configUpdateHook(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG]);
+    LOGGER.updateAddress(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG]);
+    #endif
     if (_configUpdatedHandler != nullptr) {
       (*_configUpdatedHandler)();
     }
-    #endif
   }
 };
 

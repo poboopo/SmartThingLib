@@ -5,45 +5,18 @@
 
 BetterLogger LOGGER;
 
-void BetterLogger::connectToServer() {
-  if (!parseAddressFromString()) {
-    return;
-  }
-  if (_sock >= 0) {
-    close(_sock);
-    _connected = false;
-  }
-
-  info(LOGGER_TAG, "Connecting to %s via tcp", _fullAddr.c_str());
-
-  _sock = socket(AF_INET, SOCK_STREAM, 0);
-  if (_sock < 0) {
-    Serial.println("Socket creation failed");
-    return;
-  }
-
-  // todo make non blocking
-  if (connect(_sock, (struct sockaddr*)&_saddr, sizeof(_saddr)) < 0) {
-    error(LOGGER_TAG, "Connection failed");
-    return;
-  }
-  _connected = true;
-  info(LOGGER_TAG, "Connected to tcp logging server");
+bool BetterLogger::connect(const char * ip, int port) {
+  IPAddress address;
+  address.fromString(ip);
+  return _tcp.connect(address, port);
 }
 
-void BetterLogger::log(const char* message) {
-  Serial.println(message);
+void BetterLogger::disconnect() {
+  _tcp.stop();
+}
 
-  // is it really necessary?
-  if (_connected && _sock > 0) {
-    int nbytes = send(_sock, message, strlen(message), 0);
-    if (nbytes < 0) {
-      Serial.println("Failed to send message via socket. Closing connection.");
-      close(_sock);
-      _sock = -1;
-      _connected = false;
-    }
-  }
+size_t BetterLogger::sendRemote(const char* message) {
+  return _tcp.write((uint8_t *) message, strlen(message));
 }
 
 #endif

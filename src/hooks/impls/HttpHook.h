@@ -68,7 +68,7 @@ class HttpHook : public T {
 
   void createRequestTask() {
     if (_sending) {
-      LOGGER.warning(HTTP_HOOK_TAG, "Request task already exist! Skipping");
+      LOGGER.debug(HTTP_HOOK_TAG, "Request task already exist! Skipping");
       return;
     }
     xTaskCreate(
@@ -94,7 +94,7 @@ class HttpHook : public T {
                  valueStr.isEmpty() ? "blank_value" : valueStr.c_str());
     urlCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
     payloadCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
-    LOGGER.info(HTTP_HOOK_TAG, "Sending request [%s] %s :: %s",
+    LOGGER.debug(HTTP_HOOK_TAG, "Sending request [%s] %s :: %s",
                 _method.c_str(), urlCopy.c_str(), payloadCopy.c_str());
 
     HTTPClient client;
@@ -107,7 +107,7 @@ class HttpHook : public T {
         client.sendRequest(_method.c_str(), payloadCopy.c_str());
     client.end();
 
-    LOGGER.info(HTTP_HOOK_TAG, "Request %s finished with code %d",
+    LOGGER.debug(HTTP_HOOK_TAG, "Request %s finished with code %d",
                 urlCopy.c_str(), _lastResponseCode);
   }
 

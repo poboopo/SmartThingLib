@@ -1,7 +1,13 @@
 #ifndef HTTP_HOOK_H
 #define HTTP_HOOK_H
 
+#ifdef ARDUINO_ARCH_ESP32
 #include <HTTPClient.h>
+#endif
+#ifdef ARDUINO_ARCH_ESP8266
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
+#endif
 #include <type_traits>
 
 #include "hooks/impls/Hook.h"
@@ -17,6 +23,8 @@ class HttpHook : public T {
       : T(HTTP_HOOK_TAG, readonly), _url(url), _method("GET") {
     fixUrl();
   };
+  virtual ~HttpHook() {};
+
   void call(V &value) {
     _currentValue = value;
     if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
@@ -56,7 +64,9 @@ class HttpHook : public T {
   void setPayload(const char *payload) { _payload = payload; }
   void setMethod(const char *method) { _method = method; }
 
+  #ifdef ARDUINO_ARCH_ESP32
   TaskHandle_t _requestTask = NULL;  // not safe
+  #endif
   bool _sending = false;
 
  private:
@@ -71,15 +81,22 @@ class HttpHook : public T {
       LOGGER.debug(HTTP_HOOK_TAG, "Request task already exist! Skipping");
       return;
     }
+    #ifdef ARDUINO_ARCH_ESP32
     xTaskCreate(
-        [](void *o) {
-          HttpHook *hook = static_cast<HttpHook *>(o);
-          hook->_sending = true;
-          hook->sendRequest();
-          hook->_sending = false;
-          vTaskDelete(hook->_requestTask);
-        },
-        _url.c_str(), 10000, this, 1, &_requestTask);
+      [](void *o) {
+        HttpHook *hook = static_cast<HttpHook *>(o);
+        hook->_sending = true;
+        hook->sendRequest();
+        hook->_sending = false;
+        vTaskDelete(hook->_requestTask);
+      },
+      _url.c_str(), 10000, this, 1, &_requestTask);
+    #endif
+    #ifdef ARDUINO_ARCH_ESP8266
+    _sending = true;
+    sendRequest(); // todo make async
+    _sending = false;
+    #endif
   }
 
   void sendRequest() {
@@ -99,7 +116,13 @@ class HttpHook : public T {
 
     HTTPClient client;
     client.setTimeout(2000);
+    #ifdef ARDUINO_ARCH_ESP32
     client.begin("http://" + urlCopy);
+    #endif
+    #ifdef ARDUINO_ARCH_ESP8266
+    WiFiClient wifiClient; // todo global var?
+    client.begin(wifiClient, "http://" + urlCopy);
+    #endif
     if (!payloadCopy.isEmpty()) {
       client.addHeader("Content-Type", "application/json");
     }

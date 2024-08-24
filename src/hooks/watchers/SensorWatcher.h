@@ -17,6 +17,8 @@ class SensorWatcher : public Watcher<int16_t> {
  public:
   SensorWatcher(const Observable::Sensor::Sensor* sensor)
       : Watcher<int16_t>(sensor, -1){};
+  virtual ~SensorWatcher() {};
+
   bool check() {
     if (_observable != nullptr) {
       int16_t newValue = _observable->valueProvider();

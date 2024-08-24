@@ -5,12 +5,12 @@
 #if ENABLE_HOOKS 
 
 #include <ArduinoJson.h>
-#include <WebServer.h>
 
 #include "SmartThing.h"
 #include "hooks/builders/HooksFactory.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/handlers/HandlerUtils.h"
+#include "net/rest/handlers/RequestHandler.h"
 
 #define HOOKS_RQ_PATH "/hooks"
 #define HOOKS_RQ_TAG "hooks_handler"
@@ -23,106 +23,80 @@
 class HooksRequestHandler : public RequestHandler {
  public:
   HooksRequestHandler(){};
-  bool canHandle(HTTPMethod method, String uri) {
-    return uri.startsWith(HOOKS_RQ_PATH) &&
-           (method == HTTP_GET || method == HTTP_PUT || method == HTTP_POST ||
-            method == HTTP_DELETE || method == HTTP_OPTIONS);
+  bool canHandle(AsyncWebServerRequest *request) {
+    return request->url().startsWith(HOOKS_RQ_PATH) &&
+           (request->method() == HTTP_GET || request->method() == HTTP_PUT || request->method() == HTTP_POST ||
+            request->method() == HTTP_DELETE || request->method() == HTTP_OPTIONS);
   };
-
-  bool handle(WebServer &server, HTTPMethod requestMethod, String requestUri) {
-    String body = server.arg("plain");
-    LOGGER.logRequest(HOOKS_RQ_TAG, http_method_str(requestMethod),
-                      requestUri.c_str(), body.c_str());
-
-    if (requestMethod == HTTP_OPTIONS) {
-      server.sendHeader("Access-Control-Allow-Origin", "*");
-      server.sendHeader("Access-Control-Allow-Methods",
-                        "GET, POST, PUT, DELETE, OPTIONS");
-      server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
-      server.send(200);
-      return true;
-    }
-
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    if (requestMethod == HTTP_GET) {
-      if (requestUri.equals("/hooks/templates")) {
-        String type = server.arg(HOOK_OBSERVABLE_TYPE);
+  AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
+    if (request->method() == HTTP_GET) {
+      if (request->url().equals("/hooks/templates")) {
+        String type = request->arg(HOOK_OBSERVABLE_TYPE);
         if (type.isEmpty()) {
-          server.send(400, CONTENT_TYPE_JSON,
+          return request->beginResponse(400, CONTENT_TYPE_JSON,
                       buildErrorJson("Type parameter are missing!"));
-          return true;
         }
         DynamicJsonDocument doc = Hook::HooksFactory::getTemplates(type.c_str());
         String response;
         serializeJson(doc, response);
-        server.send(200, CONTENT_TYPE_JSON, response);
-        return true;
+        return request->beginResponse(200, CONTENT_TYPE_JSON, response);
       }
-      if (requestUri.equals("/hooks/by/observable")) {
-        String type = server.arg(HOOK_OBSERVABLE_TYPE);
-        String name = server.arg(HOOK_NAME_ARG);
+      if (request->url().equals("/hooks/by/observable")) {
+        String type = request->arg(HOOK_OBSERVABLE_TYPE);
+        String name = request->arg(HOOK_NAME_ARG);
 
         if (type.isEmpty() || name.isEmpty()) {
-          server.send(
+          return request->beginResponse(
               400, CONTENT_TYPE_JSON,
               buildErrorJson("Observable type or name args are missing!"));
-          return true;
         }
         DynamicJsonDocument doc = HooksManager.getObservableHooksJson(
             type.c_str(), name.c_str());
         String response;
         serializeJson(doc, response);
-        server.send(200, CONTENT_TYPE_JSON, response);
-        return true;
+        return request->beginResponse(200, CONTENT_TYPE_JSON, response);
       }
-      if (requestUri.equals("/hooks/by/id")) {
-        String type = server.arg(HOOK_OBSERVABLE_TYPE);
-        String name = server.arg(HOOK_NAME_ARG);
-        String id = server.arg(HOOK_ID_ARG);
+      if (request->url().equals("/hooks/by/id")) {
+        String type = request->arg(HOOK_OBSERVABLE_TYPE);
+        String name = request->arg(HOOK_NAME_ARG);
+        String id = request->arg(HOOK_ID_ARG);
 
         if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
-          server.send(400, CONTENT_TYPE_JSON,
+          return request->beginResponse(400, CONTENT_TYPE_JSON,
                       buildErrorJson("Type, name or id args are missing!"));
-          return true;
         }
         DynamicJsonDocument doc = HooksManager.getHookJsonById(
             type.c_str(), name.c_str(), id.toInt());
         String response;
         serializeJson(doc, response);
-        server.send(200, CONTENT_TYPE_JSON, response);
-        return true;
+        return request->beginResponse(200, CONTENT_TYPE_JSON, response);
       }
-      if (requestUri.equals("/hooks/test")) {
-        String type = server.arg(HOOK_OBSERVABLE_TYPE);
-        String name = server.arg(HOOK_NAME_ARG);
-        String id = server.arg(HOOK_ID_ARG);
-        String value = server.arg("value");
+      if (request->url().equals("/hooks/test")) {
+        String type = request->arg(HOOK_OBSERVABLE_TYPE);
+        String name = request->arg(HOOK_NAME_ARG);
+        String id = request->arg(HOOK_ID_ARG);
+        String value = request->arg("value");
 
         if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
-          server.send(400, CONTENT_TYPE_JSON,
+          return request->beginResponse(400, CONTENT_TYPE_JSON,
                       buildErrorJson("Type, name or id args are missing!"));
-          return true;
         }
         if (HooksManager.callHook(type.c_str(), name.c_str(), id.toInt(), value)) {
-          server.send(200);
+          return request->beginResponse(200);
         } else {
-          server.send(500);
+          return request->beginResponse(500);
         }
-        return true;
       }
       DynamicJsonDocument doc = HooksManager.allHooksToJson(false, false);
       String response;
       serializeJson(doc, response);
-      server.send(200, CONTENT_TYPE_JSON, response);
-      return true;
+      return request->beginResponse(200, CONTENT_TYPE_JSON, response);
     }
-    if (requestMethod == HTTP_POST) {
-      if (!server.hasArg("plain")) {
-        server.send(400, CONTENT_TYPE_JSON, "Body is missing!");
-        return true;
+    if (request->method() == HTTP_POST) {
+      if (_body.isEmpty()) {
+        return request->beginResponse(400, CONTENT_TYPE_JSON, "Body is missing!");
       }
-      int id =
-          HooksManager.createHookFromJson(server.arg("plain").c_str());
+      int id = HooksManager.createHookFromJson(_body.c_str());
       if (id >= 0) {
         HooksManager.saveHooksToSettings();
         // spritf fails, why?
@@ -130,59 +104,53 @@ class HooksRequestHandler : public RequestHandler {
         doc["id"] = id;
         String response;
         serializeJson(doc, response);
-        server.send(201, CONTENT_TYPE_JSON, response);
+        return request->beginResponse(201, CONTENT_TYPE_JSON, response);
       } else {
-        server.send(500, CONTENT_TYPE_JSON,
+        return request->beginResponse(500, CONTENT_TYPE_JSON,
                     buildErrorJson("Failed to create hook. Check logs for "
                                    "additional information."));
       }
-      return true;
     }
-    if (requestMethod == HTTP_PUT) {
-      String body = server.arg("plain");
-      if (body.isEmpty()) {
-        server.send(400, CONTENT_TYPE_JSON, buildErrorJson("Body is missing!"));
-        return true;
+    if (request->method() == HTTP_PUT) {
+      if (_body.isEmpty()) {
+        return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Body is missing!"));
       }
 
       DynamicJsonDocument doc(1024);
-      deserializeJson(doc, body);
+      deserializeJson(doc, _body);
       if (HooksManager.updateHook(doc)) {
         HooksManager.saveHooksToSettings();
-        server.send(200);
+        return request->beginResponse(200);
       } else {
-        server.send(500, CONTENT_TYPE_JSON,
+        return request->beginResponse(500, CONTENT_TYPE_JSON,
                     buildErrorJson("Failed to update hook. Check logs for "
                                    "additional information."));
       }
-      return true;
     }
-    if (requestMethod == HTTP_DELETE) {
-      String type = server.arg(HOOK_OBSERVABLE_TYPE);
-      String name = server.arg(HOOK_NAME_ARG);
-      String id = server.arg(HOOK_ID_ARG);
+    if (request->method() == HTTP_DELETE) {
+      String type = request->arg(HOOK_OBSERVABLE_TYPE);
+      String name = request->arg(HOOK_NAME_ARG);
+      String id = request->arg(HOOK_ID_ARG);
 
       if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
-        server.send(
+        return request->beginResponse(
             400, CONTENT_TYPE_JSON,
             buildErrorJson("Observable type, name or id args are missing!"));
-        return true;
       }
 
       if (HooksManager.deleteHook(type.c_str(), name.c_str(),
                                           id.toInt())) {
         HooksManager.saveHooksToSettings();
-        server.send(200);
+        return request->beginResponse(200);
       } else {
-        server.send(500, CONTENT_TYPE_JSON,
+        return request->beginResponse(500, CONTENT_TYPE_JSON,
                     buildErrorJson("Failed to delete hook. Check logs for "
                                    "additional information."));
       }
-      return true;
     }
-
-    return false;
-  };
+    
+    return nullptr;
+  }
 };
 #endif
 

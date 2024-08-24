@@ -24,14 +24,14 @@ using Observable::ObservableObject;
 void HooksManagerClass::loadFromSettings() {
   JsonArray hooksInfo = STSettings.getHooks();
   if (hooksInfo.size() == 0) {
-    LOGGER.debug(HOOKS_MANAGER_TAG, "There is not hooks in settings");
+    LOGGER.debug(HOOKS_MANAGER_TAG, "There is no hooks in settings");
     return;
   }
 
-  for (int i = 0; i < hooksInfo.size(); i++) {
+  for (unsigned int i = 0; i < hooksInfo.size(); i++) {
     JsonObject observable = hooksInfo[i]["observable"];
     JsonArray hooks = hooksInfo[i]["hooks"];
-    for (int j = 0; j < hooks.size(); j++) {
+    for (unsigned int j = 0; j < hooks.size(); j++) {
       createHookFromJson(observable, hooks[j]);
     }
   }

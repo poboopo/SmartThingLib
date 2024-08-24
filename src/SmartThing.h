@@ -15,8 +15,13 @@
 #include "utils/LedIndicator.h"
 #include "Features.h"
 
+#ifdef ARDUINO_ARCH_ESP8266
+#define WIFI_MODE_STA WIFI_STA
+#define WIFI_MODE_AP WIFI_AP
+#endif
+
 #define SMART_THING_VERSION "0.7"
-#define SMART_THING_TAG "SMART_THING"
+#define SMART_THING_TAG "smart_thing"
 // Pins
 #define LED_PIN 13
 
@@ -28,7 +33,7 @@
 #define DEVICE_NAME_LENGTH_MAX 15
 #define DEVICE_TYPE_LENGTH_MAX 15
 
-#define SMART_THING_LOOP_TASK_DELAY 250  // ms
+#define SMART_THING_LOOP_TASK_DELAY 100  // ms
 
 class SmartThingClass {
  public:
@@ -44,6 +49,13 @@ class SmartThingClass {
     _name = name;
     return init();
   }
+
+
+  #ifdef ARDUINO_ARCH_ESP8266
+  void loop() {
+    loopRoutine();
+  }
+  #endif
 
   void updateDeviceName(String name);
   const char * getType();
@@ -97,8 +109,10 @@ class SmartThingClass {
   WiFiUDP _beaconUdp;
 
   bool init();
-
+  
+  #ifdef ARDUINO_ARCH_ESP32
   TaskHandle_t _loopTaskHandle = NULL;
+  #endif
   void updateBroadCastMessage();
 
   String _ip;

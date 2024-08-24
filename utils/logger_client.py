@@ -78,7 +78,7 @@ def recvMessages(ip, conn):
                     print("Connection closed")
                     break
                 message = data.decode()
-                splitted = message.split("_&_")
+                splitted = message.split("&")
                 if (len(splitted) == 1):
                     print(message)
                     continue
@@ -95,8 +95,8 @@ def recvMessages(ip, conn):
                 formatedMessage = f"{START_COLOR + ipColor[ip]}{datetime.now()} [{ip: ^15} :: {name: ^15}]{END_COLOR} - "
                 formatedMessage += f"{START_COLOR + colorByLevel(logLevel)}[{str(logLevel): ^2}] [{tag: ^20}] :: {messageCuted}{END_COLOR}"
                 print(formatedMessage)
-                logFile.write(formatedMessage + '\n')
-                logFile.flush()
+                # logFile.write(formatedMessage + '\n')
+                # logFile.flush()
             except Exception as e:
                 print(f"Failed to process message: {e}")
     finally:

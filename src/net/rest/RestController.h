@@ -1,19 +1,12 @@
 #ifndef REST_CONTROLLER_H
 #define REST_CONTROLLER_H
 
-#include <WebServer.h>
+#include <ESPAsyncWebServer.h>
 
 #include "logs/BetterLogger.h"
 #include "settings/SettingsManager.h"
 
-#define SERVER_PORT 80
 #define CONTENT_TYPE_JSON "application/json"
-
-struct RestHandlerResult {
-  int code = 200;
-  String contentType = CONTENT_TYPE_JSON;
-  String body = "";
-};
 
 typedef std::function<void(void)> RestHandlerFunction;
 
@@ -29,20 +22,13 @@ class RestControllerClass {
   }
   void addRestartHandler(RestHandlerFunction hf) { _restartHandler = hf; }
 
-  String getRequestBody();
-  String getRequestArg(String name);
-  WebServer* getWebServer() { return &_server; };
-
-  void handle();
+  AsyncWebServer* getWebServer() { return &_server; };
 
  private:
   bool _setupFinished = false;
-  WebServer _server;
+  AsyncWebServer _server;
 
   void setupHandler();
-  void preHandleRequest();
-
-  void processRestHandlerResult(RestHandlerResult result);
 
   RestHandlerFunction _configUpdatedHandler = []() {};
   RestHandlerFunction _restartHandler = []() {};

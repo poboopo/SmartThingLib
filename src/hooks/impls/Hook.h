@@ -19,12 +19,14 @@ namespace Hook {
   template <typename T>
   class Hook {
     public:
-      Hook(const char *type, bool readonly)
+      Hook(const char *type, bool readonly, int id = -1, bool triggerDisabled = true, CompareType compare = EQ)
           : _type(type),
             _readonly(readonly),
-            _id(-1),
-            _compareType(EQ),
-            _triggerDisabled(true){};
+            _id(id),
+            _compareType(compare),
+            _triggerDisabled(triggerDisabled){};
+
+      virtual ~Hook() {};
 
       // todo make value const
       virtual bool accept(T &value) = 0;
@@ -62,12 +64,12 @@ namespace Hook {
       const char *type() const { return _type; }
 
     protected:
-      int _id;
       const char *_type;
-      T _triggerValue;
-      bool _triggerDisabled;
       bool _readonly;
+      int _id;
       CompareType _compareType;
+      bool _triggerDisabled;
+      T _triggerValue;
   };
 
   #if ENABLE_SENSORS

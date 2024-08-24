@@ -30,10 +30,12 @@ class InfoRequestHandler : public RequestHandler {
         jsonDoc["name"] = SmartThing.getName();
         jsonDoc["type"] = SmartThing.getType();
         #ifdef ARDUINO_ARCH_ESP32
+        jsonDoc["platform"] = "esp32";
         jsonDoc["chip_model"] = ESP.getChipModel();
         jsonDoc["chip_revision"] = ESP.getChipRevision();
         #endif
         #ifdef ARDUINO_ARCH_ESP8266
+        jsonDoc["platform"] = "esp8266";
         jsonDoc["chip_model"] = "unknown";
         jsonDoc["chip_revision"] = "unknown";
         #endif

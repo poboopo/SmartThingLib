@@ -35,7 +35,8 @@
 #endif
 
 #ifndef LOGGER_TYPE
-#define LOGGER_TYPE TCP_LOGGER
+// #define LOGGER_TYPE TCP_LOGGER
+#define LOGGER_TYPE SERIAL_LOGGER
 #endif
 
 #ifndef LOGGING_LEVEL

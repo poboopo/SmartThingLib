@@ -1,7 +1,15 @@
 #ifndef NOTIFICATION_HOOK_H
 #define NOTIFICATIONS_HOOK_H
 
+#ifdef ARDUINO_ARCH_ESP32
+#include <HTTPClient.h>
+#endif
+#ifdef ARDUINO_ARCH_ESP8266
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
+#endif
 #include <type_traits>
+
 #include "hooks/impls/Hook.h"
 #include "settings/SettingsManager.h"
 
@@ -21,6 +29,7 @@ class NotificationHook : public T {
   public:
     NotificationHook(const char * message, bool readOnly)
       : T(NOTIFICATION_HOOK_TAG, readOnly), _message(message), _notificationType(NOTIFICATION_INFO) {};
+    virtual ~NotificationHook() {};
 
     void call(V &value) {
       _ip = STSettings.getConfig()[GATEWAY_CONFIG].as<String>();
@@ -29,7 +38,7 @@ class NotificationHook : public T {
         return;
       }
       _currentValue = value;
-      if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
+      if (WiFi.isConnected()) {
         createRequestTask();
       } else {
         LOGGER.error(HTTP_HOOK_TAG, "WiFi not connected!");
@@ -62,8 +71,9 @@ class NotificationHook : public T {
     String getNoticationType() {
       return _notificationType;
     }
-
+    #ifdef ARDUINO_ARCH_ESP32
     TaskHandle_t _requestTask = NULL;
+    #endif
     bool _sending = false;
   private:
     String _message;
@@ -75,6 +85,7 @@ class NotificationHook : public T {
       if (_sending) {
         return;
       }
+      #ifdef ARDUINO_ARCH_ESP32
       xTaskCreate(
         [](void *o) {
           NotificationHook *hook = static_cast<NotificationHook *>(o);
@@ -84,6 +95,12 @@ class NotificationHook : public T {
           vTaskDelete(hook->_requestTask);
         },
         "notification", 10000, this, 1, &_requestTask);
+      #endif
+      #ifdef ARDUINO_ARCH_ESP8266
+      _sending = true;
+      sendRequest(); // todo async
+      _sending = false;
+      #endif
     }
 
     void sendRequest() {
@@ -109,7 +126,13 @@ class NotificationHook : public T {
 
       HTTPClient client;
       client.setTimeout(2000);
+      #ifdef ARDUINO_ARCH_ESP32
       client.begin(url);
+      #endif
+      #ifdef ARDUINO_ARCH_ESP8266
+      WiFiClient wifiClient; // todo global var?
+      client.begin(wifiClient, url);
+      #endif
       client.addHeader("Content-Type", "application/json");
       int code = client.sendRequest("POST", payload.c_str());
       client.end();

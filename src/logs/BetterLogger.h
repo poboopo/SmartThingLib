@@ -3,16 +3,7 @@
 
 #include "Features.h"
 #include <Arduino.h>
-
-#define LOGGER_TAG "LOGGER"
-
-#if LOGGER_TYPE == SERIAL_LOGGER
-// [name][level][tag]message
-#define LOGGER_MESSAGE_TEMPLATE "[%s][%u][%s]%s"
-#else
-// name_&_level_&_tag_&_message
-#define LOGGER_MESSAGE_TEMPLATE "%s_&_%u_&_%s_&_%s\n"
-#endif
+#include <ESPAsyncWebServer.h>
 
 #if LOGGER_TYPE == MULTICAST_LOGGER
 #include <WiFiUdp.h>
@@ -21,7 +12,16 @@
 #include <WiFiClient.h>
 #endif
 
-#define STAT_LOG_TAG "STATISTICS"
+#define LOGGER_TAG "LOGGER"
+
+#if LOGGER_TYPE == SERIAL_LOGGER
+// [name][level][tag]message
+#define LOGGER_MESSAGE_TEMPLATE "[%s][%u][%s]%s"
+#else
+// name_&_level_&_tag_&_message
+#define LOGGER_MESSAGE_TEMPLATE "%s&%u&%s&%s\n"
+#endif
+
 #define MAX_MESSAGE_LENGTH 2048
 
 class BetterLogger {
@@ -74,15 +74,18 @@ class BetterLogger {
   }
 
   template <typename... Args>
-  void log(uint8_t level, const char* tag, const char* format,
-           Args... args) {
+  void log(uint8_t level, const char* tag, const char* format, Args... args) {
     // TODO fix long args will cause core panic
-    char message[MAX_MESSAGE_LENGTH];
-    sprintf(message, format, args...);
-    char formattedMessage[MAX_MESSAGE_LENGTH];
-    sprintf(formattedMessage, LOGGER_MESSAGE_TEMPLATE, _name, level, tag,
-            message);
-    log(formattedMessage);
+    // char message[MAX_MESSAGE_LENGTH];
+    // sprintf(message, format, args...);
+    // char formattedMessage[MAX_MESSAGE_LENGTH];
+    // sprintf(formattedMessage, LOGGER_MESSAGE_TEMPLATE, _name, level, tag,
+    //         message);
+    // log(formattedMessage);
+    //todo esp8266
+    Serial.printf(LOGGER_MESSAGE_TEMPLATE, _name, level, tag, "");
+    Serial.printf(format, args...);
+    Serial.println();
   }
   #else
     void log(const char* message){}
@@ -91,8 +94,7 @@ class BetterLogger {
     }
   #endif
 
-  void logRequest(const char* tag, const char* method, const char* uri,
-                  const char* body) {
+  void logRequest(const char* tag, const char * method, const char* uri, const char* body) {
     info(tag, "[%s] %s - %s", method, uri, body == nullptr ? "" : body);
   };
 
@@ -121,18 +123,10 @@ class BetterLogger {
     log(LOGGING_LEVEL_DEBUG, tag, format, args...);
 #endif
   };
-  void statistics() {
-    info(STAT_LOG_TAG, "----------STATISTIC----------");
-    info(STAT_LOG_TAG, "Free/size heap: %u/%u", ESP.getFreeHeap(),
-         ESP.getHeapSize());
-    info(STAT_LOG_TAG, "Min free/max alloc heap: %u/%u", ESP.getMinFreeHeap(),
-         ESP.getMaxAllocHeap());
-    info(STAT_LOG_TAG, "--------STATISTIC-END--------");
-  };
 
  private:
   const char* _name = "no_name";
-  #if LOGGER_TYPE != SERIAL_LOGGER
+  #if LOGGER_TYPE == TCP_LOGGER || LOGGER_TYPE == MULTICAST_LOGGER
   bool _connected = false;
   String _fullAddr;
 

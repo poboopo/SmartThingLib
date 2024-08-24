@@ -1,8 +1,6 @@
 #ifndef CONFIG_RH_H
 #define CONFIG_RH_H
 
-#include <WebServer.h>
-
 #include "SmartThing.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
@@ -13,38 +11,49 @@
 #define CONFIG_PATH "/config"
 #define CONFIG_LOG_TAG "config_handler"
 
-class ConfigRequestHandler : public RequestHandler {
+class ConfigRequestHandler : public AsyncWebHandler {
  public:
   ConfigRequestHandler(RestHandlerFunction* configUpdatedHandler)
       : _configUpdatedHandler(configUpdatedHandler){};
+  virtual ~ConfigRequestHandler() {};
 
-  bool canHandle(HTTPMethod method, String uri) {
-    return uri.startsWith(CONFIG_PATH) &&
-           (method == HTTP_GET || method == HTTP_OPTIONS ||
-            method == HTTP_POST || method == HTTP_DELETE);
+  bool canHandle(AsyncWebServerRequest *request) {
+    return request->url().startsWith(CONFIG_PATH) &&
+           (request->method() == HTTP_GET || request->method() == HTTP_OPTIONS ||
+            request->method() == HTTP_POST || request->method() == HTTP_DELETE);
   }
 
-  bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {
-    String body = server.arg("plain");
-    LOGGER.logRequest(CONFIG_LOG_TAG, http_method_str(requestMethod),
-                      requestUri.c_str(), body.c_str());
-
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    if (requestMethod == HTTP_OPTIONS) {
-      server.sendHeader("Access-Control-Allow-Methods",
-                        "GET, POST, DELETE, OPTIONS");
-      server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
-      server.send(200);
-      return true;
+  void handleRequest(AsyncWebServerRequest *request) {
+    if (request->method() == HTTP_OPTIONS) {
+      AsyncWebServerResponse * response = request->beginResponse(200);
+      response->addHeader("Access-Control-Allow-Origin", "*");
+      response->addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
+      response->addHeader("Access-Control-Allow-Headers", "Content-Type");
+      request->send(response);
+      return;
     }
-    if (requestMethod == HTTP_GET) {
+
+    AsyncWebServerResponse * asyncResponse = processRequest(request);
+    if (asyncResponse != nullptr) {
+      asyncResponse->addHeader("Access-Control-Allow-Origin", "*");
+      request->send(asyncResponse);
+    }
+  }
+
+ private:
+  RestHandlerFunction* _configUpdatedHandler;
+
+  AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
+    String body = request->arg("plain");
+    LOGGER.logRequest(CONFIG_LOG_TAG, request->methodToString(), request->url().c_str(), body.c_str());
+
+    if (request->method() == HTTP_GET) {
       JsonObject config = STSettings.getConfig();
       String response;
       serializeJson(config, response);
-      server.send(200, CONTENT_TYPE_JSON, response);
-      return true;
+      return request->beginResponse(200, CONTENT_TYPE_JSON, response);
     }
-    if (requestMethod == HTTP_POST) {
+    if (request->method() == HTTP_POST) {
       Config::ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
       if (entriesList->size() != 0) {
         DynamicJsonDocument jsonDoc(1024);
@@ -59,42 +68,37 @@ class ConfigRequestHandler : public RequestHandler {
         }
         STSettings.save();
       }
-      server.send(200);
       callHooks();
-      return true;
+      return request->beginResponse(200);
     }
-    if (requestMethod == HTTP_DELETE) {
-      if (requestUri.equals("/config/delete/all")) {
+    if (request->method() == HTTP_DELETE) {
+      if (request->url().equals("/config/delete/all")) {
         STSettings.dropConfig();
         STSettings.save();
-        server.send(200);
-        return true;
+        return request->beginResponse(200);
       }
-      if (!server.hasArg("name")) {
-        server.send(400, "content/json",
+      if (!request->hasArg("name")) {
+        return request->beginResponse(400, "content/json",
                     buildErrorJson("Setting name is missing"));
       }
-      String name = server.arg("name");
+      String name = request->arg("name");
 
       JsonObject config = STSettings.getConfig();
       if (config.containsKey(name)) {
         LOGGER.warning(CONFIG_LOG_TAG, "Removing config value %s", name);
         config.remove(name);
         STSettings.save();
-        server.send(200);
         callHooks();
+        return request->beginResponse(200);
       } else {
         LOGGER.error(CONFIG_LOG_TAG, "Failed to remove config %s - no such key",
                      name);
-        server.send(404, "content/json", buildErrorJson("No such key"));
+        return request->beginResponse(404, "content/json", buildErrorJson("No such key"));
       }
-      return true;
     }
-    return false;
+    return nullptr;
   }
 
- private:
-  RestHandlerFunction* _configUpdatedHandler;
   void callHooks() {
     #if ENABLE_LOGGER
     LOGGER.updateAddress(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG]);

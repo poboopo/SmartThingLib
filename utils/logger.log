@@ -1,0 +1,36 @@
+[32m2024-08-16 00:52:16.191744 [                ::       sus      ][0m - [30[10] [    SMART_THING     ] :: Beacon udp created[0m
+[32m2024-08-16 00:52:16.192207 [                ::       sus      ][0m - [30[20] [     web_server     ] :: Web service started on port 80[0m
+[32m2024-08-16 00:52:16.203184 [                ::       sus      ][0m - [30[10] [    SMART_THING     ] :: RestController started[0m
+[32m2024-08-16 00:52:16.203673 [                ::       sus      ][0m - [30[10] [ device_states_list ] :: Added new device state wifi[0m
+[32m2024-08-16 00:52:16.214737 [                ::       sus      ][0m - [30[10] [    SMART_THING     ] :: Loading hooks from settings...[0m
+[32m2024-08-16 00:52:16.215050 [                ::       sus      ][0m - [30[10] [   hooks_factory    ] :: -----------------------BUILD-START-----------------------[0m
+[32m2024-08-16 00:52:16.226345 [                ::       sus      ][0m - [30[10] [   hooks_factory    ] :: Building hook type=notification_hook[0m
+[32m2024-08-16 00:52:16.227015 [                ::       sus      ][0m - [30[10] [notification_cb_builder] :: Notification hook created: type=warning, message=Led off![0m
+[32m2024-08-16 00:52:16.237516 [                ::       sus      ][0m - [30[10] [   hooks_factory    ] :: Id=1[0m
+[32m2024-08-16 00:52:16.239259 [                ::       sus      ][0m - [30[10] [   hooks_factory    ] :: Trigger=false[0m
+[32m2024-08-16 00:52:16.239399 [                ::       sus      ][0m - [30[10] [   hooks_factory    ] :: compareType=eq[0m
+[32m2024-08-16 00:52:16.251681 [                ::       sus      ][0m - [30[10] [   hooks_factory    ] :: ------------------------BUILD-END-----------------------[0m
+[32m2024-08-16 00:52:16.252465 [                ::       sus      ][0m - [30[10] [   hooks_manager    ] :: Creating new watcher for state [led][0m
+[32m2024-08-16 00:52:16.262970 [                ::       sus      ][0m - [30[20] [   hooks_manager    ] :: Added new watcher for state [led][0m
+[32m2024-08-16 00:52:16.263583 [                ::       sus      ][0m - [30[10] [      watcher       ] :: New hook added id=1[0m
+[32m2024-08-16 00:52:16.275264 [                ::       sus      ][0m - [30[20] [   hooks_manager    ] :: Added new hook(id=1) for state [led][0m
+[32m2024-08-16 00:52:16.277029 [                ::       sus      ][0m - [30[10] [    SMART_THING     ] :: Hooks loaded[0m
+[32m2024-08-16 00:52:16.277860 [                ::       sus      ][0m - [30[10] [    SMART_THING     ] :: Creating loop task[0m
+[32m2024-08-16 00:52:16.287352 [                ::       sus      ][0m - [30[10] [    SMART_THING     ] :: Loop task created[0m
+[32m2024-08-16 00:52:16.288202 [                ::       sus      ][0m - [30[10] [config_entries_list ] :: Added new config entry - laddr:Logger address (ip:port)[0m
+[32m2024-08-16 00:52:16.296810 [                ::       sus      ][0m - [30[10] [ device_states_list ] :: Added new device state logger[0m
+[32m2024-08-16 00:52:16.297588 [                ::       sus      ][0m - [30[10] [config_entries_list ] :: Added new config entry - gtw:Gateway address (ip:port)[0m
+[32m2024-08-16 00:52:16.310144 [                ::       sus      ][0m - [30[10] [    SMART_THING     ] :: Setup finished[0m
+[32m2024-08-16 00:52:16.311573 [                ::       sus      ][0m - [30[20] [        main        ] :: SmartThing successfully initialized[0m
+[32m2024-08-16 00:52:16.322758 [                ::       sus      ][0m - [30[20] [        main        ] :: Setup finished[0m
+[32m2024-08-16 12:50:14.771001 [ 192.168.1.13   ::       sus      ][0m - [30[10] [    SMART_THING     ] :: Beacon udp created[0m
+[32m2024-08-16 12:50:14.899200 [ 192.168.1.13   ::       sus      ][0m - [30[20] [     web_server     ] :: Web service started on port 80
+sus[0m
+[32m2024-08-16 12:50:14.902383 [ 192.168.1.13   ::       sus      ][0m - [30[20] [        main        ] :: Setup finished[0m
+[32m2024-08-16 12:50:25.165617 [ 192.168.1.13   ::       sus      ][0m - [30[20] [   state_handler    ] :: [GET] /states -[0m
+[32m2024-08-16 12:50:26.436548 [ 192.168.1.13   ::       sus      ][0m - [30[20] [     web_server     ] :: [GET] /metrics -[0m
+[32m2024-08-16 12:50:30.966142 [ 192.168.1.13   ::       sus      ][0m - [30[20] [     web_server     ] :: [GET] / -[0m
+[32m2024-08-16 12:50:31.225013 [ 192.168.1.13   ::       sus      ][0m - [30[20] [     web_server     ] :: [GET] /assets/index.js -[0m
+[32m2024-08-16 12:50:31.543525 [ 192.168.1.13   ::       sus      ][0m - [30[20] [     web_server     ] :: [GET] /assets/index.css -[0m
+[32m2024-08-16 12:50:31.807113 [ 192.168.1.13   ::       sus      ][0m - [30[20] [     web_server     ] :: [GET] /features -[0m
+[32m2024-08-16 12:50:32.063459 [ 192.168.1.13   ::       sus      ][0m - [30[20] [    wifi_handler    ] :: [GET] /info/system -[0m

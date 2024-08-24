@@ -4,43 +4,50 @@
 #include "Features.h"
 #if ENABLE_STATES
 
-#include <WebServer.h>
-
 #include "SmartThing.h"
 #include "logs/BetterLogger.h"
 
 #define STATE_RQ_PATH "/state"
 #define STATE_RQ_TAG "state_handler"
 
-class StateRequestHandler : public RequestHandler {
+class StateRequestHandler : public AsyncWebHandler {
  public:
   StateRequestHandler(){};
-  bool canHandle(HTTPMethod method, String uri) {
-    return uri.startsWith(STATE_RQ_PATH) &&
-           (method == HTTP_GET || method == HTTP_PUT || method == HTTP_OPTIONS);
+  virtual ~StateRequestHandler(){};
+
+  bool canHandle(AsyncWebServerRequest *request) {
+    return request->url().startsWith(STATE_RQ_PATH) &&
+           (request->method() == HTTP_GET || request->method() == HTTP_PUT ||
+           request->method() == HTTP_OPTIONS);
   };
-
-  bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {
-    LOGGER.logRequest(STATE_RQ_TAG, http_method_str(requestMethod),
-                      requestUri.c_str(), "");
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-
-    if (requestMethod == HTTP_OPTIONS) {
-      server.sendHeader("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
-      server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
-      server.send(200);
-      return true;
+  void handleRequest(AsyncWebServerRequest *request) {
+    if (request->method() == HTTP_OPTIONS) {
+      AsyncWebServerResponse * response = request->beginResponse(200);
+      response->addHeader("Access-Control-Allow-Origin", "*");
+      response->addHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+      response->addHeader("Access-Control-Allow-Headers", "Content-Type");
+      request->send(response);
+      return;
     }
-    if (requestMethod == HTTP_GET) {
+
+    AsyncWebServerResponse * asyncResponse = processRequest(request);
+    if (asyncResponse != nullptr) {
+      asyncResponse->addHeader("Access-Control-Allow-Origin", "*");
+      request->send(asyncResponse);
+    }
+  };
+ private:
+  AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
+    LOGGER.logRequest(STATE_RQ_TAG, request->methodToString(), request->url().c_str(), "");
+
+    if (request->method() == HTTP_GET) {
       DynamicJsonDocument state = SmartThing.getDeviceStatesInfo();
       String response;
       serializeJson(state, response);
-      server.send(200, CONTENT_TYPE_JSON, response);
-      return true;
+      return request->beginResponse(200, CONTENT_TYPE_JSON, response);
     }
-
-    return false;
-  };
+    return nullptr;
+  }
 };
 
 #endif

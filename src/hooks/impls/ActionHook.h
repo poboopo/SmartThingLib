@@ -18,6 +18,7 @@ namespace Hook {
     public:
       ActionHook(const char *action, bool readOnly)
           : T(ACTION_HOOK_TAG, readOnly), _action(action){};
+      virtual ~ActionHook() {};
 
       void call(V &value) {
         // replace ${value} in _action?

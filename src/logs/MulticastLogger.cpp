@@ -1,6 +1,7 @@
 #include "logs/BetterLogger.h"
 
-#if ENABLE_LOGGER && LOGGER_TYPE == MULTICAST_LOGGER
+// todo esp8266
+#if defined(ARDUINO_ARCH_ESP32) && ENABLE_LOGGER && LOGGER_TYPE == MULTICAST_LOGGER
 
 BetterLogger LOGGER;
 

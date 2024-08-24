@@ -12,13 +12,17 @@
 #define GATEWAY_CONFIG "gtw"
 
 #define SETTINGS_MANAGER_TAG "settings_manager"
-#define JSON_SETTINGS_DOC_SIZE 2048
-#define EEPROM_LOAD_SIZE 2048
+
+// #define JSON_SETTINGS_DOC_SIZE 2048
+// #define EEPROM_LOAD_SIZE 2048
+
+#define JSON_SETTINGS_DOC_SIZE 512
+#define EEPROM_LOAD_SIZE 512
 
 class SettingsManager {
  private:
   DynamicJsonDocument _settings = DynamicJsonDocument(JSON_SETTINGS_DOC_SIZE);
-  const char* loadFromEeprom();
+  String loadFromEeprom();
   bool _loaded = false;
 
   JsonObject getOrCreateObject(const char* name);

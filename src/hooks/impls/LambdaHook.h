@@ -18,6 +18,8 @@ class LambdaHook : public T {
   LambdaHook(CustomHook customHook, bool readOnly)
       : T(LAMBDA_HOOK_TAG, readOnly),
         _customHook(customHook){};
+  virtual ~LambdaHook() {};
+
   void call(V &value) { _customHook(value); };
 
  private:

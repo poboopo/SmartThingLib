@@ -28,10 +28,10 @@ void HooksManagerClass::loadFromSettings() {
     return;
   }
 
-  for (int i = 0; i < hooksInfo.size(); i++) {
+  for (unsigned int i = 0; i < hooksInfo.size(); i++) {
     JsonObject observable = hooksInfo[i]["observable"];
     JsonArray hooks = hooksInfo[i]["hooks"];
-    for (int j = 0; j < hooks.size(); j++) {
+    for (unsigned int j = 0; j < hooks.size(); j++) {
       createHookFromJson(observable, hooks[j]);
     }
   }

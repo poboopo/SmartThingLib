@@ -3,8 +3,6 @@
 #define WIPE_PIN 19
 #define WIPE_TIMEOUT 5000
 
-using namespace Observable;
-
 SmartThingClass SmartThing;
 
 SmartThingClass::SmartThingClass(){};
@@ -22,10 +20,7 @@ bool SmartThingClass::init() {
   LOGGER.debug(SMART_THING_TAG, "Settings manager loaded");
 
   _name = STSettings.getDeviceName();
-  if (_name.isEmpty()) {
-    _name = ESP.getChipModel();
-  }
-  LOGGER.debug(SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
+  LOGGER.debug(SMART_THING_TAG, "Device type/name: %s/%s", _type.c_str(), _name.c_str());
 
   LOGGER.debug(
     SMART_THING_TAG,
@@ -36,23 +31,29 @@ bool SmartThingClass::init() {
   _led.init(LED_PIN);
 
   delay(50);
-  if (!digitalRead(WIPE_PIN)) {
-    wipeSettings();
-  }
+  // todo esp8266
+  // if (!digitalRead(WIPE_PIN)) {
+  //   wipeSettings();
+  // }
 
   _ip = connectToWifi();
 
   if (wifiConnected()) {
-    LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s", _ip);
+    LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s", _ip.c_str());
     delay(1000);
     LOGGER.init(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG], _name.c_str());
 
+    #ifdef ARDUINO_ARCH_ESP32
     if (_beaconUdp.beginMulticast(MULTICAST_GROUP, MULTICAST_PORT)) {
       updateBroadCastMessage();
       LOGGER.debug(SMART_THING_TAG, "Beacon udp created");
     } else {
-      LOGGER.error(SMART_THING_TAG, "Failed to create beacn udp");
+      LOGGER.error(SMART_THING_TAG, "Failed to create beacon udp");
     }
+    #endif
+    #ifdef ARDUINO_ARCH_ESP8266
+    updateBroadCastMessage();
+    #endif
 
     RestController.begin();
     LOGGER.debug(SMART_THING_TAG, "RestController started");
@@ -73,10 +74,12 @@ bool SmartThingClass::init() {
   LOGGER.debug(SMART_THING_TAG, "Hooks loaded");
   #endif
 
+  #ifdef ARDUINO_ARCH_ESP32
   LOGGER.debug(SMART_THING_TAG, "Creating loop task");
   xTaskCreate([](void* o) { static_cast<SmartThingClass*>(o)->loopRoutine(); },
               SMART_THING_TAG, 50000, this, 1, &_loopTaskHandle);
   LOGGER.debug(SMART_THING_TAG, "Loop task created");
+  #endif
 
   #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
   addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)", "string");
@@ -86,36 +89,51 @@ bool SmartThingClass::init() {
   });
   #endif
   #endif
+  #if ENABLE_HOOKS
   // For notifications
   addConfigEntry(GATEWAY_CONFIG, "Gateway address (ip:port)", "string");
+  #endif
 
   LOGGER.debug(SMART_THING_TAG, "Setup finished");
   return true;
 }
 
 void SmartThingClass::loopRoutine() {
+  #ifdef ARDUINO_ARCH_ESP32
   const TickType_t xDelay = SMART_THING_LOOP_TASK_DELAY / portTICK_PERIOD_MS;
+  #endif
 
   for (;;) {
     if (wifiConnected()) {
-      RestController.handle();
       sendBeacon();
     }
     #if ENABLE_HOOKS 
     HooksManager.check();
     #endif
+
+    #ifdef ARDUINO_ARCH_ESP32
     vTaskDelay(xDelay);
+    #endif
+    #ifdef ARDUINO_ARCH_ESP8266
+    delay(SMART_THING_LOOP_TASK_DELAY); // todo check millis
+    #endif
   }
 }
 
 // todo move to different async task
 void SmartThingClass::sendBeacon() {
+  #ifdef ARDUINO_ARCH_ESP32
   _beaconUdp.beginMulticastPacket();
+  #endif
+  #ifdef ARDUINO_ARCH_ESP8266
+  _beaconUdp.beginPacketMulticast(MULTICAST_GROUP, MULTICAST_PORT, WiFi.localIP());
+  #endif
   _beaconUdp.write((uint8_t *) _broadcastMessage.c_str(), _broadcastMessage.length());
   _beaconUdp.endPacket();
 }
 
 String SmartThingClass::connectToWifi() {
+  LOGGER.info(SMART_THING_TAG, "Trying to connect to wifi");
   if (wifiConnected()) {
     LOGGER.info(SMART_THING_TAG, "WiFi already connected");
     return WiFi.localIP().toString();
@@ -125,12 +143,12 @@ String SmartThingClass::connectToWifi() {
   const char* password = wifiConfig[PASSWORD_SETTING];
   int mode = wifiConfig[WIFI_MODE_SETTING];
 
-  if (mode == WIFI_MODE_NULL || ssid == nullptr || strlen(ssid) == 0) {
+  if (ssid == nullptr || strlen(ssid) == 0) {
     LOGGER.warning(
-        SMART_THING_TAG,
-        "Ssid is blank or mode null -> creating setup AP with name %s",
-        ESP.getChipModel());
-    WiFi.softAP(ESP.getChipModel());
+      SMART_THING_TAG,
+      "Ssid is blank or mode null -> creating setup AP with name %s", _name.c_str()
+    );
+    WiFi.softAP(_name);
     delay(500);
     LOGGER.info(SMART_THING_TAG, "WiFi started in soft AP mode");
     return WiFi.softAPIP().toString();
@@ -152,9 +170,9 @@ String SmartThingClass::connectToWifi() {
                    password);
       WiFi.begin(ssid, password);
       long startTime = millis();
-      _led.blink();
-      while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {}
-      _led.off();
+      while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {
+        delay(50);
+      }
       if (WiFi.isConnected()) {
         LOGGER.info(SMART_THING_TAG, "WiFi started in STA mode");
         return WiFi.localIP().toString();

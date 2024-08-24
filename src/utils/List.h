@@ -2,7 +2,6 @@
 #define MY_LIST_H
 
 #include <Arduino.h>
-
 #include <functional>
 
 template <typename T>
@@ -12,7 +11,7 @@ class List {
   typedef std::function<void(T *, int index)> ForEachIndexFunction;
   typedef std::function<bool(T *)> FindFunction;
 
-  List() : _count(0), _head(nullptr){};
+  List() : _head(nullptr), _count(0){};
   ~List() { removeAll(); };
 
   void removeAll() {

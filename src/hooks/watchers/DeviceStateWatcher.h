@@ -18,6 +18,8 @@ class DeviceStateWatcher : public Watcher<String> {
  public:
   DeviceStateWatcher(const Observable::DeviceState::DeviceState* deviceState)
       : Watcher<String>(deviceState, ""){};
+  virtual ~DeviceStateWatcher() {};
+
   bool check() {
     if (_observable == nullptr) {
       return false;

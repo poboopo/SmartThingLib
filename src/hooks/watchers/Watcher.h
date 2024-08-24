@@ -25,6 +25,7 @@ class Watcher {
       : _observable(observable),
         _oldValue(initialValue),
         _hookIdSequence(0){};
+  virtual ~Watcher() {};
 
   virtual bool check() = 0;
   virtual const char *getObservableInfo() = 0;
@@ -42,7 +43,7 @@ class Watcher {
     }
     DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE * _hooks.size());
     _hooks.forEach([&](Hook::Hook<T> *current) {
-      if (current == nullptr || ignoreReadOnly && current->isReadonly()) {
+      if ((current == nullptr || ignoreReadOnly) && current->isReadonly()) {
         return;
       }
       doc.add(current->toJson(shortJson));

@@ -8,6 +8,20 @@
 #define DEVICE_NAME "dn"
 #define GROUP_HOOKS "cb"
 
+#ifdef ARDUINO_ARCH_ESP32
+bool eepromBegin(size_t size) {
+  return EEPROM.begin(size);
+}
+#endif
+
+#ifdef ARDUINO_ARCH_ESP8266
+bool eepromBegin(size_t size) {
+  EEPROM.begin(size);
+  return true;
+}
+#endif
+
+
 SettingsManager STSettings;
 
 SettingsManager::SettingsManager() {}
@@ -16,23 +30,28 @@ SettingsManager::~SettingsManager() { _settings.garbageCollect(); }
 
 void SettingsManager::loadSettings() {
   LOGGER.info(SETTINGS_MANAGER_TAG, "Loading data from eeprom...");
-  const char* loaddedSettings = loadFromEeprom();
-  if (strlen(loaddedSettings) == 0) {
+  String loaddedSettings = loadFromEeprom();
+  if (loaddedSettings.length() == 0) {
     LOGGER.warning(SETTINGS_MANAGER_TAG, "Settings empty! Adding default");
     addDefaultSettings();
-    return;
+  } else {
+    deserializeJson(_settings, loaddedSettings);
   }
-  deserializeJson(_settings, loaddedSettings);
   _loaded = true;
 }
 
 void SettingsManager::addDefaultSettings() {
+  #ifdef ARDUINO_ARCH_ESP32
   _settings[DEVICE_NAME] = ESP.getChipModel();
+  #endif
+  #ifdef ARDUINO_ARCH_ESP8266
+  _settings[DEVICE_NAME] = "SMT_DEV";
+  #endif
   save();
 }
 
 void SettingsManager::clear() {
-  if (EEPROM.begin(EEPROM_LOAD_SIZE)) {
+  if (eepromBegin(EEPROM_LOAD_SIZE)) {
     for (int i = 0; i < EEPROM_LOAD_SIZE; i++) {
       EEPROM.write(i, 0);
     }
@@ -42,8 +61,8 @@ void SettingsManager::clear() {
   }
 }
 
-const char* SettingsManager::loadFromEeprom() {
-  if (EEPROM.begin(EEPROM_LOAD_SIZE)) {
+String SettingsManager::loadFromEeprom() {
+  if (eepromBegin(EEPROM_LOAD_SIZE)) {
     String data = "{";
     uint8_t val;
     bool completed = false;
@@ -70,7 +89,7 @@ const char* SettingsManager::loadFromEeprom() {
     // LOGGER.debug(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]",
     //              data.c_str(), data.length());
     LOGGER.debug(SETTINGS_MANAGER_TAG, "Loaded from eeprom data length=%u", data.length());
-    return data.c_str();
+    return data;
   } else {
     LOGGER.error(SETTINGS_MANAGER_TAG, "Failed to open EEPROM");
     return "";
@@ -80,8 +99,7 @@ const char* SettingsManager::loadFromEeprom() {
 void SettingsManager::removeIfEmpty(const char* group) {
   if (_settings[group].size() == 0) {
     _settings.remove(group);
-    LOGGER.debug(SETTINGS_MANAGER_TAG,
-                 "Removed group %s from settings - it's empty", group);
+    LOGGER.debug(SETTINGS_MANAGER_TAG, "Removed group %s from settings - it's empty", group);
   }
 }
 
@@ -110,10 +128,10 @@ bool SettingsManager::save() {
     return false;
   }
 
-  if (EEPROM.begin(EEPROM_LOAD_SIZE)) {
+  if (eepromBegin(EEPROM_LOAD_SIZE)) {
     LOGGER.debug(SETTINGS_MANAGER_TAG, "Wrtining data to EEPROM (length [%u])",
                  data.length());
-    for (int i = 0; i < data.length(); i++) {
+    for (unsigned int i = 0; i < data.length(); i++) {
       EEPROM.write(i, data.charAt(i));
     }
     EEPROM.commit();
@@ -126,7 +144,7 @@ bool SettingsManager::save() {
 }
 
 void SettingsManager::removeSetting(const char* name) {
-  if (name == SSID_SETTING || name == PASSWORD_SETTING || name == GROUP_WIFI) {
+  if (strcmp(name, SSID_SETTING) == 0  || strcmp(name, PASSWORD_SETTING) == 0  || strcmp(name, GROUP_WIFI) == 0 ) {
     LOGGER.warning(SETTINGS_MANAGER_TAG,
                    "You can't remove Wifi credits with this function! Use "
                    "dropWifiCredits insted.");

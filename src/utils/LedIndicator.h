@@ -1,28 +1,42 @@
 #include <Arduino.h>
 
-#ifndef LedIndicator_H
-#define LedIndicator_H
+#ifndef LED_INDICATOR_H
+#define LED_INDICATOR_H
 
+// todo remove
 #define LED_INDICATOR_TAG "led_indicator"
 #define BLINK_DELAY 200
 
 class LedIndicator {
  private:
   uint8_t _ledPin;
-  int8_t _count;
-  TaskHandle_t _taskHandle = NULL;
-  void blinkTask();
   bool _enabled;
 
  public:
-  LedIndicator();
-  ~LedIndicator();
-  void init(uint8_t ledPin);
-  void blink();
-  void blink(int8_t count);
-  void on();
-  void off();
-  bool isOn() { return _enabled; }
+  LedIndicator() {};
+  ~LedIndicator() {
+    off();
+  };
+
+  void init(uint8_t ledPin)  {
+    _ledPin = ledPin;
+    pinMode(_ledPin, OUTPUT);
+    off();
+  }
+
+  void on() {
+    digitalWrite(_ledPin, HIGH);
+    _enabled = true;
+  }
+
+  void off() {
+    digitalWrite(_ledPin, LOW);
+    _enabled = false;
+  }
+
+  bool isOn() {
+    return _enabled;
+  }
 };
 
 #endif

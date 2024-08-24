@@ -1,8 +1,6 @@
 #ifndef INFO_RQ_H
 #define INFO_RQ_H
 
-#include <WebServer.h>
-
 #include "SmartThing.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
@@ -11,82 +9,95 @@
 
 #define INFO_RQ_PATH "/info"
 #define INFO_RQ_TAG "wifi_handler"
+#define MAX_CONTENT_LENGTH 1024
 
-class InfoRequestHandler : public RequestHandler {
+class InfoRequestHandler : public AsyncWebHandler {
  public:
   InfoRequestHandler(){};
-  bool canHandle(HTTPMethod method, String uri) {
-    return uri.startsWith(INFO_RQ_PATH) &&
-           (method == HTTP_GET || method == HTTP_PUT || method == HTTP_OPTIONS);
-  }
-  bool handle(WebServer& server, HTTPMethod requestMethod, String requestUri) {
-    String body = server.arg("plain");
-    LOGGER.logRequest(INFO_RQ_TAG, http_method_str(requestMethod),
-                      requestUri.c_str(), body.c_str());
-    server.sendHeader("Access-Control-Allow-Origin", "*");
+  virtual ~InfoRequestHandler(){};
 
-    if (requestMethod == HTTP_OPTIONS) {
-      server.sendHeader("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
-      server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
-      server.send(200);
-      return true;
+  bool canHandle(AsyncWebServerRequest *request) {
+    return request->url().startsWith(INFO_RQ_PATH) &&
+           (request->method() == HTTP_GET || request->method() == HTTP_PUT ||
+            request->method() == HTTP_OPTIONS);
+  }
+  void handleRequest(AsyncWebServerRequest *request) {
+    if (request->method() == HTTP_OPTIONS) {
+      AsyncWebServerResponse * response = request->beginResponse(200);
+      response->addHeader("Access-Control-Allow-Origin", "*");
+      response->addHeader("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
+      response->addHeader("Access-Control-Allow-Headers", "Content-Type");
+      request->send(response);
+      return;
     }
-    
-    if (requestUri.equals("/info/system")) {
-      if (requestMethod == HTTP_GET) {
+
+    AsyncWebServerResponse * asyncResponse = processRequest(request);
+    if (asyncResponse == nullptr) {
+      LOGGER.error(INFO_RQ_TAG, "Response = nullptr!");
+      request->send(500, CONTENT_TYPE_JSON, buildErrorJson("Internal error - failed to process request"));
+    }
+    asyncResponse->addHeader("Access-Control-Allow-Origin", "*");
+    request->send(asyncResponse);
+  }
+
+ private:
+  AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
+    String body = request->arg("plain");
+    LOGGER.logRequest(INFO_RQ_TAG, request->methodToString(), request->url().c_str(), body.c_str());
+
+    if (request->url().equals("/info/system")) {
+      if (request->method() == HTTP_GET) {
         DynamicJsonDocument jsonDoc(256);
         jsonDoc["version"] = SMART_THING_VERSION;
         jsonDoc["name"] = SmartThing.getName();
         jsonDoc["type"] = SmartThing.getType();
+        #ifdef ARDUINO_ARCH_ESP32
         jsonDoc["chip_model"] = ESP.getChipModel();
         jsonDoc["chip_revision"] = ESP.getChipRevision();
+        #endif
+        #ifdef ARDUINO_ARCH_ESP8266
+        jsonDoc["chip_model"] = "unknown";
+        jsonDoc["chip_revision"] = "unknown";
+        #endif
 
         String result;
         serializeJson(jsonDoc, result);
-        server.send(200, CONTENT_TYPE_JSON, result);
-        return true;
+        return request->beginResponse(200, CONTENT_TYPE_JSON, result);
       }
-      if (requestMethod == HTTP_PUT) {
+      if (request->method() == HTTP_PUT) {
         if (body.isEmpty()) {
-          server.send(400, CONTENT_TYPE_JSON,
-                      buildErrorJson("Body is missing!"));
-          return true;
+          return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Body is missing!"));
         }
         DynamicJsonDocument jsDoc(64);
         deserializeJson(jsDoc, body);
         const char* newName = jsDoc["name"];
         if (strlen(newName) == 0 || strlen(newName) > DEVICE_NAME_LENGTH_MAX) {
-          server.send(
+          return request->beginResponse(
               400, CONTENT_TYPE_JSON,
               buildErrorJson("Name is missing or too long (max 10 symbols)"));
-          return true;
         }
 
         SmartThing.updateDeviceName(newName);
-        server.send(200);
-        return true;
+        return request->beginResponse(200);
       }
     }
-    if (requestUri.equals("/info/actions") && requestMethod == HTTP_GET) {
+    if (request->url().equals("/info/actions") && request->method() == HTTP_GET) {
       #if ENABLE_ACTIONS 
       DynamicJsonDocument doc = SmartThing.getActionsInfo();
       String response;
       serializeJson(doc, response);
-      server.send(200, CONTENT_TYPE_JSON, response);
+      return request->beginResponse(200, CONTENT_TYPE_JSON, response);
       #else
-      server.send(400, CONTENT_TYPE_JSON, buildErrorJson("Actions feature disabled"));
+      return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Actions feature disabled"));
       #endif
-      return true;
     }
-    if (requestUri.equals("/info/config") && requestMethod == HTTP_GET) {
+    if (request->url().equals("/info/config") && request->method() == HTTP_GET) {
       DynamicJsonDocument doc = SmartThing.getConfigInfoJson();
       String response;
       serializeJson(doc, response);
-      server.send(200, CONTENT_TYPE_JSON, response);
-      return true;
+      return request->beginResponse(200, CONTENT_TYPE_JSON, response);
     }
-
-    return false;
+    return nullptr;
   }
 };
 

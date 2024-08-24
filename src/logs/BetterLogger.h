@@ -14,26 +14,22 @@
 
 #define LOGGER_TAG "LOGGER"
 
-#if LOGGER_TYPE == SERIAL_LOGGER
-// [name][level][tag]message
-#define LOGGER_MESSAGE_TEMPLATE "[%s][%u][%s]%s"
-#else
 // name_&_level_&_tag_&_message
-#define LOGGER_MESSAGE_TEMPLATE "%s&%u&%s&%s\n"
-#endif
-
-#define MAX_MESSAGE_LENGTH 2048
+#define TCP_LOGGER_MESSAGE_TEMPLATE "%s&%u&%s&"
+// ip_name_&_level_&_tag_&_message
+#define UDP_LOGGER_MESSAGE_TEMPLATE "%s&%s&%u&%s&"
 
 class BetterLogger {
  public:
-  BetterLogger(){};
+  BetterLogger() {
+    Serial.begin(115200);
+  };
   ~BetterLogger() { 
     #if LOGGER_TYPE != SERIAL_LOGGER
     disconnect();
     #endif
   }
 
-  void init() { Serial.begin(115200); }
   void init(String fullAddr, const char* name) {
     _name = name;
     #if LOGGER_TYPE != SERIAL_LOGGER
@@ -55,43 +51,30 @@ class BetterLogger {
       return;
     }
     _fullAddr = fullAddr;
-    warning(LOGGER_TAG, "Server log address was updated");
+    warning(LOGGER_TAG, "Server log address was updated to %s", fullAddr.c_str());
     parseAddressAndConnect();
     #endif
   }
 
   #if ENABLE_LOGGER
-  void log(const char* message) {
-    Serial.println(message);
-    #if LOGGER_TYPE != SERIAL_LOGGER
-    if (_connected) {
-      if (sendRemote(message) < 0) {
-        _connected = false;
-        error(LOGGER_TAG, "Failed to send message to remote, closing connection");
-      }
-    }
-    #endif
-  }
-
   template <typename... Args>
   void log(uint8_t level, const char* tag, const char* format, Args... args) {
-    // TODO fix long args will cause core panic
-    // char message[MAX_MESSAGE_LENGTH];
-    // sprintf(message, format, args...);
-    // char formattedMessage[MAX_MESSAGE_LENGTH];
-    // sprintf(formattedMessage, LOGGER_MESSAGE_TEMPLATE, _name, level, tag,
-    //         message);
-    // log(formattedMessage);
-    //todo esp8266
-    Serial.printf(LOGGER_MESSAGE_TEMPLATE, _name, level, tag, "");
+    #if LOGGER_TYPE != SERIAL_LOGGER
+    if (_connected) {
+      if (sendRemote(level, tag, format, args...) <= 0) {
+        _connected = false;
+      }
+      return;
+    }
+    #endif
+    Serial.printf("[%s][%u][%s]", _name, level, tag);
     Serial.printf(format, args...);
     Serial.println();
   }
   #else
-    void log(const char* message){}
-    template <typename... Args>
-    void log(uint8_t level, const char* tag, const char* format, Args... args) {
-    }
+  template <typename... Args>
+  void log(uint8_t level, const char* tag, const char* format, Args... args) {
+  }
   #endif
 
   void logRequest(const char* tag, const char * method, const char* uri, const char* body) {
@@ -132,14 +115,58 @@ class BetterLogger {
 
   #if LOGGER_TYPE == MULTICAST_LOGGER
   WiFiUDP _udp;
+  String _ip;
   #endif
   #if LOGGER_TYPE == TCP_LOGGER
   WiFiClient _tcp;
   #endif
 
-  size_t sendRemote(const char * message);
-  bool connect(const char * ip, int port);
-  void disconnect();
+  template <typename... Args>
+  size_t sendRemote(uint8_t level, const char* tag, const char* format, Args... args) {
+    size_t size = 0;
+    #if LOGGER_TYPE == TCP_LOGGER
+    size += _tcp.printf(TCP_LOGGER_MESSAGE_TEMPLATE, _name, level, tag);
+    size += _tcp.printf(format, args...);
+    _tcp.println();
+    return size;
+    #endif
+    #if LOGGER_TYPE == MULTICAST_LOGGER
+    _udp.beginMulticastPacket();
+    size += _udp.printf(UDP_LOGGER_MESSAGE_TEMPLATE, _ip.c_str(), _name, level, tag);
+    size += _udp.printf(format, args...);
+    _udp.println();
+    _udp.endPacket();
+    #endif
+    return size;
+  }
+
+  bool connect(const char * ip, int port) {
+    IPAddress address;
+    address.fromString(ip);
+    #if LOGGER_TYPE == TCP_LOGGER
+    _connected = _tcp.connect(address, port);
+    #endif
+    #if LOGGER_TYPE == MULTICAST_LOGGER
+    _connected = _udp.beginMulticast(address, port);
+    if (_connected) {
+      _ip = WiFi.localIP();
+    }
+    #endif
+    return _connected;
+  }
+
+  void disconnect() {
+    if (!_connected) {
+      return;
+    }
+    #if LOGGER_TYPE == TCP_LOGGER
+    _tcp.stop();
+    #endif
+    #if LOGGER_TYPE == MULTICAST_LOGGER
+    _udp.stop();
+    #endif
+    _connected = false;
+  }
 
   void parseAddressAndConnect() {
     if (_fullAddr.isEmpty()) {
@@ -166,9 +193,9 @@ class BetterLogger {
 
     info(LOGGER_TAG, "Trying to connect to logger server [%s, %s]", ip.c_str(), port.c_str());
     disconnect();
-    _connected = false;
     if (connect(ip.c_str(), port.toInt())) {
-      _connected = true;
+      Serial.println();
+      Serial.println("Remote logger connected! Serial output disabled while remote logger connected!");
       info(LOGGER_TAG, "Logger connected!");
     } else {
       error(LOGGER_TAG, "Failed to connect");

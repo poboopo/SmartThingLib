@@ -4,11 +4,12 @@
 #include "SmartThing.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/handlers/HandlerUtils.h"
+#include "net/rest/handlers/RequestHandler.h"
 
 #define SETTINGS_RQ_PATH "/settings"
 #define SETTINGS_RQ_TAG "settings_handler"
 
-class SettingsRequestHandler : public AsyncWebHandler {
+class SettingsRequestHandler : public RequestHandler {
  public:
   SettingsRequestHandler(){};
   virtual ~SettingsRequestHandler(){};
@@ -19,27 +20,7 @@ class SettingsRequestHandler : public AsyncWebHandler {
            request->method() == HTTP_OPTIONS);
   };
 
-  void handleRequest(AsyncWebServerRequest *request) {
-    if (request->method() == HTTP_OPTIONS) {
-      AsyncWebServerResponse * response = request->beginResponse(200);
-      response->addHeader("Access-Control-Allow-Origin", "*");
-      response->addHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-      response->addHeader("Access-Control-Allow-Headers", "Content-Type");
-      request->send(response);
-      return;
-    }
-
-    AsyncWebServerResponse * asyncResponse = processRequest(request);
-    if (asyncResponse != nullptr) {
-      asyncResponse->addHeader("Access-Control-Allow-Origin", "*");
-      request->send(asyncResponse);
-    }
-  };
- private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
-    String body = request->arg("plain");
-    LOGGER.logRequest(SETTINGS_RQ_TAG, request->methodToString(), request->url().c_str(), body.c_str());
-
     if (request->method() == HTTP_GET) {
       DynamicJsonDocument settings = STSettings.exportSettings();
       String response;
@@ -47,12 +28,12 @@ class SettingsRequestHandler : public AsyncWebHandler {
       return request->beginResponse(200, CONTENT_TYPE_JSON, response);
     }
     if (request->method() == HTTP_POST) {
-      if (body.isEmpty()) {
+      if (_body.isEmpty()) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, ERROR_BODY_MISSING);
       }
       DynamicJsonDocument doc(JSON_SETTINGS_DOC_SIZE);
-      deserializeJson(doc, body);
-      LOGGER.info(SETTINGS_RQ_TAG, "Trying to import settings: %s", body.c_str());
+      deserializeJson(doc, _body);
+      LOGGER.info(SETTINGS_RQ_TAG, "Trying to import settings: %s", _body.c_str());
       if (STSettings.importSettings(doc)) {
         LOGGER.info(SETTINGS_RQ_TAG, "Successfully imported settings!");
         return request->beginResponse(200);

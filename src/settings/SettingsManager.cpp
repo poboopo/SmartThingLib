@@ -129,8 +129,11 @@ bool SettingsManager::save() {
   }
 
   if (eepromBegin(EEPROM_LOAD_SIZE)) {
-    LOGGER.debug(SETTINGS_MANAGER_TAG, "Wrtining data to EEPROM (length [%u])",
+    LOGGER.debug(SETTINGS_MANAGER_TAG, "Writing data to EEPROM (length [%u])",
                  data.length());
+    #if LOGGER_TYPE == SERIAL_LOGGER
+    Serial.print(data.c_str());
+    #endif
     for (unsigned int i = 0; i < data.length(); i++) {
       EEPROM.write(i, data.charAt(i));
     }

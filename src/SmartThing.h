@@ -21,7 +21,7 @@
 #endif
 
 #define SMART_THING_VERSION "0.7"
-#define SMART_THING_TAG "SMART_THING"
+#define SMART_THING_TAG "smart_thing"
 // Pins
 #define LED_PIN 13
 
@@ -33,7 +33,7 @@
 #define DEVICE_NAME_LENGTH_MAX 15
 #define DEVICE_TYPE_LENGTH_MAX 15
 
-#define SMART_THING_LOOP_TASK_DELAY 250  // ms
+#define SMART_THING_LOOP_TASK_DELAY 100  // ms
 
 class SmartThingClass {
  public:

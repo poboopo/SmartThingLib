@@ -13,11 +13,8 @@
 
 #define SETTINGS_MANAGER_TAG "settings_manager"
 
-// #define JSON_SETTINGS_DOC_SIZE 2048
-// #define EEPROM_LOAD_SIZE 2048
-
-#define JSON_SETTINGS_DOC_SIZE 512
-#define EEPROM_LOAD_SIZE 512
+#define JSON_SETTINGS_DOC_SIZE 2048
+#define EEPROM_LOAD_SIZE 1024
 
 class SettingsManager {
  private:
@@ -28,7 +25,7 @@ class SettingsManager {
   JsonObject getOrCreateObject(const char* name);
   void removeIfEmpty(const char* group);
   void addDefaultSettings();
-  void clear();  // clears EEPROM
+  void clear();
  public:
   SettingsManager();
   ~SettingsManager();

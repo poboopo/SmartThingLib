@@ -13,7 +13,6 @@ bool SmartThingClass::wifiConnected() {
 }
 
 bool SmartThingClass::init() {
-  LOGGER.init();
   LOGGER.debug(SMART_THING_TAG, "Smart thing initialization started");
 
   STSettings.loadSettings();
@@ -103,19 +102,15 @@ void SmartThingClass::loopRoutine() {
   const TickType_t xDelay = SMART_THING_LOOP_TASK_DELAY / portTICK_PERIOD_MS;
   #endif
 
-  for (;;) {
-    if (wifiConnected()) {
-      sendBeacon();
-    }
-    #if ENABLE_HOOKS 
+
+  while (true) {
+    sendBeacon();
     HooksManager.check();
-    #endif
 
     #ifdef ARDUINO_ARCH_ESP32
     vTaskDelay(xDelay);
-    #endif
-    #ifdef ARDUINO_ARCH_ESP8266
-    delay(SMART_THING_LOOP_TASK_DELAY); // todo check millis
+    #else
+    delay(SMART_THING_LOOP_TASK_DELAY);
     #endif
   }
 }

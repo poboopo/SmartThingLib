@@ -7,11 +7,12 @@
 #include "net/rest/handlers/HandlerUtils.h"
 #include "settings/SettingsManager.h"
 #include "settings/ConfigEntriesList.h"
+#include "net/rest/handlers/RequestHandler.h"
 
 #define CONFIG_PATH "/config"
 #define CONFIG_LOG_TAG "config_handler"
 
-class ConfigRequestHandler : public AsyncWebHandler {
+class ConfigRequestHandler : public RequestHandler {
  public:
   ConfigRequestHandler(RestHandlerFunction* configUpdatedHandler)
       : _configUpdatedHandler(configUpdatedHandler){};
@@ -23,30 +24,7 @@ class ConfigRequestHandler : public AsyncWebHandler {
             request->method() == HTTP_POST || request->method() == HTTP_DELETE);
   }
 
-  void handleRequest(AsyncWebServerRequest *request) {
-    if (request->method() == HTTP_OPTIONS) {
-      AsyncWebServerResponse * response = request->beginResponse(200);
-      response->addHeader("Access-Control-Allow-Origin", "*");
-      response->addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
-      response->addHeader("Access-Control-Allow-Headers", "Content-Type");
-      request->send(response);
-      return;
-    }
-
-    AsyncWebServerResponse * asyncResponse = processRequest(request);
-    if (asyncResponse != nullptr) {
-      asyncResponse->addHeader("Access-Control-Allow-Origin", "*");
-      request->send(asyncResponse);
-    }
-  }
-
- private:
-  RestHandlerFunction* _configUpdatedHandler;
-
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
-    String body = request->arg("plain");
-    LOGGER.logRequest(CONFIG_LOG_TAG, request->methodToString(), request->url().c_str(), body.c_str());
-
     if (request->method() == HTTP_GET) {
       JsonObject config = STSettings.getConfig();
       String response;
@@ -57,13 +35,17 @@ class ConfigRequestHandler : public AsyncWebHandler {
       Config::ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
       if (entriesList->size() != 0) {
         DynamicJsonDocument jsonDoc(1024);
-        deserializeJson(jsonDoc, body);
+        deserializeJson(jsonDoc, _body);
         JsonObject root = jsonDoc.as<JsonObject>();
         JsonObject config = STSettings.getConfig();
 
         for (JsonPair pair : root) {
           if (entriesList->haveConfigEntry(pair.key().c_str())) {
-            config[pair.key()] = pair.value();
+            if (pair.value().isNull()) {
+              config.remove(pair.key());
+            } else {
+              config[pair.key()] = pair.value();
+            }
           }
         }
         STSettings.save();
@@ -99,6 +81,9 @@ class ConfigRequestHandler : public AsyncWebHandler {
     return nullptr;
   }
 
+ private:
+  RestHandlerFunction* _configUpdatedHandler;
+  
   void callHooks() {
     #if ENABLE_LOGGER
     LOGGER.updateAddress(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG]);

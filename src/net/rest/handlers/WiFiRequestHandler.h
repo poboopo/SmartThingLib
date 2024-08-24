@@ -6,11 +6,12 @@
 #include "net/rest/RestController.h"
 #include "net/rest/handlers/HandlerUtils.h"
 #include "settings/SettingsManager.h"
+#include "net/rest/handlers/RequestHandler.h"
 
 #define WIFI_LOG_TAG "wifi_handler"
 #define WIFI_RQ_PATH "/wifi"
 
-class WiFiRequesthandler : public AsyncWebHandler {
+class WiFiRequesthandler : public RequestHandler {
  public:
   WiFiRequesthandler() {};
   virtual ~WiFiRequesthandler() {};
@@ -21,27 +22,7 @@ class WiFiRequesthandler : public AsyncWebHandler {
             request->method() == HTTP_OPTIONS);
   }
 
-  void handleRequest(AsyncWebServerRequest *request) {
-    if (request->method() == HTTP_OPTIONS) {
-      AsyncWebServerResponse * response = request->beginResponse(200);
-      response->addHeader("Access-Control-Allow-Origin", "*");
-      response->addHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-      response->addHeader("Access-Control-Allow-Headers", "Content-Type");
-      request->send(response);
-      return;
-    }
-
-    AsyncWebServerResponse * asyncResponse = processRequest(request);
-    if (asyncResponse != nullptr) {
-      asyncResponse->addHeader("Access-Control-Allow-Origin", "*");
-      request->send(asyncResponse);
-    }
-  }
- private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
-    String body = request->arg("plain");
-    LOGGER.logRequest(WIFI_LOG_TAG, request->methodToString(), request->url().c_str(), body.c_str());
-
     if (request->method() == HTTP_GET) {
       DynamicJsonDocument jsonDoc(1028);
       jsonDoc["settings"] = STSettings.getWiFi();
@@ -54,12 +35,12 @@ class WiFiRequesthandler : public AsyncWebHandler {
 
       return request->beginResponse(200, CONTENT_TYPE_JSON, response);
     } else if (request->method() == HTTP_POST) {
-      if (body.length() == 0) {
+      if (_body.length() == 0) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, ERROR_BODY_MISSING);
       }
 
       DynamicJsonDocument jsonDoc(256);
-      deserializeJson(jsonDoc, body);
+      deserializeJson(jsonDoc, _body);
 
       String ssid = jsonDoc["ssid"].as<String>();
       if (ssid.isEmpty()) {

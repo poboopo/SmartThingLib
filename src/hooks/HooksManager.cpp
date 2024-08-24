@@ -24,7 +24,7 @@ using Observable::ObservableObject;
 void HooksManagerClass::loadFromSettings() {
   JsonArray hooksInfo = STSettings.getHooks();
   if (hooksInfo.size() == 0) {
-    LOGGER.debug(HOOKS_MANAGER_TAG, "There is not hooks in settings");
+    LOGGER.debug(HOOKS_MANAGER_TAG, "There is no hooks in settings");
     return;
   }
 

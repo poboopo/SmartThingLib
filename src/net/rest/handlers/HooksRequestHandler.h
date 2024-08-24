@@ -10,6 +10,7 @@
 #include "hooks/builders/HooksFactory.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/handlers/HandlerUtils.h"
+#include "net/rest/handlers/RequestHandler.h"
 
 #define HOOKS_RQ_PATH "/hooks"
 #define HOOKS_RQ_TAG "hooks_handler"
@@ -19,7 +20,7 @@
 #define HOOK_ID_ARG "id"
 
 // todo cut off first /hooks?
-class HooksRequestHandler : public AsyncWebHandler {
+class HooksRequestHandler : public RequestHandler {
  public:
   HooksRequestHandler(){};
   bool canHandle(AsyncWebServerRequest *request) {
@@ -27,30 +28,7 @@ class HooksRequestHandler : public AsyncWebHandler {
            (request->method() == HTTP_GET || request->method() == HTTP_PUT || request->method() == HTTP_POST ||
             request->method() == HTTP_DELETE || request->method() == HTTP_OPTIONS);
   };
-  
-  void handleRequest(AsyncWebServerRequest *request) {
-    if (request->method() == HTTP_OPTIONS) {
-      AsyncWebServerResponse * response = request->beginResponse(200);
-      response->addHeader("Access-Control-Allow-Origin", "*");
-      response->addHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-      response->addHeader("Access-Control-Allow-Headers", "Content-Type");
-      request->send(response);
-      return;
-    }
-
-    AsyncWebServerResponse * asyncResponse = processRequest(request);
-    if (asyncResponse == nullptr) {
-      LOGGER.error(HOOKS_RQ_TAG, "Response = nullptr!");
-      request->send(500, CONTENT_TYPE_JSON, buildErrorJson("Internal error - failed to process request"));
-    }
-    asyncResponse->addHeader("Access-Control-Allow-Origin", "*");
-    request->send(asyncResponse);
-  };
- private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
-    String body = request->arg("plain");
-    LOGGER.logRequest(HOOKS_RQ_TAG, request->methodToString(), request->url().c_str(), body.c_str());
-
     if (request->method() == HTTP_GET) {
       if (request->url().equals("/hooks/templates")) {
         String type = request->arg(HOOK_OBSERVABLE_TYPE);
@@ -115,10 +93,10 @@ class HooksRequestHandler : public AsyncWebHandler {
       return request->beginResponse(200, CONTENT_TYPE_JSON, response);
     }
     if (request->method() == HTTP_POST) {
-      if (body.isEmpty()) {
+      if (_body.isEmpty()) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, "Body is missing!");
       }
-      int id = HooksManager.createHookFromJson(body.c_str());
+      int id = HooksManager.createHookFromJson(_body.c_str());
       if (id >= 0) {
         HooksManager.saveHooksToSettings();
         // spritf fails, why?
@@ -134,13 +112,12 @@ class HooksRequestHandler : public AsyncWebHandler {
       }
     }
     if (request->method() == HTTP_PUT) {
-      String body = request->arg("plain");
-      if (body.isEmpty()) {
+      if (_body.isEmpty()) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Body is missing!"));
       }
 
       DynamicJsonDocument doc(1024);
-      deserializeJson(doc, body);
+      deserializeJson(doc, _body);
       if (HooksManager.updateHook(doc)) {
         HooksManager.saveHooksToSettings();
         return request->beginResponse(200);

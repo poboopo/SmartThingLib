@@ -6,12 +6,12 @@
 #include "net/rest/RestController.h"
 #include "net/rest/handlers/HandlerUtils.h"
 #include "settings/SettingsManager.h"
+#include "net/rest/handlers/RequestHandler.h"
 
 #define INFO_RQ_PATH "/info"
 #define INFO_RQ_TAG "wifi_handler"
-#define MAX_CONTENT_LENGTH 1024
 
-class InfoRequestHandler : public AsyncWebHandler {
+class InfoRequestHandler : public RequestHandler {
  public:
   InfoRequestHandler(){};
   virtual ~InfoRequestHandler(){};
@@ -21,30 +21,8 @@ class InfoRequestHandler : public AsyncWebHandler {
            (request->method() == HTTP_GET || request->method() == HTTP_PUT ||
             request->method() == HTTP_OPTIONS);
   }
-  void handleRequest(AsyncWebServerRequest *request) {
-    if (request->method() == HTTP_OPTIONS) {
-      AsyncWebServerResponse * response = request->beginResponse(200);
-      response->addHeader("Access-Control-Allow-Origin", "*");
-      response->addHeader("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
-      response->addHeader("Access-Control-Allow-Headers", "Content-Type");
-      request->send(response);
-      return;
-    }
 
-    AsyncWebServerResponse * asyncResponse = processRequest(request);
-    if (asyncResponse == nullptr) {
-      LOGGER.error(INFO_RQ_TAG, "Response = nullptr!");
-      request->send(500, CONTENT_TYPE_JSON, buildErrorJson("Internal error - failed to process request"));
-    }
-    asyncResponse->addHeader("Access-Control-Allow-Origin", "*");
-    request->send(asyncResponse);
-  }
-
- private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
-    String body = request->arg("plain");
-    LOGGER.logRequest(INFO_RQ_TAG, request->methodToString(), request->url().c_str(), body.c_str());
-
     if (request->url().equals("/info/system")) {
       if (request->method() == HTTP_GET) {
         DynamicJsonDocument jsonDoc(256);
@@ -65,11 +43,11 @@ class InfoRequestHandler : public AsyncWebHandler {
         return request->beginResponse(200, CONTENT_TYPE_JSON, result);
       }
       if (request->method() == HTTP_PUT) {
-        if (body.isEmpty()) {
+        if (_body.isEmpty()) {
           return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Body is missing!"));
         }
         DynamicJsonDocument jsDoc(64);
-        deserializeJson(jsDoc, body);
+        deserializeJson(jsDoc, _body);
         const char* newName = jsDoc["name"];
         if (strlen(newName) == 0 || strlen(newName) > DEVICE_NAME_LENGTH_MAX) {
           return request->beginResponse(

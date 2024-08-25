@@ -12,18 +12,19 @@
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
 #include "settings/SettingsManager.h"
-#include "utils/LedIndicator.h"
 #include "Features.h"
-
-#ifdef ARDUINO_ARCH_ESP8266
-#define WIFI_MODE_STA WIFI_STA
-#define WIFI_MODE_AP WIFI_AP
-#endif
 
 #define SMART_THING_VERSION "0.7"
 #define SMART_THING_TAG "smart_thing"
-// Pins
-#define LED_PIN 13
+
+#ifdef ARDUINO_ARCH_ESP32
+#define LED_PIN 2
+#endif
+#ifdef ARDUINO_ARCH_ESP8266
+#define LED_PIN LED_BUILTIN
+#define WIFI_MODE_STA WIFI_STA
+#define WIFI_MODE_AP WIFI_AP
+#endif
 
 #define WIFI_SETUP_TIMEOUT 10000
 
@@ -107,10 +108,7 @@ class SmartThingClass {
     return &_configEntriesList;
   }
   bool addConfigEntry(const char* name, const char* caption, const char* type);
-
-  LedIndicator* getLed() { return &_led; }
  private:
-  LedIndicator _led;
   WiFiUDP _beaconUdp;
 
   long _lastBeacon = -1;

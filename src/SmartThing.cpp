@@ -27,7 +27,8 @@ bool SmartThingClass::init() {
     WIPE_PIN, WIPE_TIMEOUT
   );
   pinMode(WIPE_PIN, INPUT_PULLUP);
-  _led.init(LED_PIN);
+  LOGGER.debug(SMART_THING_TAG, "Led pin=%d", LED_PIN);
+  pinMode(LED_PIN, OUTPUT);
 
   delay(50);
   // todo esp8266
@@ -168,11 +169,15 @@ String SmartThingClass::connectToWifi() {
                    password);
       WiFi.begin(ssid, password);
       long startTime = millis();
+      bool led = true;
       while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {
+        digitalWrite(LED_PIN, led);
+        led = !led;
         delay(50);
       }
+      digitalWrite(LED_PIN, LOW);
       if (WiFi.isConnected()) {
-        LOGGER.info(SMART_THING_TAG, "WiFi started in STA mode");
+        LOGGER.info(SMART_THING_TAG, "WiFi started in STA mode"); 
         return WiFi.localIP().toString();
       } else {
         WiFi.disconnect();
@@ -191,7 +196,7 @@ void SmartThingClass::wipeSettings() {
   LOGGER.warning(SMART_THING_TAG, "ALL SETTINGS WILL BE WIPED IN %d ms!!!",
                  WIPE_TIMEOUT);
 
-  _led.on();
+  digitalWrite(LED_PIN, HIGH);
   while (!digitalRead(WIPE_PIN) &&
          millis() - started < WIPE_TIMEOUT) {
   }
@@ -200,7 +205,7 @@ void SmartThingClass::wipeSettings() {
     STSettings.save();
     LOGGER.warning(SMART_THING_TAG, "Settings were wiped!");
   }
-  _led.off();
+  digitalWrite(LED_PIN, LOW);
 }
 
 void SmartThingClass::updateDeviceName(String name) {

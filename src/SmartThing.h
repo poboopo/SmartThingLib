@@ -33,7 +33,17 @@
 #define DEVICE_NAME_LENGTH_MAX 15
 #define DEVICE_TYPE_LENGTH_MAX 15
 
+#ifndef SMART_THING_LOOP_TASK_DELAY
 #define SMART_THING_LOOP_TASK_DELAY 100  // ms
+#endif
+
+#ifndef SMART_THING_HOOKS_CHECK_DELAY
+#define SMART_THING_HOOKS_CHECK_DELAY 500 // ms
+#endif
+
+#ifndef SMART_THING_BEACON_SEND_DELAY
+#define SMART_THING_BEACON_SEND_DELAY 1000 //ms
+#endif
 
 class SmartThingClass {
  public:
@@ -103,17 +113,20 @@ class SmartThingClass {
   LedIndicator _led;
   WiFiUDP _beaconUdp;
 
-  bool init();
-  
-  #ifdef ARDUINO_ARCH_ESP32
-  TaskHandle_t _loopTaskHandle = NULL;
-  #endif
-  void updateBroadCastMessage();
+  long _lastBeacon = -1;
+  long _lastHooksCheck = -1;
 
   String _ip;
   String _name;
   String _type;
   String _broadcastMessage;
+  
+  #ifdef ARDUINO_ARCH_ESP32
+  TaskHandle_t _loopTaskHandle = NULL;
+  #endif
+
+  bool init();
+  void updateBroadCastMessage();
 
   void wipeSettings();
   String connectToWifi();

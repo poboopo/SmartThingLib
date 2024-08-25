@@ -98,8 +98,14 @@ bool SmartThingClass::init() {
 }
 
 void SmartThingClass::loop() {
-  sendBeacon();
-  HooksManager.check();
+  if (_lastBeacon == -1 || millis() - _lastBeacon > SMART_THING_BEACON_SEND_DELAY) {
+    sendBeacon();
+    _lastBeacon = millis();
+  }
+  if (_lastHooksCheck == -1 || millis() - _lastHooksCheck > SMART_THING_HOOKS_CHECK_DELAY) {
+    HooksManager.check();
+    _lastHooksCheck = millis();
+  }
 }
 
 #ifdef ARDUINO_ARCH_ESP32

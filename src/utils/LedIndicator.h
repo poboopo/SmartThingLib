@@ -7,6 +7,7 @@
 #define LED_INDICATOR_TAG "led_indicator"
 #define BLINK_DELAY 200
 
+//deprecated
 class LedIndicator {
  private:
   uint8_t _ledPin;

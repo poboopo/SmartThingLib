@@ -9,6 +9,7 @@
 #include "net/rest/handlers/StateRequestHandler.h"
 #include "net/rest/handlers/WiFiRequestHandler.h"
 #include "net/rest/handlers/SettingsRequestHandler.h"
+#include "net/rest/handlers/DangerRequestHandler.h"
 #include "net/rest/Pages.h"
 
 #define WEB_SERVER_TAG "web_server"
@@ -38,6 +39,7 @@ void RestControllerClass::setupHandler() {
   _server.addHandler(new WiFiRequesthandler());
   _server.addHandler(new InfoRequestHandler());
   _server.addHandler(new SettingsRequestHandler());
+  _server.addHandler(new DangerRequestHandler());
   #if ENABLE_SENSORS
   _server.addHandler(new SensorsRequestHandler());
   #endif

@@ -201,7 +201,7 @@ void SmartThingClass::wipeSettings() {
          millis() - started < WIPE_TIMEOUT) {
   }
   if (!digitalRead(WIPE_PIN)) {
-    STSettings.dropAll();
+    STSettings.wipeAll();
     STSettings.save();
     LOGGER.warning(SMART_THING_TAG, "Settings were wiped!");
   }

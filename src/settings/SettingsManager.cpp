@@ -157,7 +157,7 @@ void SettingsManager::removeSetting(const char* name) {
   // _settings.garbageCollect();
 }
 
-void SettingsManager::dropAll() {
+void SettingsManager::wipeAll() {
   _settings.clear();
   clear();
 }

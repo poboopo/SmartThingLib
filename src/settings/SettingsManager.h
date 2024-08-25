@@ -33,7 +33,7 @@ class SettingsManager {
 
   void loadSettings();
   void removeSetting(const char* name);
-  void dropAll();
+  void wipeAll();
   bool save();
 
   JsonObject getConfig();

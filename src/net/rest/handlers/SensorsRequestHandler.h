@@ -40,13 +40,10 @@ class SensorsRequestHandler : public AsyncWebHandler {
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     LOGGER.logRequest(SENSORS_RQ_TAG, request->methodToString(), request->url().c_str(), "");
 
-    if (request->method() == HTTP_GET) {
-      JsonDocument sensors = SmartThing.getSensorsValues();
-      String response;
-      serializeJson(sensors, response);
-      return request->beginResponse(200, CONTENT_TYPE_JSON, response);
-    }
-    return nullptr;
+    JsonDocument sensors = SmartThing.getSensorsValues();
+    String response;
+    serializeJson(sensors, response);
+    return request->beginResponse(200, CONTENT_TYPE_JSON, response);
   }
 };
 

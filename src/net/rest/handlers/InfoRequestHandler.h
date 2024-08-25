@@ -25,7 +25,7 @@ class InfoRequestHandler : public RequestHandler {
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->url().equals("/info/system")) {
       if (request->method() == HTTP_GET) {
-        DynamicJsonDocument jsonDoc(256);
+        JsonDocument jsonDoc;
         jsonDoc["version"] = SMART_THING_VERSION;
         jsonDoc["name"] = SmartThing.getName();
         jsonDoc["type"] = SmartThing.getType();
@@ -48,7 +48,7 @@ class InfoRequestHandler : public RequestHandler {
         if (_body.isEmpty()) {
           return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Body is missing!"));
         }
-        DynamicJsonDocument jsDoc(64);
+        JsonDocument jsDoc;
         deserializeJson(jsDoc, _body);
         const char* newName = jsDoc["name"];
         if (strlen(newName) == 0 || strlen(newName) > DEVICE_NAME_LENGTH_MAX) {
@@ -61,9 +61,11 @@ class InfoRequestHandler : public RequestHandler {
         return request->beginResponse(200);
       }
     }
+    // why it's here???
+    // todo move to actions handler 
     if (request->url().equals("/info/actions") && request->method() == HTTP_GET) {
       #if ENABLE_ACTIONS 
-      DynamicJsonDocument doc = SmartThing.getActionsInfo();
+      JsonDocument doc = SmartThing.getActionsInfo();
       String response;
       serializeJson(doc, response);
       return request->beginResponse(200, CONTENT_TYPE_JSON, response);
@@ -72,7 +74,7 @@ class InfoRequestHandler : public RequestHandler {
       #endif
     }
     if (request->url().equals("/info/config") && request->method() == HTTP_GET) {
-      DynamicJsonDocument doc = SmartThing.getConfigInfoJson();
+      JsonDocument doc = SmartThing.getConfigInfoJson();
       String response;
       serializeJson(doc, response);
       return request->beginResponse(200, CONTENT_TYPE_JSON, response);

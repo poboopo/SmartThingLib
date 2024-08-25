@@ -78,7 +78,7 @@ void RestControllerClass::setupHandler() {
 
   _server.on("/features", HTTP_GET, [this](AsyncWebServerRequest * request) {
     LOGGER.logRequest(WEB_SERVER_TAG, request->methodToString(), "/features", "");
-    DynamicJsonDocument doc(2048);
+    JsonDocument doc;
     doc["web"] = ENABLE_WEB_PAGE == 1;
     doc["actions"] = ENABLE_ACTIONS == 1;
     doc["sensors"] = ENABLE_SENSORS == 1;
@@ -95,12 +95,11 @@ void RestControllerClass::setupHandler() {
 
   _server.on("/metrics", HTTP_GET, [this](AsyncWebServerRequest * request) {
     LOGGER.logRequest(WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
-    DynamicJsonDocument doc(2048);
+    JsonDocument doc;
     doc["uptime"] = millis();
 
-    JsonObject obj = doc.createNestedObject("heap");
+    JsonObject obj = doc["heap"].to<JsonObject>();
     obj["free"] = ESP.getFreeHeap();
-    obj["settingsUsage"] = STSettings.usage();
     #ifdef ARDUINO_ARCH_ESP32
     obj["size"] = ESP.getHeapSize();
     obj["minFree"] = ESP.getMinFreeHeap();
@@ -108,7 +107,7 @@ void RestControllerClass::setupHandler() {
     #endif
 
     #if ENABLE_SENSORS || ENABLE_STATES || ENABLE_HOOKS
-    JsonObject counts = doc.createNestedObject("counts");
+    JsonObject counts = doc["counts"].to<JsonObject>();
     #if ENABLE_SENSORS
     counts["sensors"] = SmartThing.getSensorsCount();
     #endif

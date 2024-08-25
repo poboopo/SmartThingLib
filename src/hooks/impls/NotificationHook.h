@@ -109,13 +109,13 @@ class NotificationHook : public T {
       String messageCopy = _message;
       messageCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
 
-      StaticJsonDocument<256> doc;
-      JsonObject from = doc.createNestedObject("device");
+      JsonDocument doc;
+      JsonObject from = doc["device"].to<JsonObject>();
       from["name"] = SmartThing.getName();
       from["type"] = SmartThing.getType();
       from["ip"] = SmartThing.getIp();
 
-      JsonObject notification = doc.createNestedObject("notification");
+      JsonObject notification = doc["notification"].to<JsonObject>();
       notification["message"] = messageCopy;
       notification["type"] = _notificationType;
 

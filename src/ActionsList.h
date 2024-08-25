@@ -67,8 +67,8 @@ class ActionsList : public List<Action> {
     return action->handler();
   };
 
-  DynamicJsonDocument toJson() {
-    DynamicJsonDocument doc(size() * 64);
+  JsonDocument toJson() {
+    JsonDocument doc;
     forEach([&](Action* current) { doc[current->name] = current->caption; });
     return doc;
   };

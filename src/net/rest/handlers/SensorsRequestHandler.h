@@ -41,7 +41,7 @@ class SensorsRequestHandler : public AsyncWebHandler {
     LOGGER.logRequest(SENSORS_RQ_TAG, request->methodToString(), request->url().c_str(), "");
 
     if (request->method() == HTTP_GET) {
-      DynamicJsonDocument sensors = SmartThing.getSensorsValues();
+      JsonDocument sensors = SmartThing.getSensorsValues();
       String response;
       serializeJson(sensors, response);
       return request->beginResponse(200, CONTENT_TYPE_JSON, response);

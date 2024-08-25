@@ -22,7 +22,7 @@ class SettingsRequestHandler : public RequestHandler {
 
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_GET) {
-      DynamicJsonDocument settings = STSettings.exportSettings();
+      JsonDocument settings = STSettings.exportSettings();
       String response;
       serializeJson(settings, response);
       return request->beginResponse(200, CONTENT_TYPE_JSON, response);
@@ -31,7 +31,7 @@ class SettingsRequestHandler : public RequestHandler {
       if (_body.isEmpty()) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, ERROR_BODY_MISSING);
       }
-      DynamicJsonDocument doc(JSON_SETTINGS_DOC_SIZE);
+      JsonDocument doc;
       deserializeJson(doc, _body);
       LOGGER.info(SETTINGS_RQ_TAG, "Trying to import settings: %s", _body.c_str());
       if (STSettings.importSettings(doc)) {

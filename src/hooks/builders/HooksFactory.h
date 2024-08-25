@@ -92,8 +92,8 @@ namespace Hook {
         return hook;
       }
 
-      static DynamicJsonDocument getTemplates(const char * type) {
-        DynamicJsonDocument doc(MAX_HOOK_TEMPLATE_SIZE * 4);
+      static JsonDocument getTemplates(const char * type) {
+        JsonDocument doc;
         doc["default"] = getDefaultTemplate(type);
         #if ENABLE_ACTIONS
         if (SmartThing.getActionsCount() > 0) {
@@ -106,8 +106,8 @@ namespace Hook {
       }
     
     private:
-      static DynamicJsonDocument getDefaultTemplate(const char * type) {
-        DynamicJsonDocument doc(MAX_HOOK_TEMPLATE_SIZE);
+      static JsonDocument getDefaultTemplate(const char * type) {
+        JsonDocument doc;
         if (strcmp(type, SENSOR_TYPE) == 0) {
           deserializeJson(doc, DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON);
         } else if (strcmp(type, STATE_TYPE) == 0) {

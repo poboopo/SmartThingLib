@@ -24,9 +24,9 @@ class WiFiRequesthandler : public RequestHandler {
 
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_GET) {
-      DynamicJsonDocument jsonDoc(1028);
+      JsonDocument jsonDoc;
       jsonDoc["settings"] = STSettings.getWiFi();
-      JsonObject modes = jsonDoc.createNestedObject("modes");
+      JsonObject modes = jsonDoc["modes"].to<JsonObject>();
       modes[String(WIFI_MODE_STA)] = "STA";
       modes[String(WIFI_MODE_AP)] = "AP";
 
@@ -39,7 +39,7 @@ class WiFiRequesthandler : public RequestHandler {
         return request->beginResponse(400, CONTENT_TYPE_JSON, ERROR_BODY_MISSING);
       }
 
-      DynamicJsonDocument jsonDoc(256);
+      JsonDocument jsonDoc;
       deserializeJson(jsonDoc, _body);
 
       String ssid = jsonDoc["ssid"].as<String>();

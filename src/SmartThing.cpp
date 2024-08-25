@@ -75,7 +75,7 @@ bool SmartThingClass::init() {
 
   #ifdef ARDUINO_ARCH_ESP32
   LOGGER.debug(SMART_THING_TAG, "Creating loop task");
-  xTaskCreate([](void* o) { static_cast<SmartThingClass*>(o)->loopRoutine(); },
+  xTaskCreate([](void* o) { static_cast<SmartThingClass*>(o)->asyncLoop(); },
               SMART_THING_TAG, 50000, this, 1, &_loopTaskHandle);
   LOGGER.debug(SMART_THING_TAG, "Loop task created");
   #endif
@@ -97,23 +97,20 @@ bool SmartThingClass::init() {
   return true;
 }
 
-void SmartThingClass::loopRoutine() {
-  #ifdef ARDUINO_ARCH_ESP32
+void SmartThingClass::loop() {
+  sendBeacon();
+  HooksManager.check();
+}
+
+#ifdef ARDUINO_ARCH_ESP32
+void SmartThingClass::asyncLoop() {
   const TickType_t xDelay = SMART_THING_LOOP_TASK_DELAY / portTICK_PERIOD_MS;
-  #endif
-
-
   while (true) {
-    sendBeacon();
-    HooksManager.check();
-
-    #ifdef ARDUINO_ARCH_ESP32
+    loop();
     vTaskDelay(xDelay);
-    #else
-    delay(SMART_THING_LOOP_TASK_DELAY);
-    #endif
   }
 }
+#endif
 
 // todo move to different async task
 void SmartThingClass::sendBeacon() {
@@ -218,12 +215,12 @@ void SmartThingClass::updateBroadCastMessage() {
   _broadcastMessage = _ip + "$" + _type + "$" + _name + "$" + SMART_THING_VERSION;
 }
 
-DynamicJsonDocument SmartThingClass::getConfigInfoJson() {
+JsonDocument SmartThingClass::getConfigInfoJson() {
   return _configEntriesList.toJson();
 }
 
 #if ENABLE_SENSORS 
-DynamicJsonDocument SmartThingClass::getSensorsValues() {
+JsonDocument SmartThingClass::getSensorsValues() {
   return _sensorsList.getValues();
 }
 
@@ -258,7 +255,7 @@ bool SmartThingClass::addDeviceState(
   return _deviceStatesList.add(name, function);
 }
 
-DynamicJsonDocument SmartThingClass::getDeviceStatesInfo() {
+JsonDocument SmartThingClass::getDeviceStatesInfo() {
   return _deviceStatesList.getValues();
 }
 
@@ -274,7 +271,7 @@ int16_t SmartThingClass::getDeviceStatesCount() {
 #endif
 
 #if ENABLE_ACTIONS 
-DynamicJsonDocument SmartThingClass::getActionsInfo() {
+JsonDocument SmartThingClass::getActionsInfo() {
   return _actionsList.toJson();
 }
 bool SmartThingClass::addActionHandler(const char* action, const char* caption,

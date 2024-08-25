@@ -43,4 +43,4 @@
     - add different templates support on logger? -
     - fix logger message length
 
-- DynamicJsonDocument -> JsonDocument
+- JsonDocument -> JsonDocument

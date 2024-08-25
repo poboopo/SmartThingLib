@@ -50,12 +50,7 @@ class SmartThingClass {
     return init();
   }
 
-
-  #ifdef ARDUINO_ARCH_ESP8266
-  void loop() {
-    loopRoutine();
-  }
-  #endif
+  void loop();
 
   void updateDeviceName(String name);
   const char * getType();
@@ -71,7 +66,7 @@ class SmartThingClass {
   bool addDigitalSensor(const char* name, int pin);
   bool addAnalogSensor(const char* name, int pin);
   const Observable::Sensor::Sensor* getSensor(const char* name);
-  DynamicJsonDocument getSensorsValues();
+  JsonDocument getSensorsValues();
   int16_t getSensorsCount();
   #endif
 
@@ -80,7 +75,7 @@ class SmartThingClass {
 
   const Observable::DeviceState::DeviceState* getDeviceState(
       const char* name);
-  DynamicJsonDocument getDeviceStatesInfo();
+  JsonDocument getDeviceStatesInfo();
 
   int16_t getDeviceStatesCount();
   #endif
@@ -94,10 +89,10 @@ class SmartThingClass {
   };
   ActionResult callAction(const char* action);
   int16_t getActionsCount();
-  DynamicJsonDocument getActionsInfo();
+  JsonDocument getActionsInfo();
   #endif
   
-  DynamicJsonDocument getConfigInfoJson();
+  JsonDocument getConfigInfoJson();
   Config::ConfigEntriesList * getConfigInfo() {
     return &_configEntriesList;
   }
@@ -123,7 +118,9 @@ class SmartThingClass {
   void wipeSettings();
   String connectToWifi();
 
-  void loopRoutine();
+  #ifdef ARDUINO_ARCH_ESP32
+  void asyncLoop();
+  #endif
   void sendBeacon();
 
   #if ENABLE_SENSORS

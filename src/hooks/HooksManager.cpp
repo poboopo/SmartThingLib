@@ -44,7 +44,7 @@ int HooksManagerClass::createHookFromJson(const char *json) {
   }
   LOGGER.debug(HOOKS_MANAGER_TAG, "Creating hook from json: %s", json);
 
-  DynamicJsonDocument doc(1024);
+  JsonDocument doc;
   deserializeJson(doc, json);
 
   return createHookFromJson(doc["observable"], doc["hook"]);
@@ -207,7 +207,7 @@ bool HooksManagerClass::deleteHook(const char *type, const char *name,
   return -1;
 }
 
-bool HooksManagerClass::updateHook(DynamicJsonDocument doc) {
+bool HooksManagerClass::updateHook(JsonDocument doc) {
   JsonObject observable = doc["observable"];
   JsonObject hookObject = doc["hook"];
 
@@ -462,13 +462,12 @@ void HooksManagerClass::saveHooksToSettings() {
   LOGGER.debug(HOOKS_MANAGER_TAG, "Hooks were saved");
 }
 
-DynamicJsonDocument HooksManagerClass::allHooksToJson(
+JsonDocument HooksManagerClass::allHooksToJson(
     bool ignoreReadOnly, bool shortJson) {
   if (_hooksCount == 0) {
     LOGGER.debug(HOOKS_MANAGER_TAG, "No hooks, creating empty doc");
-    DynamicJsonDocument doc(0);
-    doc.to<JsonArray>();
-    return doc;
+    JsonDocument doc;
+    return doc.to<JsonArray>();
   }
 
   int watchersCount = 0;
@@ -483,20 +482,20 @@ DynamicJsonDocument HooksManagerClass::allHooksToJson(
 
   if (size == 0) {
     LOGGER.debug(HOOKS_MANAGER_TAG,
-                 "DynamicJsonDocument size = 0, creating empty doc");
-    DynamicJsonDocument doc(0);
+                 "JsonDocument size = 0, creating empty doc");
+    JsonDocument doc;
     return doc;
   }
 
   LOGGER.debug(HOOKS_MANAGER_TAG, "DynamicJsonDoc size for hooks = %d",
                size);
-  DynamicJsonDocument doc(size);
+  JsonDocument doc;
   #if ENABLE_SENSORS 
   _sensorsWatchers.forEach([&](Watcher<int16_t> *watcher) {
     if (watcher == nullptr) {
       return;
     }
-    DynamicJsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
+    JsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
     if (wjs.size() > 0) doc.add(wjs);
   });
   #endif
@@ -505,20 +504,20 @@ DynamicJsonDocument HooksManagerClass::allHooksToJson(
     if (watcher == nullptr) {
       return;
     }
-    DynamicJsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
+    JsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
     if (wjs.size() > 0) doc.add(wjs);
   });
   #endif
   return doc;
 }
 
-DynamicJsonDocument HooksManagerClass::getWatchersInfo() {
-  DynamicJsonDocument doc(1024);
+JsonDocument HooksManagerClass::getWatchersInfo() {
+  JsonDocument doc;
   #if ENABLE_SENSORS 
   if (_sensorsWatchers.size() > 0) {
     LOGGER.debug(HOOKS_MANAGER_TAG,
                  "Collecting info from sensors watchers");
-    JsonArray array = doc.createNestedArray(SENSOR_WATCHER_TYPE);
+    JsonArray array = doc[SENSOR_WATCHER_TYPE].to<JsonArray>();
     collectInfo<int16_t>(&_sensorsWatchers, &array);
   }
   #endif
@@ -526,14 +525,14 @@ DynamicJsonDocument HooksManagerClass::getWatchersInfo() {
   if (_statesWatchers.size() > 0) {
     LOGGER.debug(HOOKS_MANAGER_TAG,
                  "Collecting info from device state watchers");
-    JsonArray array = doc.createNestedArray(STATE_WATCHER_TYPE);
+    JsonArray array = doc[STATE_WATCHER_TYPE].to<JsonArray>();
     collectInfo<String>(&_statesWatchers, &array);
   }
   #endif
   return doc;
 }
 
-DynamicJsonDocument HooksManagerClass::getObservableHooksJson(const char *type, const char *name) {
+JsonDocument HooksManagerClass::getObservableHooksJson(const char *type, const char *name) {
   #if ENABLE_SENSORS 
   if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
     return getObservableHooksJsonFromList<int16_t>(&_sensorsWatchers, name);
@@ -545,12 +544,12 @@ DynamicJsonDocument HooksManagerClass::getObservableHooksJson(const char *type, 
   }
   #endif
   LOGGER.error(HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
-  DynamicJsonDocument doc(4);
+  JsonDocument doc;
   return doc;
 }
 
 template <typename T>
-DynamicJsonDocument HooksManagerClass::getObservableHooksJsonFromList(
+JsonDocument HooksManagerClass::getObservableHooksJsonFromList(
     List<Watcher<T>> *list, const char *name) {
   if (name == nullptr || strlen(name) == 0) {
     LOGGER.error(HOOKS_MANAGER_TAG, "Name of observable is missing!");
@@ -563,11 +562,11 @@ DynamicJsonDocument HooksManagerClass::getObservableHooksJsonFromList(
                      "Can't find watcher for observable [%s]", name);
     }
   }
-  DynamicJsonDocument doc(4);
+  JsonDocument doc;
   return doc;
 }
 
-DynamicJsonDocument HooksManagerClass::getHookJsonById(const char *type,
+JsonDocument HooksManagerClass::getHookJsonById(const char *type,
                                                                const char *name,
                                                                int id) {
   #if ENABLE_SENSORS 
@@ -581,12 +580,12 @@ DynamicJsonDocument HooksManagerClass::getHookJsonById(const char *type,
   }
   #endif
   LOGGER.error(HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
-  DynamicJsonDocument doc(4);
+  JsonDocument doc;
   return doc;
 }
 
 template <typename T>
-DynamicJsonDocument HooksManagerClass::getHookJsonFromList(
+JsonDocument HooksManagerClass::getHookJsonFromList(
     List<Watcher<T>> *list, const char *name, int id) {
   if (name == nullptr || strlen(name) == 0) {
     LOGGER.error(HOOKS_MANAGER_TAG, "Name of observable is missing!");
@@ -606,7 +605,7 @@ DynamicJsonDocument HooksManagerClass::getHookJsonFromList(
                      "Can't find watcher for observable [%s]", name);
     }
   }
-  DynamicJsonDocument doc(4);
+  JsonDocument doc;
   return doc;
 }
 }  // namespace Hook

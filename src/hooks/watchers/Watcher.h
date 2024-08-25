@@ -30,18 +30,16 @@ class Watcher {
   virtual bool check() = 0;
   virtual const char *getObservableInfo() = 0;
 
-  DynamicJsonDocument getObservableHooksJson() {
+  JsonDocument getObservableHooksJson() {
     return getObservableHooksJson(false, false);
   }
 
-  DynamicJsonDocument getObservableHooksJson(bool ignoreReadOnly, bool shortJson) {
+  JsonDocument getObservableHooksJson(bool ignoreReadOnly, bool shortJson) {
+    JsonDocument doc;
     if (_hooks.size() == 0) {
       LOGGER.debug(WATCHER_HOOK_TAG, "No hook's, creating empty array");
-      DynamicJsonDocument doc(0);
-      doc.to<JsonArray>();
-      return doc;
+      return doc.to<JsonArray>();
     }
-    DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE * _hooks.size());
     _hooks.forEach([&](Hook::Hook<T> *current) {
       if ((current == nullptr || ignoreReadOnly) && current->isReadonly()) {
         return;
@@ -51,16 +49,13 @@ class Watcher {
     return doc;
   };
 
-  DynamicJsonDocument toJson(bool ignoreReadOnly, bool shortJson) {
+  JsonDocument toJson(bool ignoreReadOnly, bool shortJson) {
+    JsonDocument doc;
     if (_hooks.size() == 0) {
-      DynamicJsonDocument doc(0);
       return doc;
     }
-    DynamicJsonDocument hooks =
-        getObservableHooksJson(ignoreReadOnly, shortJson);
-    DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE * _hooks.size() + 128);
-    doc["observable"] =
-        ((Observable::ObservableObject<T> *)_observable)->toJson();
+    JsonDocument hooks = getObservableHooksJson(ignoreReadOnly, shortJson);
+    doc["observable"] = ((Observable::ObservableObject<T> *)_observable)->toJson();
     doc["hooks"] = hooks;
     return doc;
   }

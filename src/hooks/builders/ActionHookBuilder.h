@@ -31,9 +31,9 @@ class ActionHookBuilder {
 
     return hook;
   }
-  static DynamicJsonDocument getTemplate() {
-    DynamicJsonDocument doc(MAX_HOOK_TEMPLATE_SIZE);
-    JsonObject actionObj = doc.createNestedObject("action");
+  static JsonDocument getTemplate() {
+    JsonDocument doc;
+    JsonObject actionObj = doc["action"].to<JsonObject>();
     actionObj["required"] = true;
     actionObj["values"] = SmartThing.getActionsInfo();
     return doc;

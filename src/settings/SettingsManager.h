@@ -13,12 +13,13 @@
 
 #define SETTINGS_MANAGER_TAG "settings_manager"
 
+// deprecated
 #define JSON_SETTINGS_DOC_SIZE 2048
 #define EEPROM_LOAD_SIZE 1024
 
 class SettingsManager {
  private:
-  DynamicJsonDocument _settings = DynamicJsonDocument(JSON_SETTINGS_DOC_SIZE);
+  JsonDocument _settings;
   String loadFromEeprom();
   bool _loaded = false;
 
@@ -48,11 +49,10 @@ class SettingsManager {
   JsonArray getHooks();
   void dropAllHooks();
 
-  const DynamicJsonDocument exportSettings();
-  bool importSettings(DynamicJsonDocument doc);
+  const JsonDocument exportSettings();
+  bool importSettings(JsonDocument doc);
 
-  const DynamicJsonDocument getAllSettings();
-  int16_t usage() { return _settings.memoryUsage(); }
+  const JsonDocument getAllSettings();
 };
 
 extern SettingsManager STSettings;

@@ -34,7 +34,7 @@ class ConfigRequestHandler : public RequestHandler {
     if (request->method() == HTTP_POST) {
       Config::ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
       if (entriesList->size() != 0) {
-        DynamicJsonDocument jsonDoc(1024);
+        JsonDocument jsonDoc;
         deserializeJson(jsonDoc, _body);
         JsonObject root = jsonDoc.as<JsonObject>();
         JsonObject config = STSettings.getConfig();

@@ -31,17 +31,16 @@ class HooksManagerClass {
   int addHook(const Observable::DeviceState::DeviceState * state, Hook<String> * hook);
   #endif
   bool deleteHook(const char* type, const char* name, int id);
-  bool updateHook(DynamicJsonDocument doc);
+  bool updateHook(JsonDocument doc);
 
   void check();
   boolean callHook(const char * type, const char * name, int id, String value);
 
-  DynamicJsonDocument getWatchersInfo();
-  DynamicJsonDocument allHooksToJson(bool ignoreReadOnly, bool shortJson);
-  DynamicJsonDocument getObservableHooksJson(const char* type,
+  JsonDocument getWatchersInfo();
+  JsonDocument allHooksToJson(bool ignoreReadOnly, bool shortJson);
+  JsonDocument getObservableHooksJson(const char* type,
                                                  const char* name);
-  DynamicJsonDocument getHookJsonById(const char* type, const char* name,
-                                          int id);
+  JsonDocument getHookJsonById(const char* type, const char* name, int id);
 
   void saveHooksToSettings();
 
@@ -78,11 +77,11 @@ class HooksManagerClass {
                                           const char* name, int id);
 
   template <typename T>
-  DynamicJsonDocument getObservableHooksJsonFromList(List<Watcher<T>>* list,
+  JsonDocument getObservableHooksJsonFromList(List<Watcher<T>>* list,
                                                          const char* name);
 
   template <typename T>
-  DynamicJsonDocument getHookJsonFromList(List<Watcher<T>>* list,
+  JsonDocument getHookJsonFromList(List<Watcher<T>>* list,
                                               const char* name, int id);
 
   template <typename T>

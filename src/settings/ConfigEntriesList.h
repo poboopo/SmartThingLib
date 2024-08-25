@@ -39,10 +39,10 @@ class ConfigEntriesList : public List<ConfigEntry> {
       return false;
     }
   };
-  DynamicJsonDocument toJson() {
-    DynamicJsonDocument doc(size() * 64);
+  JsonDocument toJson() {
+    JsonDocument doc;
     forEach([&](ConfigEntry* current) {
-      JsonObject obj = doc.createNestedObject(current->name);
+      JsonObject obj = doc[current->name].to<JsonObject>();
       obj["caption"] = current->caption;
       obj["type"] = current->type;
     });

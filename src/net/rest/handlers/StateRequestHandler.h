@@ -41,7 +41,7 @@ class StateRequestHandler : public AsyncWebHandler {
     LOGGER.logRequest(STATE_RQ_TAG, request->methodToString(), request->url().c_str(), "");
 
     if (request->method() == HTTP_GET) {
-      DynamicJsonDocument state = SmartThing.getDeviceStatesInfo();
+      JsonDocument state = SmartThing.getDeviceStatesInfo();
       String response;
       serializeJson(state, response);
       return request->beginResponse(200, CONTENT_TYPE_JSON, response);

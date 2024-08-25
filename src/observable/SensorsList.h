@@ -49,10 +49,10 @@ class SensorsList : public List<Sensor> {
     });
   };
 
-  DynamicJsonDocument getValues() {
-    DynamicJsonDocument doc(size() * 64);
+  JsonDocument getValues() {
+    JsonDocument doc;
     forEach([&](Sensor* current) {
-      JsonObject sensorObj = doc.createNestedObject(current->name);
+      JsonObject sensorObj = doc[current->name].to<JsonObject>();
       sensorObj["value"] = current->valueProvider();
       sensorObj["type"] = Observable::Sensor::sensorTypeName(current->type);
     });

@@ -42,8 +42,8 @@ class DeviceStatesList : public List<DeviceState> {
       return false;
     }
   };
-  DynamicJsonDocument getValues() {
-    DynamicJsonDocument doc(size() * 64);
+  JsonDocument getValues() {
+    JsonDocument doc;
     forEach([&](DeviceState *current) {
       doc[current->name] = current->valueProvider();
     });

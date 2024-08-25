@@ -36,7 +36,7 @@ class HooksRequestHandler : public RequestHandler {
           return request->beginResponse(400, CONTENT_TYPE_JSON,
                       buildErrorJson("Type parameter are missing!"));
         }
-        DynamicJsonDocument doc = Hook::HooksFactory::getTemplates(type.c_str());
+        JsonDocument doc = Hook::HooksFactory::getTemplates(type.c_str());
         String response;
         serializeJson(doc, response);
         return request->beginResponse(200, CONTENT_TYPE_JSON, response);
@@ -50,7 +50,7 @@ class HooksRequestHandler : public RequestHandler {
               400, CONTENT_TYPE_JSON,
               buildErrorJson("Observable type or name args are missing!"));
         }
-        DynamicJsonDocument doc = HooksManager.getObservableHooksJson(
+        JsonDocument doc = HooksManager.getObservableHooksJson(
             type.c_str(), name.c_str());
         String response;
         serializeJson(doc, response);
@@ -65,7 +65,7 @@ class HooksRequestHandler : public RequestHandler {
           return request->beginResponse(400, CONTENT_TYPE_JSON,
                       buildErrorJson("Type, name or id args are missing!"));
         }
-        DynamicJsonDocument doc = HooksManager.getHookJsonById(
+        JsonDocument doc = HooksManager.getHookJsonById(
             type.c_str(), name.c_str(), id.toInt());
         String response;
         serializeJson(doc, response);
@@ -87,7 +87,7 @@ class HooksRequestHandler : public RequestHandler {
           return request->beginResponse(500);
         }
       }
-      DynamicJsonDocument doc = HooksManager.allHooksToJson(false, false);
+      JsonDocument doc = HooksManager.allHooksToJson(false, false);
       String response;
       serializeJson(doc, response);
       return request->beginResponse(200, CONTENT_TYPE_JSON, response);
@@ -100,7 +100,7 @@ class HooksRequestHandler : public RequestHandler {
       if (id >= 0) {
         HooksManager.saveHooksToSettings();
         // spritf fails, why?
-        DynamicJsonDocument doc(16);
+        JsonDocument doc;
         doc["id"] = id;
         String response;
         serializeJson(doc, response);
@@ -116,7 +116,7 @@ class HooksRequestHandler : public RequestHandler {
         return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Body is missing!"));
       }
 
-      DynamicJsonDocument doc(1024);
+      JsonDocument doc;
       deserializeJson(doc, _body);
       if (HooksManager.updateHook(doc)) {
         HooksManager.saveHooksToSettings();

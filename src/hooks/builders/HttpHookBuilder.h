@@ -40,8 +40,8 @@ class HttpHookBuilder {
 
     return hook;
   }
-  static DynamicJsonDocument getTemplate() {
-    DynamicJsonDocument doc(MAX_HOOK_TEMPLATE_SIZE);
+  static JsonDocument getTemplate() {
+    JsonDocument doc;
     deserializeJson(doc, HTTP_HOOKS_TEMPLATES_JSON);
     return doc;
   }

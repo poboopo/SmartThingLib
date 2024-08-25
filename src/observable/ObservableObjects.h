@@ -9,8 +9,6 @@
 #define STATE_TYPE "state"
 #define SENSOR_TYPE "sensor"
 
-#define CONFIGURABLE_JS0N_SIZE 64
-
 namespace Observable {
   template <class T>
   struct ObservableObject {
@@ -23,8 +21,8 @@ namespace Observable {
 
     ValueProviderFunction valueProvider;
 
-    StaticJsonDocument<CONFIGURABLE_JS0N_SIZE> toJson() {
-      StaticJsonDocument<CONFIGURABLE_JS0N_SIZE> doc;
+    JsonDocument toJson() {
+      JsonDocument doc;
       doc["name"] = name;
       doc["type"] = type;
       return doc;

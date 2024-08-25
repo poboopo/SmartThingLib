@@ -10,7 +10,9 @@
 #include "hooks/comparator/Comparator.h"
 #include "logs/BetterLogger.h"
 
+// deprecated
 #define HOOK_INFO_DOC_SIZE 512
+// deprecated
 #define MAX_HOOK_TEMPLATE_SIZE 1024
 #define VALUE_DYNAMIC_PARAM "{v}"
 
@@ -36,8 +38,8 @@ namespace Hook {
       virtual void disableTrigger() { _triggerDisabled = true; };
       virtual void enableTrigger() { _triggerDisabled = false; };
 
-      virtual DynamicJsonDocument toJson(bool shortJson) {
-        DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE);
+      virtual JsonDocument toJson(bool shortJson) {
+        JsonDocument doc;
         doc["id"] = _id;
         doc["readonly"] = _readonly;
         doc["type"] = _type;
@@ -100,8 +102,8 @@ namespace Hook {
         }
       }
       
-      DynamicJsonDocument toJson(bool shortJson) {
-        DynamicJsonDocument doc(HOOK_INFO_DOC_SIZE);
+      JsonDocument toJson(bool shortJson) {
+        JsonDocument doc;
         doc["id"] = _id;
         doc["readonly"] = _readonly;
         doc["type"] = _type;

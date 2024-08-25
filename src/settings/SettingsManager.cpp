@@ -26,7 +26,7 @@ SettingsManager STSettings;
 
 SettingsManager::SettingsManager() {}
 
-SettingsManager::~SettingsManager() { _settings.garbageCollect(); }
+SettingsManager::~SettingsManager() { _settings.clear(); }
 
 void SettingsManager::loadSettings() {
   LOGGER.info(SETTINGS_MANAGER_TAG, "Loading data from eeprom...");
@@ -108,7 +108,7 @@ bool SettingsManager::save() {
   removeIfEmpty(GROUP_WIFI);
   removeIfEmpty(GROUP_CONFIG);
   removeIfEmpty(GROUP_HOOKS);
-  _settings.garbageCollect();
+  // _settings.garbageCollect();
 
   String data;
   serializeJson(_settings, data);
@@ -154,7 +154,7 @@ void SettingsManager::removeSetting(const char* name) {
     return;
   }
   _settings.remove(name);
-  _settings.garbageCollect();
+  // _settings.garbageCollect();
 }
 
 void SettingsManager::dropAll() {
@@ -169,7 +169,7 @@ JsonObject SettingsManager::getOrCreateObject(const char* name) {
     return _settings[name];
   }
   LOGGER.debug(SETTINGS_MANAGER_TAG, "Creating new nested object %s", name);
-  return _settings.createNestedObject(name);
+  return _settings[name].to<JsonObject>();
 }
 
 JsonObject SettingsManager::getConfig() {
@@ -206,23 +206,22 @@ JsonArray SettingsManager::getHooks() {
   if (_settings.containsKey(GROUP_HOOKS)) {
     return _settings[GROUP_HOOKS];
   }
-  return _settings.createNestedArray(GROUP_HOOKS);
+  return _settings[GROUP_HOOKS].to<JsonArray>();
 }
 
 void SettingsManager::dropAllHooks() {
   _settings.remove(GROUP_HOOKS);
-  _settings.garbageCollect();
 }
 
-const DynamicJsonDocument SettingsManager::exportSettings() {
-  DynamicJsonDocument doc(JSON_SETTINGS_DOC_SIZE);
+const JsonDocument SettingsManager::exportSettings() {
+  JsonDocument doc;
   doc[GROUP_CONFIG] = getConfig();
   doc[GROUP_HOOKS] = getHooks();
   doc[DEVICE_NAME] = getDeviceName();
   return doc;
 }
 
-bool SettingsManager::importSettings(DynamicJsonDocument doc) {
+bool SettingsManager::importSettings(JsonDocument doc) {
   if (doc.size() == 0) {
     LOGGER.info(SETTINGS_MANAGER_TAG, "Empty settings json!");
     return false;
@@ -269,6 +268,6 @@ bool SettingsManager::importSettings(DynamicJsonDocument doc) {
   return res;
 }
 
-const DynamicJsonDocument SettingsManager::getAllSettings() {
+const JsonDocument SettingsManager::getAllSettings() {
   return _settings;
 }

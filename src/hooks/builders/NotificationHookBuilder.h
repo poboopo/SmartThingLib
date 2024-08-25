@@ -34,13 +34,13 @@ class NotificationHookBuilder {
 
       return hook;
     }
-    static DynamicJsonDocument getTemplate() {
-      DynamicJsonDocument doc(MAX_HOOK_TEMPLATE_SIZE);
-      JsonObject msg = doc.createNestedObject(MESSAGE_FIELD);
+    static JsonDocument getTemplate() {
+      JsonDocument doc;
+      JsonObject msg = doc[MESSAGE_FIELD].to<JsonObject>();
       msg["required"] = true;
       
-      JsonObject type = doc.createNestedObject(NOTIFICATION_TYPE_FIELD);
-      JsonArray ar = type.createNestedArray("values");
+      JsonObject type = doc[NOTIFICATION_TYPE_FIELD].to<JsonObject>();
+      JsonArray ar = type["values"].to<JsonArray>();
       ar.add(NOTIFICATION_INFO);
       ar.add(NOTIFICATION_WARNING);
       ar.add(NOTIFICATION_ERROR);

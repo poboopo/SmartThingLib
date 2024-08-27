@@ -106,6 +106,10 @@ void RestControllerClass::setupHandler() {
     obj["size"] = ESP.getHeapSize();
     obj["minFree"] = ESP.getMinFreeHeap();
     obj["maxAlloc"] = ESP.getMaxAllocHeap();
+    obj["resetReason"] = esp_reset_reason();
+    #endif
+    #ifdef ARDUINO_ARCH_ESP8266
+    obj["resetReason"] = ESP.getResetReason();
     #endif
 
     #if ENABLE_SENSORS || ENABLE_STATES || ENABLE_HOOKS

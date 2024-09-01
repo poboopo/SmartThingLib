@@ -8,8 +8,8 @@ import threading
 # connect to udp via param
 
 TCP = True
-PORT = 7778
-ADRESS = "192.168.1.12"
+PORT = 7779
+ADRESS = "192.168.0.108"
 
 LOGGER_FILE = "logger.log"
 START_COLOR = "\033["
@@ -20,7 +20,6 @@ lastColorIndex = 2
 logFile = open(LOGGER_FILE, "a")
 
 def colorByLevel(logLevel):
-    print(logLevel)
     if logLevel == 40:
         return "31m"
     if logLevel == 30:
@@ -66,6 +65,9 @@ def printHeader():
     print(f"{'TIMESTAMP': ^26} [{'IP': ^15} :: {'NAME': ^15}] - [{'LEVEL': ^7}] [{'TAG': ^20}] :: LOG MESSAGE")
     print(f"{'':-<115}{END_COLOR}")
 
+def trim(line):
+    return line.replace('\n', '').replace('\r', '')
+
 def recvMessages(ip, conn):
     global ipColor
     global lastColorIndex
@@ -83,10 +85,10 @@ def recvMessages(ip, conn):
                     print(message)
                     continue
 
-                name = splitted[0]
-                logLevel = splitted[1]
-                tag = splitted[2]
-                messageCuted = splitted[3].strip()
+                name = trim(splitted[0])
+                logLevel = trim(splitted[1])
+                tag = trim(splitted[2])
+                messageCuted = trim(splitted[3].strip())
 
                 if (ip not in ipColor.keys()):
                     ipColor.update({ip: f"3{lastColorIndex}m"})

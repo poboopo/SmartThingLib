@@ -2,6 +2,10 @@
 
 #define WIPE_PIN 19
 #define WIPE_TIMEOUT 5000
+#define WIFI_SETUP_TIMEOUT 10000
+
+#define MULTICAST_GROUP IPAddress(224, 1, 1, 1)
+#define MULTICAST_PORT 7778
 
 SmartThingClass SmartThing;
 
@@ -145,9 +149,9 @@ String SmartThingClass::connectToWifi() {
   if (ssid == nullptr || strlen(ssid) == 0) {
     LOGGER.warning(
       SMART_THING_TAG,
-      "Ssid is blank or mode null -> creating setup AP with name %s", _name.c_str()
+      "Ssid is blank or mode null -> creating setup AP with name %s", SMT_DEFAULT_NAME
     );
-    WiFi.softAP(_name);
+    WiFi.softAP(SMT_DEFAULT_NAME);
     delay(500);
     LOGGER.info(SMART_THING_TAG, "WiFi started in soft AP mode");
     return WiFi.softAPIP().toString();
@@ -215,7 +219,6 @@ void SmartThingClass::updateDeviceName(String name) {
     return;
   }
   _name = name;
-  // todo move from there
   STSettings.setDeviceName(_name.c_str());
   STSettings.save();
   updateBroadCastMessage();

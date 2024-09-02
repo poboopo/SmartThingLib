@@ -25,7 +25,6 @@ class SettingsManager {
 
   JsonObject getOrCreateObject(const char* name);
   void removeIfEmpty(const char* group);
-  void addDefaultSettings();
   void clear();
  public:
   SettingsManager();
@@ -43,7 +42,7 @@ class SettingsManager {
   void dropWifiCredits();
 
   const String getDeviceName();
-  void setDeviceName(const char* name);
+  void setDeviceName(String name);
 
   void setHooks(JsonArray doc);
   JsonArray getHooks();

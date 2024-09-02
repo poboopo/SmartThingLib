@@ -246,7 +246,6 @@ bool HooksManagerClass::updateHook(JsonDocument doc) {
   return false;
 }
 
-// todo more logs with info?
 template <typename T>
 bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
                                            const char *name,
@@ -478,17 +477,6 @@ JsonDocument HooksManagerClass::allHooksToJson(
   watchersCount += _statesWatchers.size();
   #endif
 
-  int size = _hooksCount * HOOK_INFO_DOC_SIZE + watchersCount * WATCHER_INFO_DOC_SIZE;
-
-  if (size == 0) {
-    LOGGER.debug(HOOKS_MANAGER_TAG,
-                 "JsonDocument size = 0, creating empty doc");
-    JsonDocument doc;
-    return doc;
-  }
-
-  LOGGER.debug(HOOKS_MANAGER_TAG, "DynamicJsonDoc size for hooks = %d",
-               size);
   JsonDocument doc;
   #if ENABLE_SENSORS 
   _sensorsWatchers.forEach([&](Watcher<int16_t> *watcher) {

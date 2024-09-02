@@ -19,7 +19,6 @@
 #define HOOK_OBSERVABLE_TYPE "type"
 #define HOOK_ID_ARG "id"
 
-// todo cut off first /hooks?
 class HooksRequestHandler : public RequestHandler {
  public:
   HooksRequestHandler(){};

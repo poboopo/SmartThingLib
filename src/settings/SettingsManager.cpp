@@ -33,21 +33,10 @@ void SettingsManager::loadSettings() {
   String loaddedSettings = loadFromEeprom();
   if (loaddedSettings.length() == 0) {
     LOGGER.warning(SETTINGS_MANAGER_TAG, "Settings empty! Adding default");
-    addDefaultSettings();
   } else {
     deserializeJson(_settings, loaddedSettings);
   }
   _loaded = true;
-}
-
-void SettingsManager::addDefaultSettings() {
-  #ifdef ARDUINO_ARCH_ESP32
-  _settings[DEVICE_NAME] = ESP.getChipModel();
-  #endif
-  #ifdef ARDUINO_ARCH_ESP8266
-  _settings[DEVICE_NAME] = "SMT_DEV";
-  #endif
-  save();
 }
 
 void SettingsManager::clear() {
@@ -187,15 +176,19 @@ void SettingsManager::dropConfig() {
 
 JsonObject SettingsManager::getWiFi() { return getOrCreateObject(GROUP_WIFI); }
 
-void SettingsManager::setDeviceName(const char* name) {
-  _settings[DEVICE_NAME] = name;
+void SettingsManager::setDeviceName(String name) {
+  if (name.isEmpty()) {
+    _settings.remove(DEVICE_NAME);
+  } else {
+    _settings[DEVICE_NAME] = name;
+  }
 }
 
 const String SettingsManager::getDeviceName() {
   if (_settings.containsKey(DEVICE_NAME)) {
     return _settings[DEVICE_NAME];
   }
-  return "";
+  return SMT_DEFAULT_NAME;
 }
 
 void SettingsManager::setHooks(JsonArray doc) {

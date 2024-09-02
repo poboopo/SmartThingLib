@@ -73,6 +73,7 @@ class InfoRequestHandler : public RequestHandler {
       return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Actions feature disabled"));
       #endif
     }
+    // todo move to config handlerw
     if (request->url().equals("/info/config") && request->method() == HTTP_GET) {
       JsonDocument doc = SmartThing.getConfigInfoJson();
       String response;

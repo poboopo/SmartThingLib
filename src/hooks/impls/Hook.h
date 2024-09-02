@@ -10,13 +10,8 @@
 #include "hooks/comparator/Comparator.h"
 #include "logs/BetterLogger.h"
 
-// deprecated
-#define HOOK_INFO_DOC_SIZE 512
-// deprecated
-#define MAX_HOOK_TEMPLATE_SIZE 1024
 #define VALUE_DYNAMIC_PARAM "{v}"
 
-// todo store hook pointer?
 namespace Hook {
   template <typename T>
   class Hook {

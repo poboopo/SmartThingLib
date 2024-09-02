@@ -334,7 +334,7 @@ bool HooksManagerClass::deleteHookFromList(List<Watcher<T>> *list,
     LOGGER.error(HOOKS_MANAGER_TAG, "Name of observable is missing!");
     return false;
   }
-  LOGGER.debug(HOOKS_MANAGER_TAG,
+  LOGGER.warning(HOOKS_MANAGER_TAG,
                "Trying to delete observable [%s]'s hook id=%d", name, id);
   Watcher<T> *watcher = getWatcherByObservableName(list, name);
   if (watcher == nullptr || !watcher->removeHook(id)) {

@@ -17,6 +17,10 @@ bool SmartThingClass::wifiConnected() {
 }
 
 bool SmartThingClass::init() {
+  if (_initialized) {
+    LOGGER.warning(SMART_THING_TAG, "Already initialized!");
+    return false;
+  }
   LOGGER.debug(SMART_THING_TAG, "Smart thing initialization started");
 
   STSettings.loadSettings();
@@ -33,12 +37,27 @@ bool SmartThingClass::init() {
   pinMode(WIPE_PIN, INPUT_PULLUP);
   LOGGER.debug(SMART_THING_TAG, "Led pin=%d", LED_PIN);
   pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, LOW);
 
   delay(50);
   // todo esp8266
   // if (!digitalRead(WIPE_PIN)) {
   //   wipeSettings();
   // }
+
+  #if ENABLE_STATES
+  addDeviceState("wifi", [this]() {
+    return wifiConnected() ? "connected" : "disconnected";
+  });
+  #endif
+
+  #if ENABLE_HOOKS
+  LOGGER.debug(SMART_THING_TAG, "Loading hooks from settings...");
+  HooksManager.loadFromSettings();
+  LOGGER.debug(SMART_THING_TAG, "Hooks loaded, making first check");
+  HooksManager.check();
+  LOGGER.debug(SMART_THING_TAG, "Hooks first check finished");
+  #endif
 
   _ip = connectToWifi();
 
@@ -50,7 +69,7 @@ bool SmartThingClass::init() {
     #ifdef ARDUINO_ARCH_ESP32
     if (_beaconUdp.beginMulticast(MULTICAST_GROUP, MULTICAST_PORT)) {
       updateBroadCastMessage();
-      LOGGER.debug(SMART_THING_TAG, "Beacon udp created");
+      LOGGER.info(SMART_THING_TAG, "Beacon udp created");
     } else {
       LOGGER.error(SMART_THING_TAG, "Failed to create beacon udp");
     }
@@ -60,23 +79,11 @@ bool SmartThingClass::init() {
     #endif
 
     RestController.begin();
-    LOGGER.debug(SMART_THING_TAG, "RestController started");
+    LOGGER.info(SMART_THING_TAG, "RestController started");
   } else {
     LOGGER.warning(SMART_THING_TAG,
                    "WiFi not available, skipping all network setup");
   }
-
-  #if ENABLE_STATES
-  addDeviceState("wifi", [this]() {
-    return wifiConnected() ? "connected" : "disconnected";
-  });
-  #endif
-
-  #if ENABLE_HOOKS 
-  LOGGER.debug(SMART_THING_TAG, "Loading hooks from settings...");
-  HooksManager.loadFromSettings();
-  LOGGER.debug(SMART_THING_TAG, "Hooks loaded");
-  #endif
 
   #ifdef ARDUINO_ARCH_ESP32
   LOGGER.debug(SMART_THING_TAG, "Creating loop task");
@@ -99,6 +106,7 @@ bool SmartThingClass::init() {
   #endif
 
   LOGGER.debug(SMART_THING_TAG, "Setup finished");
+  _initialized = true;
   return true;
 }
 
@@ -107,10 +115,12 @@ void SmartThingClass::loop() {
     sendBeacon();
     _lastBeacon = millis();
   }
+  #if ENABLE_HOOKS
   if (_lastHooksCheck == -1 || millis() - _lastHooksCheck > SMART_THING_HOOKS_CHECK_DELAY) {
     HooksManager.check();
     _lastHooksCheck = millis();
   }
+  #endif
 }
 
 #ifdef ARDUINO_ARCH_ESP32

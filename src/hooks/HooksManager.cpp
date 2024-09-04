@@ -22,18 +22,25 @@ using namespace Observable::DeviceState;
 using Observable::ObservableObject;
 
 void HooksManagerClass::loadFromSettings() {
-  JsonArray hooksInfo = STSettings.getHooks();
+  JsonDocument hooksInfo = STSettings.getHooks();
   if (hooksInfo.size() == 0) {
     LOGGER.debug(HOOKS_MANAGER_TAG, "There is no hooks in settings");
     return;
   }
 
+  bool needGhostDelete = false;
   for (unsigned int i = 0; i < hooksInfo.size(); i++) {
     JsonObject observable = hooksInfo[i]["observable"];
     JsonArray hooks = hooksInfo[i]["hooks"];
     for (unsigned int j = 0; j < hooks.size(); j++) {
-      createHookFromJson(observable, hooks[j]);
+      needGhostDelete = needGhostDelete || createHookFromJson(observable, hooks[j]) < 0;
     }
+  }
+
+  if (needGhostDelete) {
+    LOGGER.warning(HOOKS_MANAGER_TAG, "Have some ghost hooks to delete, trying to save correct hooks list");
+    saveHooksToSettings();
+    LOGGER.info(HOOKS_MANAGER_TAG, "Ghost hooks removed");
   }
 }
 
@@ -70,6 +77,8 @@ int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
     return -1;
   }
 
+  LOGGER.debug(HOOKS_MANAGER_TAG, "Trying to build hook for [%s] %s", type, name);
+
   #if ENABLE_STATES
   if (strcmp(type, STATE_TYPE) == 0) {
     return addHook<String>(SmartThing.getDeviceState(name),
@@ -93,7 +102,7 @@ int HooksManagerClass::addHook(const ObservableObject<T> *obj,
                                        Hook<T> *hook) {
   if (obj == nullptr) {
     LOGGER.error(HOOKS_MANAGER_TAG,
-                 "Observable object is missing, skipping...");
+                 "Observable object is missing, cancelling hook creation");
     return -1;
   }
   if (hook == nullptr) {
@@ -456,35 +465,30 @@ boolean HooksManagerClass::callWatcherHook(List<Watcher<T>>* list, const char * 
 
 void HooksManagerClass::saveHooksToSettings() {
   LOGGER.debug(HOOKS_MANAGER_TAG, "Saving hooks");
-  STSettings.setHooks(allHooksToJson(true, true).as<JsonArray>());
-  STSettings.save();
-  LOGGER.debug(HOOKS_MANAGER_TAG, "Hooks were saved");
+  STSettings.setHooks(allHooksToJson(true, true));
+  if (STSettings.save()) {
+    LOGGER.debug(HOOKS_MANAGER_TAG, "Hooks were saved");
+  } else {
+    // todo reboot?
+    LOGGER.error(HOOKS_MANAGER_TAG, "Hooks save failed");
+  }
 }
 
-JsonDocument HooksManagerClass::allHooksToJson(
-    bool ignoreReadOnly, bool shortJson) {
+JsonDocument HooksManagerClass::allHooksToJson(bool ignoreReadOnly, bool shortJson) {
+  JsonDocument doc;
+  doc.to<JsonArray>();
   if (_hooksCount == 0) {
     LOGGER.debug(HOOKS_MANAGER_TAG, "No hooks, creating empty doc");
-    JsonDocument doc;
-    return doc.to<JsonArray>();
+    return doc;
   }
 
-  int watchersCount = 0;
-  #if ENABLE_SENSORS 
-  watchersCount += _sensorsWatchers.size();
-  #endif
-  #if ENABLE_STATES
-  watchersCount += _statesWatchers.size();
-  #endif
-
-  JsonDocument doc;
   #if ENABLE_SENSORS 
   _sensorsWatchers.forEach([&](Watcher<int16_t> *watcher) {
     if (watcher == nullptr) {
       return;
     }
     JsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
-    if (wjs.size() > 0) doc.add(wjs);
+    if (!wjs.isNull()) doc.add(wjs);
   });
   #endif
   #if ENABLE_STATES
@@ -493,7 +497,7 @@ JsonDocument HooksManagerClass::allHooksToJson(
       return;
     }
     JsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
-    if (wjs.size() > 0) doc.add(wjs);
+    if (!wjs.isNull()) doc.add(wjs);
   });
   #endif
   return doc;
@@ -537,8 +541,7 @@ JsonDocument HooksManagerClass::getObservableHooksJson(const char *type, const c
 }
 
 template <typename T>
-JsonDocument HooksManagerClass::getObservableHooksJsonFromList(
-    List<Watcher<T>> *list, const char *name) {
+JsonDocument HooksManagerClass::getObservableHooksJsonFromList(List<Watcher<T>> *list, const char *name) {
   if (name == nullptr || strlen(name) == 0) {
     LOGGER.error(HOOKS_MANAGER_TAG, "Name of observable is missing!");
   } else {

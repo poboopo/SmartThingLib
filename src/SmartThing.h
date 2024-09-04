@@ -108,15 +108,17 @@ class SmartThingClass {
   }
   bool addConfigEntry(const char* name, const char* caption, const char* type);
  private:
-  WiFiUDP _beaconUdp;
-
+  bool _initialized = false;
   long _lastBeacon = -1;
+  #if ENABLE_HOOKS
   long _lastHooksCheck = -1;
+  #endif
 
   String _ip;
   String _name;
   String _type;
   String _broadcastMessage;
+  WiFiUDP _beaconUdp;
   
   #ifdef ARDUINO_ARCH_ESP32
   TaskHandle_t _loopTaskHandle = NULL;

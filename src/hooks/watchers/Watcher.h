@@ -36,9 +36,10 @@ class Watcher {
 
   JsonDocument getObservableHooksJson(bool ignoreReadOnly, bool shortJson) {
     JsonDocument doc;
+    doc.to<JsonArray>();
     if (_hooks.size() == 0) {
       LOGGER.debug(WATCHER_HOOK_TAG, "No hook's, creating empty array");
-      return doc.to<JsonArray>();
+      return doc;
     }
     _hooks.forEach([&](Hook::Hook<T> *current) {
       if ((current == nullptr || ignoreReadOnly) && current->isReadonly()) {

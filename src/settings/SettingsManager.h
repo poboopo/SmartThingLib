@@ -13,8 +13,6 @@
 
 #define SETTINGS_MANAGER_TAG "settings_manager"
 
-// deprecated
-#define JSON_SETTINGS_DOC_SIZE 2048
 #define EEPROM_LOAD_SIZE 1024
 
 class SettingsManager {
@@ -44,8 +42,8 @@ class SettingsManager {
   const String getDeviceName();
   void setDeviceName(String name);
 
-  void setHooks(JsonArray doc);
-  JsonArray getHooks();
+  void setHooks(JsonDocument doc);
+  JsonDocument getHooks();
   void dropAllHooks();
 
   const JsonDocument exportSettings();

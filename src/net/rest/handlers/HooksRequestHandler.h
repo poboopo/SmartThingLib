@@ -102,11 +102,7 @@ class HooksRequestHandler : public RequestHandler {
       int id = HooksManager.createHookFromJson(_body.c_str());
       if (id >= 0) {
         HooksManager.saveHooksToSettings();
-        // spritf fails, why?
-        JsonDocument doc;
-        doc["id"] = id;
-        String response;
-        serializeJson(doc, response);
+        String response = "{\"id\":" + String(id) + "}";
         return request->beginResponse(201, CONTENT_TYPE_JSON, response);
       } else {
         return request->beginResponse(500, CONTENT_TYPE_JSON,

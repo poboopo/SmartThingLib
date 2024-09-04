@@ -86,7 +86,7 @@ String SettingsManager::loadFromEeprom() {
 }
 
 void SettingsManager::removeIfEmpty(const char* group) {
-  if (_settings[group].size() == 0) {
+  if (_settings[group].isNull() || _settings[group].size() == 0) {
     _settings.remove(group);
     LOGGER.debug(SETTINGS_MANAGER_TAG, "Removed group %s from settings - it's empty", group);
   }
@@ -137,7 +137,7 @@ bool SettingsManager::save() {
 
 void SettingsManager::removeSetting(const char* name) {
   if (strcmp(name, SSID_SETTING) == 0  || strcmp(name, PASSWORD_SETTING) == 0  || strcmp(name, GROUP_WIFI) == 0 ) {
-    LOGGER.warning(SETTINGS_MANAGER_TAG,
+    LOGGER.error(SETTINGS_MANAGER_TAG,
                    "You can't remove Wifi credits with this function! Use "
                    "dropWifiCredits insted.");
     return;
@@ -191,15 +191,15 @@ const String SettingsManager::getDeviceName() {
   return SMT_DEFAULT_NAME;
 }
 
-void SettingsManager::setHooks(JsonArray doc) {
+void SettingsManager::setHooks(JsonDocument doc) {
   _settings[GROUP_HOOKS] = doc;
 }
 
-JsonArray SettingsManager::getHooks() {
+JsonDocument SettingsManager::getHooks() {
   if (_settings.containsKey(GROUP_HOOKS)) {
     return _settings[GROUP_HOOKS];
   }
-  return _settings[GROUP_HOOKS].to<JsonArray>();
+  return _settings[GROUP_HOOKS];
 }
 
 void SettingsManager::dropAllHooks() {

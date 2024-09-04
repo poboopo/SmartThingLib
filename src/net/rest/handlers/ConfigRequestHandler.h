@@ -40,12 +40,10 @@ class ConfigRequestHandler : public RequestHandler {
         JsonObject config = STSettings.getConfig();
 
         for (JsonPair pair : root) {
-          if (entriesList->haveConfigEntry(pair.key().c_str())) {
-            if (pair.value().isNull()) {
-              config.remove(pair.key());
-            } else {
-              config[pair.key()] = pair.value();
-            }
+          if (entriesList->haveConfigEntry(pair.key().c_str()) && !pair.value().isNull()) {
+            config[pair.key()] = pair.value();
+          } else {
+            config.remove(pair.key());
           }
         }
         STSettings.save();

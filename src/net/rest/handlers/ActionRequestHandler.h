@@ -8,13 +8,14 @@
 #include "SmartThing.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/handlers/HandlerUtils.h"
+#include "net/rest/handlers/RequestHandler.h"
 
 #define ACTION_RQ_PATH "/action"
 #define ACTION_RQ_TAG "action_handler"
 
 using namespace Action;
 
-class ActionRequestHandler : public AsyncWebHandler {
+class ActionRequestHandler : public RequestHandler {
  public:
   ActionRequestHandler(){};
   virtual ~ActionRequestHandler() {};
@@ -25,28 +26,16 @@ class ActionRequestHandler : public AsyncWebHandler {
             request->method() == HTTP_OPTIONS);
   };
 
-  void handleRequest(AsyncWebServerRequest *request) {
-    if (request->method() == HTTP_OPTIONS) {
-      AsyncWebServerResponse * response = request->beginResponse(200);
-      response->addHeader("Access-Control-Allow-Origin", "*");
-      response->addHeader("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
-      response->addHeader("Access-Control-Allow-Headers", "Content-Type");
-      request->send(response);
-      return;
-    }
-
-    AsyncWebServerResponse * asyncResponse = processRequest(request);
-    if (asyncResponse != nullptr) {
-      asyncResponse->addHeader("Access-Control-Allow-Origin", "*");
-      request->send(asyncResponse);
-    }
-  };
- private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
-    String action = request->arg("action");
-    LOGGER.logRequest(ACTION_RQ_TAG, request->methodToString(), request->url().c_str(), action.isEmpty() ? "no_action" : action.c_str());
 
+    if (request->method() == HTTP_GET && request->url().equals("/actions/info")) {
+      JsonDocument doc = SmartThing.getActionsInfo();
+      String response;
+      serializeJson(doc, response);
+      return request->beginResponse(200, CONTENT_TYPE_JSON, response);
+    }
     if (request->method() == HTTP_PUT) {
+      String action = request->arg("action");
       if (action.isEmpty()) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Parameter action is missing!"));
       }

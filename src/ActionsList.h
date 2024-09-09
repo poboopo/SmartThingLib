@@ -58,6 +58,7 @@ class ActionsList : public List<Action> {
   };
 
   ActionResult callAction(const char* actionName) {
+    LOGGER.info(ACTIONS_LIST_TAG, "Trying to call action %s", actionName);
     const Action* action = findAction(actionName);
     if (action == nullptr) {
       LOGGER.error(ACTIONS_LIST_TAG, "Can't find action with name %s",

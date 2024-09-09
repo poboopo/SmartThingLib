@@ -9,7 +9,7 @@ import threading
 
 TCP = True
 PORT = 7779
-ADRESS = "192.168.0.108"
+ADRESS = "192.168.1.12"
 
 LOGGER_FILE = "logger.log"
 START_COLOR = "\033["
@@ -17,7 +17,7 @@ END_COLOR = "\033[0m"
 
 ipColor = {}
 lastColorIndex = 2
-logFile = open(LOGGER_FILE, "a")
+# logFile = open(LOGGER_FILE, "a")
 
 def colorByLevel(logLevel):
     if logLevel == 40:
@@ -105,6 +105,8 @@ def recvMessages(ip, conn):
         conn.close()
 
 if __name__ == "__main__":
-    tcp()
-    # udp()
+    if (TCP):
+        tcp()
+    else:
+        udp()
     logFile.close()

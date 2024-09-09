@@ -31,13 +31,9 @@ class InfoRequestHandler : public RequestHandler {
         jsonDoc["type"] = SmartThing.getType();
         #ifdef ARDUINO_ARCH_ESP32
         jsonDoc["platform"] = "esp32";
-        jsonDoc["chip_model"] = ESP.getChipModel();
-        jsonDoc["chip_revision"] = ESP.getChipRevision();
         #endif
         #ifdef ARDUINO_ARCH_ESP8266
         jsonDoc["platform"] = "esp8266";
-        jsonDoc["chip_model"] = "unknown";
-        jsonDoc["chip_revision"] = "unknown";
         #endif
 
         String result;
@@ -60,25 +56,6 @@ class InfoRequestHandler : public RequestHandler {
         SmartThing.updateDeviceName(newName);
         return request->beginResponse(200);
       }
-    }
-    // why it's here???
-    // todo move to actions handler 
-    if (request->url().equals("/info/actions") && request->method() == HTTP_GET) {
-      #if ENABLE_ACTIONS 
-      JsonDocument doc = SmartThing.getActionsInfo();
-      String response;
-      serializeJson(doc, response);
-      return request->beginResponse(200, CONTENT_TYPE_JSON, response);
-      #else
-      return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Actions feature disabled"));
-      #endif
-    }
-    // todo move to config handlerw
-    if (request->url().equals("/info/config") && request->method() == HTTP_GET) {
-      JsonDocument doc = SmartThing.getConfigInfoJson();
-      String response;
-      serializeJson(doc, response);
-      return request->beginResponse(200, CONTENT_TYPE_JSON, response);
     }
     return nullptr;
   }

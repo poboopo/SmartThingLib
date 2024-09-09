@@ -25,13 +25,22 @@ class ConfigRequestHandler : public RequestHandler {
   }
 
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
+    String url = request->url();
     if (request->method() == HTTP_GET) {
-      JsonObject config = STSettings.getConfig();
-      String response;
-      serializeJson(config, response);
-      return request->beginResponse(200, CONTENT_TYPE_JSON, response);
+      if (url.equals("/config/info")) {
+        JsonDocument doc = SmartThing.getConfigInfoJson();
+        String response;
+        serializeJson(doc, response);
+        return request->beginResponse(200, CONTENT_TYPE_JSON, response);
+      }
+      if (url.equals("/config/values")) {
+        JsonObject config = STSettings.getConfig();
+        String response;
+        serializeJson(config, response);
+        return request->beginResponse(200, CONTENT_TYPE_JSON, response);
+      }
     }
-    if (request->method() == HTTP_POST) {
+    if (request->method() == HTTP_POST && url.equals("/config/values")) {
       Config::ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
       if (entriesList->size() != 0) {
         JsonDocument jsonDoc;

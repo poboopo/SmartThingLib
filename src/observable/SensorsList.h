@@ -52,12 +52,18 @@ class SensorsList : public List<Sensor> {
   JsonDocument getValues() {
     JsonDocument doc;
     forEach([&](Sensor* current) {
-      JsonObject sensorObj = doc[current->name].to<JsonObject>();
-      sensorObj["value"] = current->valueProvider();
-      sensorObj["type"] = Observable::Sensor::sensorTypeName(current->type);
+      doc[current->name] = current->valueProvider();
     });
     return doc;
   };
+  JsonDocument getTypes() {
+    JsonDocument doc;
+    forEach([&](Sensor* current) {
+      doc[current->name] = Observable::Sensor::sensorTypeName(current->type);
+    });
+    return doc;
+  }
+
   const Sensor* findSensor(const char* name) {
     return findValue(
         [&](Sensor* current) { return strcmp(current->name, name) == 0; });

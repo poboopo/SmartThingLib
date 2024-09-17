@@ -16,7 +16,7 @@ class SensorsRequestHandler : public AsyncWebHandler {
   virtual ~SensorsRequestHandler() {};
 
   bool canHandle(AsyncWebServerRequest *request) {
-    return request->url().equals(SENSORS_RQ_PATH) &&
+    return request->url().startsWith(SENSORS_RQ_PATH) &&
            (request->method() == HTTP_GET || request->method() == HTTP_OPTIONS);
   };
 
@@ -38,11 +38,12 @@ class SensorsRequestHandler : public AsyncWebHandler {
   };
  private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
-    LOGGER.logRequest(SENSORS_RQ_TAG, request->methodToString(), request->url().c_str(), "");
+    String url = request->url();
+    LOGGER.logRequest(SENSORS_RQ_TAG, request->methodToString(), url.c_str(), "");
 
-    JsonDocument sensors = SmartThing.getSensorsValues();
+    JsonDocument data = url.equals("/sensors/types") ? SmartThing.getSensorsTypes() : SmartThing.getSensorsValues();
     String response;
-    serializeJson(sensors, response);
+    serializeJson(data, response);
     return request->beginResponse(200, CONTENT_TYPE_JSON, response);
   }
 };

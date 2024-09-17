@@ -37,8 +37,7 @@ class DeviceStatesList : public List<DeviceState> {
       if (state != nullptr) {
         delete state;
       }
-      LOGGER.error(DEVICE_STATES_LIST_TAG, "Dailed to add new device state %s",
-                   name);
+      LOGGER.error(DEVICE_STATES_LIST_TAG, "Dailed to add new device state %s", name);
       return false;
     }
   };

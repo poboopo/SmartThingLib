@@ -77,6 +77,7 @@ class SmartThingClass {
   bool addAnalogSensor(const char* name, int pin);
   const Observable::Sensor::Sensor* getSensor(const char* name);
   JsonDocument getSensorsValues();
+  JsonDocument getSensorsTypes();
   int16_t getSensorsCount();
   #endif
 

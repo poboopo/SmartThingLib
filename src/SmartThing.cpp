@@ -246,6 +246,9 @@ JsonDocument SmartThingClass::getConfigInfoJson() {
 #if ENABLE_SENSORS 
 JsonDocument SmartThingClass::getSensorsValues() {
   return _sensorsList.getValues();
+} 
+JsonDocument SmartThingClass::getSensorsTypes() {
+  return _sensorsList.getTypes();
 }
 
 int16_t SmartThingClass::getSensorsCount() { return _sensorsList.size(); }

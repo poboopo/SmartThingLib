@@ -23,6 +23,7 @@
 
 #define NOTIFIACTION_PATH "/notification"
 
+//todo merge with http hook
 namespace Hook {
 template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
 class NotificationHook : public T {

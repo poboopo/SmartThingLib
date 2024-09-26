@@ -100,38 +100,29 @@ class HttpHook : public T {
   }
 
   void sendRequest() {
-    // probably bad realisation for memory
+    const char * valueStr = String(_currentValue).c_str();
+    String urlResolved = "http://" + replaceValues(_url.c_str(), valueStr);
+    String payloadResolved = replaceValues(_payload.c_str(), valueStr);
 
-    String valueStr = String(_currentValue);
-
-    String urlCopy = _url;
-    String payloadCopy = _payload;
-
-    LOGGER.debug(HTTP_HOOK_TAG, "Replacing {v} with [%s]",
-                 valueStr.isEmpty() ? "blank_value" : valueStr.c_str());
-    urlCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
-    payloadCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
-    LOGGER.debug(HTTP_HOOK_TAG, "Sending request [%s] %s :: %s",
-                _method.c_str(), urlCopy.c_str(), payloadCopy.c_str());
+    LOGGER.debug(HTTP_HOOK_TAG, "Resolved url and payload: %s, %s", urlResolved.c_str(), payloadResolved.c_str());
+    LOGGER.info(HTTP_HOOK_TAG, "Sending request [%s] %s :: %s", _method.c_str(), urlResolved.c_str(), payloadResolved.c_str());
 
     HTTPClient client;
     client.setTimeout(2000);
     #ifdef ARDUINO_ARCH_ESP32
-    client.begin("http://" + urlCopy);
+    client.begin(urlResolved);
     #endif
     #ifdef ARDUINO_ARCH_ESP8266
     WiFiClient wifiClient; // todo global var?
-    client.begin(wifiClient, "http://" + urlCopy);
+    client.begin(wifiClient, urlResolved);
     #endif
-    if (!payloadCopy.isEmpty()) {
+    if (!payloadResolved.isEmpty()) {
       client.addHeader("Content-Type", "application/json");
     }
-    _lastResponseCode =
-        client.sendRequest(_method.c_str(), payloadCopy.c_str());
+    _lastResponseCode = client.sendRequest(_method.c_str(), payloadResolved.c_str());
     client.end();
 
-    LOGGER.debug(HTTP_HOOK_TAG, "Request %s finished with code %d",
-                urlCopy.c_str(), _lastResponseCode);
+    LOGGER.debug(HTTP_HOOK_TAG, "Request %s finished with code %d", urlResolved.c_str(), _lastResponseCode);
   }
 
   void fixUrl() {
@@ -139,6 +130,50 @@ class HttpHook : public T {
     if (_url.startsWith("http://")) {
       _url.remove(0, 7);
     }
+  }
+
+  // todo can be optimized
+  String replaceValues(const char * input, const char * value) {
+    #ifdef ARDUINO_ARCH_ESP32
+    JsonObject conf = STSettings.getConfig();
+
+    String result = "";
+    String key = "";
+    bool opened = false;
+
+    for (int i = 0; i < strlen(input); i++) {
+      if (input[i] == '{') {
+        if (opened) {
+          result += "{" + key;
+          key.clear();
+        }
+        opened = true;
+      } else if (opened) {
+        if (input[i] == '}') {
+          if (key.equals(VALUE_DYNAMIC_PARAM)) {
+            result += value;
+          } else if (conf.containsKey(key)) {
+            result += conf[key].as<String>();
+          }
+          opened = false;
+          key.clear();
+        } else {
+          key += input[i];
+        }
+      } else {
+        result += input[i];
+      }
+    }
+    if (opened && key.length() > 0) {
+      result += "{" + key;
+    }
+    return result;
+    #endif
+    #ifdef ARDUINO_ARCH_ESP8266
+    String result = input;
+    result.replace(VALUE_DYNAMIC_PARAM, value);
+    return result;
+    #endif
   }
 };
 }  // namespace Hook

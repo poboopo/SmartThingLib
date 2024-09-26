@@ -41,9 +41,9 @@ bool SmartThingClass::init() {
 
   delay(50);
   // todo esp8266
-  // if (!digitalRead(WIPE_PIN)) {
-  //   wipeSettings();
-  // }
+  if (!digitalRead(WIPE_PIN)) {
+    wipeSettings();
+  }
 
   #if ENABLE_STATES
   addDeviceState("wifi", [this]() {
@@ -135,6 +135,9 @@ void SmartThingClass::asyncLoop() {
 
 // todo move to different async task
 void SmartThingClass::sendBeacon() {
+  if (!wifiConnected()) {
+    return;
+  }
   #ifdef ARDUINO_ARCH_ESP32
   _beaconUdp.beginMulticastPacket();
   #endif

@@ -12,6 +12,7 @@
 
 #include "hooks/impls/Hook.h"
 #include "settings/SettingsManager.h"
+#include "utils/StringUtils.h"
 
 #define NOTIFICATION_HOOK_TAG "notification_hook"
 #define MESSAGE_FIELD "message"
@@ -21,9 +22,6 @@
 #define NOTIFICATION_WARNING "warning"
 #define NOTIFICATION_ERROR "error"
 
-#define NOTIFIACTION_PATH "/notification"
-
-//todo merge with http hook
 namespace Hook {
 template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
 class NotificationHook : public T {
@@ -33,11 +31,6 @@ class NotificationHook : public T {
     virtual ~NotificationHook() {};
 
     void call(V &value) {
-      _ip = STSettings.getConfig()[GATEWAY_CONFIG].as<String>();
-      if (_ip.isEmpty()) {
-        LOGGER.debug(NOTIFICATION_HOOK_TAG, "Gateway ip is missing!");
-        return;
-      }
       _currentValue = value;
       if (WiFi.isConnected()) {
         createRequestTask();
@@ -78,7 +71,6 @@ class NotificationHook : public T {
     bool _sending = false;
   private:
     String _message;
-    String _ip;
     String _notificationType;
     V _currentValue;
 
@@ -105,10 +97,14 @@ class NotificationHook : public T {
     }
 
     void sendRequest() {
-      String valueStr = String(_currentValue);
+      String gtwIp = STSettings.getConfig()[GATEWAY_CONFIG].as<String>();
+      if (gtwIp.isEmpty()) {
+        LOGGER.debug(NOTIFICATION_HOOK_TAG, "Gateway ip is missing!");
+        return;
+      }
 
-      String messageCopy = _message;
-      messageCopy.replace(VALUE_DYNAMIC_PARAM, valueStr);
+      const char * valueStr = String(_currentValue).c_str();
+      String messageResolved = replaceValues(_message.c_str(), valueStr);
 
       JsonDocument doc;
       JsonObject from = doc["device"].to<JsonObject>();
@@ -117,12 +113,12 @@ class NotificationHook : public T {
       from["ip"] = SmartThing.getIp();
 
       JsonObject notification = doc["notification"].to<JsonObject>();
-      notification["message"] = messageCopy;
+      notification["message"] = messageResolved;
       notification["type"] = _notificationType;
 
       String payload;
       serializeJson(doc, payload);
-      String url = "http://" + _ip + "/notification";
+      String url = "http://" + gtwIp + "/notification";
       LOGGER.debug(NOTIFICATION_HOOK_TAG, "Sending notification to [%s]:%s", url.c_str(), payload.c_str());
 
       HTTPClient client;
@@ -138,7 +134,7 @@ class NotificationHook : public T {
       int code = client.sendRequest("POST", payload.c_str());
       client.end();
 
-      LOGGER.debug(NOTIFICATION_HOOK_TAG, "Notification send finished with code %d", code);
+      LOGGER.debug(NOTIFICATION_HOOK_TAG, "Notification send request finished with code %d", code);
     }
 
 };

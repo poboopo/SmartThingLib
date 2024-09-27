@@ -10,13 +10,6 @@
 #include "hooks/comparator/Comparator.h"
 #include "logs/BetterLogger.h"
 
-#ifdef ARDUINO_ARCH_ESP32
-#define VALUE_DYNAMIC_PARAM "v"
-#endif
-#ifdef ARDUINO_ARCH_ESP8266
-#define VALUE_DYNAMIC_PARAM "{v}"
-#endif
-
 namespace Hook {
   template <typename T>
   class Hook {

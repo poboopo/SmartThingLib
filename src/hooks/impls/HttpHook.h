@@ -12,6 +12,7 @@
 
 #include "hooks/impls/Hook.h"
 #include "logs/BetterLogger.h"
+#include "utils/StringUtils.h"
 
 #define HTTP_HOOK_TAG "http_hook"
 
@@ -130,50 +131,6 @@ class HttpHook : public T {
     if (_url.startsWith("http://")) {
       _url.remove(0, 7);
     }
-  }
-
-  // todo can be optimized
-  String replaceValues(const char * input, const char * value) {
-    #ifdef ARDUINO_ARCH_ESP32
-    JsonObject conf = STSettings.getConfig();
-
-    String result = "";
-    String key = "";
-    bool opened = false;
-
-    for (int i = 0; i < strlen(input); i++) {
-      if (input[i] == '{') {
-        if (opened) {
-          result += "{" + key;
-          key.clear();
-        }
-        opened = true;
-      } else if (opened) {
-        if (input[i] == '}') {
-          if (key.equals(VALUE_DYNAMIC_PARAM)) {
-            result += value;
-          } else if (conf.containsKey(key)) {
-            result += conf[key].as<String>();
-          }
-          opened = false;
-          key.clear();
-        } else {
-          key += input[i];
-        }
-      } else {
-        result += input[i];
-      }
-    }
-    if (opened && key.length() > 0) {
-      result += "{" + key;
-    }
-    return result;
-    #endif
-    #ifdef ARDUINO_ARCH_ESP8266
-    String result = input;
-    result.replace(VALUE_DYNAMIC_PARAM, value);
-    return result;
-    #endif
   }
 };
 }  // namespace Hook

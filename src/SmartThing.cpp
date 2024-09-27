@@ -62,7 +62,7 @@ bool SmartThingClass::init() {
   _ip = connectToWifi();
 
   if (wifiConnected()) {
-    LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s", _ip.c_str());
+    LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s, hostname %s", _ip.c_str(), _name.c_str());
     delay(1000);
     LOGGER.init(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG], _name.c_str());
 
@@ -154,6 +154,9 @@ String SmartThingClass::connectToWifi() {
     LOGGER.info(SMART_THING_TAG, "WiFi already connected");
     return WiFi.localIP().toString();
   }
+  WiFi.setHostname(_name.c_str());
+  WiFi.setAutoReconnect(true);
+
   JsonObject wifiConfig = STSettings.getWiFi();
   const char* ssid = wifiConfig[SSID_SETTING];
   const char* password = wifiConfig[PASSWORD_SETTING];

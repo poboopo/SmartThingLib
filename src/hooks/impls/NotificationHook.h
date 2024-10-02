@@ -103,7 +103,7 @@ class NotificationHook : public T {
         return;
       }
 
-      const char * valueStr = String(_currentValue).c_str();
+      String valueStr = String(_currentValue);
       String messageResolved = replaceValues(_message.c_str(), valueStr);
 
       JsonDocument doc;

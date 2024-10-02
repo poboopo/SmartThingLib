@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "settings/SettingsManager.h"
+#include "logs/BetterLogger.h"
 
 #ifdef ARDUINO_ARCH_ESP32
 #define VALUE_DYNAMIC_PARAM "v"
@@ -12,8 +13,9 @@
 #endif
 
 // replaces keys in string with config values
-inline String replaceValues(const char * input, const char * value) {
+inline String replaceValues(const char * input, String &value) {
   #ifdef ARDUINO_ARCH_ESP32
+  LOGGER.info("123", "Value: %s", value.c_str());
   JsonObject conf = STSettings.getConfig();
 
   String result = "";

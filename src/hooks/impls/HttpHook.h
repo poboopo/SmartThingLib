@@ -101,8 +101,8 @@ class HttpHook : public T {
   }
 
   void sendRequest() {
-    const char * valueStr = String(_currentValue).c_str();
-    String urlResolved = "http://" + replaceValues(_url.c_str(), valueStr);
+    String valueStr = String(_currentValue);
+    String urlResolved = replaceValues(_url.c_str(), valueStr);
     String payloadResolved = replaceValues(_payload.c_str(), valueStr);
 
     LOGGER.debug(HTTP_HOOK_TAG, "Resolved url and payload: %s, %s", urlResolved.c_str(), payloadResolved.c_str());
@@ -111,11 +111,11 @@ class HttpHook : public T {
     HTTPClient client;
     client.setTimeout(2000);
     #ifdef ARDUINO_ARCH_ESP32
-    client.begin(urlResolved);
+    client.begin("http://" + urlResolved);
     #endif
     #ifdef ARDUINO_ARCH_ESP8266
     WiFiClient wifiClient; // todo global var?
-    client.begin(wifiClient, urlResolved);
+    client.begin(wifiClient, "http://" + urlResolved);
     #endif
     if (!payloadResolved.isEmpty()) {
       client.addHeader("Content-Type", "application/json");

@@ -29,21 +29,25 @@ bool SmartThingClass::init() {
   _name = STSettings.getDeviceName();
   LOGGER.debug(SMART_THING_TAG, "Device type/name: %s/%s", _type.c_str(), _name.c_str());
 
+  #ifdef ARDUINO_ARCH_ESP32
   LOGGER.debug(
     SMART_THING_TAG,
     "Wipe pin=%d, timeout=%d",
     WIPE_PIN, WIPE_TIMEOUT
   );
   pinMode(WIPE_PIN, INPUT_PULLUP);
+  #endif
   LOGGER.debug(SMART_THING_TAG, "Led pin=%d", LED_PIN);
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
 
   delay(50);
   // todo esp8266
+  #ifdef ARDUINO_ARCH_ESP32
   if (!digitalRead(WIPE_PIN)) {
     wipeSettings();
   }
+  #endif
 
   #if ENABLE_STATES
   addDeviceState("wifi", [this]() {
@@ -154,7 +158,7 @@ String SmartThingClass::connectToWifi() {
     LOGGER.info(SMART_THING_TAG, "WiFi already connected");
     return WiFi.localIP().toString();
   }
-  WiFi.setHostname(_name.c_str());
+  WiFi.hostname(_name);
   WiFi.setAutoReconnect(true);
 
   JsonObject wifiConfig = STSettings.getWiFi();

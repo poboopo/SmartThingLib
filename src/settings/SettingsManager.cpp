@@ -176,15 +176,15 @@ void SettingsManager::dropConfig() {
 
 JsonObject SettingsManager::getWiFi() { return getOrCreateObject(GROUP_WIFI); }
 
-void SettingsManager::setDeviceName(String name) {
-  if (name.isEmpty()) {
+void SettingsManager::setDeviceName(const char * name) {
+  if (strlen(name) == 0) {
     _settings.remove(DEVICE_NAME);
   } else {
     _settings[DEVICE_NAME] = name;
   }
 }
 
-const String SettingsManager::getDeviceName() {
+const char * SettingsManager::getDeviceName() {
   if (_settings.containsKey(DEVICE_NAME)) {
     return _settings[DEVICE_NAME];
   }

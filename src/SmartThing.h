@@ -47,17 +47,18 @@
 
 class SmartThingClass {
  public:
-  ~SmartThingClass();
   SmartThingClass();
+  ~SmartThingClass();
 
-  bool init(String type) {
-    _type = type;
-    return init();
-  }
-  bool init(String type, String name) {
-    _type = type;
-    _name = name;
-    return init();
+  bool init(const char * type);
+  bool init(const char * type, const char * name) {
+    if (name == nullptr) {
+      LOGGER.error(SMART_THING_TAG, "Name can't be nullptr");
+      return false;
+    }
+    _name = (char *) malloc(strlen(name) + 1);
+    strcpy(_name, name);
+    return init(type);
   }
 
   void loop();
@@ -115,22 +116,21 @@ class SmartThingClass {
   long _lastHooksCheck = -1;
   #endif
 
-  String _ip;
-  String _name;
-  String _type;
-  String _broadcastMessage;
+  char * _ip;
+  char * _name;
+  char * _type;
+  char * _broadcastMessage;
   WiFiUDP _beaconUdp;
   
   #ifdef ARDUINO_ARCH_ESP32
   TaskHandle_t _loopTaskHandle = NULL;
   #endif
 
-  bool init();
   void updateBroadCastMessage();
   void setDnsName();
 
   void wipeSettings();
-  String connectToWifi();
+  void connectToWifi();
 
   #ifdef ARDUINO_ARCH_ESP32
   void asyncLoop();

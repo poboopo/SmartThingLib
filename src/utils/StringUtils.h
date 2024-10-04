@@ -15,7 +15,6 @@
 // replaces keys in string with config values
 inline String replaceValues(const char * input, String &value) {
   #ifdef ARDUINO_ARCH_ESP32
-  LOGGER.info("123", "Value: %s", value.c_str());
   JsonObject conf = STSettings.getConfig();
 
   String result = "";

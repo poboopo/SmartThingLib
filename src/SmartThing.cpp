@@ -11,24 +11,40 @@
 SmartThingClass SmartThing;
 
 SmartThingClass::SmartThingClass(){};
-SmartThingClass::~SmartThingClass(){};
+SmartThingClass::~SmartThingClass() {
+  free(_type);
+  free(_ip);
+  free(_broadcastMessage);
+};
 
 bool SmartThingClass::wifiConnected() {
   return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
 }
 
-bool SmartThingClass::init() {
+bool SmartThingClass::init(const char * type) {
   if (_initialized) {
     LOGGER.warning(SMART_THING_TAG, "Already initialized!");
     return false;
   }
+  if (type == nullptr) {
+    LOGGER.error(SMART_THING_TAG, "Device type is missing!");
+    return false;
+  }
+
+  _type = (char *) malloc(strlen(type) + 1);
+  strcpy(_type, type);
+
   LOGGER.debug(SMART_THING_TAG, "Smart thing initialization started");
 
   STSettings.loadSettings();
   LOGGER.debug(SMART_THING_TAG, "Settings manager loaded");
 
-  _name = STSettings.getDeviceName();
-  LOGGER.debug(SMART_THING_TAG, "Device type/name: %s/%s", _type.c_str(), _name.c_str());
+  if (_name == nullptr || strlen(_name) == 0) {
+    String name = STSettings.getDeviceName();
+    _name = (char *) malloc(name.length() + 1);
+    strcpy(_name, name.c_str());
+  }
+  LOGGER.debug(SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
 
   #ifdef ARDUINO_ARCH_ESP32
   LOGGER.debug(
@@ -84,12 +100,12 @@ bool SmartThingClass::init() {
   LOGGER.debug(SMART_THING_TAG, "Hooks first check finished");
   #endif
 
-  _ip = connectToWifi();
+  connectToWifi();
 
   if (wifiConnected()) {
-    LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s, hostname %s", _ip.c_str(), _name.c_str());
+    LOGGER.info(SMART_THING_TAG, "WiFi connected, local ip %s, hostname %s", _ip, _name);
     delay(1000);
-    LOGGER.init(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG], _name.c_str());
+    LOGGER.init(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG], _name);
 
     #ifdef ARDUINO_ARCH_ESP32
     if (_beaconUdp.beginMulticast(MULTICAST_GROUP, MULTICAST_PORT)) {
@@ -150,7 +166,7 @@ void SmartThingClass::asyncLoop() {
 
 // todo move to different async task
 void SmartThingClass::sendBeacon() {
-  if (!wifiConnected()) {
+  if (!wifiConnected() || _broadcastMessage == nullptr) {
     return;
   }
   #ifdef ARDUINO_ARCH_ESP32
@@ -159,16 +175,18 @@ void SmartThingClass::sendBeacon() {
   #ifdef ARDUINO_ARCH_ESP8266
   _beaconUdp.beginPacketMulticast(MULTICAST_GROUP, MULTICAST_PORT, WiFi.localIP());
   #endif
-  _beaconUdp.write((uint8_t *) _broadcastMessage.c_str(), _broadcastMessage.length());
+  _beaconUdp.write((uint8_t *) _broadcastMessage, strlen(_broadcastMessage));
   _beaconUdp.endPacket();
 }
 
-String SmartThingClass::connectToWifi() {
+void SmartThingClass::connectToWifi() {
   LOGGER.info(SMART_THING_TAG, "Trying to connect to wifi");
+  String ip = "";
   if (wifiConnected()) {
     LOGGER.info(SMART_THING_TAG, "WiFi already connected");
-    return WiFi.localIP().toString();
+    return;
   }
+  
   WiFi.hostname(_name);
   WiFi.setAutoReconnect(true);
 
@@ -185,7 +203,7 @@ String SmartThingClass::connectToWifi() {
     WiFi.softAP(SMT_DEFAULT_NAME);
     delay(500);
     LOGGER.info(SMART_THING_TAG, "WiFi started in soft AP mode");
-    return WiFi.softAPIP().toString();
+    ip = WiFi.softAPIP().toString();
   } else {
     if (mode == WIFI_MODE_AP) {
       if (password != nullptr && strlen(password) >= 0) {
@@ -198,7 +216,7 @@ String SmartThingClass::connectToWifi() {
       }
       delay(500);
       LOGGER.info(SMART_THING_TAG, "WiFi started in AP mode");
-      return WiFi.softAPIP().toString();
+      ip = WiFi.softAPIP().toString();
     } else if (mode == WIFI_MODE_STA) {
       LOGGER.debug(SMART_THING_TAG, "WiFi connecting to %s :: %s", ssid,
                    password);
@@ -213,17 +231,17 @@ String SmartThingClass::connectToWifi() {
       digitalWrite(LED_PIN, LOW);
       if (WiFi.isConnected()) {
         LOGGER.info(SMART_THING_TAG, "WiFi started in STA mode"); 
-        return WiFi.localIP().toString();
+        ip = WiFi.localIP().toString();
       } else {
         WiFi.disconnect();
         LOGGER.error(SMART_THING_TAG, "Failed to connect to Wifi (%s::%s)", ssid, password);
-        return "";
       }
     } else {
       LOGGER.error(SMART_THING_TAG, "Mode %d not supported!", mode);
-      return "";
     }
   }
+  _ip = (char *) malloc(ip.length() + 1);
+  strcpy(_ip, ip.c_str());
 }
 
 void SmartThingClass::wipeSettings() {
@@ -247,12 +265,14 @@ void SmartThingClass::updateDeviceName(String name) {
   name.trim();
   name.replace(" ", "-");
   name.toLowerCase();
-  if (name == _name) {
+  if (name.equals(_name)) {
     return;
   }
-  _name = name;
+  free(_name);
+  _name = (char *) malloc(name.length() + 1);
+  strcpy(_name, name.c_str());
 
-  STSettings.setDeviceName(_name.c_str());
+  STSettings.setDeviceName(_name);
   STSettings.save();
 
   updateBroadCastMessage();
@@ -262,18 +282,22 @@ void SmartThingClass::updateDeviceName(String name) {
 }
 
 void SmartThingClass::updateBroadCastMessage() {
-  _broadcastMessage = _ip + "$" + _type + "$" + _name + "$" + SMART_THING_VERSION;
+  free(_broadcastMessage);
+  _broadcastMessage = (char *) malloc(strlen(_ip) + strlen(_type) + strlen(_name) + strlen(SMART_THING_VERSION) + 4);
+  sprintf(_broadcastMessage, "%s$%s$%s$%s", _ip, _type, _name, SMART_THING_VERSION);
 }
 
 void SmartThingClass::setDnsName() {
   // todo add hostname exists check
-  String hostName = _name + "-smt";
-  esp_err_t err = mdns_hostname_set(hostName.c_str());
+  char * hostname = (char *) malloc(strlen(_name) + 5);
+  sprintf(hostname, "%s-smt", _name);
+  esp_err_t err = mdns_hostname_set(hostname);
   if (err != ESP_OK) {
     LOGGER.error(SMART_THING_TAG, "Failed to set mdns hostname! (code=%s)", esp_err_to_name(err));
   } else {
-    LOGGER.info(SMART_THING_TAG, "New mdns hostname: %s", hostName.c_str());
+    LOGGER.info(SMART_THING_TAG, "New mdns hostname: %s", hostname);
   }
+  free(hostname);
 }
 
 JsonDocument SmartThingClass::getConfigInfoJson() {
@@ -358,13 +382,13 @@ bool SmartThingClass::addConfigEntry(const char* name, const char* caption,
 }
 
 const char * SmartThingClass::getType() { 
-  return _type.c_str(); 
+  return _type; 
 }
 
 const char * SmartThingClass::getName() { 
-  return _name.c_str(); 
+  return _name; 
 }
 
 const char * SmartThingClass::getIp() {
-  return _ip.c_str();
+  return _ip;
 }

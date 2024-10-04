@@ -29,6 +29,7 @@ class InfoRequestHandler : public RequestHandler {
         jsonDoc["version"] = SMART_THING_VERSION;
         jsonDoc["name"] = SmartThing.getName();
         jsonDoc["type"] = SmartThing.getType();
+        jsonDoc["ip"] = SmartThing.getIp();
         #ifdef ARDUINO_ARCH_ESP32
         jsonDoc["platform"] = "esp32";
         #endif

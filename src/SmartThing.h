@@ -28,7 +28,7 @@
 #define HIGH 0
 #endif
 
-#define SMT_DEFAULT_NAME "SMT_DEV"
+#define SMT_DEFAULT_NAME "smt-device"
 
 #define DEVICE_NAME_LENGTH_MAX 15
 #define DEVICE_TYPE_LENGTH_MAX 15
@@ -127,6 +127,7 @@ class SmartThingClass {
 
   bool init();
   void updateBroadCastMessage();
+  void setDnsName();
 
   void wipeSettings();
   String connectToWifi();

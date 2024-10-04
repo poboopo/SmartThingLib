@@ -31,10 +31,10 @@ class InfoRequestHandler : public RequestHandler {
         jsonDoc["type"] = SmartThing.getType();
         jsonDoc["ip"] = SmartThing.getIp();
         #ifdef ARDUINO_ARCH_ESP32
-        jsonDoc["platform"] = "esp32";
+        jsonDoc["board"] = "esp32";
         #endif
         #ifdef ARDUINO_ARCH_ESP8266
-        jsonDoc["platform"] = "esp8266";
+        jsonDoc["board"] = "esp8266";
         #endif
 
         String result;

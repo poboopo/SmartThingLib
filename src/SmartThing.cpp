@@ -142,6 +142,9 @@ bool SmartThingClass::init(const char * type) {
 }
 
 void SmartThingClass::loop() {
+  if (!_initialized) {
+    return;
+  }
   if (_lastBeacon == -1 || millis() - _lastBeacon > SMART_THING_BEACON_SEND_DELAY) {
     sendBeacon();
     _lastBeacon = millis();

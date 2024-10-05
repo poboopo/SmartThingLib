@@ -3,7 +3,6 @@
 
 #include "Features.h"
 #include <Arduino.h>
-#include <ESPAsyncWebServer.h>
 
 #if LOGGER_TYPE == MULTICAST_LOGGER
 #include <WiFiUdp.h>

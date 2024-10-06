@@ -106,7 +106,7 @@ class HttpHook : public T {
     String payloadResolved = replaceValues(_payload.c_str(), valueStr);
 
     LOGGER.debug(HTTP_HOOK_TAG, "Resolved url and payload: %s, %s", urlResolved.c_str(), payloadResolved.c_str());
-    LOGGER.info(HTTP_HOOK_TAG, "Sending request [%s] %s :: %s", _method.c_str(), urlResolved.c_str(), payloadResolved.c_str());
+    LOGGER.debug(HTTP_HOOK_TAG, "Sending request [%s] %s :: %s", _method.c_str(), urlResolved.c_str(), payloadResolved.c_str());
 
     HTTPClient client;
     client.setTimeout(2000);
@@ -123,7 +123,7 @@ class HttpHook : public T {
     _lastResponseCode = client.sendRequest(_method.c_str(), payloadResolved.c_str());
     client.end();
 
-    LOGGER.debug(HTTP_HOOK_TAG, "Request %s finished with code %d", urlResolved.c_str(), _lastResponseCode);
+    LOGGER.info(HTTP_HOOK_TAG, "Request %s finished with code %d", urlResolved.c_str(), _lastResponseCode);
   }
 
   void fixUrl() {

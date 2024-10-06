@@ -127,7 +127,9 @@ class SmartThingClass {
   #endif
 
   void updateBroadCastMessage();
+  #ifdef ARDUINO_ARCH_ESP32
   void setDnsName();
+  #endif
 
   void wipeSettings();
   void connectToWifi();

@@ -1,5 +1,8 @@
 #include "SmartThing.h"
+
+#ifdef ARDUINO_ARCH_ESP32
 #include <mdns.h>
+#endif
 
 #define WIPE_PIN 19
 #define WIPE_TIMEOUT 5000
@@ -119,6 +122,7 @@ bool SmartThingClass::init(const char * type) {
     updateBroadCastMessage();
     #endif
 
+    #ifdef ARDUINO_ARCH_ESP32
     esp_err_t errInit = mdns_init();
     if (errInit != ESP_OK) {
       LOGGER.error(SMART_THING_TAG, "Failed to init mdns! (code=%s)", esp_err_to_name(errInit));
@@ -128,6 +132,7 @@ bool SmartThingClass::init(const char * type) {
       mdns_hostname_set("");
       setDnsName();
     }
+    #endif
 
     RestController.begin();
     LOGGER.info(SMART_THING_TAG, "RestController started");
@@ -279,7 +284,9 @@ void SmartThingClass::updateDeviceName(String name) {
   STSettings.save();
 
   updateBroadCastMessage();
+  #ifdef ARDUINO_ARCH_ESP32
   setDnsName();
+  #endif
   
   LOGGER.info(SMART_THING_TAG, "New device name %s", name.c_str());
 }
@@ -290,6 +297,7 @@ void SmartThingClass::updateBroadCastMessage() {
   sprintf(_broadcastMessage, "%s$%s$%s$%s", _ip, _type, _name, SMART_THING_VERSION);
 }
 
+#ifdef ARDUINO_ARCH_ESP32
 void SmartThingClass::setDnsName() {
   // todo add hostname exists check
   char * hostname = (char *) malloc(strlen(_name) + 5);
@@ -302,6 +310,7 @@ void SmartThingClass::setDnsName() {
   }
   free(hostname);
 }
+#endif
 
 JsonDocument SmartThingClass::getConfigInfoJson() {
   return _configEntriesList.toJson();

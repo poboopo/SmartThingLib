@@ -42,7 +42,7 @@
 #endif
 
 #ifndef SMART_THING_BEACON_SEND_DELAY
-#define SMART_THING_BEACON_SEND_DELAY 1000 //ms
+#define SMART_THING_BEACON_SEND_DELAY 5000 //ms
 #endif
 
 class SmartThingClass {

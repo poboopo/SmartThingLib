@@ -14,14 +14,13 @@
 
 // replaces keys in string with config values
 inline String replaceValues(const char * input, String &value) {
-  #ifdef ARDUINO_ARCH_ESP32
   JsonObject conf = STSettings.getConfig();
 
   String result = "";
   String key = "";
   bool opened = false;
 
-  for (int i = 0; i < strlen(input); i++) {
+  for (int i = 0; i < (int) strlen(input); i++) {
     if (input[i] == '{') {
       if (opened) {
         result += "{" + key;
@@ -48,12 +47,6 @@ inline String replaceValues(const char * input, String &value) {
     result += "{" + key;
   }
   return result;
-  #endif
-  #ifdef ARDUINO_ARCH_ESP8266
-  String result = input;
-  result.replace(VALUE_DYNAMIC_PARAM, value);
-  return result;
-  #endif
 }
 
 #endif

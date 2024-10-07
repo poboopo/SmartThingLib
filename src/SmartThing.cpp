@@ -11,6 +11,13 @@
 #define MULTICAST_GROUP IPAddress(224, 1, 1, 1)
 #define MULTICAST_PORT 7778
 
+#ifdef ARDUINO_ARCH_ESP32
+static const char * beaconTemplate = "%s$%s$%s$%s$esp32";
+#endif
+#ifdef ARDUINO_ARCH_ESP8266
+static const char * beaconTemplate = "%s$%s$%s$%s$esp8266";
+#endif
+
 SmartThingClass SmartThing;
 
 SmartThingClass::SmartThingClass(){};
@@ -292,9 +299,11 @@ void SmartThingClass::updateDeviceName(String name) {
 }
 
 void SmartThingClass::updateBroadCastMessage() {
-  free(_broadcastMessage);
+  if (_broadcastMessage != nullptr) {
+    free(_broadcastMessage);
+  }
   _broadcastMessage = (char *) malloc(strlen(_ip) + strlen(_type) + strlen(_name) + strlen(SMART_THING_VERSION) + 4);
-  sprintf(_broadcastMessage, "%s$%s$%s$%s", _ip, _type, _name, SMART_THING_VERSION);
+  sprintf(_broadcastMessage, beaconTemplate, _ip, _type, _name, SMART_THING_VERSION);
 }
 
 #ifdef ARDUINO_ARCH_ESP32

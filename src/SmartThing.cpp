@@ -13,10 +13,13 @@
 
 #ifdef ARDUINO_ARCH_ESP32
 static const char * beaconTemplate = "%s$%s$%s$%s$esp32";
+static size_t beaconExtraSize = 9;
 #endif
 #ifdef ARDUINO_ARCH_ESP8266
 static const char * beaconTemplate = "%s$%s$%s$%s$esp8266";
+static int beaconExtraSize = 11;
 #endif
+static size_t versionLen = strlen(SMART_THING_VERSION);
 
 SmartThingClass SmartThing;
 
@@ -302,7 +305,8 @@ void SmartThingClass::updateBroadCastMessage() {
   if (_broadcastMessage != nullptr) {
     free(_broadcastMessage);
   }
-  _broadcastMessage = (char *) malloc(strlen(_ip) + strlen(_type) + strlen(_name) + strlen(SMART_THING_VERSION) + 4);
+  size_t size = strlen(_ip) + strlen(_type) + strlen(_name) + versionLen + beaconExtraSize + 1;
+  _broadcastMessage = (char *) malloc(size);
   sprintf(_broadcastMessage, beaconTemplate, _ip, _type, _name, SMART_THING_VERSION);
 }
 

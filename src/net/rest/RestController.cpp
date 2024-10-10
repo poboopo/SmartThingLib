@@ -10,7 +10,7 @@
 #include "net/rest/handlers/WiFiRequestHandler.h"
 #include "net/rest/handlers/SettingsRequestHandler.h"
 #include "net/rest/handlers/DangerRequestHandler.h"
-#include "net/rest/Pages.h"
+#include "net/rest/WebPageAssets.h"
 
 #define WEB_SERVER_TAG "web_server"
 

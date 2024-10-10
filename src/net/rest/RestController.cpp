@@ -14,6 +14,38 @@
 
 #define WEB_SERVER_TAG "web_server"
 
+String resetReasonAsString() {
+  #ifdef ARDUINO_ARCH_ESP8266
+  return ESP.getResetReason();
+  #endif
+  #ifdef ARDUINO_ARCH_ESP32
+  switch (esp_reset_reason()) {
+    case ESP_RST_POWERON:
+      return "ESP_RST_POWERON";
+    case ESP_RST_EXT:
+      return "ESP_RST_EXT";
+    case ESP_RST_SW:
+      return "ESP_RST_SW";
+    case ESP_RST_PANIC:
+      return "ESP_RST_PANIC";
+    case ESP_RST_INT_WDT:
+      return "ESP_RST_INT_WDT";
+    case ESP_RST_TASK_WDT:
+      return "ESP_RST_TASK_WDT";
+    case ESP_RST_WDT:
+      return "ESP_RST_WDT";
+    case ESP_RST_DEEPSLEEP:
+      return "ESP_RST_DEEPSLEEP";
+    case ESP_RST_BROWNOUT:
+      return "ESP_RST_BROWNOUT";
+    case ESP_RST_SDIO:
+      return "ESP_RST_SDIO";
+    default:
+      return "ESP_RST_UNKNOWN";
+  }
+  #endif
+}
+
 RestControllerClass RestController;
 
 RestControllerClass::RestControllerClass(): _server(AsyncWebServer(80)) {};
@@ -63,12 +95,10 @@ void RestControllerClass::setupHandler() {
     LOGGER.logRequest(WEB_SERVER_TAG, request->methodToString(), "/", "");
     request->send_P(200, "text/html", WEB_PAGE_MAIN);
   });
-  _server.on("/assets/index.js", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    LOGGER.logRequest(WEB_SERVER_TAG, request->methodToString(), "/assets/index.js", "");
+  _server.on("/assets/script.js", HTTP_GET, [this](AsyncWebServerRequest * request) {
     request->send_P(200, "text/javascript", SCRIPT_PAGE_MAIN);
   });
-  _server.on("/assets/index.css", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    LOGGER.logRequest(WEB_SERVER_TAG, request->methodToString(), "/assets/index.css", "");
+  _server.on("/assets/styles.css", HTTP_GET, [this](AsyncWebServerRequest * request) {
     request->send_P(200, "text/css", STYLE_PAGE_MAIN);
   });
 #else
@@ -102,15 +132,12 @@ void RestControllerClass::setupHandler() {
 
     JsonObject obj = doc["heap"].to<JsonObject>();
     obj["free"] = ESP.getFreeHeap();
+    doc["resetReason"] = resetReasonAsString();
+
     #ifdef ARDUINO_ARCH_ESP32
     obj["size"] = ESP.getHeapSize();
     obj["minFree"] = ESP.getMinFreeHeap();
     obj["maxAlloc"] = ESP.getMaxAllocHeap();
-    
-    doc["resetReason"] = esp_reset_reason();
-    #endif
-    #ifdef ARDUINO_ARCH_ESP8266
-    doc["resetReason"] = ESP.getResetReason();
     #endif
 
     #if ENABLE_SENSORS || ENABLE_STATES || ENABLE_HOOKS

@@ -24,8 +24,6 @@
 #define LED_PIN LED_BUILTIN
 #define WIFI_MODE_STA WIFI_STA
 #define WIFI_MODE_AP WIFI_AP
-#define LOW 1
-#define HIGH 0
 #endif
 
 #define SMT_DEFAULT_NAME "smt-device"

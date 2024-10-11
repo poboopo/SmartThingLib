@@ -118,7 +118,7 @@ class NotificationHook : public T {
 
       String payload;
       serializeJson(doc, payload);
-      String url = "http://" + gtwIp + "/notification";
+      String url = "http://" + gtwIp + "/api/notification";
       LOGGER.debug(NOTIFICATION_HOOK_TAG, "Sending notification to [%s]:%s", url.c_str(), payload.c_str());
 
       HTTPClient client;

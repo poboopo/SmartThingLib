@@ -11,7 +11,7 @@ const char* WEB_PAGE_MAIN PROGMEM = R"=====(<!DOCTYPE html>
     <link rel="stylesheet" href="/assets/styles.css">
   </head>
   <body>
-    <h1 class="header">SmartThing device control panel1</h1>
+    <h1 class="header">SmartThing device control panel</h1>
     <div id="control-panel" class="bordered"></div>
     <div id="toasts-list" class="list"></div>
   </body>

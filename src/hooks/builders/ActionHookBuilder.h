@@ -8,7 +8,7 @@
 #include "hooks/impls/ActionHook.h"
 #include "logs/BetterLogger.h"
 
-#define ACTION_HOOK_BUILDER_TAG "action_cb_builder"
+static const char * ACTION_HOOK_BUILDER_TAG = "action_cb_builder";
 
 namespace Hook {
 class ActionHookBuilder {

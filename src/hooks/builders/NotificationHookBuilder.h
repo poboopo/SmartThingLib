@@ -3,7 +3,7 @@
 
 #include "hooks/impls/NotificationHook.h"
 
-#define NOTIFICATION_HOOK_BUILDER_TAG "notification_cb_builder"
+static const char * NOTIFICATION_HOOK_BUILDER_TAG = "notification_cb_builder";
 
 namespace Hook {
 class NotificationHookBuilder {

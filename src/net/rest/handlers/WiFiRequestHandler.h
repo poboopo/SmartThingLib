@@ -8,7 +8,6 @@
 #include "settings/SettingsManager.h"
 #include "net/rest/handlers/RequestHandler.h"
 
-#define WIFI_LOG_TAG "wifi_handler"
 #define WIFI_RQ_PATH "/wifi"
 
 class WiFiRequesthandler : public RequestHandler {

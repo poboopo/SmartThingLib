@@ -8,6 +8,10 @@
 #define DEVICE_NAME "dn"
 #define GROUP_HOOKS "cb"
 
+#define EEPROM_LOAD_SIZE 1024
+
+static const char * SETTINGS_MANAGER_TAG = "settings_manager";
+
 #ifdef ARDUINO_ARCH_ESP32
 bool eepromBegin(size_t size) {
   return EEPROM.begin(size);

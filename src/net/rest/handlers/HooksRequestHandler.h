@@ -12,12 +12,12 @@
 #include "net/rest/handlers/HandlerUtils.h"
 #include "net/rest/handlers/RequestHandler.h"
 
-#define HOOKS_RQ_PATH "/hooks"
-#define HOOKS_RQ_TAG "hooks_handler"
-
 #define HOOK_NAME_ARG "name"
 #define HOOK_OBSERVABLE_TYPE "type"
 #define HOOK_ID_ARG "id"
+#define HOOKS_RQ_PATH "/hooks"
+
+static const char * HOOKS_RQ_TAG = "hooks_handler";
 
 class HooksRequestHandler : public RequestHandler {
  public:

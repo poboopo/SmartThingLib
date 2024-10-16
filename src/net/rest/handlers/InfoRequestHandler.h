@@ -9,7 +9,6 @@
 #include "net/rest/handlers/RequestHandler.h"
 
 #define INFO_RQ_PATH "/info"
-#define INFO_RQ_TAG "info_handler"
 
 class InfoRequestHandler : public RequestHandler {
  public:

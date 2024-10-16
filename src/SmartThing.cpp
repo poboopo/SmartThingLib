@@ -4,6 +4,18 @@
 #include <mdns.h>
 #endif
 
+#ifndef SMART_THING_LOOP_TASK_DELAY
+#define SMART_THING_LOOP_TASK_DELAY 100  // ms
+#endif
+
+#ifndef SMART_THING_HOOKS_CHECK_DELAY
+#define SMART_THING_HOOKS_CHECK_DELAY 500 // ms
+#endif
+
+#ifndef SMART_THING_BEACON_SEND_DELAY
+#define SMART_THING_BEACON_SEND_DELAY 5000 //ms
+#endif
+
 #define WIPE_PIN 19
 #define WIPE_TIMEOUT 5000
 #define WIFI_SETUP_TIMEOUT 10000
@@ -11,6 +23,7 @@
 #define MULTICAST_GROUP IPAddress(224, 1, 1, 1)
 #define MULTICAST_PORT 7778
 
+static const char * SMART_THING_TAG = "smart_thing";
 #ifdef ARDUINO_ARCH_ESP32
 static const char * beaconTemplate = "%s$%s$%s$%s$esp32";
 static size_t beaconExtraSize = 9;
@@ -32,6 +45,16 @@ SmartThingClass::~SmartThingClass() {
 
 bool SmartThingClass::wifiConnected() {
   return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
+}
+
+bool SmartThingClass::init(const char * type, const char * name) {
+  if (name == nullptr) {
+    LOGGER.error(SMART_THING_TAG, "Name can't be nullptr");
+    return false;
+  }
+  _name = (char *) malloc(strlen(name) + 1);
+  strcpy(_name, name);
+  return init(type);
 }
 
 bool SmartThingClass::init(const char * type) {
@@ -131,7 +154,7 @@ bool SmartThingClass::init(const char * type) {
     #ifdef ARDUINO_ARCH_ESP8266
     updateBroadCastMessage();
     #endif
-
+    
     #ifdef ARDUINO_ARCH_ESP32
     esp_err_t errInit = mdns_init();
     if (errInit != ESP_OK) {
@@ -151,7 +174,7 @@ bool SmartThingClass::init(const char * type) {
                    "WiFi not available, skipping all network setup");
   }
 
-  LOGGER.debug(SMART_THING_TAG, "Setup finished");
+  LOGGER.info(SMART_THING_TAG, "Setup finished");
   _initialized = true;
   return true;
 }

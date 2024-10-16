@@ -1,8 +1,6 @@
 #ifndef WATCHER_HOOK_H
 #define WATCHER_HOOK_H
 
-#define WATCHER_HOOK_TAG "watcher_hook"
-
 #include <ArduinoJson.h>
 #include <functional>
 

@@ -14,13 +14,14 @@
 #include "settings/SettingsManager.h"
 #include "utils/StringUtils.h"
 
-#define NOTIFICATION_HOOK_TAG "notification_hook"
 #define MESSAGE_FIELD "message"
 #define NOTIFICATION_TYPE_FIELD "ntfType"
 
 #define NOTIFICATION_INFO "info"
 #define NOTIFICATION_WARNING "warning"
 #define NOTIFICATION_ERROR "error"
+
+static const char * NOTIFICATION_HOOK_TAG = "notification_hook";
 
 namespace Hook {
 template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>

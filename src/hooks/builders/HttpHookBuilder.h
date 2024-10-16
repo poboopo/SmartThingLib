@@ -4,12 +4,12 @@
 #include "hooks/impls/HttpHook.h"
 #include "logs/BetterLogger.h"
 
-#define HTTP_HOOK_BUILDER_TAG "http_cb_builder"
-
 #define HTTP_HOOKS_TEMPLATES_JSON                                      \
   "{\"url\": {\"required\": true},\"method\": {\"required\": "             \
   "false,\"values\": [\"GET\",\"POST\",\"DELETE\",\"PUT\"]},\"payload\": " \
   "{\"required\": false}}"
+
+static const char * HTTP_HOOK_BUILDER_TAG = "http_cb_builder";
 
 namespace Hook {
 class HttpHookBuilder {

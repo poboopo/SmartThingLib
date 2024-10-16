@@ -5,7 +5,7 @@
 #include "logs/BetterLogger.h"
 
 #define DANGER_RQ_PATH "/danger"
-#define DANGER_RQ_TAG "danger_handler"
+static const char * DANGER_RQ_TAG = "danger_handler";
 
 class DangerRequestHandler : public AsyncWebHandler {
  public:

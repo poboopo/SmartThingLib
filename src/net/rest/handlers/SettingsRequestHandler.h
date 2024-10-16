@@ -7,7 +7,7 @@
 #include "net/rest/handlers/RequestHandler.h"
 
 #define SETTINGS_RQ_PATH "/settings"
-#define SETTINGS_RQ_TAG "settings_handler"
+static const char * SETTINGS_RQ_TAG = "settings_handler";
 
 class SettingsRequestHandler : public RequestHandler {
  public:

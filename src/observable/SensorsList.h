@@ -11,7 +11,7 @@
 #include "observable/ObservableObjects.h"
 #include "utils/List.h"
 
-#define SENSORS_LIST_TAG "sensors_list"
+static const char * SENSORS_LIST_TAG = "sensors_list";
 
 namespace Observable {
 namespace Sensor {

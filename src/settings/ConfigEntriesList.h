@@ -6,7 +6,7 @@
 #include "utils/List.h"
 #include "logs/BetterLogger.h"
 
-#define CONFIG_ENTRIES_LIST_TAG "config_entries_list"
+static const char * CONFIG_ENTRIES_LIST_TAG = "config_entries_list";
 
 namespace Config {
 struct ConfigEntry {

@@ -11,7 +11,7 @@
 #include <WiFiClient.h>
 #endif
 
-#define LOGGER_TAG "LOGGER"
+static const char * LOGGER_TAG = "logger";
 
 // name_&_level_&_tag_&_message
 #define TCP_LOGGER_MESSAGE_TEMPLATE "%s&%u&%s&"

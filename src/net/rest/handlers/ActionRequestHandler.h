@@ -11,7 +11,6 @@
 #include "net/rest/handlers/RequestHandler.h"
 
 #define ACTION_RQ_PATH "/action"
-#define ACTION_RQ_TAG "action_handler"
 
 using namespace Action;
 

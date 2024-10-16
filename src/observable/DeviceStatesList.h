@@ -13,7 +13,7 @@
 #include "observable/ObservableObjects.h"
 #include "utils/List.h"
 
-#define DEVICE_STATES_LIST_TAG "device_states_list"
+static const char * DEVICE_STATES_LIST_TAG = "device_states_list";
 
 namespace Observable {
 namespace DeviceState {

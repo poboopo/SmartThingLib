@@ -11,10 +11,6 @@
 #define LOGGER_ADDRESS_CONFIG "laddr"
 #define GATEWAY_CONFIG "gtw"
 
-#define SETTINGS_MANAGER_TAG "settings_manager"
-
-#define EEPROM_LOAD_SIZE 1024
-
 class SettingsManager {
  private:
   JsonDocument _settings;

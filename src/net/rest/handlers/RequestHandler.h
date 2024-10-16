@@ -6,7 +6,7 @@
 #include "net/rest/RestController.h"
 #include "net/rest/handlers/HandlerUtils.h"
 
-#define REQUEST_HANDLER_TAG "request"
+static const char * REQUEST_HANDLER_TAG = "request";
 
 class RequestHandler : public AsyncWebHandler {
   public:

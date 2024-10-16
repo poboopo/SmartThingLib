@@ -11,7 +11,7 @@
 #include "utils/List.h"
 #include "logs/BetterLogger.h"
 
-#define ACTIONS_LIST_TAG "action_handlers_list"
+static const char * ACTIONS_LIST_TAG = "action_handlers_list";
 
 struct ActionResult {
   ActionResult(){};

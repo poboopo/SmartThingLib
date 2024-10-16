@@ -8,7 +8,7 @@
 #include "logs/BetterLogger.h"
 
 #define STATE_RQ_PATH "/state"
-#define STATE_RQ_TAG "state_handler"
+static const char * STATE_RQ_TAG = "state_handler";
 
 class StateRequestHandler : public AsyncWebHandler {
  public:

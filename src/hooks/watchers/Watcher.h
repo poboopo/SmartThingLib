@@ -11,7 +11,7 @@
 #include "utils/List.h"
 
 #define WATCHER_INFO_DOC_SIZE 128
-#define WATCHER_TAG "watcher"
+static const char * WATCHER_TAG = "watcher";
 
 /*
     Класс наблюдатель за объектами
@@ -38,7 +38,7 @@ class Watcher {
     JsonDocument doc;
     doc.to<JsonArray>();
     if (_hooks.size() == 0) {
-      LOGGER.debug(WATCHER_HOOK_TAG, "No hook's, creating empty array");
+      LOGGER.debug(WATCHER_TAG, "No hook's, creating empty array");
       return doc;
     }
     _hooks.forEach([&](Hook::Hook<T> *current) {

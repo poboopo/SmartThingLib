@@ -11,8 +11,6 @@
 #include "hooks/impls/Hook.h"
 #include "hooks/impls/HttpHook.h"
 
-#define HOOKS_FACTORY_TAG "hooks_factory"
-
 #define CB_BUILDER_TRIGGER "trigger"
 #define CB_BUILDER_COMPARE "compareType"
 
@@ -22,6 +20,8 @@
 #define DEFAULT_STATES_HOOKS_TEMPLATES_JSON                                  \
   "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true," \
   "\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}"
+
+static const char * HOOKS_FACTORY_TAG = "hooks_factory";
 
 namespace Hook {
   class HooksFactory {

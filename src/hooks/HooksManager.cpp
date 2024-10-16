@@ -8,7 +8,7 @@
 #include "hooks/watchers/SensorWatcher.h"
 #include "settings/SettingsManager.h"
 
-#define HOOKS_MANAGER_TAG "hooks_manager"
+static const char * HOOKS_MANAGER_TAG = "hooks_manager";
 
 Hook::HooksManagerClass HooksManager;
 

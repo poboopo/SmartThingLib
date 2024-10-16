@@ -10,7 +10,7 @@
 #include "hooks/impls/Hook.h"
 #include "logs/BetterLogger.h"
 
-#define ACTION_HOOK_TAG "action_hook"
+static const char * ACTION_HOOK_TAG = "action_hook";
 
 namespace Hook {
   template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>

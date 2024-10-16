@@ -9,7 +9,6 @@
 #include "observable/ObservableObjects.h"
 #include "logs/BetterLogger.h"
 
-#define SENSOR_WATCHER_TAG "sensor_watcher"
 #define SENSOR_WATCHER_TYPE "sensor"
 
 namespace Hook {

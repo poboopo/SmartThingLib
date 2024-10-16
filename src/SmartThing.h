@@ -15,7 +15,6 @@
 #include "Features.h"
 
 #define SMART_THING_VERSION "0.7"
-#define SMART_THING_TAG "smart_thing"
 
 #ifdef ARDUINO_ARCH_ESP32
 #define LED_PIN 2
@@ -27,21 +26,7 @@
 #endif
 
 #define SMT_DEFAULT_NAME "smt-device"
-
 #define DEVICE_NAME_LENGTH_MAX 15
-#define DEVICE_TYPE_LENGTH_MAX 15
-
-#ifndef SMART_THING_LOOP_TASK_DELAY
-#define SMART_THING_LOOP_TASK_DELAY 100  // ms
-#endif
-
-#ifndef SMART_THING_HOOKS_CHECK_DELAY
-#define SMART_THING_HOOKS_CHECK_DELAY 500 // ms
-#endif
-
-#ifndef SMART_THING_BEACON_SEND_DELAY
-#define SMART_THING_BEACON_SEND_DELAY 5000 //ms
-#endif
 
 class SmartThingClass {
  public:
@@ -49,15 +34,7 @@ class SmartThingClass {
   ~SmartThingClass();
 
   bool init(const char * type);
-  bool init(const char * type, const char * name) {
-    if (name == nullptr) {
-      LOGGER.error(SMART_THING_TAG, "Name can't be nullptr");
-      return false;
-    }
-    _name = (char *) malloc(strlen(name) + 1);
-    strcpy(_name, name);
-    return init(type);
-  }
+  bool init(const char * type, const char * name);
 
   void loop();
 

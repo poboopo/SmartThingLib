@@ -25,7 +25,10 @@ class InfoRequestHandler : public RequestHandler {
     if (request->url().equals("/info/system")) {
       if (request->method() == HTTP_GET) {
         JsonDocument jsonDoc;
-        jsonDoc["version"] = SMART_THING_VERSION;
+        #ifdef VERSION
+        jsonDoc["version"] = VERSION;
+        #endif
+        jsonDoc["smtVersion"] = SMART_THING_VERSION;
         jsonDoc["name"] = SmartThing.getName();
         jsonDoc["type"] = SmartThing.getType();
         jsonDoc["ip"] = SmartThing.getIp();

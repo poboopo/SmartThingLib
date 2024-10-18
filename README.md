@@ -2,6 +2,6 @@ SmarThingLib - библиотека для разработка IOT устрой
 
 Для работы требуется ArduinoJson
 ```
-lib_deps = 
-	bblanchon/ArduinoJson@^6.20.1
+	bblanchon/ArduinoJson@^7.0.4
+	esphome/ESPAsyncWebServer-esphome@^3.2.2
 ```

@@ -13,7 +13,7 @@
 #endif
 
 #ifndef SMART_THING_BEACON_SEND_DELAY
-#define SMART_THING_BEACON_SEND_DELAY 5000 //ms
+#define SMART_THING_BEACON_SEND_DELAY 2000 //ms
 #endif
 
 #define WIPE_PIN 19

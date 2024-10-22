@@ -11,6 +11,7 @@
 #include "logs/BetterLogger.h"
 #include "net/rest/handlers/HandlerUtils.h"
 #include "net/rest/handlers/RequestHandler.h"
+#include "net/rest/WebPageAssets.h"
 
 #define HOOK_NAME_ARG "name"
 #define HOOK_OBSERVABLE_TYPE "type"
@@ -29,6 +30,9 @@ class HooksRequestHandler : public RequestHandler {
   };
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_GET) {
+      if (request->url().equals("/hooks/script.js")) {
+        return request->beginResponse(200, CONTENT_TYPE_JS, SCRIPT_HOOKS_TAB);
+      }
       if (request->url().equals("/hooks/templates")) {
         String type = request->arg(HOOK_OBSERVABLE_TYPE);
         if (type.isEmpty()) {

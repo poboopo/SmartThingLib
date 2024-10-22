@@ -7,6 +7,7 @@
 #include "settings/SettingsManager.h"
 
 #define CONTENT_TYPE_JSON "application/json"
+#define CONTENT_TYPE_JS "text/javascript"
 
 typedef std::function<void(void)> RestHandlerFunction;
 

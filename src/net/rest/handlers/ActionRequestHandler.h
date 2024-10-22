@@ -9,8 +9,9 @@
 #include "logs/BetterLogger.h"
 #include "net/rest/handlers/HandlerUtils.h"
 #include "net/rest/handlers/RequestHandler.h"
+#include "net/rest/WebPageAssets.h"
 
-#define ACTION_RQ_PATH "/action"
+#define ACTION_RQ_PATH "/actions"
 
 using namespace Action;
 
@@ -26,12 +27,17 @@ class ActionRequestHandler : public RequestHandler {
   };
 
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
+    if (request->method() == HTTP_GET) {
+      if (request->url().equals("/actions/script.js")) {
+        return request->beginResponse(200, CONTENT_TYPE_JS, SCRIPT_ACTIONS_TAB);
+      }
 
-    if (request->method() == HTTP_GET && request->url().equals("/actions/info")) {
-      JsonDocument doc = SmartThing.getActionsInfo();
-      String response;
-      serializeJson(doc, response);
-      return request->beginResponse(200, CONTENT_TYPE_JSON, response);
+      if (request->url().equals("/actions/info")) {
+        JsonDocument doc = SmartThing.getActionsInfo();
+        String response;
+        serializeJson(doc, response);
+        return request->beginResponse(200, CONTENT_TYPE_JSON, response);
+      }
     }
     if (request->method() == HTTP_PUT) {
       String action = request->arg("action");

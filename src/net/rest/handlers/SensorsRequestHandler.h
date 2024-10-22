@@ -6,6 +6,7 @@
 
 #include "SmartThing.h"
 #include "logs/BetterLogger.h"
+#include "net/rest/WebPageAssets.h"
 
 #define SENSORS_RQ_PATH "/sensors"
 static const char * SENSORS_RQ_TAG = "sensors_handler";
@@ -40,6 +41,10 @@ class SensorsRequestHandler : public AsyncWebHandler {
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     String url = request->url();
     LOGGER.logRequest(SENSORS_RQ_TAG, request->methodToString(), url.c_str(), "");
+
+    if (url.equals("/sensors/script.js")) {
+      return request->beginResponse(200, CONTENT_TYPE_JS, SCRIPT_SENSORS_TAB);
+    }
 
     JsonDocument data = url.equals("/sensors/types") ? SmartThing.getSensorsTypes() : SmartThing.getSensorsValues();
     String response;

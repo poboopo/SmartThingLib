@@ -6,6 +6,7 @@
 
 #include "SmartThing.h"
 #include "logs/BetterLogger.h"
+#include "net/rest/WebPageAssets.h"
 
 #define STATE_RQ_PATH "/state"
 static const char * STATE_RQ_TAG = "state_handler";
@@ -39,6 +40,10 @@ class StateRequestHandler : public AsyncWebHandler {
  private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     LOGGER.logRequest(STATE_RQ_TAG, request->methodToString(), request->url().c_str(), "");
+
+    if (request->url().equals("/states/script.js")) {
+      return request->beginResponse(200, CONTENT_TYPE_JS, SCRIPT_STATES_TAB);
+    }
 
     JsonDocument state = SmartThing.getDeviceStatesInfo();
     String response;

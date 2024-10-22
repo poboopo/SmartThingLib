@@ -30,9 +30,11 @@ class HooksRequestHandler : public RequestHandler {
   };
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_GET) {
+      #if ENABLE_WEB_PAGE
       if (request->url().equals("/hooks/script.js")) {
         return request->beginResponse(200, CONTENT_TYPE_JS, SCRIPT_HOOKS_TAB);
       }
+      #endif
       if (request->url().equals("/hooks/templates")) {
         String type = request->arg(HOOK_OBSERVABLE_TYPE);
         if (type.isEmpty()) {

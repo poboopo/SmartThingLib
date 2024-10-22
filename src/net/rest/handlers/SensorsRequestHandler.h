@@ -42,9 +42,11 @@ class SensorsRequestHandler : public AsyncWebHandler {
     String url = request->url();
     LOGGER.logRequest(SENSORS_RQ_TAG, request->methodToString(), url.c_str(), "");
 
+    #if ENABLE_WEB_PAGE
     if (url.equals("/sensors/script.js")) {
       return request->beginResponse(200, CONTENT_TYPE_JS, SCRIPT_SENSORS_TAB);
     }
+    #endif
 
     JsonDocument data = url.equals("/sensors/types") ? SmartThing.getSensorsTypes() : SmartThing.getSensorsValues();
     String response;

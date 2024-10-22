@@ -27,7 +27,7 @@
 #endif
 
 #ifndef ENABLE_HOOKS
-#define ENABLE_HOOKS 1
+#define ENABLE_HOOKS 0
 #endif
 
 #ifndef ENABLE_LOGGER

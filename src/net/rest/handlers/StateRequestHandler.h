@@ -41,9 +41,11 @@ class StateRequestHandler : public AsyncWebHandler {
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     LOGGER.logRequest(STATE_RQ_TAG, request->methodToString(), request->url().c_str(), "");
 
+    #if ENABLE_WEB_PAGE
     if (request->url().equals("/states/script.js")) {
       return request->beginResponse(200, CONTENT_TYPE_JS, SCRIPT_STATES_TAB);
     }
+    #endif
 
     JsonDocument state = SmartThing.getDeviceStatesInfo();
     String response;

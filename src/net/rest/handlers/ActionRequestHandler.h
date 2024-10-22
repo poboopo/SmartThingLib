@@ -28,9 +28,11 @@ class ActionRequestHandler : public RequestHandler {
 
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_GET) {
+      #if ENABLE_WEB_PAGE
       if (request->url().equals("/actions/script.js")) {
         return request->beginResponse(200, CONTENT_TYPE_JS, SCRIPT_ACTIONS_TAB);
       }
+      #endif
 
       if (request->url().equals("/actions/info")) {
         JsonDocument doc = SmartThing.getActionsInfo();

@@ -30,8 +30,9 @@ void HooksManagerClass::loadFromSettings() {
 
   bool needGhostDelete = false;
   for (unsigned int i = 0; i < hooksInfo.size(); i++) {
-    JsonObject observable = hooksInfo[i]["observable"];
-    JsonArray hooks = hooksInfo[i]["hooks"];
+    JsonObject config = hooksInfo[i];
+    JsonObject observable = config["observable"];
+    JsonArray hooks = config["hooks"];
     for (unsigned int j = 0; j < hooks.size(); j++) {
       needGhostDelete = needGhostDelete || createHookFromJson(observable, hooks[j]) < 0;
     }

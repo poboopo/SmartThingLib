@@ -96,7 +96,7 @@ namespace Hook {
         JsonDocument doc;
         doc["default"] = getDefaultTemplate(type);
         #if ENABLE_ACTIONS
-        if (SmartThing.getActionsCount() > 0) {
+        if (ActionsManager.count() > 0) {
           doc[ACTION_HOOK_TAG] = ActionHookBuilder::getTemplate();
         }
         #endif

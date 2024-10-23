@@ -113,6 +113,7 @@ void RestControllerClass::setupHandler() {
     JsonDocument doc;
     doc["web"] = ENABLE_WEB_PAGE == 1;
     doc["actions"] = ENABLE_ACTIONS == 1;
+    doc["actionsScheduler"] = ENABLE_ACTIONS_SCHEDULER == 1;
     doc["sensors"] = ENABLE_SENSORS == 1;
     doc["states"] = ENABLE_STATES == 1;
     doc["hooks"] = ENABLE_HOOKS == 1;

@@ -16,6 +16,10 @@
 #define SMART_THING_BEACON_SEND_DELAY 2000 //ms
 #endif
 
+#ifndef SMART_THING_ACTIONS_SCHEDULE_DELAY
+#define SMART_THING_ACTIONS_SCHEDULE_DELAY 200 //ms
+#endif
+
 #define WIPE_PIN 19
 #define WIPE_TIMEOUT 5000
 #define WIFI_SETUP_TIMEOUT 10000
@@ -117,10 +121,6 @@ bool SmartThingClass::init(const char * type) {
   });
     #endif
   #endif
-  #if ENABLE_HOOKS
-  // For notifications
-  addConfigEntry(GATEWAY_CONFIG, "Gateway address (ip:port)", "string");
-  #endif
 
   #if ENABLE_STATES
   addDeviceState("wifi", [this]() {
@@ -129,11 +129,19 @@ bool SmartThingClass::init(const char * type) {
   #endif
 
   #if ENABLE_HOOKS
+  // For notifications
+  addConfigEntry(GATEWAY_CONFIG, "Gateway address (ip:port)", "string");
+
   SMT_LOG_DEBUG(SMART_THING_TAG, "Loading hooks from settings...");
   HooksManager.loadFromSettings();
   SMT_LOG_DEBUG(SMART_THING_TAG, "Hooks loaded, making first check");
   HooksManager.check();
   SMT_LOG_DEBUG(SMART_THING_TAG, "Hooks first check finished");
+  #endif
+
+  #if ENABLE_ACTIONS_SCHEDULER
+  SMT_LOG_DEBUG(SMART_THING_TAG, "Loading actions schedule config from settings");
+  ActionsManager.loadFromSettings();
   #endif
 
   connectToWifi();
@@ -183,14 +191,24 @@ void SmartThingClass::loop() {
   if (!_initialized) {
     return;
   }
-  if (_lastBeacon == -1 || millis() - _lastBeacon > SMART_THING_BEACON_SEND_DELAY) {
+
+  long current = millis();
+  if (_lastBeacon == -1 || current - _lastBeacon > SMART_THING_BEACON_SEND_DELAY) {
     sendBeacon();
-    _lastBeacon = millis();
+    _lastBeacon = current;
   }
+
   #if ENABLE_HOOKS
-  if (_lastHooksCheck == -1 || millis() - _lastHooksCheck > SMART_THING_HOOKS_CHECK_DELAY) {
+  if (_lastHooksCheck == -1 || current - _lastHooksCheck > SMART_THING_HOOKS_CHECK_DELAY) {
     HooksManager.check();
-    _lastHooksCheck = millis();
+    _lastHooksCheck = current;
+  }
+  #endif
+  
+  #if ENABLE_ACTIONS_SCHEDULER
+  if (_lastActionsCheck == -1 || current - _lastActionsCheck > SMART_THING_ACTIONS_SCHEDULE_DELAY) {
+    ActionsManager.scheduled();
+    _lastActionsCheck = current;
   }
   #endif
 }
@@ -404,24 +422,6 @@ int16_t SmartThingClass::getDeviceStatesCount() {
   return _deviceStatesList.size();
 }
 
-#endif
-
-#if ENABLE_ACTIONS 
-JsonDocument SmartThingClass::getActionsInfo() {
-  return _actionsList.toJson();
-}
-bool SmartThingClass::addActionHandler(const char* action, const char* caption,
-                                       Action::ActionHandler handler) {
-  return _actionsList.add(action, caption, handler);
-}
-
-ActionResult SmartThingClass::callAction(const char* action) {
-  return _actionsList.callAction(action);
-}
-
-int16_t SmartThingClass::getActionsCount() {
-  return _actionsList.size();
-}
 #endif
 
 bool SmartThingClass::addConfigEntry(const char* name, const char* caption,

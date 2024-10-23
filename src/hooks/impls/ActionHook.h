@@ -23,7 +23,7 @@ namespace Hook {
       void call(V &value) {
         // replace ${value} in _action?
         SMT_LOG_DEBUG(ACTION_HOOK_TAG, "Calling action  %s", _action.c_str());
-        SmartThing.callAction(_action.c_str());
+        ActionsManager.call(_action.c_str());
       }
 
       void addCustomJsonValues(JsonDocument &doc, boolean shortJson) {

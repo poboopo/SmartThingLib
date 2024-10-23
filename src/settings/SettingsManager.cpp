@@ -3,15 +3,6 @@
 
 #include <EEPROM.h>
 
-#define GROUP_CONFIG "cg"
-#define GROUP_WIFI "wf"
-#define DEVICE_NAME "dn"
-#define GROUP_HOOKS "cb"
-
-#define EEPROM_LOAD_SIZE 1024
-
-static const char * SETTINGS_MANAGER_TAG = "settings_manager";
-
 #ifdef ARDUINO_ARCH_ESP32
 bool eepromBegin(size_t size) {
   return EEPROM.begin(size);
@@ -101,6 +92,7 @@ bool SettingsManager::save() {
   removeIfEmpty(GROUP_WIFI);
   removeIfEmpty(GROUP_CONFIG);
   removeIfEmpty(GROUP_HOOKS);
+  removeIfEmpty(GROUP_ACTIONS);
   // _settings.garbageCollect();
 
   String data;
@@ -200,9 +192,6 @@ void SettingsManager::setHooks(JsonDocument doc) {
 }
 
 JsonDocument SettingsManager::getHooks() {
-  if (_settings.containsKey(GROUP_HOOKS)) {
-    return _settings[GROUP_HOOKS];
-  }
   return _settings[GROUP_HOOKS];
 }
 
@@ -210,11 +199,20 @@ void SettingsManager::dropAllHooks() {
   _settings.remove(GROUP_HOOKS);
 }
 
+void SettingsManager::setActionsConfig(JsonDocument doc) {
+  _settings[GROUP_ACTIONS] = doc;
+}
+
+JsonDocument SettingsManager::getActionsConfig() {
+  return getOrCreateObject(GROUP_ACTIONS);
+}
+
 const JsonDocument SettingsManager::exportSettings() {
   JsonDocument doc;
   doc[GROUP_CONFIG] = getConfig();
   doc[GROUP_HOOKS] = getHooks();
   doc[DEVICE_NAME] = getDeviceName();
+  doc[GROUP_ACTIONS] = getActionsConfig();
   return doc;
 }
 
@@ -250,6 +248,12 @@ bool SettingsManager::importSettings(JsonDocument doc) {
     res = false;
   } else {
     _settings[GROUP_HOOKS] = doc[GROUP_HOOKS];
+  }
+  if (doc[GROUP_ACTIONS].size() > 0 && !doc[GROUP_ACTIONS].is<JsonObject>()) {
+    SMT_LOG_ERROR(SETTINGS_MANAGER_TAG, "Expected %s to be JsonObject!", GROUP_ACTIONS);
+    res = false;
+  } else {
+    _settings[GROUP_ACTIONS] = doc[GROUP_ACTIONS];
   }
 
   if (res) {

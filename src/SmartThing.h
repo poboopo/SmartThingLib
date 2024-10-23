@@ -5,13 +5,13 @@
 #include <WiFiUdp.h>
 
 #include "hooks/HooksManager.h"
-#include "ActionsList.h"
 #include "settings/ConfigEntriesList.h"
 #include "observable/DeviceStatesList.h"
 #include "observable/SensorsList.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
 #include "settings/SettingsManager.h"
+#include "actions/ActionsManager.h"
 #include "Features.h"
 
 #define SMART_THING_VERSION "0.7"
@@ -66,18 +66,6 @@ class SmartThingClass {
 
   int16_t getDeviceStatesCount();
   #endif
-
-  #if ENABLE_ACTIONS
-  bool addActionHandler(const char* action, const char* caption,
-                        Action::ActionHandler handler);
-  bool addActionHandler(const char* action,
-                        Action::ActionHandler handler) {
-    return addActionHandler(action, action, handler);
-  };
-  ActionResult callAction(const char* action);
-  int16_t getActionsCount();
-  JsonDocument getActionsInfo();
-  #endif
   
   JsonDocument getConfigInfoJson();
   Config::ConfigEntriesList * getConfigInfo() {
@@ -89,6 +77,9 @@ class SmartThingClass {
   long _lastBeacon = -1;
   #if ENABLE_HOOKS
   long _lastHooksCheck = -1;
+  #endif
+  #if ENABLE_ACTIONS_SCHEDULER
+  long _lastActionsCheck = -1;
   #endif
 
   char * _ip;
@@ -120,10 +111,6 @@ class SmartThingClass {
 
   #if ENABLE_STATES
   Observable::DeviceState::DeviceStatesList _deviceStatesList;
-  #endif
-
-  #if ENABLE_ACTIONS
-  Action::ActionsList _actionsList;
   #endif
 
   Config::ConfigEntriesList _configEntriesList;

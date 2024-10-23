@@ -2,14 +2,23 @@
 #define SettingsManager_H
 
 #include <ArduinoJson.h>
-
 #include "logs/BetterLogger.h"
+
+#define GROUP_CONFIG "cg"
+#define GROUP_WIFI "wf"
+#define GROUP_HOOKS "cb"
+#define GROUP_ACTIONS "ac"
+#define DEVICE_NAME "dn"
 
 #define SSID_SETTING "ss"
 #define PASSWORD_SETTING "ps"
 #define WIFI_MODE_SETTING "md"
 #define LOGGER_ADDRESS_CONFIG "laddr"
 #define GATEWAY_CONFIG "gtw"
+
+#define EEPROM_LOAD_SIZE 1024
+
+static const char * SETTINGS_MANAGER_TAG = "settings_manager";
 
 class SettingsManager {
  private:
@@ -41,6 +50,9 @@ class SettingsManager {
   void setHooks(JsonDocument doc);
   JsonDocument getHooks();
   void dropAllHooks();
+
+  void setActionsConfig(JsonDocument doc);
+  JsonDocument getActionsConfig();
 
   const JsonDocument exportSettings();
   bool importSettings(JsonDocument doc);

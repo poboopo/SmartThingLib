@@ -26,11 +26,13 @@ class RequestHandler : public AsyncWebHandler {
       LOGGER.logRequest(REQUEST_HANDLER_TAG, request->methodToString(), request->url().c_str(), _body.c_str());
       AsyncWebServerResponse * asyncResponse = processRequest(request);
       if (asyncResponse == nullptr) {
-        SMT_LOG_ERROR(REQUEST_HANDLER_TAG, "Response = nullptr!");
-        request->send(500, CONTENT_TYPE_JSON, buildErrorJson("Internal error - failed to process request"));
-      }
+        SMT_LOG_ERROR(REQUEST_HANDLER_TAG, "Response = nullptr! Sending 404 response");
+        asyncResponse = request->beginResponse(404);
+      } 
+
       asyncResponse->addHeader("Access-Control-Allow-Origin", "*");
       request->send(asyncResponse);
+
       if (!_body.isEmpty()) {
         _body.clear();
       }

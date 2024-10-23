@@ -7,6 +7,7 @@
 
 #include "hooks/impls/ActionHook.h"
 #include "logs/BetterLogger.h"
+#include "actions/ActionsManager.h"
 
 static const char * ACTION_HOOK_BUILDER_TAG = "action_cb_builder";
 
@@ -35,7 +36,7 @@ class ActionHookBuilder {
     JsonDocument doc;
     JsonObject actionObj = doc["action"].to<JsonObject>();
     actionObj["required"] = true;
-    actionObj["values"] = SmartThing.getActionsInfo();
+    actionObj["values"] = ActionsManager.toJson();
     return doc;
   }
 };

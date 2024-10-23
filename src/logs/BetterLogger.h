@@ -11,12 +11,37 @@
 #include <WiFiClient.h>
 #endif
 
-static const char * LOGGER_TAG = "logger";
+#if ENABLE_LOGGER
+#define SMT_LOG(level, tag, format, ...) LOGGER.log(level,  tag, format, ##__VA_ARGS__)
+#else
+#define SMT_LOG(level, tag, format, ...)
+#endif
 
-// name_&_level_&_tag_&_message
-#define TCP_LOGGER_MESSAGE_TEMPLATE "%s&%u&%s&"
-// ip_name_&_level_&_tag_&_message
-#define UDP_LOGGER_MESSAGE_TEMPLATE "%s&%s&%u&%s&"
+#if ENABLE_LOGGER && (LOGGING_LEVEL == LOGGING_LEVEL_DEBUG)
+#define SMT_LOG_DEBUG(tag, format, ...) LOGGER.debug(tag, format, ##__VA_ARGS__)
+#else
+#define SMT_LOG_DEBUG(tag, format, ...)
+#endif
+
+#if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_INFO)
+#define SMT_LOG_INFO(tag, format, ...) LOGGER.info(tag, format, ##__VA_ARGS__)
+#else
+#define SMT_LOG_INFO(tag, format, ...)
+#endif
+
+#if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_WARN)
+#define SMT_LOG_WARNING(tag, format, ...) LOGGER.warning(tag, format, ##__VA_ARGS__)
+#else
+#define SMT_LOG_WARNING(tag, format, ...)
+#endif
+
+#if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_ERROR)
+#define SMT_LOG_ERROR(tag, format, ...) LOGGER.error(tag, format, ##__VA_ARGS__)
+#else
+#define SMT_LOG_ERROR(tag, format, ...)
+#endif
+
+static const char * LOGGER_TAG = "logger";
 
 class BetterLogger {
  public:
@@ -76,34 +101,49 @@ class BetterLogger {
   }
   #endif
 
-  void logRequest(const char* tag, const char * method, const char* uri, const char* body) {
-    info(tag, "[%s] %s - %s", method, uri, body == nullptr ? "" : body);
-  };
-
   // bad impl, but i have no other ideas
+  #if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_ERROR)
   template <typename... Args>
   void error(const char* tag, const char* format, Args... args) {
-#if LOGGING_LEVEL == LOGGING_LEVEL_ERROR || LOGGING_LEVEL == LOGGING_LEVEL_WARN || LOGGING_LEVEL == LOGGING_LEVEL_INFO || LOGGING_LEVEL == LOGGING_LEVEL_DEBUG
     log(LOGGING_LEVEL_ERROR, tag, format, args...);
-#endif
-  };
+  }
+  #else
+  template <typename... Args>
+  void error(const char* tag, const char* format, Args... args) {}
+  #endif
+
+  #if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_WARN)
   template <typename... Args>
   void warning(const char* tag, const char* format, Args... args) {
-#if LOGGING_LEVEL == LOGGING_LEVEL_WARN || LOGGING_LEVEL == LOGGING_LEVEL_INFO || LOGGING_LEVEL == LOGGING_LEVEL_DEBUG
     log(LOGGING_LEVEL_WARN, tag, format, args...);
-#endif
-  };
+  }
+  #else
+  template <typename... Args>
+  void warning(const char* tag, const char* format, Args... args) {}
+  #endif
+
+  #if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_INFO)
   template <typename... Args>
   void info(const char* tag, const char* format, Args... args) {
-#if LOGGING_LEVEL == LOGGING_LEVEL_INFO || LOGGING_LEVEL == LOGGING_LEVEL_DEBUG
     log(LOGGING_LEVEL_INFO, tag, format, args...);
-#endif
   };
+  #else
+  template <typename... Args>
+  void info(const char* tag, const char* format, Args... args) {}
+  #endif
+
+  #if ENABLE_LOGGER && (LOGGING_LEVEL == LOGGING_LEVEL_DEBUG)
   template <typename... Args>
   void debug(const char* tag, const char* format, Args... args) {
-#if LOGGING_LEVEL == LOGGING_LEVEL_DEBUG
     log(LOGGING_LEVEL_DEBUG, tag, format, args...);
-#endif
+  };
+  #else
+  template <typename... Args>
+  void debug(const char* tag, const char* format, Args... args) {}
+  #endif
+
+  void logRequest(const char* tag, const char * method, const char* uri, const char* body) {
+    info(tag, "[%s] %s - %s", method, uri, body == nullptr ? "" : body);
   };
 
  private:
@@ -124,14 +164,16 @@ class BetterLogger {
   size_t sendRemote(uint8_t level, const char* tag, const char* format, Args... args) {
     size_t size = 0;
     #if LOGGER_TYPE == TCP_LOGGER
-    size += _tcp.printf(TCP_LOGGER_MESSAGE_TEMPLATE, _name, level, tag);
+    // name_&_level_&_tag_&_message
+    size += _tcp.printf("%s&%u&%s&", _name, level, tag);
     size += _tcp.printf(format, args...);
     _tcp.println();
     return size;
     #endif
     #if LOGGER_TYPE == MULTICAST_LOGGER
     _udp.beginMulticastPacket();
-    size += _udp.printf(UDP_LOGGER_MESSAGE_TEMPLATE, _ip.c_str(), _name, level, tag);
+    // ip_name_&_level_&_tag_&_message
+    size += _udp.printf("%s&%s&%u&%s&", _ip.c_str(), _name, level, tag);
     size += _udp.printf(format, args...);
     _udp.println();
     _udp.endPacket();

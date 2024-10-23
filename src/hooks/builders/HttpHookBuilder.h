@@ -17,12 +17,12 @@ class HttpHookBuilder {
   template <class B, typename T>
   static Hook<T>* build(JsonObject doc, bool readOnly) {
     if (doc.size() == 0) {
-      LOGGER.error(HTTP_HOOK_BUILDER_TAG, "Json document is empty!");
+      SMT_LOG_ERROR(HTTP_HOOK_BUILDER_TAG, "Json document is empty!");
       return nullptr;
     }
     const char* url = doc["url"];
     if (url == nullptr || strlen(url) == 0) {
-      LOGGER.error(HTTP_HOOK_BUILDER_TAG, "Url can't be blank!");
+      SMT_LOG_ERROR(HTTP_HOOK_BUILDER_TAG, "Url can't be blank!");
       return nullptr;
     }
     String method = doc["method"];
@@ -34,7 +34,7 @@ class HttpHookBuilder {
     HttpHook<B, T>* hook = new HttpHook<B, T>(url, readOnly);
     hook->setPayload(payload);
     hook->setMethod(method.c_str());
-    LOGGER.debug(HTTP_HOOK_BUILDER_TAG,
+    SMT_LOG_DEBUG(HTTP_HOOK_BUILDER_TAG,
                  "Http hook created: url=%s, method=%s, payload=%s", url,
                  method.c_str(), payload == nullptr ? "-" : payload);
 

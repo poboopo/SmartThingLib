@@ -16,17 +16,17 @@ class ActionHookBuilder {
   template <class B, typename T>
   static Hook<T>* build(JsonObject doc, bool readOnly) {
     if (doc.size() == 0) {
-      LOGGER.error(ACTION_HOOK_BUILDER_TAG, "Json document is empty!");
+      SMT_LOG_ERROR(ACTION_HOOK_BUILDER_TAG, "Json document is empty!");
       return nullptr;
     }
     const char* action = doc["action"];
     if (action == nullptr || strlen(action) == 0) {
-      LOGGER.error(ACTION_HOOK_BUILDER_TAG, "Action can't be blank!");
+      SMT_LOG_ERROR(ACTION_HOOK_BUILDER_TAG, "Action can't be blank!");
       return nullptr;
     }
 
     ActionHook<B, T>* hook = new ActionHook<B, T>(action, readOnly);
-    LOGGER.debug(ACTION_HOOK_BUILDER_TAG,
+    SMT_LOG_DEBUG(ACTION_HOOK_BUILDER_TAG,
                  "Action hook created: action=%s", action);
 
     return hook;

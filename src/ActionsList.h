@@ -37,31 +37,31 @@ class ActionsList : public List<Action> {
  public:
   bool add(const char* actionName, const char* caption, ActionHandler handler) {
     if (findAction(actionName) != nullptr) {
-      LOGGER.warning(ACTIONS_LIST_TAG,
+      SMT_LOG_WARNING(ACTIONS_LIST_TAG,
                      "Handler for action %s already exists! Skipping...",
                      actionName);
       return false;
     }
     Action* action = new Action(actionName, caption, handler);
     if (append(action) > -1) {
-      LOGGER.debug(ACTIONS_LIST_TAG, "Added new action handler - %s:%s",
+      SMT_LOG_DEBUG(ACTIONS_LIST_TAG, "Added new action handler - %s:%s",
                    actionName, caption);
       return true;
     } else {
       if (action != nullptr) {
         delete action;
       }
-      LOGGER.error(ACTIONS_LIST_TAG, "Failed to add new action handler - %s:%s",
+      SMT_LOG_ERROR(ACTIONS_LIST_TAG, "Failed to add new action handler - %s:%s",
                    actionName, caption);
       return false;
     }
   };
 
   ActionResult callAction(const char* actionName) {
-    LOGGER.info(ACTIONS_LIST_TAG, "Trying to call action %s", actionName);
+    SMT_LOG_INFO(ACTIONS_LIST_TAG, "Trying to call action %s", actionName);
     const Action* action = findAction(actionName);
     if (action == nullptr) {
-      LOGGER.error(ACTIONS_LIST_TAG, "Can't find action with name %s",
+      SMT_LOG_ERROR(ACTIONS_LIST_TAG, "Can't find action with name %s",
                    actionName);
       return ActionResult(false, "Failed to find action");
     }

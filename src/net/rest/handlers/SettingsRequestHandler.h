@@ -33,15 +33,15 @@ class SettingsRequestHandler : public RequestHandler {
       }
       JsonDocument doc;
       deserializeJson(doc, _body);
-      LOGGER.info(SETTINGS_RQ_TAG, "Trying to import settings: %s", _body.c_str());
+      SMT_LOG_INFO(SETTINGS_RQ_TAG, "Trying to import settings: %s", _body.c_str());
       if (STSettings.importSettings(doc)) {
-        LOGGER.info(SETTINGS_RQ_TAG, "Successfully imported settings!");
+        SMT_LOG_INFO(SETTINGS_RQ_TAG, "Successfully imported settings!");
         return request->beginResponse(200);
-        LOGGER.warning(SETTINGS_RQ_TAG, "Restarting in 5 sec!");
+        SMT_LOG_WARNING(SETTINGS_RQ_TAG, "Restarting in 5 sec!");
         delay(5000);
         ESP.restart();
       } else {
-        LOGGER.error(SETTINGS_RQ_TAG, "Settings import failed");
+        SMT_LOG_ERROR(SETTINGS_RQ_TAG, "Settings import failed");
         return request->beginResponse(500, CONTENT_TYPE_JSON, buildErrorJson("Settings import failed! Check logs for details"));
       }
     }

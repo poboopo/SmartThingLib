@@ -21,20 +21,20 @@ class ConfigEntriesList : public List<ConfigEntry> {
  public:
   bool add(const char* name, const char* caption, const char* type) {
     if (findConfigEntry(name) != nullptr) {
-      LOGGER.warning(CONFIG_ENTRIES_LIST_TAG, "Config entry %s already exists!",
+      SMT_LOG_WARNING(CONFIG_ENTRIES_LIST_TAG, "Config entry %s already exists!",
                      name);
       return false;
     }
     ConfigEntry* entry = new ConfigEntry(name, caption, type);
     if (append(entry) > -1) {
-      LOGGER.debug(CONFIG_ENTRIES_LIST_TAG, "Added new config entry - %s:%s",
+      SMT_LOG_DEBUG(CONFIG_ENTRIES_LIST_TAG, "Added new config entry - %s:%s",
                    name, caption);
       return true;
     } else {
       if (entry != nullptr) {
         delete entry;
       }
-      LOGGER.error(CONFIG_ENTRIES_LIST_TAG,
+      SMT_LOG_ERROR(CONFIG_ENTRIES_LIST_TAG,
                    "Failed to add new config entry - %s:%s", name, caption);
       return false;
     }

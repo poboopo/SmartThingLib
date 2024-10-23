@@ -24,7 +24,7 @@ class SensorsList : public List<Sensor> {
   };
   bool addDigital(const char* name, int pin) {
     if (pin < 0) {
-      LOGGER.warning(SENSORS_LIST_TAG,
+      SMT_LOG_WARNING(SENSORS_LIST_TAG,
                      "Pin value can't be negative for sensor! Skipping...");
       return false;
     }
@@ -37,7 +37,7 @@ class SensorsList : public List<Sensor> {
   };
   bool addAnalog(const char* name, int pin) {
     if (pin < 0) {
-      LOGGER.warning(SENSORS_LIST_TAG,
+      SMT_LOG_WARNING(SENSORS_LIST_TAG,
                      "Pin value can't be negative for sensor! Skipping...");
       return false;
     }
@@ -74,7 +74,7 @@ class SensorsList : public List<Sensor> {
            Observable::ObservableObject<int16_t>::ValueProviderFunction
                valueProvider) {
     if (findSensor(name) != nullptr) {
-      LOGGER.warning(SENSORS_LIST_TAG,
+      SMT_LOG_WARNING(SENSORS_LIST_TAG,
                      "Sensor with name %s already exist! Skipping...", name);
       return false;
     }
@@ -83,13 +83,13 @@ class SensorsList : public List<Sensor> {
     sensor->valueProvider = valueProvider;
     sensor->type = type;
     if (append(sensor) > -1) {
-      LOGGER.debug(SENSORS_LIST_TAG, "Added new sensor %s", name);
+      SMT_LOG_DEBUG(SENSORS_LIST_TAG, "Added new sensor %s", name);
       return true;
     } else {
       if (sensor != nullptr) {
         delete sensor;
       }
-      LOGGER.error(SENSORS_LIST_TAG, "Failed to add new sensor %s", name);
+      SMT_LOG_ERROR(SENSORS_LIST_TAG, "Failed to add new sensor %s", name);
       return false;
     }
   };

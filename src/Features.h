@@ -27,7 +27,7 @@
 #endif
 
 #ifndef ENABLE_HOOKS
-#define ENABLE_HOOKS 0
+#define ENABLE_HOOKS 1
 #endif
 
 #ifndef ENABLE_LOGGER
@@ -39,5 +39,5 @@
 #endif
 
 #ifndef LOGGING_LEVEL
-#define LOGGING_LEVEL LOGGING_LEVEL_DEBUG
+#define LOGGING_LEVEL LOGGING_LEVEL_INFO
 #endif

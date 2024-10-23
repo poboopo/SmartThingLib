@@ -22,7 +22,7 @@ namespace Hook {
 
       void call(V &value) {
         // replace ${value} in _action?
-        LOGGER.debug(ACTION_HOOK_TAG, "Calling action  %s", _action.c_str());
+        SMT_LOG_DEBUG(ACTION_HOOK_TAG, "Calling action  %s", _action.c_str());
         SmartThing.callAction(_action.c_str());
       }
 
@@ -34,11 +34,11 @@ namespace Hook {
         if (obj.containsKey("action")) {
           String newAction = obj["action"].as<String>();
           if (newAction.isEmpty()) {
-            LOGGER.error(ACTION_HOOK_TAG, "Action is missing!");
+            SMT_LOG_ERROR(ACTION_HOOK_TAG, "Action is missing!");
             return;
           }
           _action = newAction;
-          LOGGER.debug(ACTION_HOOK_TAG, "New hook action: %s",
+          SMT_LOG_DEBUG(ACTION_HOOK_TAG, "New hook action: %s",
                       _action.c_str());
         }
       }

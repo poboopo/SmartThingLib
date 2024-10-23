@@ -33,10 +33,10 @@ SettingsManager::SettingsManager() {}
 SettingsManager::~SettingsManager() { _settings.clear(); }
 
 void SettingsManager::loadSettings() {
-  LOGGER.info(SETTINGS_MANAGER_TAG, "Loading data from eeprom...");
+  SMT_LOG_INFO(SETTINGS_MANAGER_TAG, "Loading data from eeprom...");
   String loaddedSettings = loadFromEeprom();
   if (loaddedSettings.length() == 0) {
-    LOGGER.warning(SETTINGS_MANAGER_TAG, "Settings empty! Adding default");
+    SMT_LOG_WARNING(SETTINGS_MANAGER_TAG, "Settings empty! Adding default");
   } else {
     deserializeJson(_settings, loaddedSettings);
   }
@@ -48,9 +48,9 @@ void SettingsManager::clear() {
     for (int i = 0; i < EEPROM_LOAD_SIZE; i++) {
       EEPROM.write(i, 0);
     }
-    LOGGER.warning(SETTINGS_MANAGER_TAG, "EEPROM clear");
+    SMT_LOG_WARNING(SETTINGS_MANAGER_TAG, "EEPROM clear");
   } else {
-    LOGGER.error(SETTINGS_MANAGER_TAG, "Failed to open EEPROM");
+    SMT_LOG_ERROR(SETTINGS_MANAGER_TAG, "Failed to open EEPROM");
   }
 }
 
@@ -71,20 +71,20 @@ String SettingsManager::loadFromEeprom() {
     }
 
     if (!completed) {
-      LOGGER.error(SETTINGS_MANAGER_TAG,
+      SMT_LOG_ERROR(SETTINGS_MANAGER_TAG,
                    "Settings string not completed. Missing \\n ?");
-      // LOGGER.error(SETTINGS_MANAGER_TAG, "%s", data.c_str());
+      // SMT_LOG_ERROR(SETTINGS_MANAGER_TAG, "%s", data.c_str());
       return "";
     }
 
     data += "}";
 
-    // LOGGER.debug(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]",
+    // SMT_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]",
     //              data.c_str(), data.length());
-    LOGGER.debug(SETTINGS_MANAGER_TAG, "Loaded from eeprom data length=%u", data.length());
+    SMT_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Loaded from eeprom data length=%u", data.length());
     return data;
   } else {
-    LOGGER.error(SETTINGS_MANAGER_TAG, "Failed to open EEPROM");
+    SMT_LOG_ERROR(SETTINGS_MANAGER_TAG, "Failed to open EEPROM");
     return "";
   }
 }
@@ -92,12 +92,12 @@ String SettingsManager::loadFromEeprom() {
 void SettingsManager::removeIfEmpty(const char* group) {
   if (_settings[group].isNull() || _settings[group].size() == 0) {
     _settings.remove(group);
-    LOGGER.debug(SETTINGS_MANAGER_TAG, "Removed group %s from settings - it's empty", group);
+    SMT_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Removed group %s from settings - it's empty", group);
   }
 }
 
 bool SettingsManager::save() {
-  LOGGER.info(SETTINGS_MANAGER_TAG, "Saving settings");
+  SMT_LOG_INFO(SETTINGS_MANAGER_TAG, "Saving settings");
   removeIfEmpty(GROUP_WIFI);
   removeIfEmpty(GROUP_CONFIG);
   removeIfEmpty(GROUP_HOOKS);
@@ -115,14 +115,14 @@ bool SettingsManager::save() {
   }
 
   if (data.length() > EEPROM_LOAD_SIZE) {
-    LOGGER.error(SETTINGS_MANAGER_TAG,
+    SMT_LOG_ERROR(SETTINGS_MANAGER_TAG,
                  "Save failed, data are too long! Expected less then %d, got %d",
                  EEPROM_LOAD_SIZE, data.length());
     return false;
   }
 
   if (eepromBegin(EEPROM_LOAD_SIZE)) {
-    LOGGER.debug(SETTINGS_MANAGER_TAG, "Writing data to EEPROM (length [%u])",
+    SMT_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Writing data to EEPROM (length [%u])",
                  data.length());
     #if LOGGER_TYPE == SERIAL_LOGGER
     Serial.print(data.c_str());
@@ -131,17 +131,17 @@ bool SettingsManager::save() {
       EEPROM.write(i, data.charAt(i));
     }
     EEPROM.commit();
-    LOGGER.info(SETTINGS_MANAGER_TAG, "Settings saved");
+    SMT_LOG_INFO(SETTINGS_MANAGER_TAG, "Settings saved");
     return true;
   } else {
-    LOGGER.error(SETTINGS_MANAGER_TAG, "Save failed, can't open EEPROM");
+    SMT_LOG_ERROR(SETTINGS_MANAGER_TAG, "Save failed, can't open EEPROM");
     return false;
   }
 }
 
 void SettingsManager::removeSetting(const char* name) {
   if (strcmp(name, SSID_SETTING) == 0  || strcmp(name, PASSWORD_SETTING) == 0  || strcmp(name, GROUP_WIFI) == 0 ) {
-    LOGGER.error(SETTINGS_MANAGER_TAG,
+    SMT_LOG_ERROR(SETTINGS_MANAGER_TAG,
                    "You can't remove Wifi credits with this function! Use "
                    "dropWifiCredits insted.");
     return;
@@ -161,7 +161,7 @@ JsonObject SettingsManager::getOrCreateObject(const char* name) {
   if (_settings.containsKey(name)) {
     return _settings[name];
   }
-  LOGGER.debug(SETTINGS_MANAGER_TAG, "Creating new nested object %s", name);
+  SMT_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Creating new nested object %s", name);
   return _settings[name].to<JsonObject>();
 }
 
@@ -172,9 +172,9 @@ JsonObject SettingsManager::getConfig() {
 void SettingsManager::dropConfig() {
   if (_settings.containsKey(GROUP_CONFIG)) {
     _settings.remove(GROUP_CONFIG);
-    LOGGER.warning(SETTINGS_MANAGER_TAG, "All config values were removed!");
+    SMT_LOG_WARNING(SETTINGS_MANAGER_TAG, "All config values were removed!");
   } else {
-    LOGGER.debug(SETTINGS_MANAGER_TAG, "Config settings not exists");
+    SMT_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Config settings not exists");
   }
 }
 
@@ -220,33 +220,33 @@ const JsonDocument SettingsManager::exportSettings() {
 
 bool SettingsManager::importSettings(JsonDocument doc) {
   if (doc.size() == 0) {
-    LOGGER.info(SETTINGS_MANAGER_TAG, "Empty settings json!");
+    SMT_LOG_INFO(SETTINGS_MANAGER_TAG, "Empty settings json!");
     return false;
   }
   bool res = true;
   String old;
   serializeJson(_settings, old);
-  LOGGER.debug(SETTINGS_MANAGER_TAG, "Old settings save length=%u", old.length());
+  SMT_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Old settings save length=%u", old.length());
 
   String name = doc[DEVICE_NAME];
   if (!name.isEmpty()) {
     if (name.length() > DEVICE_NAME_LENGTH_MAX) {
       res = false;
-      LOGGER.error(SETTINGS_MANAGER_TAG, "Device name is too long! Max length: %d", DEVICE_NAME_LENGTH_MAX);
+      SMT_LOG_ERROR(SETTINGS_MANAGER_TAG, "Device name is too long! Max length: %d", DEVICE_NAME_LENGTH_MAX);
     } else {
-      LOGGER.info(SETTINGS_MANAGER_TAG, "New name: %s", name.c_str());
+      SMT_LOG_INFO(SETTINGS_MANAGER_TAG, "New name: %s", name.c_str());
       _settings[DEVICE_NAME] = name;
     }
   }
   
   if (doc[GROUP_CONFIG].size() > 0 && !doc[GROUP_CONFIG].is<JsonObject>()) {
-    LOGGER.error(SETTINGS_MANAGER_TAG, "Expected %s to be JsonObject!", GROUP_CONFIG);
+    SMT_LOG_ERROR(SETTINGS_MANAGER_TAG, "Expected %s to be JsonObject!", GROUP_CONFIG);
     res = false;
   } else {
     _settings[GROUP_CONFIG] = doc[GROUP_CONFIG];
   }
   if (doc[GROUP_HOOKS].size() > 0 && !doc[GROUP_HOOKS].is<JsonArray>()) {
-    LOGGER.error(SETTINGS_MANAGER_TAG, "Expected %s to be JsonArray!", GROUP_HOOKS);
+    SMT_LOG_ERROR(SETTINGS_MANAGER_TAG, "Expected %s to be JsonArray!", GROUP_HOOKS);
     res = false;
   } else {
     _settings[GROUP_HOOKS] = doc[GROUP_HOOKS];
@@ -257,7 +257,7 @@ bool SettingsManager::importSettings(JsonDocument doc) {
   }
 
   if (!res) {
-    LOGGER.info(SETTINGS_MANAGER_TAG, "Import failed, rollback old settings");
+    SMT_LOG_INFO(SETTINGS_MANAGER_TAG, "Import failed, rollback old settings");
     deserializeJson(_settings, old);
     save();
   }

@@ -36,7 +36,7 @@ class NotificationHook : public T {
       if (WiFi.isConnected()) {
         createRequestTask();
       } else {
-        LOGGER.error(HTTP_HOOK_TAG, "WiFi not connected!");
+        SMT_LOG_ERROR(HTTP_HOOK_TAG, "WiFi not connected!");
       }
     }
 
@@ -100,7 +100,7 @@ class NotificationHook : public T {
     void sendRequest() {
       String gtwIp = STSettings.getConfig()[GATEWAY_CONFIG].as<String>();
       if (gtwIp.isEmpty()) {
-        LOGGER.debug(NOTIFICATION_HOOK_TAG, "Gateway ip is missing!");
+        SMT_LOG_DEBUG(NOTIFICATION_HOOK_TAG, "Gateway ip is missing!");
         return;
       }
 
@@ -120,7 +120,7 @@ class NotificationHook : public T {
       String payload;
       serializeJson(doc, payload);
       String url = "http://" + gtwIp + "/api/notification";
-      LOGGER.debug(NOTIFICATION_HOOK_TAG, "Sending notification to [%s]:%s", url.c_str(), payload.c_str());
+      SMT_LOG_DEBUG(NOTIFICATION_HOOK_TAG, "Sending notification to [%s]:%s", url.c_str(), payload.c_str());
 
       HTTPClient client;
       client.setTimeout(2000);
@@ -135,7 +135,7 @@ class NotificationHook : public T {
       int code = client.sendRequest("POST", payload.c_str());
       client.end();
 
-      LOGGER.debug(NOTIFICATION_HOOK_TAG, "Notification send request finished with code %d", code);
+      SMT_LOG_DEBUG(NOTIFICATION_HOOK_TAG, "Notification send request finished with code %d", code);
     }
 
 };

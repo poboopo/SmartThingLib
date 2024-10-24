@@ -60,7 +60,7 @@ class ActionRequestHandler : public RequestHandler {
     }
     
     #if ENABLE_ACTIONS_SCHEDULER
-    if (request->method() == HTTP_PUT && request->url().equals("/actions/delay")) {
+    if (request->method() == HTTP_PUT && request->url().equals("/actions/schedule")) {
       if (_body.isEmpty()) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Request body is missing"));
       }
@@ -72,7 +72,7 @@ class ActionRequestHandler : public RequestHandler {
       
       const char * name = doc[ACTIONS_JSON_NAME];
       unsigned long newDelay = doc[ACTIONS_JSON_DELAY];
-      if (ActionsManager.updateActionDelay(name, newDelay)) {
+      if (ActionsManager.updateActionSchedule(name, newDelay)) {
         return request->beginResponse(200);
       } else {
         return request->beginResponse(500, CONTENT_TYPE_JSON, buildErrorJson("Action delay update failed. Check logs for more information."));

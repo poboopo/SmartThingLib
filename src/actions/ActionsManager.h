@@ -57,7 +57,7 @@ class ActionsManagerClass : protected List<Action> {
   #if ENABLE_ACTIONS_SCHEDULER
   void loadFromSettings();
 
-  bool updateActionDelay(const char * name, unsigned long newDelay);
+  bool updateActionSchedule(const char * name, unsigned long newDelay);
 
   void scheduled();
   #endif

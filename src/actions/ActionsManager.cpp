@@ -58,7 +58,7 @@ void ActionsManagerClass::loadFromSettings() {
   });
 }
 
-bool ActionsManagerClass::updateActionDelay(const char * name, unsigned long newDelay) {
+bool ActionsManagerClass::updateActionSchedule(const char * name, unsigned long newDelay) {
   SMT_LOG_DEBUG(ACTIONS_TAG, "Trying to update action %s delay", name);
   Action* action = findAction(name);
   if (action == nullptr) {

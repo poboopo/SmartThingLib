@@ -5,6 +5,12 @@
     "title": "SmartThing device API",
     "description": "Описание API устройства семейства SmartThing"
   },
+  "servers": [
+    {
+      "description": "Test device",
+      "url": "http://192.168.1.13"
+    }
+  ],
   "paths": {
     "/info/system": {
       "get": {
@@ -52,34 +58,50 @@
         }
       }
     },
-    "/info/actions": {
+    "/wifi": {
       "get": {
         "tags": [
-          "Device information"
+          "WiFi"
         ],
-        "description": "Get device actions",
+        "description": "Get wifi configuration",
         "responses": {
           "200": {
-            "description": "Device actions",
+            "description": "Wifi SSID and password",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "example": {
-                    "action_key1": "action caption 1",
-                    "action_key2": "action caption 2"
-                  }
+                  "$ref": "#components/schemas/WifiInfo"
                 }
               }
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "WiFi"
+        ],
+        "description": "Update wifi configuration",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#components/schemas/WifiInfo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Wifi SSID and password was updated"
+          }
+        }
       }
     },
-    "/info/config": {
+    "/config/info": {
       "get": {
         "tags": [
-          "Device information"
+          "Configuration"
         ],
         "description": "Get device configuration fields",
         "responses": {
@@ -102,47 +124,7 @@
         }
       }
     },
-    "/wifi": {
-      "get": {
-        "tags": [
-          "Configuration"
-        ],
-        "description": "Get wifi configuration",
-        "responses": {
-          "200": {
-            "description": "Wifi SSID and password",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#components/schemas/WifiInfo"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Configuration"
-        ],
-        "description": "Update wifi configuration",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#components/schemas/WifiInfo"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Wifi SSID and password was updated"
-          }
-        }
-      }
-    },
-    "/config": {
+    "/config/values": {
       "get": {
         "tags": [
           "Configuration"
@@ -180,7 +162,9 @@
             "description": "New device configuration entries added"
           }
         }
-      },
+      }
+    },
+    "/config/delete/all": {
       "delete": {
         "tags": [
           "Configuration"
@@ -207,12 +191,32 @@
         }
       }
     },
-    "/action": {
-      "put": {
+    "/actions/info": {
+      "get": {
         "tags": [
           "Actions"
         ],
-        "description": "Perform device action",
+        "description": "Get device actions",
+        "responses": {
+          "200": {
+            "description": "Device actions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/Actions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actions/call": {
+      "get": {
+        "tags": [
+          "Actions"
+        ],
+        "description": "Call device action",
         "parameters": [
           {
             "name": "action",
@@ -241,6 +245,36 @@
         }
       }
     },
+    "/actions/schedule": {
+      "put": {
+        "tags": ["Actions"],
+        "description": "Update action schedule delay",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#components/schemas/ActionSchedule"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Schedule delay updated"
+          },
+          "500": {
+            "description": "Failed to update schedule delay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#content/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sensors": {
       "get": {
         "tags": [
@@ -254,6 +288,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#components/schemas/SensorsValues"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sensors/types": {
+      "get": {
+        "tags": [
+          "Sensors and states"
+        ],
+        "description": "Get device sensors types",
+        "responses": {
+          "200": {
+            "description": "Sensors types",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/SensorsTypes"
                 }
               }
             }
@@ -576,6 +630,33 @@
         }
       }
     },
+    "/features": {
+      "get": {
+        "tags": ["Utils"],
+        "description": "Get devices features",
+        "responses": {
+          "200": {
+            "description": "Device features",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "web": true,
+                    "actions": true,
+                    "actionsScheduler": true,
+                    "sensors": true,
+                    "states": true,
+                    "hooks": true,
+                    "logger": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/metrics": {
       "get": {
         "tags": [
@@ -614,7 +695,11 @@
         "type": "object",
         "properties": {
           "version": {
-            "description": "Firmware version",
+            "description": "Device firmware version",
+            "type": "string"
+          },
+          "smtVersion": {
+            "description": "SmartThing library version",
             "type": "string"
           },
           "name": {
@@ -625,13 +710,14 @@
             "description": "Device type",
             "type": "string"
           },
-          "chip_model": {
-            "description": "Device chip model",
+          "ip": {
+            "description": "Device ip in local network",
             "type": "string"
           },
-          "chip_revision": {
-            "description": "Device chip revision",
-            "type": "string"
+          "board": {
+            "description": "Device board type",
+            "type": "string",
+            "enum": ["esp32", "esp8266"]
           }
         }
       },
@@ -663,39 +749,85 @@
           "entry3": false
         }
       },
+      "Actions": {
+        "description": "Device actions info",
+        "type": "array",
+        "items": {
+          "description": "Action",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "Action system name",
+              "type": "string"
+            },
+            "caption": {
+              "description": "Action description for user",
+              "type": "string"
+            },
+            "callDelay": {
+              "description": "Scheduled action call delay in ms. If 0 - action not called on schedule",
+              "type": "number"
+            },
+            "lastCall": {
+              "description": "Ms after last schdeuled action call",
+              "type": "number"
+            }
+          }
+        },
+        "example": [
+          {
+            "name": "led_on",
+            "caption": "Turn led on",
+            "callDelay": 15000,
+            "lastCall": 3090
+          },
+          {
+            "name": "led_off",
+            "caption": "Turn led off",
+            "callDelay": 0,
+            "lastCall": 0
+          }
+        ]
+      },
+      "ActionSchedule": {
+        "description": "Action schedule update request",
+        "type": "object",
+        "properties": {
+          "action": {
+            "description": "Action to update",
+            "type": "string"
+          },
+          "callDelay": {
+            "description": "New schdeule delay. 0 to disable schdeule for this action",
+            "type": "number"
+          }
+        }
+      },
       "SensorsValues": {
         "description": "Sensors values response",
         "type": "object",
         "properties": {
           "sensor_name": {
-            "description": "Sensor info",
-            "type": "object",
-            "properties": {
-              "value": {
-                "description": "Sensor value",
-                "type": "integer"
-              },
-              "type": {
-                "description": "Sensor type",
-                "type": "string",
-                "example": "digital/analog/custom"
-              }
-            }
+            "description": "Sensor value",
+            "type": "integer"
           }
         },
         "example": {
-          "button": {
-            "value": 1,
-            "type": "digital"
-          },
-          "position": {
-            "value": 0,
-            "type": "custom"
-          },
-          "light": {
-            "value": 0,
-            "type": "analog"
+          "button": 1,
+          "position": 13,
+          "light": 510
+        }
+      },
+      "SensorsTypes": {
+        "description": "Sensors types info",
+        "properties": {
+          "sensor_name": {
+            "description": "Sensor type",
+            "type": "string"
           }
+        },
+        "example": {
+          "button": "digital"
         }
       },
       "DeviceStates": {

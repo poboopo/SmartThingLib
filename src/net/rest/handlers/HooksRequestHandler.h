@@ -95,63 +95,67 @@ class HooksRequestHandler : public RequestHandler {
           return request->beginResponse(500);
         }
       }
-      JsonDocument doc = HooksManager.allHooksToJson(false, false);
-      String response;
-      serializeJson(doc, response);
-      return request->beginResponse(200, CONTENT_TYPE_JSON, response);
     }
-    if (request->method() == HTTP_POST) {
-      if (_body.isEmpty()) {
-        return request->beginResponse(400, CONTENT_TYPE_JSON, "Body is missing!");
+    if (request->url().equals(HOOKS_RQ_PATH)) {
+      if (request->method() == HTTP_GET) {
+        JsonDocument doc = HooksManager.allHooksToJson(false, false);
+        String response;
+        serializeJson(doc, response);
+        return request->beginResponse(200, CONTENT_TYPE_JSON, response);
       }
-      ST_LOG_INFO(HOOKS_RQ_TAG, "Creating new hook");
-      int id = HooksManager.createHookFromJson(_body.c_str());
-      if (id >= 0) {
-        HooksManager.saveHooksToSettings();
-        String response = "{\"id\":" + String(id) + "}";
-        return request->beginResponse(201, CONTENT_TYPE_JSON, response);
-      } else {
-        return request->beginResponse(500, CONTENT_TYPE_JSON,
-                    buildErrorJson("Failed to create hook. Check logs for "
-                                   "additional information."));
+      if (request->method() == HTTP_POST) {
+        if (_body.isEmpty()) {
+          return request->beginResponse(400, CONTENT_TYPE_JSON, "Body is missing!");
+        }
+        ST_LOG_INFO(HOOKS_RQ_TAG, "Creating new hook");
+        int id = HooksManager.createHookFromJson(_body.c_str());
+        if (id >= 0) {
+          HooksManager.saveHooksToSettings();
+          String response = "{\"id\":" + String(id) + "}";
+          return request->beginResponse(201, CONTENT_TYPE_JSON, response);
+        } else {
+          return request->beginResponse(500, CONTENT_TYPE_JSON,
+                      buildErrorJson("Failed to create hook. Check logs for "
+                                    "additional information."));
+        }
       }
-    }
-    if (request->method() == HTTP_PUT) {
-      if (_body.isEmpty()) {
-        return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Body is missing!"));
-      }
+      if (request->method() == HTTP_PUT) {
+        if (_body.isEmpty()) {
+          return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Body is missing!"));
+        }
 
-      ST_LOG_INFO(HOOKS_RQ_TAG, "Updating hook");
-      JsonDocument doc;
-      deserializeJson(doc, _body);
-      if (HooksManager.updateHook(doc)) {
-        HooksManager.saveHooksToSettings();
-        return request->beginResponse(200);
-      } else {
-        return request->beginResponse(500, CONTENT_TYPE_JSON,
-                    buildErrorJson("Failed to update hook. Check logs for "
-                                   "additional information."));
+        ST_LOG_INFO(HOOKS_RQ_TAG, "Updating hook");
+        JsonDocument doc;
+        deserializeJson(doc, _body);
+        if (HooksManager.updateHook(doc)) {
+          HooksManager.saveHooksToSettings();
+          return request->beginResponse(200);
+        } else {
+          return request->beginResponse(500, CONTENT_TYPE_JSON,
+                      buildErrorJson("Failed to update hook. Check logs for "
+                                    "additional information."));
+        }
       }
-    }
-    if (request->method() == HTTP_DELETE) {
-      String type = request->arg(HOOK_OBSERVABLE_TYPE);
-      String name = request->arg(HOOK_NAME_ARG);
-      String id = request->arg(HOOK_ID_ARG);
+      if (request->method() == HTTP_DELETE) {
+        String type = request->arg(HOOK_OBSERVABLE_TYPE);
+        String name = request->arg(HOOK_NAME_ARG);
+        String id = request->arg(HOOK_ID_ARG);
 
-      if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
-        return request->beginResponse(
-            400, CONTENT_TYPE_JSON,
-            buildErrorJson("Observable type, name or id args are missing!"));
-      }
+        if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
+          return request->beginResponse(
+              400, CONTENT_TYPE_JSON,
+              buildErrorJson("Observable type, name or id args are missing!"));
+        }
 
-      if (HooksManager.deleteHook(type.c_str(), name.c_str(),
-                                          id.toInt())) {
-        HooksManager.saveHooksToSettings();
-        return request->beginResponse(200);
-      } else {
-        return request->beginResponse(500, CONTENT_TYPE_JSON,
-                    buildErrorJson("Failed to delete hook. Check logs for "
-                                   "additional information."));
+        if (HooksManager.deleteHook(type.c_str(), name.c_str(),
+                                            id.toInt())) {
+          HooksManager.saveHooksToSettings();
+          return request->beginResponse(200);
+        } else {
+          return request->beginResponse(500, CONTENT_TYPE_JSON,
+                      buildErrorJson("Failed to delete hook. Check logs for "
+                                    "additional information."));
+        }
       }
     }
     

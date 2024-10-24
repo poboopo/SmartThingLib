@@ -24,7 +24,7 @@ using Observable::ObservableObject;
 void HooksManagerClass::loadFromSettings() {
   JsonDocument hooksInfo = STSettings.getHooks();
   if (hooksInfo.size() == 0) {
-    SMT_LOG_DEBUG(HOOKS_MANAGER_TAG, "There is no hooks in settings");
+    ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "There is no hooks in settings");
     return;
   }
 
@@ -39,18 +39,18 @@ void HooksManagerClass::loadFromSettings() {
   }
 
   if (needGhostDelete) {
-    SMT_LOG_WARNING(HOOKS_MANAGER_TAG, "Have some ghost hooks to delete, trying to save correct hooks list");
+    ST_LOG_WARNING(HOOKS_MANAGER_TAG, "Have some ghost hooks to delete, trying to save correct hooks list");
     saveHooksToSettings();
-    SMT_LOG_INFO(HOOKS_MANAGER_TAG, "Ghost hooks removed");
+    ST_LOG_INFO(HOOKS_MANAGER_TAG, "Ghost hooks removed");
   }
 }
 
 int HooksManagerClass::createHookFromJson(const char *json) {
   if (json == nullptr) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Json is null!");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Json is null!");
     return -1;
   }
-  SMT_LOG_DEBUG(HOOKS_MANAGER_TAG, "Creating hook from json: %s", json);
+  ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "Creating hook from json: %s", json);
 
   JsonDocument doc;
   deserializeJson(doc, json);
@@ -61,24 +61,24 @@ int HooksManagerClass::createHookFromJson(const char *json) {
 int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
                                                   JsonObject hook) {
   if (observableInfo.size() == 0) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG,
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG,
                  "ObservableInfo object can't be empty!");
     return -1;
   }
   if (hook.size() == 0) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Hook object can't be empty!");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Hook object can't be empty!");
     return -1;
   }
 
   const char *type = observableInfo["type"];
   const char *name = observableInfo["name"];
   if (type == nullptr || name == nullptr) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG,
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG,
                  "Parameters observable type or name are missing!");
     return -1;
   }
 
-  SMT_LOG_DEBUG(HOOKS_MANAGER_TAG, "Trying to build hook for [%s] %s", type, name);
+  ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "Trying to build hook for [%s] %s", type, name);
 
   #if ENABLE_STATES
   if (strcmp(type, STATE_TYPE) == 0) {
@@ -93,7 +93,7 @@ int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
   }
   #endif
 
-  SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Unkown observable object type: %s",
+  ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Unkown observable object type: %s",
                type);
   return -1;
 }
@@ -102,27 +102,27 @@ template <class T>
 int HooksManagerClass::addHook(const ObservableObject<T> *obj,
                                        Hook<T> *hook) {
   if (obj == nullptr) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG,
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG,
                  "Observable object is missing, cancelling hook creation");
     return -1;
   }
   if (hook == nullptr) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Hook is missing, skipping...");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Hook is missing, skipping...");
     return -1;
   }
 
   Watcher<T> *watcher = getWatcherOrCreate<T>(obj);
   if (watcher == nullptr) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Failed to get watcher!");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Failed to get watcher!");
     return -1;
   }
 
   if (!watcher->addHook(hook)) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Failed to add hook in watcher");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Failed to add hook in watcher");
     return -1;
   }
   _hooksCount++;
-  SMT_LOG_INFO(HOOKS_MANAGER_TAG, "Added new hook(id=%d) for %s [%s]",
+  ST_LOG_INFO(HOOKS_MANAGER_TAG, "Added new hook(id=%d) for %s [%s]",
               hook->getId(), obj->type, obj->name);
   return hook->getId();
 }
@@ -131,32 +131,32 @@ template <typename T>
 Watcher<T> *HooksManagerClass::getWatcherOrCreate(
     const ObservableObject<T> *obj) {
   if (obj == nullptr || obj->type == nullptr) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Observable object is missing");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Observable object is missing");
     return nullptr;
   }
 
   List<Watcher<T>> *watchersList = getWatchersList<T>();
   if (watchersList == nullptr) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Failed to define watchers list");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Failed to define watchers list");
     return nullptr;
   }
 
   Watcher<T> *watcher = getWatcher<T>(watchersList, obj);
   if (watcher == nullptr) {
-    SMT_LOG_DEBUG(HOOKS_MANAGER_TAG, "Creating new watcher for %s [%s]",
+    ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "Creating new watcher for %s [%s]",
                  obj->type, obj->name);
     watcher = createWatcher<T>(obj);
     if (watchersList->append(watcher) < 0) {
-      SMT_LOG_ERROR(HOOKS_MANAGER_TAG,
+      ST_LOG_ERROR(HOOKS_MANAGER_TAG,
                    "Failed to append new watcher in list for %s [%s]",
                    obj->type, obj->name);
       delete watcher;
       return nullptr;
     }
-    SMT_LOG_INFO(HOOKS_MANAGER_TAG, "Added new watcher for %s [%s]",
+    ST_LOG_INFO(HOOKS_MANAGER_TAG, "Added new watcher for %s [%s]",
                 obj->type, obj->name);
   } else {
-    SMT_LOG_DEBUG(HOOKS_MANAGER_TAG, "Watcher for %s [%s] already exists!",
+    ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "Watcher for %s [%s] already exists!",
                  obj->type, obj->name);
   }
   return watcher;
@@ -198,7 +198,7 @@ int HooksManagerClass::addHook(const Observable::Sensor::Sensor * sensor, Hook<i
 bool HooksManagerClass::deleteHook(const char *type, const char *name,
                                            int id) {
   if (type == nullptr || strlen(type) == 0) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Type of observable is missing!");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Type of observable is missing!");
     return -1;
   }
 
@@ -213,7 +213,7 @@ bool HooksManagerClass::deleteHook(const char *type, const char *name,
   }
   #endif
 
-  SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
+  ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
   return -1;
 }
 
@@ -222,22 +222,22 @@ bool HooksManagerClass::updateHook(JsonDocument doc) {
   JsonObject hookObject = doc["hook"];
 
   if (observable.size() == 0) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Observable object is missing!");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Observable object is missing!");
     return false;
   }
   if (hookObject.size() == 0) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Hook object is missing!");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Hook object is missing!");
     return false;
   }
   if (!hookObject.containsKey("id")) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Hook id property is missing!");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Hook id property is missing!");
     return false;
   }
 
   const char *name = observable["name"];
   const char *type = observable["type"];
   if (name == nullptr || type == nullptr) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Observable name or type is missing!");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Observable name or type is missing!");
     return false;
   }
 
@@ -251,7 +251,7 @@ bool HooksManagerClass::updateHook(JsonDocument doc) {
     return updateHook<String>(&_statesWatchers, name, hookObject);
   }
   #endif
-  SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Observable type [%s] not supported!",
+  ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Observable type [%s] not supported!",
                type);
   return false;
 }
@@ -261,7 +261,7 @@ bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
                                            const char *name,
                                            JsonObject hookObject) {
   if (!hookObject.containsKey("id")) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG,
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG,
                  "Id value in hook object is missing!");
     return false;
   }
@@ -272,7 +272,7 @@ bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
     return false;
   }
   if (hook->isReadonly()) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG,
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG,
                  "Hook %d for observable [%s] is readonly!", id, name);
     return false;
   }
@@ -281,24 +281,24 @@ bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
     String trigger = hookObject["trigger"].as<String>();
     if (trigger.isEmpty() || trigger.equals("null")) {
       hook->disableTrigger();
-      SMT_LOG_DEBUG(HOOKS_MANAGER_TAG, "Trigger disabled");
+      ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "Trigger disabled");
     } else {
       hook->enableTrigger();
       hook->setTriggerValue(hookObject["trigger"]);
-      SMT_LOG_DEBUG(HOOKS_MANAGER_TAG, "New triggeValuer=%s", trigger.c_str());
+      ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "New triggeValuer=%s", trigger.c_str());
     }
   }
 
   if (hookObject.containsKey("compareType")) {
     String compareType = hookObject["compareType"].as<String>();
     hook->setCompareType(compareType);
-    SMT_LOG_DEBUG(HOOKS_MANAGER_TAG, "New compareType=%s", compareType.c_str());
+    ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "New compareType=%s", compareType.c_str());
   }
 
   hook->updateCustom(hookObject);
   updateTypeSpecificHookValues(hook, hookObject);
 
-  SMT_LOG_INFO(HOOKS_MANAGER_TAG,
+  ST_LOG_INFO(HOOKS_MANAGER_TAG,
               "Hook id=%d for observable [%s] was updated!", id, name);
   return true;
 }
@@ -309,7 +309,7 @@ void HooksManagerClass::updateTypeSpecificHookValues(Hook<int16_t> * hook, JsonO
   if (hookObject.containsKey("threshold")) {
     int16_t threshold = hookObject["threshold"];
     ((SensorHook *) hook)->setThreshold(threshold);
-    SMT_LOG_DEBUG(HOOKS_MANAGER_TAG, "New threshold=%d", threshold);
+    ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "New threshold=%d", threshold);
   }
 }
 #endif
@@ -323,13 +323,13 @@ Hook<T> *HooksManagerClass::getHookFromWatcherList(
     List<Watcher<T>> *list, const char *name, int id) {
   Watcher<T> *watcher = getWatcherByObservableName(list, name);
   if (watcher == nullptr) {
-    SMT_LOG_WARNING(HOOKS_MANAGER_TAG,
+    ST_LOG_WARNING(HOOKS_MANAGER_TAG,
                    "Can't find watcher for observable %s", name);
     return nullptr;
   }
   Hook<T> *hook = watcher->getHookById(id);
   if (hook == nullptr) {
-    SMT_LOG_WARNING(HOOKS_MANAGER_TAG,
+    ST_LOG_WARNING(HOOKS_MANAGER_TAG,
                    "Can't find hook id=%d for observable [%s]", id, name);
     return nullptr;
   }
@@ -340,29 +340,29 @@ template <typename T>
 bool HooksManagerClass::deleteHookFromList(List<Watcher<T>> *list,
                                                    const char *name, int id) {
   if (name == nullptr || strlen(name) == 0) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Name of observable is missing!");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Name of observable is missing!");
     return false;
   }
-  SMT_LOG_WARNING(HOOKS_MANAGER_TAG,
+  ST_LOG_WARNING(HOOKS_MANAGER_TAG,
                "Trying to delete observable [%s]'s hook id=%d", name, id);
   Watcher<T> *watcher = getWatcherByObservableName(list, name);
   if (watcher == nullptr || !watcher->removeHook(id)) {
     return false;
   }
   _hooksCount--;
-  SMT_LOG_WARNING(HOOKS_MANAGER_TAG,
+  ST_LOG_WARNING(HOOKS_MANAGER_TAG,
                  "Hook № %d of observable [%s] was deleted", id, name);
   if (watcher->haveHooks()) {
     return true;
   }
-  SMT_LOG_DEBUG(HOOKS_MANAGER_TAG,
+  ST_LOG_DEBUG(HOOKS_MANAGER_TAG,
                "No hooks left for observable [%s], removing watcher!",
                name);
   if (!list->remove(watcher)) {
     return false;
   }
   delete watcher;
-  SMT_LOG_WARNING(HOOKS_MANAGER_TAG, "Watcher for observable [%s] removed!",
+  ST_LOG_WARNING(HOOKS_MANAGER_TAG, "Watcher for observable [%s] removed!",
                  name);
   return true;
 }
@@ -410,11 +410,11 @@ void HooksManagerClass::checkWatchers(List<Watcher<T>> *list) {
 
 boolean HooksManagerClass::callHook(const char * type, const char * name, int id, String value) {
   if (strlen(type) == 0 || strlen(name) == 0) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Empty type or name!");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Empty type or name!");
     return false;
   }
   boolean emptyValue = value.isEmpty();
-  SMT_LOG_INFO(
+  ST_LOG_INFO(
     HOOKS_MANAGER_TAG,
     "Trying to call hook type=%s, name=%s, id=%d, value=%s",
     type,
@@ -432,7 +432,7 @@ boolean HooksManagerClass::callHook(const char * type, const char * name, int id
     return callWatcherHook<String>(&_statesWatchers, name, id, value, emptyValue);
   }
   #endif
-  SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Type %s not supported!", type);
+  ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Type %s not supported!", type);
   return false;
 }
 
@@ -440,38 +440,38 @@ template <typename T>
 boolean HooksManagerClass::callWatcherHook(List<Watcher<T>>* list, const char * name, int id, T value, boolean emptyValue) {
   Watcher<T> * watcher = getWatcherByObservableName(list, name);
   if (watcher == nullptr) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Can't find watcher for observable with name=%s", name);
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Can't find watcher for observable with name=%s", name);
     return false;
   }
   Hook<T> * hook = watcher->getHookById(id);
   if (hook == nullptr) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Can't find hook for observable %s by id=%d", name, id);
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Can't find hook for observable %s by id=%d", name, id);
     return false;
   }
   const Observable::ObservableObject<T> * obs = watcher->getObservable();
   if (obs == nullptr) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "OBSERVABLE NULLPTR! HOW???");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "OBSERVABLE NULLPTR! HOW???");
     return false;
   }
   if (emptyValue) {
-    SMT_LOG_INFO(HOOKS_MANAGER_TAG, "Extracting value and calling hook");
+    ST_LOG_INFO(HOOKS_MANAGER_TAG, "Extracting value and calling hook");
     T v = obs->valueProvider();
     hook->call(v);
   } else {
-    SMT_LOG_INFO(HOOKS_MANAGER_TAG, "Calling hook with provided value");
+    ST_LOG_INFO(HOOKS_MANAGER_TAG, "Calling hook with provided value");
     hook->call(value);
   }
   return true;
 }
 
 void HooksManagerClass::saveHooksToSettings() {
-  SMT_LOG_DEBUG(HOOKS_MANAGER_TAG, "Saving hooks");
+  ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "Saving hooks");
   STSettings.setHooks(allHooksToJson(true, true));
   if (STSettings.save()) {
-    SMT_LOG_DEBUG(HOOKS_MANAGER_TAG, "Hooks were saved");
+    ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "Hooks were saved");
   } else {
     // todo reboot?
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Hooks save failed");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Hooks save failed");
   }
 }
 
@@ -479,7 +479,7 @@ JsonDocument HooksManagerClass::allHooksToJson(bool ignoreReadOnly, bool shortJs
   JsonDocument doc;
   doc.to<JsonArray>();
   if (_hooksCount == 0) {
-    SMT_LOG_DEBUG(HOOKS_MANAGER_TAG, "No hooks, creating empty doc");
+    ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "No hooks, creating empty doc");
     return doc;
   }
 
@@ -508,7 +508,7 @@ JsonDocument HooksManagerClass::getWatchersInfo() {
   JsonDocument doc;
   #if ENABLE_SENSORS 
   if (_sensorsWatchers.size() > 0) {
-    SMT_LOG_DEBUG(HOOKS_MANAGER_TAG,
+    ST_LOG_DEBUG(HOOKS_MANAGER_TAG,
                  "Collecting info from sensors watchers");
     JsonArray array = doc[SENSOR_WATCHER_TYPE].to<JsonArray>();
     collectInfo<int16_t>(&_sensorsWatchers, &array);
@@ -516,7 +516,7 @@ JsonDocument HooksManagerClass::getWatchersInfo() {
   #endif
   #if ENABLE_STATES
   if (_statesWatchers.size() > 0) {
-    SMT_LOG_DEBUG(HOOKS_MANAGER_TAG,
+    ST_LOG_DEBUG(HOOKS_MANAGER_TAG,
                  "Collecting info from device state watchers");
     JsonArray array = doc[STATE_WATCHER_TYPE].to<JsonArray>();
     collectInfo<String>(&_statesWatchers, &array);
@@ -536,7 +536,7 @@ JsonDocument HooksManagerClass::getObservableHooksJson(const char *type, const c
     return getObservableHooksJsonFromList<String>(&_statesWatchers, name);
   }
   #endif
-  SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
+  ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
   JsonDocument doc;
   return doc;
 }
@@ -544,13 +544,13 @@ JsonDocument HooksManagerClass::getObservableHooksJson(const char *type, const c
 template <typename T>
 JsonDocument HooksManagerClass::getObservableHooksJsonFromList(List<Watcher<T>> *list, const char *name) {
   if (name == nullptr || strlen(name) == 0) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Name of observable is missing!");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Name of observable is missing!");
   } else {
     Watcher<T> *watcher = getWatcherByObservableName(list, name);
     if (watcher != nullptr) {
       return watcher->getObservableHooksJson();
     } else {
-      SMT_LOG_WARNING(HOOKS_MANAGER_TAG,
+      ST_LOG_WARNING(HOOKS_MANAGER_TAG,
                      "Can't find watcher for observable [%s]", name);
     }
   }
@@ -571,7 +571,7 @@ JsonDocument HooksManagerClass::getHookJsonById(const char *type,
     return getHookJsonFromList<String>(&_statesWatchers, name, id);
   }
   #endif
-  SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
+  ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
   JsonDocument doc;
   return doc;
 }
@@ -580,7 +580,7 @@ template <typename T>
 JsonDocument HooksManagerClass::getHookJsonFromList(
     List<Watcher<T>> *list, const char *name, int id) {
   if (name == nullptr || strlen(name) == 0) {
-    SMT_LOG_ERROR(HOOKS_MANAGER_TAG, "Name of observable is missing!");
+    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Name of observable is missing!");
   } else {
     Watcher<T> *watcher = getWatcherByObservableName(list, name);
     if (watcher != nullptr) {
@@ -588,12 +588,12 @@ JsonDocument HooksManagerClass::getHookJsonFromList(
       if (hook != nullptr) {
         return hook->toJson(false);
       } else {
-        SMT_LOG_WARNING(HOOKS_MANAGER_TAG,
+        ST_LOG_WARNING(HOOKS_MANAGER_TAG,
                        "Can't find hook with id [%d] in watcher for [%s]",
                        id, name);
       }
     } else {
-      SMT_LOG_WARNING(HOOKS_MANAGER_TAG,
+      ST_LOG_WARNING(HOOKS_MANAGER_TAG,
                      "Can't find watcher for observable [%s]", name);
     }
   }

@@ -26,7 +26,7 @@ class RequestHandler : public AsyncWebHandler {
       LOGGER.logRequest(REQUEST_HANDLER_TAG, request->methodToString(), request->url().c_str(), _body.c_str());
       AsyncWebServerResponse * asyncResponse = processRequest(request);
       if (asyncResponse == nullptr) {
-        SMT_LOG_ERROR(REQUEST_HANDLER_TAG, "Response = nullptr! Sending 404 response");
+        ST_LOG_ERROR(REQUEST_HANDLER_TAG, "Response = nullptr! Sending 404 response");
         asyncResponse = request->beginResponse(404);
       } 
 

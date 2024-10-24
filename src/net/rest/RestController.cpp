@@ -55,7 +55,7 @@ void RestControllerClass::begin() {
   setupHandler();
   _server.begin();
   _setupFinished = true;
-  SMT_LOG_INFO(WEB_SERVER_TAG, "Web service started");
+  ST_LOG_INFO(WEB_SERVER_TAG, "Web service started");
 }
 
 void RestControllerClass::reload() {
@@ -165,7 +165,7 @@ void RestControllerClass::setupHandler() {
     LOGGER.logRequest(WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
 
     request->send(200);
-    SMT_LOG_INFO(WEB_SERVER_TAG, "---------RESTART---------");
+    ST_LOG_INFO(WEB_SERVER_TAG, "---------RESTART---------");
     _restartHandler();
 
     delay(2000);

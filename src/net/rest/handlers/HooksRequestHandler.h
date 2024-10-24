@@ -55,7 +55,7 @@ class HooksRequestHandler : public RequestHandler {
               400, CONTENT_TYPE_JSON,
               buildErrorJson("Observable type or name args are missing!"));
         }
-        SMT_LOG_INFO(HOOKS_RQ_TAG, "Searching hooks for [%s] %s", type.c_str(), name.c_str());
+        ST_LOG_INFO(HOOKS_RQ_TAG, "Searching hooks for [%s] %s", type.c_str(), name.c_str());
         JsonDocument doc = HooksManager.getObservableHooksJson(
             type.c_str(), name.c_str());
         String response;
@@ -71,7 +71,7 @@ class HooksRequestHandler : public RequestHandler {
           return request->beginResponse(400, CONTENT_TYPE_JSON,
                       buildErrorJson("Type, name or id args are missing!"));
         }
-        SMT_LOG_INFO(HOOKS_RQ_TAG, "Collecting hook info for [%s] %s, id = %s", type.c_str(), name.c_str(), id.c_str());
+        ST_LOG_INFO(HOOKS_RQ_TAG, "Collecting hook info for [%s] %s, id = %s", type.c_str(), name.c_str(), id.c_str());
         JsonDocument doc = HooksManager.getHookJsonById(
             type.c_str(), name.c_str(), id.toInt());
         String response;
@@ -88,7 +88,7 @@ class HooksRequestHandler : public RequestHandler {
           return request->beginResponse(400, CONTENT_TYPE_JSON,
                       buildErrorJson("Type, name or id args are missing!"));
         }
-        SMT_LOG_INFO(HOOKS_RQ_TAG, "Making test hook call for [%s] %s, id = %s (value = %s)", type.c_str(), name.c_str(), id.c_str(), value.isEmpty() ? "none" : value.c_str());
+        ST_LOG_INFO(HOOKS_RQ_TAG, "Making test hook call for [%s] %s, id = %s (value = %s)", type.c_str(), name.c_str(), id.c_str(), value.isEmpty() ? "none" : value.c_str());
         if (HooksManager.callHook(type.c_str(), name.c_str(), id.toInt(), value)) {
           return request->beginResponse(200);
         } else {
@@ -104,7 +104,7 @@ class HooksRequestHandler : public RequestHandler {
       if (_body.isEmpty()) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, "Body is missing!");
       }
-      SMT_LOG_INFO(HOOKS_RQ_TAG, "Creating new hook");
+      ST_LOG_INFO(HOOKS_RQ_TAG, "Creating new hook");
       int id = HooksManager.createHookFromJson(_body.c_str());
       if (id >= 0) {
         HooksManager.saveHooksToSettings();
@@ -121,7 +121,7 @@ class HooksRequestHandler : public RequestHandler {
         return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Body is missing!"));
       }
 
-      SMT_LOG_INFO(HOOKS_RQ_TAG, "Updating hook");
+      ST_LOG_INFO(HOOKS_RQ_TAG, "Updating hook");
       JsonDocument doc;
       deserializeJson(doc, _body);
       if (HooksManager.updateHook(doc)) {

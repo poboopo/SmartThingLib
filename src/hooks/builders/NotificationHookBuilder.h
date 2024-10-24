@@ -11,12 +11,12 @@ class NotificationHookBuilder {
     template <class B, typename T>
     static Hook<T>* build(JsonObject doc, bool readOnly) {
       if (doc.size() == 0) {
-        SMT_LOG_ERROR(NOTIFICATION_HOOK_BUILDER_TAG, "Json document is empty!");
+        ST_LOG_ERROR(NOTIFICATION_HOOK_BUILDER_TAG, "Json document is empty!");
         return nullptr;
       }
       const char * message = doc[MESSAGE_FIELD];
       if (message == nullptr || strlen(message) == 0) {
-        SMT_LOG_ERROR(NOTIFICATION_HOOK_BUILDER_TAG, "Message can't be empty");
+        ST_LOG_ERROR(NOTIFICATION_HOOK_BUILDER_TAG, "Message can't be empty");
         return nullptr;
       }
 
@@ -25,7 +25,7 @@ class NotificationHookBuilder {
       if (type != nullptr && strlen(type) > 0) {
         hook->setNotificationType(type);
       }
-      SMT_LOG_DEBUG(
+      ST_LOG_DEBUG(
         NOTIFICATION_HOOK_BUILDER_TAG,
         "Notification hook created: type=%s, message=%s",
         hook->getNoticationType().c_str(),

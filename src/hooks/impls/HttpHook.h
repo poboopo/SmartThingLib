@@ -31,7 +31,7 @@ class HttpHook : public T {
     if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
       createRequestTask();
     } else {
-      SMT_LOG_ERROR(HTTP_HOOK_TAG, "WiFi not connected!");
+      ST_LOG_ERROR(HTTP_HOOK_TAG, "WiFi not connected!");
     }
   };
 
@@ -48,17 +48,17 @@ class HttpHook : public T {
     if (doc.containsKey("url")) {
       _url = doc["url"].as<String>();
       fixUrl();
-      SMT_LOG_DEBUG(HTTP_HOOK_TAG, "Hook's url was updated to %s",
+      ST_LOG_DEBUG(HTTP_HOOK_TAG, "Hook's url was updated to %s",
                    _url.c_str());
     }
     if (doc.containsKey("method")) {
       _method = doc["method"].as<String>();
-      SMT_LOG_DEBUG(HTTP_HOOK_TAG, "Hook's method was updated to %s",
+      ST_LOG_DEBUG(HTTP_HOOK_TAG, "Hook's method was updated to %s",
                    _method.c_str());
     }
     if (doc.containsKey("payload")) {
       _payload = doc["payload"].as<String>();
-      SMT_LOG_DEBUG(HTTP_HOOK_TAG, "Hook's payload was updated to %s",
+      ST_LOG_DEBUG(HTTP_HOOK_TAG, "Hook's payload was updated to %s",
                    _payload.c_str());
     }
   };
@@ -79,7 +79,7 @@ class HttpHook : public T {
 
   void createRequestTask() {
     if (_sending) {
-      SMT_LOG_DEBUG(HTTP_HOOK_TAG, "Request task already exist! Skipping");
+      ST_LOG_DEBUG(HTTP_HOOK_TAG, "Request task already exist! Skipping");
       return;
     }
     #ifdef ARDUINO_ARCH_ESP32
@@ -105,8 +105,8 @@ class HttpHook : public T {
     String urlResolved = replaceValues(_url.c_str(), valueStr);
     String payloadResolved = replaceValues(_payload.c_str(), valueStr);
 
-    SMT_LOG_DEBUG(HTTP_HOOK_TAG, "Resolved url and payload: %s, %s", urlResolved.c_str(), payloadResolved.c_str());
-    SMT_LOG_DEBUG(HTTP_HOOK_TAG, "Sending request [%s] %s :: %s", _method.c_str(), urlResolved.c_str(), payloadResolved.c_str());
+    ST_LOG_DEBUG(HTTP_HOOK_TAG, "Resolved url and payload: %s, %s", urlResolved.c_str(), payloadResolved.c_str());
+    ST_LOG_DEBUG(HTTP_HOOK_TAG, "Sending request [%s] %s :: %s", _method.c_str(), urlResolved.c_str(), payloadResolved.c_str());
 
     HTTPClient client;
     client.setTimeout(2000);
@@ -123,7 +123,7 @@ class HttpHook : public T {
     _lastResponseCode = client.sendRequest(_method.c_str(), payloadResolved.c_str());
     client.end();
 
-    SMT_LOG_INFO(HTTP_HOOK_TAG, "Request %s finished with code %d", urlResolved.c_str(), _lastResponseCode);
+    ST_LOG_INFO(HTTP_HOOK_TAG, "Request %s finished with code %d", urlResolved.c_str(), _lastResponseCode);
   }
 
   void fixUrl() {

@@ -12,33 +12,33 @@
 #endif
 
 #if ENABLE_LOGGER
-#define SMT_LOG(level, tag, format, ...) LOGGER.log(level,  tag, format, ##__VA_ARGS__)
+#define ST_LOG(level, tag, format, ...) LOGGER.log(level,  tag, format, ##__VA_ARGS__)
 #else
-#define SMT_LOG(level, tag, format, ...)
+#define ST_LOG(level, tag, format, ...)
 #endif
 
 #if ENABLE_LOGGER && (LOGGING_LEVEL == LOGGING_LEVEL_DEBUG)
-#define SMT_LOG_DEBUG(tag, format, ...) LOGGER.debug(tag, format, ##__VA_ARGS__)
+#define ST_LOG_DEBUG(tag, format, ...) LOGGER.debug(tag, format, ##__VA_ARGS__)
 #else
-#define SMT_LOG_DEBUG(tag, format, ...)
+#define ST_LOG_DEBUG(tag, format, ...)
 #endif
 
 #if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_INFO)
-#define SMT_LOG_INFO(tag, format, ...) LOGGER.info(tag, format, ##__VA_ARGS__)
+#define ST_LOG_INFO(tag, format, ...) LOGGER.info(tag, format, ##__VA_ARGS__)
 #else
-#define SMT_LOG_INFO(tag, format, ...)
+#define ST_LOG_INFO(tag, format, ...)
 #endif
 
 #if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_WARN)
-#define SMT_LOG_WARNING(tag, format, ...) LOGGER.warning(tag, format, ##__VA_ARGS__)
+#define ST_LOG_WARNING(tag, format, ...) LOGGER.warning(tag, format, ##__VA_ARGS__)
 #else
-#define SMT_LOG_WARNING(tag, format, ...)
+#define ST_LOG_WARNING(tag, format, ...)
 #endif
 
 #if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_ERROR)
-#define SMT_LOG_ERROR(tag, format, ...) LOGGER.error(tag, format, ##__VA_ARGS__)
+#define ST_LOG_ERROR(tag, format, ...) LOGGER.error(tag, format, ##__VA_ARGS__)
 #else
-#define SMT_LOG_ERROR(tag, format, ...)
+#define ST_LOG_ERROR(tag, format, ...)
 #endif
 
 static const char * LOGGER_TAG = "logger";

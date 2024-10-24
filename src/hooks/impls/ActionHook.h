@@ -22,7 +22,7 @@ namespace Hook {
 
       void call(V &value) {
         // replace ${value} in _action?
-        SMT_LOG_DEBUG(ACTION_HOOK_TAG, "Calling action  %s", _action.c_str());
+        ST_LOG_DEBUG(ACTION_HOOK_TAG, "Calling action  %s", _action.c_str());
         ActionsManager.call(_action.c_str());
       }
 
@@ -34,11 +34,11 @@ namespace Hook {
         if (obj.containsKey("action")) {
           String newAction = obj["action"].as<String>();
           if (newAction.isEmpty()) {
-            SMT_LOG_ERROR(ACTION_HOOK_TAG, "Action is missing!");
+            ST_LOG_ERROR(ACTION_HOOK_TAG, "Action is missing!");
             return;
           }
           _action = newAction;
-          SMT_LOG_DEBUG(ACTION_HOOK_TAG, "New hook action: %s",
+          ST_LOG_DEBUG(ACTION_HOOK_TAG, "New hook action: %s",
                       _action.c_str());
         }
       }

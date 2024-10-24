@@ -53,7 +53,7 @@ bool SmartThingClass::wifiConnected() {
 
 bool SmartThingClass::init(const char * type, const char * name) {
   if (name == nullptr) {
-    SMT_LOG_ERROR(SMART_THING_TAG, "Name can't be nullptr");
+    ST_LOG_ERROR(SMART_THING_TAG, "Name can't be nullptr");
     return false;
   }
   _name = (char *) malloc(strlen(name) + 1);
@@ -63,38 +63,38 @@ bool SmartThingClass::init(const char * type, const char * name) {
 
 bool SmartThingClass::init(const char * type) {
   if (_initialized) {
-    SMT_LOG_WARNING(SMART_THING_TAG, "Already initialized!");
+    ST_LOG_WARNING(SMART_THING_TAG, "Already initialized!");
     return false;
   }
   if (type == nullptr) {
-    SMT_LOG_ERROR(SMART_THING_TAG, "Device type is missing!");
+    ST_LOG_ERROR(SMART_THING_TAG, "Device type is missing!");
     return false;
   }
 
   _type = (char *) malloc(strlen(type) + 1);
   strcpy(_type, type);
 
-  SMT_LOG_DEBUG(SMART_THING_TAG, "Smart thing initialization started");
+  ST_LOG_DEBUG(SMART_THING_TAG, "Smart thing initialization started");
 
   STSettings.loadSettings();
-  SMT_LOG_DEBUG(SMART_THING_TAG, "Settings manager loaded");
+  ST_LOG_DEBUG(SMART_THING_TAG, "Settings manager loaded");
 
   if (_name == nullptr || strlen(_name) == 0) {
     String name = STSettings.getDeviceName();
     _name = (char *) malloc(name.length() + 1);
     strcpy(_name, name.c_str());
   }
-  SMT_LOG_DEBUG(SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
+  ST_LOG_DEBUG(SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
 
   #ifdef ARDUINO_ARCH_ESP32
-  SMT_LOG_DEBUG(
+  ST_LOG_DEBUG(
     SMART_THING_TAG,
     "Wipe pin=%d, timeout=%d",
     WIPE_PIN, WIPE_TIMEOUT
   );
   pinMode(WIPE_PIN, INPUT_PULLUP);
   #endif
-  SMT_LOG_DEBUG(SMART_THING_TAG, "Led pin=%d", LED_PIN);
+  ST_LOG_DEBUG(SMART_THING_TAG, "Led pin=%d", LED_PIN);
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
 
@@ -107,10 +107,10 @@ bool SmartThingClass::init(const char * type) {
   #endif
 
   #ifdef ARDUINO_ARCH_ESP32
-  SMT_LOG_DEBUG(SMART_THING_TAG, "Creating loop task");
+  ST_LOG_DEBUG(SMART_THING_TAG, "Creating loop task");
   xTaskCreate([](void* o) { static_cast<SmartThingClass*>(o)->asyncLoop(); },
               SMART_THING_TAG, 50000, this, 1, &_loopTaskHandle);
-  SMT_LOG_DEBUG(SMART_THING_TAG, "Loop task created");
+  ST_LOG_DEBUG(SMART_THING_TAG, "Loop task created");
   #endif
 
   #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
@@ -132,31 +132,31 @@ bool SmartThingClass::init(const char * type) {
   // For notifications
   addConfigEntry(GATEWAY_CONFIG, "Gateway address (ip:port)", "string");
 
-  SMT_LOG_DEBUG(SMART_THING_TAG, "Loading hooks from settings...");
+  ST_LOG_DEBUG(SMART_THING_TAG, "Loading hooks from settings...");
   HooksManager.loadFromSettings();
-  SMT_LOG_DEBUG(SMART_THING_TAG, "Hooks loaded, making first check");
+  ST_LOG_DEBUG(SMART_THING_TAG, "Hooks loaded, making first check");
   HooksManager.check();
-  SMT_LOG_DEBUG(SMART_THING_TAG, "Hooks first check finished");
+  ST_LOG_DEBUG(SMART_THING_TAG, "Hooks first check finished");
   #endif
 
   #if ENABLE_ACTIONS_SCHEDULER
-  SMT_LOG_DEBUG(SMART_THING_TAG, "Loading actions schedule config from settings");
+  ST_LOG_DEBUG(SMART_THING_TAG, "Loading actions schedule config from settings");
   ActionsManager.loadFromSettings();
   #endif
 
   connectToWifi();
 
   if (wifiConnected()) {
-    SMT_LOG_INFO(SMART_THING_TAG, "WiFi connected, local ip %s, hostname %s", _ip, _name);
+    ST_LOG_INFO(SMART_THING_TAG, "WiFi connected, local ip %s, hostname %s", _ip, _name);
     delay(1000);
     LOGGER.init(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG], _name);
 
     #ifdef ARDUINO_ARCH_ESP32
     if (_beaconUdp.beginMulticast(MULTICAST_GROUP, MULTICAST_PORT)) {
       updateBroadCastMessage();
-      SMT_LOG_INFO(SMART_THING_TAG, "Beacon udp created");
+      ST_LOG_INFO(SMART_THING_TAG, "Beacon udp created");
     } else {
-      SMT_LOG_ERROR(SMART_THING_TAG, "Failed to create beacon udp");
+      ST_LOG_ERROR(SMART_THING_TAG, "Failed to create beacon udp");
     }
     #endif
     #ifdef ARDUINO_ARCH_ESP8266
@@ -166,9 +166,9 @@ bool SmartThingClass::init(const char * type) {
     #ifdef ARDUINO_ARCH_ESP32
     esp_err_t errInit = mdns_init();
     if (errInit != ESP_OK) {
-      SMT_LOG_ERROR(SMART_THING_TAG, "Failed to init mdns! (code=%s)", esp_err_to_name(errInit));
+      ST_LOG_ERROR(SMART_THING_TAG, "Failed to init mdns! (code=%s)", esp_err_to_name(errInit));
     } else {
-      SMT_LOG_INFO(SMART_THING_TAG, "Mnds initialized");
+      ST_LOG_INFO(SMART_THING_TAG, "Mnds initialized");
       // todo smh mdns not working after first hostname sets
       mdns_hostname_set("");
       setDnsName();
@@ -176,13 +176,13 @@ bool SmartThingClass::init(const char * type) {
     #endif
 
     RestController.begin();
-    SMT_LOG_INFO(SMART_THING_TAG, "RestController started");
+    ST_LOG_INFO(SMART_THING_TAG, "RestController started");
   } else {
-    SMT_LOG_WARNING(SMART_THING_TAG,
+    ST_LOG_WARNING(SMART_THING_TAG,
                    "WiFi not available, skipping all network setup");
   }
 
-  SMT_LOG_INFO(SMART_THING_TAG, "Setup finished");
+  ST_LOG_INFO(SMART_THING_TAG, "Setup finished");
   _initialized = true;
   return true;
 }
@@ -239,10 +239,10 @@ void SmartThingClass::sendBeacon() {
 }
 
 void SmartThingClass::connectToWifi() {
-  SMT_LOG_INFO(SMART_THING_TAG, "Trying to connect to wifi");
+  ST_LOG_INFO(SMART_THING_TAG, "Trying to connect to wifi");
   String ip = "";
   if (wifiConnected()) {
-    SMT_LOG_INFO(SMART_THING_TAG, "WiFi already connected");
+    ST_LOG_INFO(SMART_THING_TAG, "WiFi already connected");
     return;
   }
   
@@ -255,29 +255,29 @@ void SmartThingClass::connectToWifi() {
   int mode = wifiConfig[WIFI_MODE_SETTING];
 
   if (ssid == nullptr || strlen(ssid) == 0) {
-    SMT_LOG_WARNING(
+    ST_LOG_WARNING(
       SMART_THING_TAG,
-      "Ssid is blank or mode null -> creating setup AP with name %s", SMT_DEFAULT_NAME
+      "Ssid is blank or mode null -> creating setup AP with name %s", ST_DEFAULT_NAME
     );
-    WiFi.softAP(SMT_DEFAULT_NAME);
+    WiFi.softAP(ST_DEFAULT_NAME);
     delay(500);
-    SMT_LOG_INFO(SMART_THING_TAG, "WiFi started in soft AP mode");
+    ST_LOG_INFO(SMART_THING_TAG, "WiFi started in soft AP mode");
     ip = WiFi.softAPIP().toString();
   } else {
     if (mode == WIFI_MODE_AP) {
       if (password != nullptr && strlen(password) >= 0) {
-        SMT_LOG_INFO(SMART_THING_TAG, "Creating AP point %s :: %s", ssid,
+        ST_LOG_INFO(SMART_THING_TAG, "Creating AP point %s :: %s", ssid,
                     password);
         WiFi.softAP(ssid, password);
       } else {
-        SMT_LOG_INFO(SMART_THING_TAG, "Creating AP point %s", ssid);
+        ST_LOG_INFO(SMART_THING_TAG, "Creating AP point %s", ssid);
         WiFi.softAP(ssid);
       }
       delay(500);
-      SMT_LOG_INFO(SMART_THING_TAG, "WiFi started in AP mode");
+      ST_LOG_INFO(SMART_THING_TAG, "WiFi started in AP mode");
       ip = WiFi.softAPIP().toString();
     } else if (mode == WIFI_MODE_STA) {
-      SMT_LOG_DEBUG(SMART_THING_TAG, "WiFi connecting to %s :: %s", ssid,
+      ST_LOG_DEBUG(SMART_THING_TAG, "WiFi connecting to %s :: %s", ssid,
                    password);
       WiFi.begin(ssid, password);
       long startTime = millis();
@@ -289,14 +289,14 @@ void SmartThingClass::connectToWifi() {
       }
       digitalWrite(LED_PIN, LOW);
       if (WiFi.isConnected()) {
-        SMT_LOG_INFO(SMART_THING_TAG, "WiFi started in STA mode"); 
+        ST_LOG_INFO(SMART_THING_TAG, "WiFi started in STA mode"); 
         ip = WiFi.localIP().toString();
       } else {
         WiFi.disconnect();
-        SMT_LOG_ERROR(SMART_THING_TAG, "Failed to connect to Wifi (%s::%s)", ssid, password);
+        ST_LOG_ERROR(SMART_THING_TAG, "Failed to connect to Wifi (%s::%s)", ssid, password);
       }
     } else {
-      SMT_LOG_ERROR(SMART_THING_TAG, "Mode %d not supported!", mode);
+      ST_LOG_ERROR(SMART_THING_TAG, "Mode %d not supported!", mode);
     }
   }
   _ip = (char *) malloc(ip.length() + 1);
@@ -305,7 +305,7 @@ void SmartThingClass::connectToWifi() {
 
 void SmartThingClass::wipeSettings() {
   long started = millis();
-  SMT_LOG_WARNING(SMART_THING_TAG, "ALL SETTINGS WILL BE WIPED IN %d ms!!!",
+  ST_LOG_WARNING(SMART_THING_TAG, "ALL SETTINGS WILL BE WIPED IN %d ms!!!",
                  WIPE_TIMEOUT);
 
   digitalWrite(LED_PIN, HIGH);
@@ -315,7 +315,7 @@ void SmartThingClass::wipeSettings() {
   if (!digitalRead(WIPE_PIN)) {
     STSettings.wipeAll();
     STSettings.save();
-    SMT_LOG_WARNING(SMART_THING_TAG, "Settings were wiped!");
+    ST_LOG_WARNING(SMART_THING_TAG, "Settings were wiped!");
   }
   digitalWrite(LED_PIN, LOW);
 }
@@ -339,7 +339,7 @@ void SmartThingClass::updateDeviceName(String name) {
   setDnsName();
   #endif
   
-  SMT_LOG_INFO(SMART_THING_TAG, "New device name %s", name.c_str());
+  ST_LOG_INFO(SMART_THING_TAG, "New device name %s", name.c_str());
 }
 
 void SmartThingClass::updateBroadCastMessage() {
@@ -358,9 +358,9 @@ void SmartThingClass::setDnsName() {
   sprintf(hostname, "%s-smt", _name);
   esp_err_t err = mdns_hostname_set(hostname);
   if (err != ESP_OK) {
-    SMT_LOG_ERROR(SMART_THING_TAG, "Failed to set mdns hostname! (code=%s)", esp_err_to_name(err));
+    ST_LOG_ERROR(SMART_THING_TAG, "Failed to set mdns hostname! (code=%s)", esp_err_to_name(err));
   } else {
-    SMT_LOG_INFO(SMART_THING_TAG, "New mdns hostname: %s", hostname);
+    ST_LOG_INFO(SMART_THING_TAG, "New mdns hostname: %s", hostname);
   }
   free(hostname);
 }

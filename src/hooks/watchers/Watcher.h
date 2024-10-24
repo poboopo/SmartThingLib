@@ -38,7 +38,7 @@ class Watcher {
     JsonDocument doc;
     doc.to<JsonArray>();
     if (_hooks.size() == 0) {
-      SMT_LOG_DEBUG(WATCHER_TAG, "No hook's, creating empty array");
+      ST_LOG_DEBUG(WATCHER_TAG, "No hook's, creating empty array");
       return doc;
     }
     _hooks.forEach([&](Hook::Hook<T> *current) {
@@ -63,53 +63,53 @@ class Watcher {
 
   bool addHook(Hook::Hook<T> *hook) {
     if (hook == nullptr) {
-      SMT_LOG_ERROR(WATCHER_TAG, "Hook is missing!");
+      ST_LOG_ERROR(WATCHER_TAG, "Hook is missing!");
       return false;
     }
 
     if (hook->isReadonly()) {
-      SMT_LOG_DEBUG(WATCHER_TAG, "Hook is readonly, skipping id generation");
+      ST_LOG_DEBUG(WATCHER_TAG, "Hook is readonly, skipping id generation");
       hook->setId(-1);
     } else if (hook->getId() < 0) {
       int id = getNextHookId();
       if (id < 0) {
-        SMT_LOG_ERROR(WATCHER_TAG, "Failed to generate new id for hook");
+        ST_LOG_ERROR(WATCHER_TAG, "Failed to generate new id for hook");
         return false;
       }
-      SMT_LOG_DEBUG(WATCHER_TAG, "Generated new hook id=%d", id);
+      ST_LOG_DEBUG(WATCHER_TAG, "Generated new hook id=%d", id);
       hook->setId(id);
     } else if (getHookById(hook->getId()) != nullptr) {
-      SMT_LOG_ERROR(WATCHER_TAG, "Hook with id=%d already exists!",
+      ST_LOG_ERROR(WATCHER_TAG, "Hook with id=%d already exists!",
                    hook->getId());
       return false;
     }
 
     _hooks.append(hook);
-    SMT_LOG_DEBUG(WATCHER_TAG, "New hook added id=%d", hook->getId());
+    ST_LOG_DEBUG(WATCHER_TAG, "New hook added id=%d", hook->getId());
     return true;
   };
 
   bool removeHook(int id) {
     if (id < 0) {
-      SMT_LOG_ERROR(WATCHER_TAG, "Failed to remove hook - id negative!");
+      ST_LOG_ERROR(WATCHER_TAG, "Failed to remove hook - id negative!");
       return false;
     }
     Hook::Hook<T> *hook = getHookById(id);
     if (hook == nullptr) {
-      SMT_LOG_ERROR(WATCHER_TAG,
+      ST_LOG_ERROR(WATCHER_TAG,
                    "Failed to remove hook - can't find hook with id %d",
                    id);
       return false;
     }
     if (hook->isReadonly()) {
-      SMT_LOG_ERROR(WATCHER_TAG, "This hook is readonly!");
+      ST_LOG_ERROR(WATCHER_TAG, "This hook is readonly!");
       return false;
     }
     if (_hooks.remove(hook)) {
       delete hook;
       return true;
     }
-    SMT_LOG_ERROR(WATCHER_TAG, "Failed to remove hook from list");
+    ST_LOG_ERROR(WATCHER_TAG, "Failed to remove hook from list");
     return false;
   }
 
@@ -128,7 +128,7 @@ class Watcher {
     }
     _hooks.forEach([&, this](Hook::Hook<T> *current) {
       if (current != nullptr && current->accept(value)) {
-        SMT_LOG_DEBUG(
+        ST_LOG_DEBUG(
           WATCHER_TAG,
           "Calling hook [id=%d] for observable [%s]%s",
           current->getId(),

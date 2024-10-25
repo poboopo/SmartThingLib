@@ -162,14 +162,12 @@
             "description": "New device configuration entries added"
           }
         }
-      }
-    },
-    "/config/delete/all": {
+      },
       "delete": {
         "tags": [
           "Configuration"
         ],
-        "description": "Delete configuration value",
+        "description": "Delete config value",
         "parameters": [
           {
             "name": "name",
@@ -187,6 +185,19 @@
           },
           "404": {
             "description": "Configuration entry with provided name not found"
+          }
+        }
+      }
+    },
+    "/config/delete/all": {
+      "delete": {
+        "tags": [
+          "Configuration"
+        ],
+        "description": "Delete configuration value",
+        "responses": {
+          "200": {
+            "description": "Configuration values were deleted"
           }
         }
       }

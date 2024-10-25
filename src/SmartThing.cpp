@@ -192,7 +192,7 @@ void SmartThingClass::loop() {
     return;
   }
 
-  long current = millis();
+  unsigned long current = millis();
   if (_lastBeacon == -1 || current - _lastBeacon > SMART_THING_BEACON_SEND_DELAY) {
     sendBeacon();
     _lastBeacon = current;
@@ -280,7 +280,7 @@ void SmartThingClass::connectToWifi() {
       ST_LOG_DEBUG(SMART_THING_TAG, "WiFi connecting to %s :: %s", ssid,
                    password);
       WiFi.begin(ssid, password);
-      long startTime = millis();
+      unsigned long startTime = millis();
       bool led = true;
       while (!WiFi.isConnected() && millis() - startTime < WIFI_SETUP_TIMEOUT) {
         digitalWrite(LED_PIN, led);
@@ -304,7 +304,7 @@ void SmartThingClass::connectToWifi() {
 }
 
 void SmartThingClass::wipeSettings() {
-  long started = millis();
+  unsigned long started = millis();
   ST_LOG_WARNING(SMART_THING_TAG, "ALL SETTINGS WILL BE WIPED IN %d ms!!!",
                  WIPE_TIMEOUT);
 

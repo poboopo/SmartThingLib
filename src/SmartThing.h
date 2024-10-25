@@ -74,12 +74,12 @@ class SmartThingClass {
   bool addConfigEntry(const char* name, const char* caption, const char* type);
  private:
   bool _initialized = false;
-  long _lastBeacon = -1;
+  unsigned long _lastBeacon = -1;
   #if ENABLE_HOOKS
-  long _lastHooksCheck = -1;
+  unsigned long _lastHooksCheck = -1;
   #endif
   #if ENABLE_ACTIONS_SCHEDULER
-  long _lastActionsCheck = -1;
+  unsigned long _lastActionsCheck = -1;
   #endif
 
   char * _ip;

@@ -81,7 +81,7 @@ bool ActionsManagerClass::updateActionSchedule(const char * name, unsigned long 
 }
 
 void ActionsManagerClass::scheduled() {
-  long current = millis();
+  unsigned long current = millis();
   forEach([&](Action * action) {
     if (action->callDelay > 0 && current - action->lastCall > action->callDelay) {
       ST_LOG_DEBUG(ACTIONS_TAG, "Scheduled call of %s", action->name);
@@ -95,7 +95,7 @@ void ActionsManagerClass::scheduled() {
 JsonDocument ActionsManagerClass::toJson() {
   JsonDocument doc;
   doc.to<JsonArray>();
-  long currentMillis = millis();
+  unsigned long currentMillis = millis();
   forEach([&](Action* current) {
     JsonDocument action;
     action[ACTIONS_JSON_NAME] = current->name;

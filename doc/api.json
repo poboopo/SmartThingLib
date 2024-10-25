@@ -219,7 +219,7 @@
         "description": "Call device action",
         "parameters": [
           {
-            "name": "action",
+            "name": "name",
             "in": "query",
             "description": "Action system name",
             "required": true,

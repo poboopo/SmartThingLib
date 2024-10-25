@@ -41,7 +41,7 @@ class ActionRequestHandler : public RequestHandler {
       }
 
       if (request->url().equals("/actions/call")) {
-        String action = request->arg("action");
+        String action = request->arg(ACTIONS_JSON_NAME);
         if (action.isEmpty()) {
           return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Parameter action is missing!"));
         }

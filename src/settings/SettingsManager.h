@@ -18,8 +18,6 @@
 
 #define EEPROM_LOAD_SIZE 1024
 
-static const char * SETTINGS_MANAGER_TAG = "settings_manager";
-
 class SettingsManager {
  private:
   JsonDocument _settings;

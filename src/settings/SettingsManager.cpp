@@ -16,6 +16,7 @@ bool eepromBegin(size_t size) {
 }
 #endif
 
+static const char * SETTINGS_MANAGER_TAG = "settings_manager";
 
 SettingsManager STSettings;
 

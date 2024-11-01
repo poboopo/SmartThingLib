@@ -11,16 +11,12 @@
 #include <WiFiClient.h>
 #endif
 
-#if ENABLE_LOGGER
-#define ST_LOG(level, tag, format, ...) LOGGER.log(level,  tag, format, ##__VA_ARGS__)
-#else
-#define ST_LOG(level, tag, format, ...)
-#endif
-
 #if ENABLE_LOGGER && (LOGGING_LEVEL == LOGGING_LEVEL_DEBUG)
 #define ST_LOG_DEBUG(tag, format, ...) LOGGER.debug(tag, format, ##__VA_ARGS__)
+#define st_log_request(tag, method, uri, body) LOGGER.logRequest(tag, method, uri, body)
 #else
 #define ST_LOG_DEBUG(tag, format, ...)
+#define st_log_request(tag, method, uri, body)
 #endif
 
 #if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_INFO)
@@ -54,7 +50,7 @@ class BetterLogger {
     #endif
   }
 
-  void init(String fullAddr, const char* name) {
+  void init(String fullAddr, const char name[]) {
     _name = name;
     #if LOGGER_TYPE != SERIAL_LOGGER
     _fullAddr = fullAddr;
@@ -62,6 +58,11 @@ class BetterLogger {
     parseAddressAndConnect();
     #endif
   }
+
+  void updateName(const char name[]) {
+    _name = name;
+  }
+
   bool isConnected() {
     #if LOGGER_TYPE == SERIAL_LOGGER
     return true;
@@ -69,6 +70,7 @@ class BetterLogger {
     return _connected;
     #endif
   }
+
   void updateAddress(String fullAddr) {
     #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
     if (_connected && _fullAddr.equals(fullAddr)) {
@@ -143,7 +145,7 @@ class BetterLogger {
   #endif
 
   void logRequest(const char* tag, const char * method, const char* uri, const char* body) {
-    info(tag, "[%s] %s - %s", method, uri, body == nullptr ? "" : body);
+    debug(tag, "[%s] %s - %s", method, uri, body == nullptr ? "" : body);
   };
 
  private:
@@ -210,7 +212,7 @@ class BetterLogger {
   }
 
   void parseAddressAndConnect() {
-    if (_fullAddr.isEmpty()) {
+    if (_fullAddr.isEmpty() || _fullAddr.equals("null")) {
       warning(LOGGER_TAG, "Empty tcp log server info");
       return;
     }

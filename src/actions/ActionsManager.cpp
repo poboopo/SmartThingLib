@@ -44,7 +44,7 @@ ActionResult ActionsManagerClass::call(const char* name) {
 
 #if ENABLE_ACTIONS_SCHEDULER
 void ActionsManagerClass::loadFromSettings() {
-  JsonDocument config = STSettings.getActionsConfig();
+  JsonDocument config = SettingsManager.getActions();
   if (config.size() == 0) {
     ST_LOG_DEBUG(ACTIONS_TAG, "Actions config empty");
     return;
@@ -65,14 +65,13 @@ bool ActionsManagerClass::updateActionSchedule(const char * name, unsigned long 
     ST_LOG_ERROR(ACTIONS_TAG, "Can't find action with name %s", name);
     return false;
   } else {
-    JsonDocument config = STSettings.getActionsConfig();
+    JsonDocument config = SettingsManager.getActions();
     if (newDelay == 0) {
       config.remove(action->name);
     } else {
       config[action->name] = newDelay;
     }
-    STSettings.setActionsConfig(config);
-    STSettings.save();
+    SettingsManager.setActions(config);
 
     action->callDelay = newDelay;
     ST_LOG_INFO(ACTIONS_TAG, "Action %s delay was update to %lu", name, newDelay);

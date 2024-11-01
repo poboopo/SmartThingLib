@@ -28,10 +28,10 @@ class DangerRequestHandler : public AsyncWebHandler {
     }
 
     String url = request->url();
-    LOGGER.logRequest(DANGER_RQ_TAG, request->methodToString(), url.c_str(), "");
+    st_log_request(DANGER_RQ_TAG, request->methodToString(), url.c_str(), "");
 
     if (url.equals("/danger/restart")) {
-      LOGGER.logRequest(DANGER_RQ_PATH, request->methodToString(), request->url().c_str(), "");
+      st_log_request(DANGER_RQ_PATH, request->methodToString(), request->url().c_str(), "");
 
       AsyncWebServerResponse * response = request->beginResponse(200);
       response->addHeader("Access-Control-Allow-Origin", "*");
@@ -40,10 +40,10 @@ class DangerRequestHandler : public AsyncWebHandler {
     }
 
     if (url.equals("/danger/wipe")) {
-      LOGGER.logRequest(DANGER_RQ_PATH, request->methodToString(), request->url().c_str(), "");
+      st_log_request(DANGER_RQ_PATH, request->methodToString(), request->url().c_str(), "");
 
       ST_LOG_WARNING(DANGER_RQ_TAG, "Wiping all settings!");
-      STSettings.wipeAll();
+      SettingsManager.clear();
 
       AsyncWebServerResponse * response = request->beginResponse(200);
       response->addHeader("Access-Control-Allow-Origin", "*");

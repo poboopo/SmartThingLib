@@ -28,28 +28,15 @@ class ConfigRequestHandler : public RequestHandler {
     String url = request->url();
     if (url.equals("/config/values")) {
       if (request->method() == HTTP_GET) {
-        JsonObject config = STSettings.getConfig();
+        JsonDocument config = SettingsManager.getConfig();
         String response;
         serializeJson(config, response);
         return request->beginResponse(200, CONTENT_TYPE_JSON, response);
       }
       if (request->method() == HTTP_POST) {
-        Config::ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
-        if (entriesList->size() != 0) {
-          JsonDocument jsonDoc;
-          deserializeJson(jsonDoc, _body);
-          JsonObject root = jsonDoc.as<JsonObject>();
-          JsonObject config = STSettings.getConfig();
-
-          for (JsonPair pair : root) {
-            if (entriesList->haveConfigEntry(pair.key().c_str()) && !pair.value().isNull()) {
-              config[pair.key()] = pair.value();
-            } else {
-              config.remove(pair.key());
-            }
-          }
-          STSettings.save();
-        }
+        JsonDocument jsonDoc;
+        deserializeJson(jsonDoc, _body);
+        SettingsManager.setConfig(jsonDoc);
         callHooks();
         return request->beginResponse(200);
       }
@@ -60,11 +47,11 @@ class ConfigRequestHandler : public RequestHandler {
         }
         String name = request->arg("name");
 
-        JsonObject config = STSettings.getConfig();
+        JsonDocument config = SettingsManager.getConfig();
         if (config.containsKey(name)) {
           ST_LOG_WARNING(CONFIG_LOG_TAG, "Removing config value %s", name);
           config.remove(name);
-          STSettings.save();
+          SettingsManager.setConfig(config);
           callHooks();
           return request->beginResponse(200);
         } else {
@@ -83,11 +70,9 @@ class ConfigRequestHandler : public RequestHandler {
     
     if (request->method() == HTTP_DELETE) {
       if (request->url().equals("/config/delete/all")) {
-        STSettings.dropConfig();
-        STSettings.save();
+        SettingsManager.dropConfig();
         return request->beginResponse(200);
       }
-      
     }
     return nullptr;
   }
@@ -97,7 +82,7 @@ class ConfigRequestHandler : public RequestHandler {
   
   void callHooks() {
     #if ENABLE_LOGGER
-    LOGGER.updateAddress(STSettings.getConfig()[LOGGER_ADDRESS_CONFIG]);
+    LOGGER.updateAddress(SettingsManager.getConfig()[LOGGER_ADDRESS_CONFIG]);
     #endif
     if (_configUpdatedHandler != nullptr) {
       (*_configUpdatedHandler)();

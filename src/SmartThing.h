@@ -26,7 +26,7 @@
 #endif
 
 #define ST_DEFAULT_NAME "smt-device"
-#define DEVICE_NAME_LENGTH_MAX 15
+#define DEVICE_NAME_LENGTH_MAX 16
 
 class SmartThingClass {
  public:
@@ -74,12 +74,12 @@ class SmartThingClass {
   bool addConfigEntry(const char* name, const char* caption, const char* type);
  private:
   bool _initialized = false;
-  unsigned long _lastBeacon = -1;
+  unsigned long _lastBeacon = 0;
   #if ENABLE_HOOKS
-  unsigned long _lastHooksCheck = -1;
+  unsigned long _lastHooksCheck = 0;
   #endif
   #if ENABLE_ACTIONS_SCHEDULER
-  unsigned long _lastActionsCheck = -1;
+  unsigned long _lastActionsCheck = 0;
   #endif
 
   char * _ip;

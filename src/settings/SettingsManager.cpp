@@ -3,273 +3,465 @@
 
 #include <EEPROM.h>
 
+// [offsets][name][wifi][config][hooks][actions]
+#define SETTINGS_TEMPLATE "%03d%03d%03d%03d%03d%s%s%s%s%s"
+#define LENGTH_PARTITION_SIZE 3
+#define DATA_OFFSET 15
+#define DEFAULT_NAME_LENGTH 10
+
+#define GROUP_CONFIG "configuration"
+#define GROUP_WIFI "wifi"
+#define GROUP_HOOKS "hooks"
+#define GROUP_ACTIONS "actions"
+#define GROUP_NAME "name"
+
 #ifdef ARDUINO_ARCH_ESP32
-bool eepromBegin(size_t size) {
-  return EEPROM.begin(size);
+bool eepromBegin() {
+  return EEPROM.begin(EEPROM_LOAD_SIZE);
 }
 #endif
 
 #ifdef ARDUINO_ARCH_ESP8266
-bool eepromBegin(size_t size) {
-  EEPROM.begin(size);
+bool eepromBegin() {
+  EEPROM.begin(EEPROM_LOAD_SIZE);
   return true;
 }
 #endif
 
+enum DataIndex {
+  NAME_INDEX,
+  WIFI_INDEX,
+  CONFIG_INDEX,
+  HOOKS_INDEX,
+  ACTIONS_INDEX,
+  FIRST_INDEX = NAME_INDEX,
+  LAST_INDEX = ACTIONS_INDEX
+};
+
 static const char * SETTINGS_MANAGER_TAG = "settings_manager";
+static const char * EEPROM_OPEN_ERROR = "Failed to open EEPROM";
 
-SettingsManager STSettings;
+SettingsManagerClass SettingsManager;
 
-SettingsManager::SettingsManager() {}
+SettingsManagerClass::SettingsManagerClass() {}
+SettingsManagerClass::~SettingsManagerClass() {}
 
-SettingsManager::~SettingsManager() { _settings.clear(); }
-
-void SettingsManager::loadSettings() {
-  ST_LOG_INFO(SETTINGS_MANAGER_TAG, "Loading data from eeprom...");
-  String loaddedSettings = loadFromEeprom();
-  if (loaddedSettings.length() == 0) {
-    ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "Settings empty! Adding default");
-  } else {
-    deserializeJson(_settings, loaddedSettings);
-  }
-  _loaded = true;
-}
-
-void SettingsManager::clear() {
-  if (eepromBegin(EEPROM_LOAD_SIZE)) {
+void SettingsManagerClass::clear() {
+  if (eepromBegin()) {
     for (int i = 0; i < EEPROM_LOAD_SIZE; i++) {
       EEPROM.write(i, 0);
     }
+    EEPROM.commit();
+    EEPROM.end();
     ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "EEPROM clear");
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Failed to open EEPROM");
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
   }
 }
 
-String SettingsManager::loadFromEeprom() {
-  if (eepromBegin(EEPROM_LOAD_SIZE)) {
-    String data = "{";
-    uint8_t val;
-    bool completed = false;
-    for (int i = 0; i < EEPROM_LOAD_SIZE; i++) {
-      val = EEPROM.read(i);
-      if (isAscii(val)) {
-        if (val == '\n') {
-          completed = true;
-          break;
-        }
-        data += (char)val;
+void SettingsManagerClass::read(uint16_t address, char * buff, uint16_t length) {
+  for (uint16_t i = 0; i < length; i++) {
+    buff[i] = (char) EEPROM.read(address + i);
+  }
+  buff[length] = 0;
+}
+
+void SettingsManagerClass::write(uint16_t address, const char * buff, uint16_t length) {
+  for (uint16_t i = 0; i < length; i++) {
+    EEPROM.write(address + i, buff[i]);
+  }
+}
+
+int SettingsManagerClass::getLength(uint8_t index) {
+  if (index < FIRST_INDEX || index > LAST_INDEX) {
+    return -1;
+  }
+  char * buff = (char *) malloc(LENGTH_PARTITION_SIZE + 1);
+  read(index * LENGTH_PARTITION_SIZE, buff, LENGTH_PARTITION_SIZE);
+  int result = atoi(buff);
+  free(buff);
+  return result;
+}
+
+int SettingsManagerClass::writeLength(uint8_t index, int length) {
+  if (index < FIRST_INDEX || index > LAST_INDEX) {
+    return -1;
+  }
+  char * buff = (char *) malloc(LENGTH_PARTITION_SIZE + 1);
+  sprintf(buff, "%03d", length);
+
+  write(index * LENGTH_PARTITION_SIZE, buff, LENGTH_PARTITION_SIZE);
+
+  free(buff);
+  return length;
+}
+
+String SettingsManagerClass::readData(uint8_t index, const char * defaultValue) {
+  if (index < FIRST_INDEX || index > LAST_INDEX) {
+    return defaultValue;
+  }
+  if (eepromBegin()) {
+    int targetLength = getLength(index);
+    if (targetLength == 0) {
+      EEPROM.end();
+      return defaultValue;
+    }
+
+    int offset = DATA_OFFSET;
+    for (int i = 0; i < index; i++) {
+      offset += getLength(i);
+    }
+
+    char * buff = (char *) malloc(targetLength + 1);
+    read(offset, buff, targetLength);
+
+    String result = buff;
+    free(buff);
+
+    EEPROM.end();
+    return result;
+  } else {
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    return defaultValue;
+  }
+}
+
+int SettingsManagerClass::writeData(uint8_t index, const char * data) {
+  if (index < FIRST_INDEX || index > LAST_INDEX || data == nullptr) {
+    return -1;
+  }
+
+  if (eepromBegin()) {
+    int tmp = 0, offset = DATA_OFFSET, targetLength = 0, tailLength = 0;
+    targetLength = getLength(index);
+    if (targetLength < 0) {
+      return -1;
+    }
+
+    for (int i = 0; i < index; i++) {
+      tmp = getLength(i);
+      if (tmp < 0) {
+        return -1;
       }
+      offset += tmp;
     }
 
-    if (!completed) {
-      ST_LOG_ERROR(SETTINGS_MANAGER_TAG,
-                   "Settings string not completed. Missing \\n ?");
-      // ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "%s", data.c_str());
-      return "";
+    char * oldData = (char *) malloc(targetLength + 1);
+    read(offset, oldData, targetLength);
+    int cmp = strcmp(oldData, data);
+    free(oldData);
+    if (cmp == 0) {
+      ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Old data equals new, not writing");
+      return targetLength;
     }
 
-    data += "}";
-
-    // ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Loaded from eeprom: %s [%u]",
-    //              data.c_str(), data.length());
-    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Loaded from eeprom data length=%u", data.length());
-    return data;
-  } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Failed to open EEPROM");
-    return "";
-  }
-}
-
-void SettingsManager::removeIfEmpty(const char* group) {
-  if (_settings[group].isNull() || _settings[group].size() == 0) {
-    _settings.remove(group);
-    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Removed group %s from settings - it's empty", group);
-  }
-}
-
-bool SettingsManager::save() {
-  ST_LOG_INFO(SETTINGS_MANAGER_TAG, "Saving settings");
-  removeIfEmpty(GROUP_WIFI);
-  removeIfEmpty(GROUP_CONFIG);
-  removeIfEmpty(GROUP_HOOKS);
-  removeIfEmpty(GROUP_ACTIONS);
-  // _settings.garbageCollect();
-
-  String data;
-  serializeJson(_settings, data);
-
-  if (data == "null") {
-    data.clear();
-  } else {
-    data.remove(0, 1);
-    data.remove(data.length() - 1);
-    data += "\n";
-  }
-
-  if (data.length() > EEPROM_LOAD_SIZE) {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG,
-                 "Save failed, data are too long! Expected less then %d, got %d",
-                 EEPROM_LOAD_SIZE, data.length());
-    return false;
-  }
-
-  if (eepromBegin(EEPROM_LOAD_SIZE)) {
-    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Writing data to EEPROM (length [%u])",
-                 data.length());
-    #if LOGGER_TYPE == SERIAL_LOGGER
-    Serial.print(data.c_str());
-    #endif
-    for (unsigned int i = 0; i < data.length(); i++) {
-      EEPROM.write(i, data.charAt(i));
+    for (int i = index + 1; i <= LAST_INDEX; i++) {
+      tmp = getLength(i);
+      if (tmp < 0) {
+        return -1;
+      }
+      tailLength += tmp;
     }
+
+    char * buffTail = (char *) malloc(tailLength + 1);
+    read(offset + targetLength, buffTail, tailLength);
+    
+    int dataLen = strlen(data);
+
+    write(offset, data, dataLen);
+    write(offset + dataLen, buffTail, strlen(buffTail));
+    writeLength(index, dataLen);
+
     EEPROM.commit();
-    ST_LOG_INFO(SETTINGS_MANAGER_TAG, "Settings saved");
-    return true;
+    EEPROM.end();
+
+    free(buffTail);
+    return dataLen;
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Save failed, can't open EEPROM");
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    return -1;
+  }
+}
+
+String SettingsManagerClass::getName() {
+  return readData(NAME_INDEX, ST_DEFAULT_NAME);
+}
+
+bool SettingsManagerClass::setName(String name) {
+  if (name.length() > DEVICE_NAME_LENGTH_MAX) {
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Name is too big! Max name length=%d", DEVICE_NAME_LENGTH_MAX);
     return false;
-  }
-}
-
-void SettingsManager::removeSetting(const char* name) {
-  if (strcmp(name, SSID_SETTING) == 0  || strcmp(name, PASSWORD_SETTING) == 0  || strcmp(name, GROUP_WIFI) == 0 ) {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG,
-                   "You can't remove Wifi credits with this function! Use "
-                   "dropWifiCredits insted.");
-    return;
-  }
-  _settings.remove(name);
-  // _settings.garbageCollect();
-}
-
-void SettingsManager::wipeAll() {
-  _settings.clear();
-  clear();
-}
-
-void SettingsManager::dropWifiCredits() { _settings.remove(GROUP_WIFI); }
-
-JsonObject SettingsManager::getOrCreateObject(const char* name) {
-  if (_settings.containsKey(name)) {
-    return _settings[name];
-  }
-  ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Creating new nested object %s", name);
-  return _settings[name].to<JsonObject>();
-}
-
-JsonObject SettingsManager::getConfig() {
-  return getOrCreateObject(GROUP_CONFIG);
-}
-
-void SettingsManager::dropConfig() {
-  if (_settings.containsKey(GROUP_CONFIG)) {
-    _settings.remove(GROUP_CONFIG);
-    ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "All config values were removed!");
-  } else {
-    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Config settings not exists");
-  }
-}
-
-JsonObject SettingsManager::getWiFi() { return getOrCreateObject(GROUP_WIFI); }
-
-void SettingsManager::setDeviceName(const char * name) {
-  if (strlen(name) == 0) {
-    _settings.remove(DEVICE_NAME);
-  } else {
-    _settings[DEVICE_NAME] = name;
-  }
-}
-
-const char * SettingsManager::getDeviceName() {
-  if (_settings.containsKey(DEVICE_NAME)) {
-    return _settings[DEVICE_NAME];
-  }
-  return ST_DEFAULT_NAME;
-}
-
-void SettingsManager::setHooks(JsonDocument doc) {
-  _settings[GROUP_HOOKS] = doc;
-}
-
-JsonDocument SettingsManager::getHooks() {
-  return _settings[GROUP_HOOKS];
-}
-
-void SettingsManager::dropAllHooks() {
-  _settings.remove(GROUP_HOOKS);
-}
-
-void SettingsManager::setActionsConfig(JsonDocument doc) {
-  _settings[GROUP_ACTIONS] = doc;
-}
-
-JsonDocument SettingsManager::getActionsConfig() {
-  return getOrCreateObject(GROUP_ACTIONS);
-}
-
-const JsonDocument SettingsManager::exportSettings() {
-  JsonDocument doc;
-  doc[GROUP_CONFIG] = getConfig();
-  doc[GROUP_HOOKS] = getHooks();
-  doc[DEVICE_NAME] = getDeviceName();
-  doc[GROUP_ACTIONS] = getActionsConfig();
-  return doc;
-}
-
-bool SettingsManager::importSettings(JsonDocument doc) {
-  if (doc.size() == 0) {
-    ST_LOG_INFO(SETTINGS_MANAGER_TAG, "Empty settings json!");
-    return false;
-  }
-  bool res = true;
-  String old;
-  serializeJson(_settings, old);
-  ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Old settings save length=%u", old.length());
-
-  String name = doc[DEVICE_NAME];
-  if (!name.isEmpty()) {
-    if (name.length() > DEVICE_NAME_LENGTH_MAX) {
-      res = false;
-      ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Device name is too long! Max length: %d", DEVICE_NAME_LENGTH_MAX);
-    } else {
-      ST_LOG_INFO(SETTINGS_MANAGER_TAG, "New name: %s", name.c_str());
-      _settings[DEVICE_NAME] = name;
-    }
   }
   
-  if (doc[GROUP_CONFIG].size() > 0 && !doc[GROUP_CONFIG].is<JsonObject>()) {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Expected %s to be JsonObject!", GROUP_CONFIG);
-    res = false;
+  if (writeData(NAME_INDEX, name.c_str()) >= 0) {
+    return true;
   } else {
-    _settings[GROUP_CONFIG] = doc[GROUP_CONFIG];
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Name update failed");
+    return false;
   }
-  if (doc[GROUP_HOOKS].size() > 0 && !doc[GROUP_HOOKS].is<JsonArray>()) {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Expected %s to be JsonArray!", GROUP_HOOKS);
-    res = false;
-  } else {
-    _settings[GROUP_HOOKS] = doc[GROUP_HOOKS];
-  }
-  if (doc[GROUP_ACTIONS].size() > 0 && !doc[GROUP_ACTIONS].is<JsonObject>()) {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Expected %s to be JsonObject!", GROUP_ACTIONS);
-    res = false;
-  } else {
-    _settings[GROUP_ACTIONS] = doc[GROUP_ACTIONS];
+}
+
+WiFiConfig SettingsManagerClass::getWiFi() {
+  WiFiConfig settings;
+
+  String settingsStr = readData(WIFI_INDEX);
+  if (settingsStr.isEmpty()) {
+    ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "WiFi config empty");
+    return settings;
   }
 
-  if (res) {
-    res = save();
+  String buff;
+  char tmp;
+  bool ssid = true;
+  for (uint8_t i = 0; i < settingsStr.length(); i++) {
+    tmp = settingsStr.charAt(i);
+    if (tmp == '|') {
+      if (ssid) {
+        settings.ssid = buff;
+        ssid = false;
+      } else {
+        settings.password = buff;
+      }
+      buff.clear();
+    } else {
+      buff += tmp;
+    }
   }
+  settings.mode = buff.toInt();
+  return settings;
+}
 
-  if (!res) {
-    ST_LOG_INFO(SETTINGS_MANAGER_TAG, "Import failed, rollback old settings");
-    deserializeJson(_settings, old);
-    save();
+bool SettingsManagerClass::setWiFi(WiFiConfig settings) {
+  char * buff = (char *) malloc(settings.ssid.length() + settings.password.length() + 4);
+  sprintf(
+    buff,
+    "%s|%s|%d",
+    settings.ssid.c_str(),
+    settings.password.c_str(),
+    settings.mode
+  );
+  bool res = false;
+  if (writeData(WIFI_INDEX, buff)) {
+    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "WiFi config updated: %s", buff);
+    res = true;
+  } else {
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "WiFi config update failed");
   }
-
+  free(buff);
   return res;
 }
 
-const JsonDocument SettingsManager::getAllSettings() {
-  return _settings;
+bool SettingsManagerClass::dropWiFi() {
+  bool res = false;
+  if (writeData(WIFI_INDEX, "") == 0) {
+    ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "WiFi config droped");
+    res = true;
+  } else {
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "WiFi conig drop failed");
+  }
+  return res;
+}
+
+JsonDocument SettingsManagerClass::getConfig() {
+  Config::ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
+  if (entriesList->size() == 0) {
+    JsonDocument doc;
+    return doc;
+  }
+
+  String data = readData(CONFIG_INDEX);
+  return stringToObject(data);
+}
+
+bool SettingsManagerClass::setConfig(JsonDocument conf) {
+  bool res = false;
+  Config::ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
+  if (entriesList->size() == 0) {
+    return res;
+  }
+
+  String data = objectToString(conf);
+  if (writeData(CONFIG_INDEX, data.c_str()) >= 0) {
+    res = true;
+    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Configuration updated");
+  } else {
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Configuration update failed");
+  }
+  return res;
+}
+
+bool SettingsManagerClass::dropConfig() {
+  bool res = false;
+  if (writeData(CONFIG_INDEX, "") == 0) {
+    ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "Config droped");
+    res = true;
+  } else {
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Configuration drop failed");
+  }
+  return res;
+}
+
+#if ENABLE_HOOKS
+bool SettingsManagerClass::setHooks(JsonDocument doc) {
+  bool res = false;
+  String data;
+  serializeJson(doc, data);
+  if (writeData(CONFIG_INDEX, data.c_str())) {
+    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Hooks updated");
+    res = true;
+  } else {
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Failed to update hooks");
+  }
+  return res;
+}
+
+JsonDocument SettingsManagerClass::getHooks() {
+  JsonDocument doc;
+  String data = readData(HOOKS_INDEX, "[]");
+  deserializeJson(doc, data);
+  return doc;
+}
+
+bool SettingsManagerClass::dropHooks() {
+  bool res = false;
+  if (writeData(CONFIG_INDEX, "")) {
+    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Hooks dropped");
+    res = true;
+  } else {
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Failed to drop hooks");
+  }
+  return res;
+}
+#endif
+
+#if ENABLE_ACTIONS_SCHEDULER
+bool SettingsManagerClass::setActions(JsonDocument conf) {
+  String data = objectToString(conf);
+  bool res = false;
+  if (writeData(ACTIONS_INDEX, data.c_str()) >= 0) {
+    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Actions config updated to %s", data.c_str());
+    res = true;
+  } else {
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Actions config update failed");
+  }
+  return res;
+}
+
+JsonDocument SettingsManagerClass::getActions() {
+  String data = readData(ACTIONS_INDEX);
+  return stringToObject(data);
+}
+#endif
+
+JsonDocument SettingsManagerClass::stringToObject(String& data) {
+  JsonDocument doc;
+  doc.to<JsonObject>();
+  if (!data.isEmpty()) {
+    String buff, key;
+    char tmp;
+    for (uint8_t i = 0; i < data.length(); i++) {
+      tmp = data.charAt(i);
+      if (tmp == ';') {
+        key = buff;
+        buff.clear();
+      } else if (tmp == '|') {
+        doc[key] = buff;
+        key.clear();
+        buff.clear();
+      } else {
+        buff += tmp;
+      }
+    }
+    doc[key] = buff;
+  }
+  return doc;
+}
+
+String SettingsManagerClass::objectToString(JsonDocument doc) {
+  String res = "";
+  JsonObject root = doc.as<JsonObject>();
+  for (JsonPair pair: root) {
+    if (!pair.value().isNull()) {
+      String value = pair.value().as<String>();
+      if (value.isEmpty()) {
+        continue;
+      }
+      res += pair.key().c_str(); // todo escape
+      res += ";";
+      res += value;
+      res += "|";
+    }
+  }
+  res.remove(res.length() - 1);
+  return res;
+}
+
+String SettingsManagerClass::exportSettings() {
+  String result = "";
+  if (eepromBegin()) {
+    uint8_t tmp = 0;
+    int actualSize = DATA_OFFSET;
+    for (uint8_t i = 0; i <= LAST_INDEX; i++) {
+      actualSize += getLength(i);
+    }
+
+    char * buff = (char *) malloc(actualSize + 1);
+    for (uint16_t i = 0; i < actualSize; i++) {
+      tmp = EEPROM.read(i);
+      if (tmp == 0) {
+        if (i < DATA_OFFSET) {
+          tmp = '0';
+        } else {
+          continue;
+        }
+      }
+      buff[i] = (char) tmp;
+    }
+    buff[actualSize] = 0;
+    EEPROM.end(); 
+    result = buff;
+    free(buff);
+    return result;
+  } else {
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    return result;
+  }
+}
+
+bool SettingsManagerClass::importSettings(String dump) {
+  if (dump.length() < LENGTH_PARTITION_SIZE) {
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Bad dump - too short");
+    return false;
+  }
+
+  bool valid = true;
+  char tmp;
+  for (uint8_t i = 0; i < LENGTH_PARTITION_SIZE; i++) {
+    tmp = dump.charAt(i);
+    if ('0' > tmp && tmp > '9') {
+      valid = false;
+      break;
+    }
+  }
+  // todo check if dump contains only ascii?
+  if (!valid) {
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Bad dump - worng partitions lengths");
+    return false;
+  }
+
+  if (eepromBegin()) {
+    ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "Writing dump in eeprom (size=%d)", dump.length());
+    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Dump=%s", dump.c_str());
+
+    for (uint16_t i = 0; i < dump.length(); i++) {
+      EEPROM.write(i, dump.charAt(i));
+    }
+    EEPROM.commit();
+    EEPROM.end();
+    ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "Dump write finished");
+    return true;
+  } else {
+    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    return false;
+  }
 }

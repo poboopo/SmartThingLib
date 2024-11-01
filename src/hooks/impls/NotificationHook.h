@@ -98,7 +98,7 @@ class NotificationHook : public T {
     }
 
     void sendRequest() {
-      String gtwIp = STSettings.getConfig()[GATEWAY_CONFIG].as<String>();
+      String gtwIp = SettingsManager.getConfig()[GATEWAY_CONFIG].as<String>();
       if (gtwIp.isEmpty()) {
         ST_LOG_DEBUG(NOTIFICATION_HOOK_TAG, "Gateway ip is missing!");
         return;

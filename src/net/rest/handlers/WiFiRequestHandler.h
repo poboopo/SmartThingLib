@@ -23,8 +23,15 @@ class WiFiRequesthandler : public RequestHandler {
 
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_GET) {
+      WiFiConfig config = SettingsManager.getWiFi();
+
       JsonDocument jsonDoc;
-      jsonDoc["settings"] = STSettings.getWiFi();
+      JsonObject settings = jsonDoc["settings"].to<JsonObject>();
+      // todo rename to normal fields names
+      settings["ss"] = config.ssid;
+      settings["ps"] = config.password;
+      settings["md"] = config.mode;
+
       JsonObject modes = jsonDoc["modes"].to<JsonObject>();
       modes[String(WIFI_MODE_STA)] = "STA";
       modes[String(WIFI_MODE_AP)] = "AP";
@@ -62,13 +69,15 @@ class WiFiRequesthandler : public RequestHandler {
       if (mode != WIFI_MODE_AP && mode != WIFI_MODE_STA) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Unkown wifi mode"));
       }
-
-      JsonObject wifiSettings = STSettings.getWiFi();
-      wifiSettings[SSID_SETTING] = ssid;
-      wifiSettings[PASSWORD_SETTING] = password;
-      wifiSettings[WIFI_MODE_SETTING] = mode;
-      STSettings.save();
-      return request->beginResponse(200);
+      WiFiConfig config;
+      config.ssid = ssid;
+      config.password = password;
+      config.mode = mode;
+      
+      if (SettingsManager.setWiFi(config)) {
+        return request->beginResponse(200);
+      }
+      return request->beginResponse(500, CONTENT_TYPE_JSON, buildErrorJson("Failed to save settings"));
     }
     return nullptr;
   }

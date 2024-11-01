@@ -2,13 +2,9 @@
 #define SettingsManager_H
 
 #include <ArduinoJson.h>
-#include "logs/BetterLogger.h"
+// #include <functional>
 
-#define GROUP_CONFIG "cg"
-#define GROUP_WIFI "wf"
-#define GROUP_HOOKS "cb"
-#define GROUP_ACTIONS "ac"
-#define DEVICE_NAME "dn"
+#include "logs/BetterLogger.h"
 
 #define SSID_SETTING "ss"
 #define PASSWORD_SETTING "ps"
@@ -18,46 +14,59 @@
 
 #define EEPROM_LOAD_SIZE 1024
 
-class SettingsManager {
- private:
-  JsonDocument _settings;
-  String loadFromEeprom();
-  bool _loaded = false;
-
-  JsonObject getOrCreateObject(const char* name);
-  void removeIfEmpty(const char* group);
-  void clear();
- public:
-  SettingsManager();
-  ~SettingsManager();
-
-  void loadSettings();
-  void removeSetting(const char* name);
-  void wipeAll();
-  bool save();
-
-  JsonObject getConfig();
-  void dropConfig();
-
-  JsonObject getWiFi();
-  void dropWifiCredits();
-
-  const char * getDeviceName();
-  void setDeviceName(const char * name);
-
-  void setHooks(JsonDocument doc);
-  JsonDocument getHooks();
-  void dropAllHooks();
-
-  void setActionsConfig(JsonDocument doc);
-  JsonDocument getActionsConfig();
-
-  const JsonDocument exportSettings();
-  bool importSettings(JsonDocument doc);
-
-  const JsonDocument getAllSettings();
+struct WiFiConfig {
+  String ssid;
+  String password;
+  uint8_t mode;
 };
 
-extern SettingsManager STSettings;
+// typedef std::function<bool(JsonPair pair)> FilterFunction;
+
+class SettingsManagerClass {
+ private:
+  void read(uint16_t address, char * buff, uint16_t length);
+  void write(uint16_t address, const char * buff, uint16_t length);
+
+  int getLength(uint8_t index);
+  int writeLength(uint8_t index, int length);
+
+  String readData(uint8_t index, const char * defaultValue = "");
+  int writeData(uint8_t index, const char * data);
+
+  JsonDocument stringToObject(String& data);
+  String objectToString(JsonDocument doc);
+ public:
+  SettingsManagerClass();
+  ~SettingsManagerClass();
+
+  String getName();
+  bool setName(String name);
+
+  WiFiConfig getWiFi();
+  bool setWiFi(WiFiConfig settings);
+  bool dropWiFi();
+
+  JsonDocument getConfig();
+  bool setConfig(JsonDocument conf);
+  bool dropConfig();
+
+  #if ENABLE_HOOKS
+  JsonDocument getHooks();
+  bool setHooks(JsonDocument doc);
+  bool dropHooks();
+  #endif
+
+  #if ENABLE_ACTIONS_SCHEDULER
+  bool setActions(JsonDocument conf);
+  JsonDocument getActions();
+  #endif
+
+  String exportSettings();
+  bool importSettings(String dump);
+  
+  void clear();
+};
+
+extern SettingsManagerClass SettingsManager;
 
 #endif

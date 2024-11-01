@@ -39,7 +39,7 @@ class StateRequestHandler : public AsyncWebHandler {
   };
  private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
-    LOGGER.logRequest(STATE_RQ_TAG, request->methodToString(), request->url().c_str(), "");
+    st_log_request(STATE_RQ_TAG, request->methodToString(), request->url().c_str(), "");
 
     #if ENABLE_WEB_PAGE
     if (request->url().equals("/states/script.js")) {

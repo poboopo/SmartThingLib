@@ -86,13 +86,13 @@ void RestControllerClass::setupHandler() {
   #endif
 
   _server.on("/health", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    LOGGER.logRequest(WEB_SERVER_TAG, request->methodToString(), "/health", "");
+    st_log_request(WEB_SERVER_TAG, request->methodToString(), "/health", "");
     request->send(200, "text/plain", "I am alive!!! :)");
   });
 
 #if ENABLE_WEB_PAGE
   _server.on("/", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    LOGGER.logRequest(WEB_SERVER_TAG, request->methodToString(), "/", "");
+    st_log_request(WEB_SERVER_TAG, request->methodToString(), "/", "");
     request->send_P(200, "text/html", WEB_PAGE_MAIN);
   });
   _server.on("/assets/script.js", HTTP_GET, [this](AsyncWebServerRequest * request) {
@@ -103,13 +103,13 @@ void RestControllerClass::setupHandler() {
   });
 #else
   _server.on("/", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    LOGGER.logRequest(WEB_SERVER_TAG, request->methodToString(), "/", "");
+    st_log_request(WEB_SERVER_TAG, request->methodToString(), "/", "");
     request->send(200, "text/plain", "Web control panel is not included in this build!");
   });
 #endif
 
   _server.on("/features", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    LOGGER.logRequest(WEB_SERVER_TAG, request->methodToString(), "/features", "");
+    st_log_request(WEB_SERVER_TAG, request->methodToString(), "/features", "");
     JsonDocument doc;
     doc["web"] = ENABLE_WEB_PAGE == 1;
     doc["actions"] = ENABLE_ACTIONS == 1;
@@ -127,7 +127,7 @@ void RestControllerClass::setupHandler() {
   });
 
   _server.on("/metrics", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    LOGGER.logRequest(WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
+    st_log_request(WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
     JsonDocument doc;
     doc["uptime"] = millis();
 
@@ -162,7 +162,7 @@ void RestControllerClass::setupHandler() {
   });
 
   _server.on("/restart", HTTP_GET, [&](AsyncWebServerRequest * request) {
-    LOGGER.logRequest(WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
+    st_log_request(WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
 
     request->send(200);
     ST_LOG_INFO(WEB_SERVER_TAG, "---------RESTART---------");

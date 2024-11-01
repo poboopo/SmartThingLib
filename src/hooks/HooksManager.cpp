@@ -22,7 +22,7 @@ using namespace Observable::DeviceState;
 using Observable::ObservableObject;
 
 void HooksManagerClass::loadFromSettings() {
-  JsonDocument hooksInfo = STSettings.getHooks();
+  JsonDocument hooksInfo = SettingsManager.getHooks();
   if (hooksInfo.size() == 0) {
     ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "There is no hooks in settings");
     return;
@@ -466,13 +466,13 @@ boolean HooksManagerClass::callWatcherHook(List<Watcher<T>>* list, const char * 
 
 void HooksManagerClass::saveHooksToSettings() {
   ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "Saving hooks");
-  STSettings.setHooks(allHooksToJson(true, true));
-  if (STSettings.save()) {
-    ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "Hooks were saved");
-  } else {
-    // todo reboot?
-    ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Hooks save failed");
-  }
+  SettingsManager.setHooks(allHooksToJson(true, true));
+  // if (SettingsManager.save()) {
+  //   ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "Hooks were saved");
+  // } else {
+  //   // todo reboot?
+  //   ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Hooks save failed");
+  // }
 }
 
 JsonDocument HooksManagerClass::allHooksToJson(bool ignoreReadOnly, bool shortJson) {

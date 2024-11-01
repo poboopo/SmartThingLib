@@ -22,26 +22,21 @@ class SettingsRequestHandler : public RequestHandler {
 
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_GET) {
-      JsonDocument settings = STSettings.exportSettings();
-      String response;
-      serializeJson(settings, response);
+      String response = SettingsManager.exportSettings();
       return request->beginResponse(200, CONTENT_TYPE_JSON, response);
     }
     if (request->method() == HTTP_POST) {
       if (_body.isEmpty()) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, ERROR_BODY_MISSING);
       }
-      JsonDocument doc;
-      deserializeJson(doc, _body);
-      ST_LOG_INFO(SETTINGS_RQ_TAG, "Trying to import settings: %s", _body.c_str());
-      if (STSettings.importSettings(doc)) {
-        ST_LOG_INFO(SETTINGS_RQ_TAG, "Successfully imported settings!");
-        return request->beginResponse(200);
+      ST_LOG_DEBUG(SETTINGS_RQ_TAG, "Trying to import settings: %s", _body.c_str());
+      if (SettingsManager.importSettings(_body)) {
+        ST_LOG_DEBUG(SETTINGS_RQ_TAG, "Successfully imported settings!");
         ST_LOG_WARNING(SETTINGS_RQ_TAG, "Restarting in 5 sec!");
         delay(5000);
         ESP.restart();
+        return request->beginResponse(200); // not reacheable
       } else {
-        ST_LOG_ERROR(SETTINGS_RQ_TAG, "Settings import failed");
         return request->beginResponse(500, CONTENT_TYPE_JSON, buildErrorJson("Settings import failed! Check logs for details"));
       }
     }

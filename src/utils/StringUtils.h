@@ -14,7 +14,7 @@
 
 // replaces keys in string with config values
 inline String replaceValues(const char * input, String &value) {
-  JsonObject conf = STSettings.getConfig();
+  JsonDocument conf = SettingsManager.getConfig();
 
   String result = "";
   String key = "";

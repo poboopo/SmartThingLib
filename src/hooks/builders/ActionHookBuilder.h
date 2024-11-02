@@ -26,8 +26,7 @@ class ActionHookBuilder {
     }
 
     ActionHook<B, T>* hook = new ActionHook<B, T>(action, readOnly);
-    ST_LOG_DEBUG(ACTION_HOOK_BUILDER_TAG,
-                 "Action hook created: action=%s", action);
+    ST_LOG_DEBUG(ACTION_HOOK_BUILDER_TAG, "Action hook created: action=%s", action);
 
     return hook;
   }
@@ -35,7 +34,14 @@ class ActionHookBuilder {
     JsonDocument doc;
     JsonObject actionObj = doc["action"].to<JsonObject>();
     actionObj["required"] = true;
-    actionObj["values"] = ActionsManager.toJson();
+    JsonObject valuesObj = actionObj["values"].to<JsonObject>();
+
+    JsonDocument actions = ActionsManager.toJson();
+    JsonArray actionsArray = actions.as<JsonArray>();
+    for (JsonObject action: actionsArray) {
+      const char * name = action[ACTIONS_JSON_NAME];
+      valuesObj[name] = action[ACTIONS_JSON_CAPTION];
+    }
     return doc;
   }
 };

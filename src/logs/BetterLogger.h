@@ -213,7 +213,10 @@ class BetterLogger {
 
   void parseAddressAndConnect() {
     if (_fullAddr.isEmpty() || _fullAddr.equals("null")) {
-      warning(LOGGER_TAG, "Empty tcp log server info");
+      if (_connected) {
+        warning(LOGGER_TAG, "Server info was deleted, disconnecting");
+        disconnect();
+      }
       return;
     }
 

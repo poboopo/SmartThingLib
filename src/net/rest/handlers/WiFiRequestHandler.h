@@ -27,10 +27,9 @@ class WiFiRequesthandler : public RequestHandler {
 
       JsonDocument jsonDoc;
       JsonObject settings = jsonDoc["settings"].to<JsonObject>();
-      // todo rename to normal fields names
-      settings["ss"] = config.ssid;
-      settings["ps"] = config.password;
-      settings["md"] = config.mode;
+      settings["ssid"] = config.ssid;
+      settings["password"] = config.password;
+      settings["mode"] = config.mode;
 
       JsonObject modes = jsonDoc["modes"].to<JsonObject>();
       modes[String(WIFI_MODE_STA)] = "STA";
@@ -62,10 +61,6 @@ class WiFiRequesthandler : public RequestHandler {
             buildErrorJson("Password is too short (8 symbols or blank)"));
       }
       int mode = jsonDoc["mode"].as<int>();
-      if (mode < 0) {
-        return request->beginResponse(400, CONTENT_TYPE_JSON,
-                    buildErrorJson("WiFi mode can't be negative"));
-      }
       if (mode != WIFI_MODE_AP && mode != WIFI_MODE_STA) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Unkown wifi mode"));
       }

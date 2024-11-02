@@ -189,17 +189,29 @@ JsonDocument SettingsRepositoryClass::stringToObject(String& data) {
   if (!data.isEmpty()) {
     String buff, key;
     char tmp;
+    bool escaped = false, buildKey = true;
     for (uint8_t i = 0; i < data.length(); i++) {
       tmp = data.charAt(i);
-      if (tmp == ';') {
-        key = buff;
-        buff.clear();
-      } else if (tmp == '|') {
-        doc[key] = buff;
-        key.clear();
-        buff.clear();
+
+      if (!escaped && tmp == '|') {
+        escaped = true;
+      } else if (!escaped && tmp == ':') {
+        if (buildKey) {
+          key = buff;
+          buff.clear();
+          buildKey = false;
+        } else {
+          doc[key] = buff;
+          key.clear();
+          buff.clear();
+          buildKey = true;
+        }
       } else {
+        if (escaped && tmp != ':') {
+          buff += '|';
+        }
         buff += tmp;
+        escaped = false;
       }
     }
     doc[key] = buff;
@@ -216,10 +228,14 @@ String SettingsRepositoryClass::objectToString(JsonDocument doc) {
       if (value.isEmpty()) {
         continue;
       }
-      res += pair.key().c_str(); // todo escape
-      res += ";";
+      String key = pair.key().c_str();
+      key.replace(":", "|:");
+      value.replace(":", "|:");
+
+      res += key;
+      res += ":";
       res += value;
-      res += "|";
+      res += ":";
     }
   }
   res.remove(res.length() - 1);
@@ -255,10 +271,12 @@ WiFiConfig SettingsRepositoryClass::getWiFi() {
 
   String buff;
   char tmp;
-  bool ssid = true;
+  bool ssid = true, escaped = false;
   for (uint8_t i = 0; i < settingsStr.length(); i++) {
     tmp = settingsStr.charAt(i);
-    if (tmp == '|') {
+    if (!escaped && tmp == '|') {
+      escaped = true;
+    } else if (!escaped && tmp == ':') {
       if (ssid) {
         settings.ssid = buff;
         ssid = false;
@@ -267,22 +285,31 @@ WiFiConfig SettingsRepositoryClass::getWiFi() {
       }
       buff.clear();
     } else {
+      if (escaped && tmp != ':') {
+        buff += '|';
+      }
       buff += tmp;
+      escaped = false;
     }
   }
+  settings.ssid = "PUK";
   settings.mode = buff.toInt();
   return settings;
 }
 
 bool SettingsRepositoryClass::setWiFi(WiFiConfig settings) {
+  settings.ssid.replace(":", "|:");
+  settings.password.replace(":", "|:");
+
   char * buff = (char *) malloc(settings.ssid.length() + settings.password.length() + 4);
   sprintf(
     buff,
-    "%s|%s|%d",
+    "%s:%s:%d",
     settings.ssid.c_str(),
     settings.password.c_str(),
     settings.mode
   );
+
   bool res = false;
   if (writeData(WIFI_INDEX, buff)) {
     ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "WiFi config updated: %s", buff);

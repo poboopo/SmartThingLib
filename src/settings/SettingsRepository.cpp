@@ -183,6 +183,49 @@ int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
   }
 }
 
+JsonDocument SettingsRepositoryClass::stringToObject(String& data) {
+  JsonDocument doc;
+  doc.to<JsonObject>();
+  if (!data.isEmpty()) {
+    String buff, key;
+    char tmp;
+    for (uint8_t i = 0; i < data.length(); i++) {
+      tmp = data.charAt(i);
+      if (tmp == ';') {
+        key = buff;
+        buff.clear();
+      } else if (tmp == '|') {
+        doc[key] = buff;
+        key.clear();
+        buff.clear();
+      } else {
+        buff += tmp;
+      }
+    }
+    doc[key] = buff;
+  }
+  return doc;
+}
+
+String SettingsRepositoryClass::objectToString(JsonDocument doc) {
+  String res = "";
+  JsonObject root = doc.as<JsonObject>();
+  for (JsonPair pair: root) {
+    if (!pair.value().isNull()) {
+      String value = pair.value().as<String>();
+      if (value.isEmpty()) {
+        continue;
+      }
+      res += pair.key().c_str(); // todo escape
+      res += ";";
+      res += value;
+      res += "|";
+    }
+  }
+  res.remove(res.length() - 1);
+  return res;
+}
+
 String SettingsRepositoryClass::getName() {
   return readData(NAME_INDEX, ST_DEFAULT_NAME);
 }
@@ -306,7 +349,7 @@ bool SettingsRepositoryClass::setHooks(JsonDocument doc) {
   bool res = false;
   String data;
   serializeJson(doc, data);
-  if (writeData(CONFIG_INDEX, data.c_str())) {
+  if (writeData(HOOKS_INDEX, data.equals("[]") ? "" : data.c_str()) >= 0) {
     ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Hooks updated");
     res = true;
   } else {
@@ -352,49 +395,6 @@ JsonDocument SettingsRepositoryClass::getActions() {
   return stringToObject(data);
 }
 #endif
-
-JsonDocument SettingsRepositoryClass::stringToObject(String& data) {
-  JsonDocument doc;
-  doc.to<JsonObject>();
-  if (!data.isEmpty()) {
-    String buff, key;
-    char tmp;
-    for (uint8_t i = 0; i < data.length(); i++) {
-      tmp = data.charAt(i);
-      if (tmp == ';') {
-        key = buff;
-        buff.clear();
-      } else if (tmp == '|') {
-        doc[key] = buff;
-        key.clear();
-        buff.clear();
-      } else {
-        buff += tmp;
-      }
-    }
-    doc[key] = buff;
-  }
-  return doc;
-}
-
-String SettingsRepositoryClass::objectToString(JsonDocument doc) {
-  String res = "";
-  JsonObject root = doc.as<JsonObject>();
-  for (JsonPair pair: root) {
-    if (!pair.value().isNull()) {
-      String value = pair.value().as<String>();
-      if (value.isEmpty()) {
-        continue;
-      }
-      res += pair.key().c_str(); // todo escape
-      res += ";";
-      res += value;
-      res += "|";
-    }
-  }
-  res.remove(res.length() - 1);
-  return res;
-}
 
 String SettingsRepositoryClass::exportSettings() {
   String result = "";

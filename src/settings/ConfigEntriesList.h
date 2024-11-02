@@ -8,20 +8,25 @@
 
 static const char * CONFIG_ENTRIES_LIST_TAG = "config_entries_list";
 
+enum ConfigEntryType {
+  CONFIG_STRING,
+  CONFIG_INTEGER,
+  CONFIG_BOOLEAN
+};
+
 struct ConfigEntry {
-  ConfigEntry(const char* n, const char* c, const char* t)
+  ConfigEntry(const char* n, const char* c, ConfigEntryType t)
       : name(n), caption(c), type(t){};
   const char* name;
   const char* caption;
-  const char* type;
+  ConfigEntryType type;
 };
 
 class ConfigEntriesList : public List<ConfigEntry> {
  public:
-  bool add(const char* name, const char* caption, const char* type) {
+  bool add(const char* name, const char* caption, ConfigEntryType type) {
     if (findConfigEntry(name) != nullptr) {
-      ST_LOG_WARNING(CONFIG_ENTRIES_LIST_TAG, "Config entry %s already exists!",
-                     name);
+      ST_LOG_WARNING(CONFIG_ENTRIES_LIST_TAG, "Config entry %s already exists!", name);
       return false;
     }
     ConfigEntry* entry = new ConfigEntry(name, caption, type);
@@ -43,7 +48,17 @@ class ConfigEntriesList : public List<ConfigEntry> {
     forEach([&](ConfigEntry* current) {
       JsonObject obj = doc[current->name].to<JsonObject>();
       obj["caption"] = current->caption;
-      obj["type"] = current->type;
+      switch (current->type) {
+        case CONFIG_STRING:
+          obj["type"] = "string";
+          break;
+        case CONFIG_INTEGER:
+          obj["type"] = "number";
+          break;
+        case CONFIG_BOOLEAN:
+          obj["type"] = "boolean";
+          break;
+      }
     });
     return doc;
   }

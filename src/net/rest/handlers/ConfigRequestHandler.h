@@ -29,6 +29,21 @@ class ConfigRequestHandler : public RequestHandler {
     if (url.equals("/config/values")) {
       if (request->method() == HTTP_GET) {
         JsonDocument config = SettingsRepository.getConfig();
+        ConfigEntriesList * list = SmartThing.getConfigInfo();
+        JsonObject obj = config.as<JsonObject>();
+
+        // jest'
+        // hard typization required only over rest, that's why
+        list->forEach([obj](ConfigEntry * entry) {
+          if (entry->type != CONFIG_STRING && obj.containsKey(entry->name)) {
+            if (entry->type == CONFIG_INTEGER) {
+              obj[entry->name] = obj[entry->name].as<int>();
+            } else if (entry->type == CONFIG_BOOLEAN) {
+              obj[entry->name] = obj[entry->name].as<bool>();
+            }
+          }
+        });
+
         String response;
         serializeJson(config, response);
         return request->beginResponse(200, CONTENT_TYPE_JSON, response);

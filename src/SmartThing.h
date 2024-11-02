@@ -49,7 +49,7 @@ class SmartThingClass {
   ConfigEntriesList * getConfigInfo() {
     return &_configEntriesList;
   }
-  bool addConfigEntry(const char* name, const char* caption, const char* type);
+  bool addConfigEntry(const char* name, const char* caption, ConfigEntryType type = CONFIG_STRING);
  private:
   bool _initialized = false;
   unsigned long _lastBeacon = 0;

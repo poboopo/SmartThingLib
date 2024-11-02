@@ -2,7 +2,7 @@
 
 #if ENABLE_HOOKS 
 
-#include "SmartThing.h"
+#include "observable/ObservablesManager.h"
 #include "hooks/builders/HooksFactory.h"
 #include "hooks/watchers/DeviceStateWatcher.h"
 #include "hooks/watchers/SensorWatcher.h"
@@ -82,13 +82,13 @@ int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
 
   #if ENABLE_STATES
   if (strcmp(type, STATE_TYPE) == 0) {
-    return addHook<String>(SmartThing.getDeviceState(name),
+    return addHook<String>(ObservablesManager.getDeviceState(name),
                                HooksFactory::build<StateHook, String>(hook));
   }
   #endif
   #if ENABLE_SENSORS 
   if (strcmp(type, SENSOR_TYPE) == 0) {
-    return addHook<int16_t>(SmartThing.getSensor(name),
+    return addHook<int16_t>(ObservablesManager.getSensor(name),
                                 HooksFactory::build<SensorHook, int16_t>(hook));
   }
   #endif

@@ -4,7 +4,7 @@
 #include "Features.h"
 #if ENABLE_SENSORS 
 
-#include "SmartThing.h"
+#include "observable/ObservablesManager.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/WebPageAssets.h"
 
@@ -48,7 +48,7 @@ class SensorsRequestHandler : public AsyncWebHandler {
     }
     #endif
 
-    JsonDocument data = url.equals("/sensors/types") ? SmartThing.getSensorsTypes() : SmartThing.getSensorsValues();
+    JsonDocument data = url.equals("/sensors/types") ? ObservablesManager.getSensorsTypes() : ObservablesManager.getSensorsValues();
     String response;
     serializeJson(data, response);
     return request->beginResponse(200, CONTENT_TYPE_JSON, response);

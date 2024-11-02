@@ -113,14 +113,14 @@ bool SmartThingClass::init(const char * type) {
   #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
   addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)", "string");
     #if ENABLE_STATES
-  addDeviceState("logger", []() {
-    return LOGGER.isConnected() ? "connected" : "disconnected";
-  });
+    ObservablesManager.addDeviceState("logger", []() {
+      return LOGGER.isConnected() ? "connected" : "disconnected";
+    });
     #endif
   #endif
 
   #if ENABLE_STATES
-  addDeviceState("wifi", [this]() {
+  ObservablesManager.addDeviceState("wifi", [this]() {
     return wifiConnected() ? "connected" : "disconnected";
   });
   #endif
@@ -380,60 +380,6 @@ void SmartThingClass::setDnsName() {
 JsonDocument SmartThingClass::getConfigInfoJson() {
   return _configEntriesList.toJson();
 }
-
-#if ENABLE_SENSORS 
-JsonDocument SmartThingClass::getSensorsValues() {
-  return _sensorsList.getValues();
-} 
-JsonDocument SmartThingClass::getSensorsTypes() {
-  return _sensorsList.getTypes();
-}
-
-int16_t SmartThingClass::getSensorsCount() { return _sensorsList.size(); }
-
-bool SmartThingClass::addSensor(
-    const char* name,
-    Observable::ObservableObject<int16_t>::ValueProviderFunction function) {
-  return _sensorsList.add(name, function);
-}
-
-bool SmartThingClass::addDigitalSensor(const char* name, int pin) {
-  pinMode(pin, INPUT_PULLUP);
-  return _sensorsList.addDigital(name, pin);
-}
-
-bool SmartThingClass::addAnalogSensor(const char* name, int pin) {
-  return _sensorsList.addAnalog(name, pin);
-}
-
-const Observable::Sensor::Sensor* SmartThingClass::getSensor(
-    const char* name) {
-  return _sensorsList.findSensor(name);
-}
-#endif
-
-#if ENABLE_STATES
-bool SmartThingClass::addDeviceState(
-    const char* name,
-    Observable::ObservableObject<const char*>::ValueProviderFunction
-        function) {
-  return _deviceStatesList.add(name, function);
-}
-
-JsonDocument SmartThingClass::getDeviceStatesInfo() {
-  return _deviceStatesList.getValues();
-}
-
-const Observable::DeviceState::DeviceState* SmartThingClass::getDeviceState(
-    const char* name) {
-  return _deviceStatesList.findState(name);
-}
-
-int16_t SmartThingClass::getDeviceStatesCount() {
-  return _deviceStatesList.size();
-}
-
-#endif
 
 bool SmartThingClass::addConfigEntry(const char* name, const char* caption,
                                      const char* type) {

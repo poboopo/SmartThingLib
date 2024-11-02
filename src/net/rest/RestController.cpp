@@ -1,6 +1,9 @@
 #include "net/rest/RestController.h"
 
 #include "Features.h"
+#include "logs/BetterLogger.h"
+#include "settings/SettingsRepository.h"
+#include "observable/ObservablesManager.h"
 #include "net/rest/handlers/ActionRequestHandler.h"
 #include "net/rest/handlers/HooksRequestHandler.h"
 #include "net/rest/handlers/ConfigRequestHandler.h"
@@ -144,10 +147,10 @@ void RestControllerClass::setupHandler() {
     #if ENABLE_SENSORS || ENABLE_STATES || ENABLE_HOOKS
     JsonObject counts = doc["counts"].to<JsonObject>();
     #if ENABLE_SENSORS
-    counts["sensors"] = SmartThing.getSensorsCount();
+    counts["sensors"] = ObservablesManager.getSensorsCount();
     #endif
     #if ENABLE_STATES
-    counts["states"] = SmartThing.getDeviceStatesCount();
+    counts["states"] = ObservablesManager.getDeviceStatesCount();
     #endif
     #if ENABLE_HOOKS
     counts["hooks"] = HooksManager.getTotalHooksCount();

@@ -3,9 +3,6 @@
 
 #include <ESPAsyncWebServer.h>
 
-#include "logs/BetterLogger.h"
-#include "settings/SettingsRepository.h"
-
 #define CONTENT_TYPE_JSON "application/json"
 #define CONTENT_TYPE_JS "text/javascript"
 

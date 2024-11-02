@@ -4,7 +4,7 @@
 #include "Features.h"
 #if ENABLE_STATES
 
-#include "SmartThing.h"
+#include "observable/ObservablesManager.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/WebPageAssets.h"
 
@@ -47,9 +47,9 @@ class StateRequestHandler : public AsyncWebHandler {
     }
     #endif
 
-    JsonDocument state = SmartThing.getDeviceStatesInfo();
+    JsonDocument states = ObservablesManager.getDeviceStatesInfo();
     String response;
-    serializeJson(state, response);
+    serializeJson(states, response);
     return request->beginResponse(200, CONTENT_TYPE_JSON, response);
   }
 };

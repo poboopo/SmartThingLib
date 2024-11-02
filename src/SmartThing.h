@@ -12,6 +12,7 @@
 #include "net/rest/RestController.h"
 #include "settings/SettingsRepository.h"
 #include "actions/ActionsManager.h"
+#include "observable/ObservablesManager.h"
 #include "Features.h"
 
 #define SMART_THING_VERSION "0.7"
@@ -44,29 +45,6 @@ class SmartThingClass {
   const char * getIp();
   bool wifiConnected();
 
-  #if ENABLE_SENSORS
-  bool addSensor(
-      const char* name,
-      Observable::ObservableObject<int16_t>::ValueProviderFunction
-          valueProvider);
-  bool addDigitalSensor(const char* name, int pin);
-  bool addAnalogSensor(const char* name, int pin);
-  const Observable::Sensor::Sensor* getSensor(const char* name);
-  JsonDocument getSensorsValues();
-  JsonDocument getSensorsTypes();
-  int16_t getSensorsCount();
-  #endif
-
-  #if ENABLE_STATES
-  bool addDeviceState(const char* name, Observable::ObservableObject<const char*>::ValueProviderFunction valueProvider);
-
-  const Observable::DeviceState::DeviceState* getDeviceState(
-      const char* name);
-  JsonDocument getDeviceStatesInfo();
-
-  int16_t getDeviceStatesCount();
-  #endif
-  
   JsonDocument getConfigInfoJson();
   Config::ConfigEntriesList * getConfigInfo() {
     return &_configEntriesList;
@@ -104,14 +82,6 @@ class SmartThingClass {
   void asyncLoop();
   #endif
   void sendBeacon();
-
-  #if ENABLE_SENSORS
-  Observable::Sensor::SensorsList _sensorsList;
-  #endif
-
-  #if ENABLE_STATES
-  Observable::DeviceState::DeviceStatesList _deviceStatesList;
-  #endif
 
   Config::ConfigEntriesList _configEntriesList;
 };

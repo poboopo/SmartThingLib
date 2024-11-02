@@ -64,13 +64,13 @@ class ConfigRequestHandler : public RequestHandler {
 
         JsonDocument config = SettingsRepository.getConfig();
         if (config.containsKey(name)) {
-          ST_LOG_WARNING(CONFIG_LOG_TAG, "Removing config value %s", name);
+          st_log_warning(CONFIG_LOG_TAG, "Removing config value %s", name);
           config.remove(name);
           SettingsRepository.setConfig(config);
           callHooks();
           return request->beginResponse(200);
         } else {
-          ST_LOG_ERROR(CONFIG_LOG_TAG, "Failed to remove config %s - no such key",
+          st_log_error(CONFIG_LOG_TAG, "Failed to remove config %s - no such key",
                       name);
           return request->beginResponse(404, "content/json", buildErrorJson("No such key"));
         }

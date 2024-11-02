@@ -21,7 +21,7 @@ class DeviceStatesList : public List<DeviceState> {
            ObservableObject<const char *>::ValueProviderFunction
                valueProvider) {
     if (findState(name) != nullptr) {
-      ST_LOG_WARNING(DEVICE_STATES_LIST_TAG,
+      st_log_warning(DEVICE_STATES_LIST_TAG,
                      "State with name %s already exist! Skipping...", name);
       return false;
     }
@@ -29,13 +29,13 @@ class DeviceStatesList : public List<DeviceState> {
     state->name = name;
     state->valueProvider = valueProvider;
     if (append(state) > -1) {
-      ST_LOG_DEBUG(DEVICE_STATES_LIST_TAG, "Added new device state %s", name);
+      st_log_debug(DEVICE_STATES_LIST_TAG, "Added new device state %s", name);
       return true;
     } else {
       if (state != nullptr) {
         delete state;
       }
-      ST_LOG_ERROR(DEVICE_STATES_LIST_TAG, "Dailed to add new device state %s", name);
+      st_log_error(DEVICE_STATES_LIST_TAG, "Dailed to add new device state %s", name);
       return false;
     }
   };

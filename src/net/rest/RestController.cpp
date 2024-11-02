@@ -58,7 +58,7 @@ void RestControllerClass::begin() {
   setupHandler();
   _server.begin();
   _setupFinished = true;
-  ST_LOG_INFO(WEB_SERVER_TAG, "Web service started");
+  st_log_info(WEB_SERVER_TAG, "Web service started");
 }
 
 void RestControllerClass::reload() {
@@ -168,7 +168,7 @@ void RestControllerClass::setupHandler() {
     st_log_request(WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
 
     request->send(200);
-    ST_LOG_INFO(WEB_SERVER_TAG, "---------RESTART---------");
+    st_log_info(WEB_SERVER_TAG, "---------RESTART---------");
     _restartHandler();
 
     delay(2000);

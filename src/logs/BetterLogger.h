@@ -12,29 +12,29 @@
 #endif
 
 #if ENABLE_LOGGER && (LOGGING_LEVEL == LOGGING_LEVEL_DEBUG)
-#define ST_LOG_DEBUG(tag, format, ...) LOGGER.debug(tag, format, ##__VA_ARGS__)
+#define st_log_debug(tag, format, ...) LOGGER.debug(tag, format, ##__VA_ARGS__)
 #define st_log_request(tag, method, uri, body) LOGGER.logRequest(tag, method, uri, body)
 #else
-#define ST_LOG_DEBUG(tag, format, ...)
+#define st_log_debug(tag, format, ...)
 #define st_log_request(tag, method, uri, body)
 #endif
 
 #if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_INFO)
-#define ST_LOG_INFO(tag, format, ...) LOGGER.info(tag, format, ##__VA_ARGS__)
+#define st_log_info(tag, format, ...) LOGGER.info(tag, format, ##__VA_ARGS__)
 #else
-#define ST_LOG_INFO(tag, format, ...)
+#define st_log_info(tag, format, ...)
 #endif
 
 #if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_WARN)
-#define ST_LOG_WARNING(tag, format, ...) LOGGER.warning(tag, format, ##__VA_ARGS__)
+#define st_log_warning(tag, format, ...) LOGGER.warning(tag, format, ##__VA_ARGS__)
 #else
-#define ST_LOG_WARNING(tag, format, ...)
+#define st_log_warning(tag, format, ...)
 #endif
 
 #if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_ERROR)
-#define ST_LOG_ERROR(tag, format, ...) LOGGER.error(tag, format, ##__VA_ARGS__)
+#define st_log_error(tag, format, ...) LOGGER.error(tag, format, ##__VA_ARGS__)
 #else
-#define ST_LOG_ERROR(tag, format, ...)
+#define st_log_error(tag, format, ...)
 #endif
 
 static const char * LOGGER_TAG = "logger";

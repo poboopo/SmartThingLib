@@ -26,19 +26,19 @@ class ConfigEntriesList : public List<ConfigEntry> {
  public:
   bool add(const char* name, const char* caption, ConfigEntryType type) {
     if (findConfigEntry(name) != nullptr) {
-      ST_LOG_WARNING(CONFIG_ENTRIES_LIST_TAG, "Config entry %s already exists!", name);
+      st_log_warning(CONFIG_ENTRIES_LIST_TAG, "Config entry %s already exists!", name);
       return false;
     }
     ConfigEntry* entry = new ConfigEntry(name, caption, type);
     if (append(entry) > -1) {
-      ST_LOG_DEBUG(CONFIG_ENTRIES_LIST_TAG, "Added new config entry - %s:%s",
+      st_log_debug(CONFIG_ENTRIES_LIST_TAG, "Added new config entry - %s:%s",
                    name, caption);
       return true;
     } else {
       if (entry != nullptr) {
         delete entry;
       }
-      ST_LOG_ERROR(CONFIG_ENTRIES_LIST_TAG,
+      st_log_error(CONFIG_ENTRIES_LIST_TAG,
                    "Failed to add new config entry - %s:%s", name, caption);
       return false;
     }

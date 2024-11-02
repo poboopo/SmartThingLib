@@ -30,13 +30,13 @@ class HooksFactory {
     static Hook<T>* build(JsonObject doc) {
       const char* type = doc["type"];
       if (type == nullptr) {
-        ST_LOG_ERROR(HOOKS_FACTORY_TAG, "Hook type is missing!");
+        st_log_error(HOOKS_FACTORY_TAG, "Hook type is missing!");
         return nullptr;
       }
 
-      ST_LOG_DEBUG(HOOKS_FACTORY_TAG,
+      st_log_debug(HOOKS_FACTORY_TAG,
                   "-----------------------BUILD-START-----------------------");
-      ST_LOG_DEBUG(HOOKS_FACTORY_TAG, "Building hook type=%s", type);
+      st_log_debug(HOOKS_FACTORY_TAG, "Building hook type=%s", type);
 
       Hook<T>* hook = nullptr;
       #if ENABLE_ACTIONS 
@@ -49,11 +49,11 @@ class HooksFactory {
       } else if (strcmp(type, NOTIFICATION_HOOK_TAG) == 0) {
         hook = NotificationHookBuilder::build<B, T>(doc, false);
       } else {
-        ST_LOG_ERROR(HOOKS_FACTORY_TAG, "Unkonwn hook type: %s", type);
+        st_log_error(HOOKS_FACTORY_TAG, "Unkonwn hook type: %s", type);
       }
       if (hook == nullptr) {
 
-      ST_LOG_DEBUG(HOOKS_FACTORY_TAG,
+      st_log_debug(HOOKS_FACTORY_TAG,
                   "-----------------------BUILD-FAILED---------------------");
         return nullptr;
       }
@@ -61,32 +61,32 @@ class HooksFactory {
       if (doc.containsKey("id") && doc["id"].is<int>()) {
         uint8_t id = doc["id"];
         hook->setId(id);
-        ST_LOG_DEBUG(HOOKS_FACTORY_TAG, "Id=%u", id);
+        st_log_debug(HOOKS_FACTORY_TAG, "Id=%u", id);
       } else {
         hook->setId(-1);
-        ST_LOG_DEBUG(HOOKS_FACTORY_TAG, "Id is empty");
+        st_log_debug(HOOKS_FACTORY_TAG, "Id is empty");
       }
 
       String trigger = doc[CB_BUILDER_TRIGGER];
       if (trigger.isEmpty() || trigger.equals("null")) {
         hook->disableTrigger();
-        ST_LOG_DEBUG(HOOKS_FACTORY_TAG, "Trigger disabled");
+        st_log_debug(HOOKS_FACTORY_TAG, "Trigger disabled");
       } else {
         hook->enableTrigger();
         hook->setTriggerValue(doc[CB_BUILDER_TRIGGER].as<T>());
         
-        ST_LOG_DEBUG(HOOKS_FACTORY_TAG, "Trigger=%s", trigger.c_str());
+        st_log_debug(HOOKS_FACTORY_TAG, "Trigger=%s", trigger.c_str());
       }
 
       String compare = doc[CB_BUILDER_COMPARE];
       if (!compare.isEmpty()) {
         hook->setCompareType(compare);
-        ST_LOG_DEBUG(HOOKS_FACTORY_TAG, "compareType=%s", compare.c_str());
+        st_log_debug(HOOKS_FACTORY_TAG, "compareType=%s", compare.c_str());
       }
 
       setTypeSpecificValues(hook, doc);
 
-      ST_LOG_DEBUG(HOOKS_FACTORY_TAG,
+      st_log_debug(HOOKS_FACTORY_TAG,
                   "------------------------BUILD-END-----------------------");
       return hook;
     }
@@ -121,7 +121,7 @@ class HooksFactory {
       if (doc.containsKey("threshold")) {
         int16_t threshold = doc["threshold"];
         ((SensorHook *) hook)->setThreshold(threshold);
-        ST_LOG_DEBUG(HOOKS_FACTORY_TAG, "Threshold=%d", threshold);
+        st_log_debug(HOOKS_FACTORY_TAG, "Threshold=%d", threshold);
       }
     }
     #endif

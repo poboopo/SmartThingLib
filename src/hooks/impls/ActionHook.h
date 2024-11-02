@@ -21,7 +21,7 @@ class ActionHook : public T {
 
     void call(V &value) {
       // replace ${value} in _action?
-      ST_LOG_DEBUG(ACTION_HOOK_TAG, "Calling action  %s", _action.c_str());
+      st_log_debug(ACTION_HOOK_TAG, "Calling action  %s", _action.c_str());
       ActionsManager.call(_action.c_str());
     }
 
@@ -33,11 +33,11 @@ class ActionHook : public T {
       if (obj.containsKey("action")) {
         String newAction = obj["action"].as<String>();
         if (newAction.isEmpty()) {
-          ST_LOG_ERROR(ACTION_HOOK_TAG, "Action is missing!");
+          st_log_error(ACTION_HOOK_TAG, "Action is missing!");
           return;
         }
         _action = newAction;
-        ST_LOG_DEBUG(ACTION_HOOK_TAG, "New hook action: %s",
+        st_log_debug(ACTION_HOOK_TAG, "New hook action: %s",
                     _action.c_str());
       }
     }

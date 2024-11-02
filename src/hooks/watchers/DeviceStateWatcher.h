@@ -28,7 +28,7 @@ class DeviceStateWatcher : public Watcher<String> {
     }
 
     if (!newValue.equals(_oldValue)) {
-      // ST_LOG_DEBUG(DEVICE_STATE_WATCHER_TAG,
+      // st_log_debug(DEVICE_STATE_WATCHER_TAG,
       //              "Device state [%s] value changed %s->%s.", _observable->name,
       //              _oldValue, newValue);
       callHooks(newValue);

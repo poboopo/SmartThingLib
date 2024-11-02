@@ -29,10 +29,10 @@ class SettingsRequestHandler : public RequestHandler {
       if (_body.isEmpty()) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, ERROR_BODY_MISSING);
       }
-      ST_LOG_DEBUG(SETTINGS_RQ_TAG, "Trying to import settings: %s", _body.c_str());
+      st_log_debug(SETTINGS_RQ_TAG, "Trying to import settings: %s", _body.c_str());
       if (SettingsRepository.importSettings(_body)) {
-        ST_LOG_DEBUG(SETTINGS_RQ_TAG, "Successfully imported settings!");
-        ST_LOG_WARNING(SETTINGS_RQ_TAG, "Restarting in 5 sec!");
+        st_log_debug(SETTINGS_RQ_TAG, "Successfully imported settings!");
+        st_log_warning(SETTINGS_RQ_TAG, "Restarting in 5 sec!");
         delay(5000);
         ESP.restart();
         return request->beginResponse(200); // not reacheable

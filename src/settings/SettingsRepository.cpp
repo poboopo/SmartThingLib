@@ -53,9 +53,9 @@ void SettingsRepositoryClass::clear() {
     }
     EEPROM.commit();
     EEPROM.end();
-    ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "EEPROM clear");
+    st_log_warning(SETTINGS_MANAGER_TAG, "EEPROM clear");
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
   }
 }
 
@@ -121,7 +121,7 @@ String SettingsRepositoryClass::readData(uint8_t index, const char * defaultValu
     EEPROM.end();
     return result;
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
     return defaultValue;
   }
 }
@@ -151,7 +151,7 @@ int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
     int cmp = strcmp(oldData, data);
     free(oldData);
     if (cmp == 0) {
-      ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Old data equals new, not writing");
+      st_log_debug(SETTINGS_MANAGER_TAG, "Old data equals new, not writing");
       return targetLength;
     }
 
@@ -178,7 +178,7 @@ int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
     free(buffTail);
     return dataLen;
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
     return -1;
   }
 }
@@ -248,14 +248,14 @@ String SettingsRepositoryClass::getName() {
 
 bool SettingsRepositoryClass::setName(String name) {
   if (name.length() > DEVICE_NAME_LENGTH_MAX) {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Name is too big! Max name length=%d", DEVICE_NAME_LENGTH_MAX);
+    st_log_error(SETTINGS_MANAGER_TAG, "Name is too big! Max name length=%d", DEVICE_NAME_LENGTH_MAX);
     return false;
   }
   
   if (writeData(NAME_INDEX, name.c_str()) >= 0) {
     return true;
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Name update failed");
+    st_log_error(SETTINGS_MANAGER_TAG, "Name update failed");
     return false;
   }
 }
@@ -265,7 +265,7 @@ WiFiConfig SettingsRepositoryClass::getWiFi() {
 
   String settingsStr = readData(WIFI_INDEX);
   if (settingsStr.isEmpty()) {
-    ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "WiFi config empty");
+    st_log_warning(SETTINGS_MANAGER_TAG, "WiFi config empty");
     return settings;
   }
 
@@ -312,10 +312,10 @@ bool SettingsRepositoryClass::setWiFi(WiFiConfig settings) {
 
   bool res = false;
   if (writeData(WIFI_INDEX, buff)) {
-    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "WiFi config updated: %s", buff);
+    st_log_debug(SETTINGS_MANAGER_TAG, "WiFi config updated: %s", buff);
     res = true;
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "WiFi config update failed");
+    st_log_error(SETTINGS_MANAGER_TAG, "WiFi config update failed");
   }
   free(buff);
   return res;
@@ -324,10 +324,10 @@ bool SettingsRepositoryClass::setWiFi(WiFiConfig settings) {
 bool SettingsRepositoryClass::dropWiFi() {
   bool res = false;
   if (writeData(WIFI_INDEX, "") == 0) {
-    ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "WiFi config droped");
+    st_log_warning(SETTINGS_MANAGER_TAG, "WiFi config droped");
     res = true;
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "WiFi conig drop failed");
+    st_log_error(SETTINGS_MANAGER_TAG, "WiFi conig drop failed");
   }
   return res;
 }
@@ -353,9 +353,9 @@ bool SettingsRepositoryClass::setConfig(JsonDocument conf) {
   String data = objectToString(conf);
   if (writeData(CONFIG_INDEX, data.c_str()) >= 0) {
     res = true;
-    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Configuration updated");
+    st_log_debug(SETTINGS_MANAGER_TAG, "Configuration updated");
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Configuration update failed");
+    st_log_error(SETTINGS_MANAGER_TAG, "Configuration update failed");
   }
   return res;
 }
@@ -363,10 +363,10 @@ bool SettingsRepositoryClass::setConfig(JsonDocument conf) {
 bool SettingsRepositoryClass::dropConfig() {
   bool res = false;
   if (writeData(CONFIG_INDEX, "") == 0) {
-    ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "Config droped");
+    st_log_warning(SETTINGS_MANAGER_TAG, "Config droped");
     res = true;
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Configuration drop failed");
+    st_log_error(SETTINGS_MANAGER_TAG, "Configuration drop failed");
   }
   return res;
 }
@@ -377,10 +377,10 @@ bool SettingsRepositoryClass::setHooks(JsonDocument doc) {
   String data;
   serializeJson(doc, data);
   if (writeData(HOOKS_INDEX, data.equals("[]") ? "" : data.c_str()) >= 0) {
-    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Hooks updated");
+    st_log_debug(SETTINGS_MANAGER_TAG, "Hooks updated");
     res = true;
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Failed to update hooks");
+    st_log_error(SETTINGS_MANAGER_TAG, "Failed to update hooks");
   }
   return res;
 }
@@ -395,10 +395,10 @@ JsonDocument SettingsRepositoryClass::getHooks() {
 bool SettingsRepositoryClass::dropHooks() {
   bool res = false;
   if (writeData(CONFIG_INDEX, "")) {
-    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Hooks dropped");
+    st_log_debug(SETTINGS_MANAGER_TAG, "Hooks dropped");
     res = true;
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Failed to drop hooks");
+    st_log_error(SETTINGS_MANAGER_TAG, "Failed to drop hooks");
   }
   return res;
 }
@@ -409,10 +409,10 @@ bool SettingsRepositoryClass::setActions(JsonDocument conf) {
   String data = objectToString(conf);
   bool res = false;
   if (writeData(ACTIONS_INDEX, data.c_str()) >= 0) {
-    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Actions config updated to %s", data.c_str());
+    st_log_debug(SETTINGS_MANAGER_TAG, "Actions config updated to %s", data.c_str());
     res = true;
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Actions config update failed");
+    st_log_error(SETTINGS_MANAGER_TAG, "Actions config update failed");
   }
   return res;
 }
@@ -450,14 +450,14 @@ String SettingsRepositoryClass::exportSettings() {
     free(buff);
     return result;
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
     return result;
   }
 }
 
 bool SettingsRepositoryClass::importSettings(String dump) {
   if (dump.length() < LENGTH_PARTITION_SIZE) {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Bad dump - too short");
+    st_log_error(SETTINGS_MANAGER_TAG, "Bad dump - too short");
     return false;
   }
 
@@ -472,23 +472,23 @@ bool SettingsRepositoryClass::importSettings(String dump) {
   }
   // todo check if dump contains only ascii?
   if (!valid) {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Bad dump - worng partitions lengths");
+    st_log_error(SETTINGS_MANAGER_TAG, "Bad dump - worng partitions lengths");
     return false;
   }
 
   if (eepromBegin()) {
-    ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "Writing dump in eeprom (size=%d)", dump.length());
-    ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Dump=%s", dump.c_str());
+    st_log_warning(SETTINGS_MANAGER_TAG, "Writing dump in eeprom (size=%d)", dump.length());
+    st_log_debug(SETTINGS_MANAGER_TAG, "Dump=%s", dump.c_str());
 
     for (uint16_t i = 0; i < dump.length(); i++) {
       EEPROM.write(i, dump.charAt(i));
     }
     EEPROM.commit();
     EEPROM.end();
-    ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "Dump write finished");
+    st_log_warning(SETTINGS_MANAGER_TAG, "Dump write finished");
     return true;
   } else {
-    ST_LOG_ERROR(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
     return false;
   }
 }

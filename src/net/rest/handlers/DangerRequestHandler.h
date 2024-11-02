@@ -42,7 +42,7 @@ class DangerRequestHandler : public AsyncWebHandler {
     if (url.equals("/danger/wipe")) {
       st_log_request(DANGER_RQ_PATH, request->methodToString(), request->url().c_str(), "");
 
-      ST_LOG_WARNING(DANGER_RQ_TAG, "Wiping all settings!");
+      st_log_warning(DANGER_RQ_TAG, "Wiping all settings!");
       SettingsRepository.clear();
 
       AsyncWebServerResponse * response = request->beginResponse(200);
@@ -54,7 +54,7 @@ class DangerRequestHandler : public AsyncWebHandler {
  private:
   void restart() {
     delay(1500);
-    ST_LOG_INFO(DANGER_RQ_TAG, "---------RESTART---------");
+    st_log_info(DANGER_RQ_TAG, "---------RESTART---------");
     delay(500);
     ESP.restart();
   }

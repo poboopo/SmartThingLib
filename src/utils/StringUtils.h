@@ -2,7 +2,7 @@
 #define STRING_UTILS_H
 
 #include <Arduino.h>
-#include "settings/SettingsManager.h"
+#include "settings/SettingsRepository.h"
 #include "logs/BetterLogger.h"
 
 #ifdef ARDUINO_ARCH_ESP32
@@ -14,7 +14,7 @@
 
 // replaces keys in string with config values
 inline String replaceValues(const char * input, String &value) {
-  JsonDocument conf = SettingsManager.getConfig();
+  JsonDocument conf = SettingsRepository.getConfig();
 
   String result = "";
   String key = "";

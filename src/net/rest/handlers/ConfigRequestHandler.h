@@ -5,7 +5,7 @@
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
 #include "net/rest/handlers/HandlerUtils.h"
-#include "settings/SettingsManager.h"
+#include "settings/SettingsRepository.h"
 #include "settings/ConfigEntriesList.h"
 #include "net/rest/handlers/RequestHandler.h"
 
@@ -28,7 +28,7 @@ class ConfigRequestHandler : public RequestHandler {
     String url = request->url();
     if (url.equals("/config/values")) {
       if (request->method() == HTTP_GET) {
-        JsonDocument config = SettingsManager.getConfig();
+        JsonDocument config = SettingsRepository.getConfig();
         String response;
         serializeJson(config, response);
         return request->beginResponse(200, CONTENT_TYPE_JSON, response);
@@ -36,7 +36,7 @@ class ConfigRequestHandler : public RequestHandler {
       if (request->method() == HTTP_POST) {
         JsonDocument jsonDoc;
         deserializeJson(jsonDoc, _body);
-        SettingsManager.setConfig(jsonDoc);
+        SettingsRepository.setConfig(jsonDoc);
         callHooks();
         return request->beginResponse(200);
       }
@@ -47,11 +47,11 @@ class ConfigRequestHandler : public RequestHandler {
         }
         String name = request->arg("name");
 
-        JsonDocument config = SettingsManager.getConfig();
+        JsonDocument config = SettingsRepository.getConfig();
         if (config.containsKey(name)) {
           ST_LOG_WARNING(CONFIG_LOG_TAG, "Removing config value %s", name);
           config.remove(name);
-          SettingsManager.setConfig(config);
+          SettingsRepository.setConfig(config);
           callHooks();
           return request->beginResponse(200);
         } else {
@@ -70,7 +70,7 @@ class ConfigRequestHandler : public RequestHandler {
     
     if (request->method() == HTTP_DELETE) {
       if (request->url().equals("/config/delete/all")) {
-        SettingsManager.dropConfig();
+        SettingsRepository.dropConfig();
         return request->beginResponse(200);
       }
     }
@@ -82,7 +82,7 @@ class ConfigRequestHandler : public RequestHandler {
   
   void callHooks() {
     #if ENABLE_LOGGER
-    LOGGER.updateAddress(SettingsManager.getConfig()[LOGGER_ADDRESS_CONFIG]);
+    LOGGER.updateAddress(SettingsRepository.getConfig()[LOGGER_ADDRESS_CONFIG]);
     #endif
     if (_configUpdatedHandler != nullptr) {
       (*_configUpdatedHandler)();

@@ -5,7 +5,7 @@
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
 #include "net/rest/handlers/HandlerUtils.h"
-#include "settings/SettingsManager.h"
+#include "settings/SettingsRepository.h"
 #include "net/rest/handlers/RequestHandler.h"
 
 #define INFO_RQ_PATH "/info"

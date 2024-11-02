@@ -5,7 +5,7 @@
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
 #include "net/rest/handlers/HandlerUtils.h"
-#include "settings/SettingsManager.h"
+#include "settings/SettingsRepository.h"
 #include "net/rest/handlers/RequestHandler.h"
 
 #define WIFI_RQ_PATH "/wifi"
@@ -23,7 +23,7 @@ class WiFiRequesthandler : public RequestHandler {
 
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_GET) {
-      WiFiConfig config = SettingsManager.getWiFi();
+      WiFiConfig config = SettingsRepository.getWiFi();
 
       JsonDocument jsonDoc;
       JsonObject settings = jsonDoc["settings"].to<JsonObject>();
@@ -74,7 +74,7 @@ class WiFiRequesthandler : public RequestHandler {
       config.password = password;
       config.mode = mode;
       
-      if (SettingsManager.setWiFi(config)) {
+      if (SettingsRepository.setWiFi(config)) {
         return request->beginResponse(200);
       }
       return request->beginResponse(500, CONTENT_TYPE_JSON, buildErrorJson("Failed to save settings"));

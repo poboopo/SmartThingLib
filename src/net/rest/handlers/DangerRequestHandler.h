@@ -43,7 +43,7 @@ class DangerRequestHandler : public AsyncWebHandler {
       st_log_request(DANGER_RQ_PATH, request->methodToString(), request->url().c_str(), "");
 
       ST_LOG_WARNING(DANGER_RQ_TAG, "Wiping all settings!");
-      SettingsManager.clear();
+      SettingsRepository.clear();
 
       AsyncWebServerResponse * response = request->beginResponse(200);
       response->addHeader("Access-Control-Allow-Origin", "*");

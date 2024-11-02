@@ -77,7 +77,7 @@ bool SmartThingClass::init(const char * type) {
   ST_LOG_DEBUG(SMART_THING_TAG, "Smart thing initialization started");
 
   if (_name == nullptr || strlen(_name) == 0) {
-    String name = SettingsManager.getName();
+    String name = SettingsRepository.getName();
     _name = (char *) malloc(name.length() + 1);
     strcpy(_name, name.c_str());
   }
@@ -146,7 +146,7 @@ bool SmartThingClass::init(const char * type) {
   if (wifiConnected()) {
     ST_LOG_INFO(SMART_THING_TAG, "WiFi connected, local ip %s, hostname %s", _ip, _name);
     delay(1000);
-    LOGGER.init(SettingsManager.getConfig()[LOGGER_ADDRESS_CONFIG], _name);
+    LOGGER.init(SettingsRepository.getConfig()[LOGGER_ADDRESS_CONFIG], _name);
 
     #ifdef ARDUINO_ARCH_ESP32
     if (_beaconUdp.beginMulticast(MULTICAST_GROUP, MULTICAST_PORT)) {
@@ -246,7 +246,7 @@ void SmartThingClass::connectToWifi() {
   WiFi.hostname(_name);
   WiFi.setAutoReconnect(true);
 
-  WiFiConfig wifiConfig = SettingsManager.getWiFi();
+  WiFiConfig wifiConfig = SettingsRepository.getWiFi();
   if (wifiConfig.ssid.isEmpty()) {
     ST_LOG_WARNING(
       SMART_THING_TAG,
@@ -319,7 +319,7 @@ void SmartThingClass::wipeSettings() {
          millis() - started < WIPE_TIMEOUT) {
   }
   if (!digitalRead(WIPE_PIN)) {
-    SettingsManager.clear();
+    SettingsRepository.clear();
     ST_LOG_WARNING(SMART_THING_TAG, "Settings were wiped!");
   }
   digitalWrite(LED_PIN, LOW);
@@ -332,7 +332,7 @@ void SmartThingClass::updateDeviceName(String name) {
   if (name.equals(_name)) {
     return;
   }
-  if (!SettingsManager.setName(name)) {
+  if (!SettingsRepository.setName(name)) {
     ST_LOG_ERROR(SMART_THING_TAG, "Name update failed");
     return;
   }

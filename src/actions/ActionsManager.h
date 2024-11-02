@@ -9,7 +9,7 @@
 
 #include "utils/List.h"
 #include "logs/BetterLogger.h"
-#include "settings/SettingsManager.h"
+#include "settings/SettingsRepository.h"
 
 static const char * ACTIONS_JSON_NAME = "name";
 static const char * ACTIONS_JSON_CAPTION = "caption";

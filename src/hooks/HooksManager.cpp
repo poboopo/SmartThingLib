@@ -6,7 +6,7 @@
 #include "hooks/builders/HooksFactory.h"
 #include "hooks/watchers/DeviceStateWatcher.h"
 #include "hooks/watchers/SensorWatcher.h"
-#include "settings/SettingsManager.h"
+#include "settings/SettingsRepository.h"
 
 static const char * HOOKS_MANAGER_TAG = "hooks_manager";
 
@@ -22,7 +22,7 @@ using namespace Observable::DeviceState;
 using Observable::ObservableObject;
 
 void HooksManagerClass::loadFromSettings() {
-  JsonDocument hooksInfo = SettingsManager.getHooks();
+  JsonDocument hooksInfo = SettingsRepository.getHooks();
   if (hooksInfo.size() == 0) {
     ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "There is no hooks in settings");
     return;
@@ -466,8 +466,8 @@ boolean HooksManagerClass::callWatcherHook(List<Watcher<T>>* list, const char * 
 
 void HooksManagerClass::saveHooksToSettings() {
   ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "Saving hooks");
-  SettingsManager.setHooks(allHooksToJson(true, true));
-  // if (SettingsManager.save()) {
+  SettingsRepository.setHooks(allHooksToJson(true, true));
+  // if (SettingsRepository.save()) {
   //   ST_LOG_DEBUG(HOOKS_MANAGER_TAG, "Hooks were saved");
   // } else {
   //   // todo reboot?

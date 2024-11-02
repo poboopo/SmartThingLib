@@ -22,7 +22,7 @@ class SettingsRequestHandler : public RequestHandler {
 
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_GET) {
-      String response = SettingsManager.exportSettings();
+      String response = SettingsRepository.exportSettings();
       return request->beginResponse(200, CONTENT_TYPE_JSON, response);
     }
     if (request->method() == HTTP_POST) {
@@ -30,7 +30,7 @@ class SettingsRequestHandler : public RequestHandler {
         return request->beginResponse(400, CONTENT_TYPE_JSON, ERROR_BODY_MISSING);
       }
       ST_LOG_DEBUG(SETTINGS_RQ_TAG, "Trying to import settings: %s", _body.c_str());
-      if (SettingsManager.importSettings(_body)) {
+      if (SettingsRepository.importSettings(_body)) {
         ST_LOG_DEBUG(SETTINGS_RQ_TAG, "Successfully imported settings!");
         ST_LOG_WARNING(SETTINGS_RQ_TAG, "Restarting in 5 sec!");
         delay(5000);

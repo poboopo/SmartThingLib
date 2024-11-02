@@ -10,7 +10,7 @@
 #include "observable/SensorsList.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
-#include "settings/SettingsManager.h"
+#include "settings/SettingsRepository.h"
 #include "actions/ActionsManager.h"
 #include "Features.h"
 

@@ -1,5 +1,5 @@
-#ifndef SettingsManager_H
-#define SettingsManager_H
+#ifndef SettingsRepository_H
+#define SettingsRepository_H
 
 #include <ArduinoJson.h>
 // #include <functional>
@@ -22,7 +22,7 @@ struct WiFiConfig {
 
 // typedef std::function<bool(JsonPair pair)> FilterFunction;
 
-class SettingsManagerClass {
+class SettingsRepositoryClass {
  private:
   void read(uint16_t address, char * buff, uint16_t length);
   void write(uint16_t address, const char * buff, uint16_t length);
@@ -36,8 +36,8 @@ class SettingsManagerClass {
   JsonDocument stringToObject(String& data);
   String objectToString(JsonDocument doc);
  public:
-  SettingsManagerClass();
-  ~SettingsManagerClass();
+  SettingsRepositoryClass();
+  ~SettingsRepositoryClass();
 
   String getName();
   bool setName(String name);
@@ -67,6 +67,6 @@ class SettingsManagerClass {
   void clear();
 };
 
-extern SettingsManagerClass SettingsManager;
+extern SettingsRepositoryClass SettingsRepository;
 
 #endif

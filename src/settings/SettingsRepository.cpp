@@ -1,4 +1,4 @@
-#include "settings/SettingsManager.h"
+#include "settings/SettingsRepository.h"
 #include "SmartThing.h"
 
 #include <EEPROM.h>
@@ -41,12 +41,12 @@ enum DataIndex {
 static const char * SETTINGS_MANAGER_TAG = "settings_manager";
 static const char * EEPROM_OPEN_ERROR = "Failed to open EEPROM";
 
-SettingsManagerClass SettingsManager;
+SettingsRepositoryClass SettingsRepository;
 
-SettingsManagerClass::SettingsManagerClass() {}
-SettingsManagerClass::~SettingsManagerClass() {}
+SettingsRepositoryClass::SettingsRepositoryClass() {}
+SettingsRepositoryClass::~SettingsRepositoryClass() {}
 
-void SettingsManagerClass::clear() {
+void SettingsRepositoryClass::clear() {
   if (eepromBegin()) {
     for (int i = 0; i < EEPROM_LOAD_SIZE; i++) {
       EEPROM.write(i, 0);
@@ -59,20 +59,20 @@ void SettingsManagerClass::clear() {
   }
 }
 
-void SettingsManagerClass::read(uint16_t address, char * buff, uint16_t length) {
+void SettingsRepositoryClass::read(uint16_t address, char * buff, uint16_t length) {
   for (uint16_t i = 0; i < length; i++) {
     buff[i] = (char) EEPROM.read(address + i);
   }
   buff[length] = 0;
 }
 
-void SettingsManagerClass::write(uint16_t address, const char * buff, uint16_t length) {
+void SettingsRepositoryClass::write(uint16_t address, const char * buff, uint16_t length) {
   for (uint16_t i = 0; i < length; i++) {
     EEPROM.write(address + i, buff[i]);
   }
 }
 
-int SettingsManagerClass::getLength(uint8_t index) {
+int SettingsRepositoryClass::getLength(uint8_t index) {
   if (index < FIRST_INDEX || index > LAST_INDEX) {
     return -1;
   }
@@ -83,7 +83,7 @@ int SettingsManagerClass::getLength(uint8_t index) {
   return result;
 }
 
-int SettingsManagerClass::writeLength(uint8_t index, int length) {
+int SettingsRepositoryClass::writeLength(uint8_t index, int length) {
   if (index < FIRST_INDEX || index > LAST_INDEX) {
     return -1;
   }
@@ -96,7 +96,7 @@ int SettingsManagerClass::writeLength(uint8_t index, int length) {
   return length;
 }
 
-String SettingsManagerClass::readData(uint8_t index, const char * defaultValue) {
+String SettingsRepositoryClass::readData(uint8_t index, const char * defaultValue) {
   if (index < FIRST_INDEX || index > LAST_INDEX) {
     return defaultValue;
   }
@@ -126,7 +126,7 @@ String SettingsManagerClass::readData(uint8_t index, const char * defaultValue) 
   }
 }
 
-int SettingsManagerClass::writeData(uint8_t index, const char * data) {
+int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
   if (index < FIRST_INDEX || index > LAST_INDEX || data == nullptr) {
     return -1;
   }
@@ -183,11 +183,11 @@ int SettingsManagerClass::writeData(uint8_t index, const char * data) {
   }
 }
 
-String SettingsManagerClass::getName() {
+String SettingsRepositoryClass::getName() {
   return readData(NAME_INDEX, ST_DEFAULT_NAME);
 }
 
-bool SettingsManagerClass::setName(String name) {
+bool SettingsRepositoryClass::setName(String name) {
   if (name.length() > DEVICE_NAME_LENGTH_MAX) {
     ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Name is too big! Max name length=%d", DEVICE_NAME_LENGTH_MAX);
     return false;
@@ -201,7 +201,7 @@ bool SettingsManagerClass::setName(String name) {
   }
 }
 
-WiFiConfig SettingsManagerClass::getWiFi() {
+WiFiConfig SettingsRepositoryClass::getWiFi() {
   WiFiConfig settings;
 
   String settingsStr = readData(WIFI_INDEX);
@@ -231,7 +231,7 @@ WiFiConfig SettingsManagerClass::getWiFi() {
   return settings;
 }
 
-bool SettingsManagerClass::setWiFi(WiFiConfig settings) {
+bool SettingsRepositoryClass::setWiFi(WiFiConfig settings) {
   char * buff = (char *) malloc(settings.ssid.length() + settings.password.length() + 4);
   sprintf(
     buff,
@@ -251,7 +251,7 @@ bool SettingsManagerClass::setWiFi(WiFiConfig settings) {
   return res;
 }
 
-bool SettingsManagerClass::dropWiFi() {
+bool SettingsRepositoryClass::dropWiFi() {
   bool res = false;
   if (writeData(WIFI_INDEX, "") == 0) {
     ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "WiFi config droped");
@@ -262,7 +262,7 @@ bool SettingsManagerClass::dropWiFi() {
   return res;
 }
 
-JsonDocument SettingsManagerClass::getConfig() {
+JsonDocument SettingsRepositoryClass::getConfig() {
   Config::ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
   if (entriesList->size() == 0) {
     JsonDocument doc;
@@ -273,7 +273,7 @@ JsonDocument SettingsManagerClass::getConfig() {
   return stringToObject(data);
 }
 
-bool SettingsManagerClass::setConfig(JsonDocument conf) {
+bool SettingsRepositoryClass::setConfig(JsonDocument conf) {
   bool res = false;
   Config::ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
   if (entriesList->size() == 0) {
@@ -290,7 +290,7 @@ bool SettingsManagerClass::setConfig(JsonDocument conf) {
   return res;
 }
 
-bool SettingsManagerClass::dropConfig() {
+bool SettingsRepositoryClass::dropConfig() {
   bool res = false;
   if (writeData(CONFIG_INDEX, "") == 0) {
     ST_LOG_WARNING(SETTINGS_MANAGER_TAG, "Config droped");
@@ -302,7 +302,7 @@ bool SettingsManagerClass::dropConfig() {
 }
 
 #if ENABLE_HOOKS
-bool SettingsManagerClass::setHooks(JsonDocument doc) {
+bool SettingsRepositoryClass::setHooks(JsonDocument doc) {
   bool res = false;
   String data;
   serializeJson(doc, data);
@@ -315,14 +315,14 @@ bool SettingsManagerClass::setHooks(JsonDocument doc) {
   return res;
 }
 
-JsonDocument SettingsManagerClass::getHooks() {
+JsonDocument SettingsRepositoryClass::getHooks() {
   JsonDocument doc;
   String data = readData(HOOKS_INDEX, "[]");
   deserializeJson(doc, data);
   return doc;
 }
 
-bool SettingsManagerClass::dropHooks() {
+bool SettingsRepositoryClass::dropHooks() {
   bool res = false;
   if (writeData(CONFIG_INDEX, "")) {
     ST_LOG_DEBUG(SETTINGS_MANAGER_TAG, "Hooks dropped");
@@ -335,7 +335,7 @@ bool SettingsManagerClass::dropHooks() {
 #endif
 
 #if ENABLE_ACTIONS_SCHEDULER
-bool SettingsManagerClass::setActions(JsonDocument conf) {
+bool SettingsRepositoryClass::setActions(JsonDocument conf) {
   String data = objectToString(conf);
   bool res = false;
   if (writeData(ACTIONS_INDEX, data.c_str()) >= 0) {
@@ -347,13 +347,13 @@ bool SettingsManagerClass::setActions(JsonDocument conf) {
   return res;
 }
 
-JsonDocument SettingsManagerClass::getActions() {
+JsonDocument SettingsRepositoryClass::getActions() {
   String data = readData(ACTIONS_INDEX);
   return stringToObject(data);
 }
 #endif
 
-JsonDocument SettingsManagerClass::stringToObject(String& data) {
+JsonDocument SettingsRepositoryClass::stringToObject(String& data) {
   JsonDocument doc;
   doc.to<JsonObject>();
   if (!data.isEmpty()) {
@@ -377,7 +377,7 @@ JsonDocument SettingsManagerClass::stringToObject(String& data) {
   return doc;
 }
 
-String SettingsManagerClass::objectToString(JsonDocument doc) {
+String SettingsRepositoryClass::objectToString(JsonDocument doc) {
   String res = "";
   JsonObject root = doc.as<JsonObject>();
   for (JsonPair pair: root) {
@@ -396,7 +396,7 @@ String SettingsManagerClass::objectToString(JsonDocument doc) {
   return res;
 }
 
-String SettingsManagerClass::exportSettings() {
+String SettingsRepositoryClass::exportSettings() {
   String result = "";
   if (eepromBegin()) {
     uint8_t tmp = 0;
@@ -428,7 +428,7 @@ String SettingsManagerClass::exportSettings() {
   }
 }
 
-bool SettingsManagerClass::importSettings(String dump) {
+bool SettingsRepositoryClass::importSettings(String dump) {
   if (dump.length() < LENGTH_PARTITION_SIZE) {
     ST_LOG_ERROR(SETTINGS_MANAGER_TAG, "Bad dump - too short");
     return false;

@@ -9,7 +9,6 @@
 
 static const char * LAMBDA_HOOK_TAG = "lambda_hook";
 
-namespace Hook {
 template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
 class LambdaHook : public T {
  public:
@@ -25,5 +24,4 @@ class LambdaHook : public T {
  private:
   CustomHook _customHook;
 };
-}  // namespace Hook
 #endif

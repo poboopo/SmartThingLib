@@ -8,7 +8,6 @@
 
 static const char * CONFIG_ENTRIES_LIST_TAG = "config_entries_list";
 
-namespace Config {
 struct ConfigEntry {
   ConfigEntry(const char* n, const char* c, const char* t)
       : name(n), caption(c), type(t){};
@@ -60,6 +59,5 @@ class ConfigEntriesList : public List<ConfigEntry> {
         [&](ConfigEntry* current) { return strcmp(current->name, name) == 0; });
   };
 };
-}  // namespace Config
 
 #endif

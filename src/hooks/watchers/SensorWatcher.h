@@ -11,10 +11,9 @@
 
 #define SENSOR_WATCHER_TYPE "sensor"
 
-namespace Hook {
 class SensorWatcher : public Watcher<int16_t> {
  public:
-  SensorWatcher(const Observable::Sensor::Sensor* sensor)
+  SensorWatcher(const Sensor* sensor)
       : Watcher<int16_t>(sensor, -1){};
   virtual ~SensorWatcher() {};
 
@@ -38,7 +37,5 @@ class SensorWatcher : public Watcher<int16_t> {
 
   const char* getObservableInfo() { return _observable->name; };
 };
-}  // namespace Hook
-
 #endif
 #endif

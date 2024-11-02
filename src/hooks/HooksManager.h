@@ -16,7 +16,6 @@
 #include "observable/ObservableObjects.h"
 #include "utils/List.h"
 
-namespace Hook {
 class HooksManagerClass {
  public:
   void loadFromSettings();
@@ -25,10 +24,10 @@ class HooksManagerClass {
                              JsonObject hookInfo);
 
   #if ENABLE_SENSORS
-  int addHook(const Observable::Sensor::Sensor * sensor, Hook<int16_t> * hook);
+  int addHook(const Sensor * sensor, Hook<int16_t> * hook);
   #endif
   #if ENABLE_STATES
-  int addHook(const Observable::DeviceState::DeviceState * state, Hook<String> * hook);
+  int addHook(const DeviceState * state, Hook<String> * hook);
   #endif
   bool deleteHook(const char* type, const char* name, int id);
   bool updateHook(JsonDocument doc);
@@ -58,7 +57,7 @@ class HooksManagerClass {
   int _hooksCount = 0;
 
   template <typename T>
-  int addHook(const Observable::ObservableObject<T>* obj,
+  int addHook(const ObservableObject<T>* obj,
                   Hook<T>* hook);
 
   template <typename T>
@@ -66,7 +65,7 @@ class HooksManagerClass {
 
   template <typename T>
   Watcher<T>* getWatcher(List<Watcher<T>>* list,
-                         const Observable::ObservableObject<T>* observable);
+                         const ObservableObject<T>* observable);
 
   template <typename T>
   Watcher<T>* getWatcherByObservableName(List<Watcher<T>>* list,
@@ -102,17 +101,16 @@ class HooksManagerClass {
 
   template <typename T>
   Watcher<T>* getWatcherOrCreate(
-      const Observable::ObservableObject<T>* obj);
+      const ObservableObject<T>* obj);
 
   template <typename T>
-  Watcher<T>* createWatcher(const Observable::ObservableObject<T>* obj);
+  Watcher<T>* createWatcher(const ObservableObject<T>* obj);
 
   template <typename T>
   List<Watcher<T>>* getWatchersList();
 };
-}  // namespace Hook
 
-extern Hook::HooksManagerClass HooksManager;
+extern HooksManagerClass HooksManager;
 
 #endif
 

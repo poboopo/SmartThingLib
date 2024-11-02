@@ -11,10 +11,9 @@
 
 #define STATE_WATCHER_TYPE "state"
 
-namespace Hook {
 class DeviceStateWatcher : public Watcher<String> {
  public:
-  DeviceStateWatcher(const Observable::DeviceState::DeviceState* deviceState)
+  DeviceStateWatcher(const DeviceState* deviceState)
       : Watcher<String>(deviceState, ""){};
   virtual ~DeviceStateWatcher() {};
 
@@ -42,7 +41,6 @@ class DeviceStateWatcher : public Watcher<String> {
 
   const char* getObservableInfo() { return _observable->name; };
 };
-}  // namespace Hook
 
 #endif
 #endif

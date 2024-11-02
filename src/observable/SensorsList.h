@@ -13,12 +13,10 @@
 
 static const char * SENSORS_LIST_TAG = "sensors_list";
 
-namespace Observable {
-namespace Sensor {
 class SensorsList : public List<Sensor> {
  public:
   bool add(const char* name,
-           Observable::ObservableObject<int16_t>::ValueProviderFunction
+           ObservableObject<int16_t>::ValueProviderFunction
                valueProvider) {
     return add(name, TYPE_CUSTOM, valueProvider);
   };
@@ -59,7 +57,7 @@ class SensorsList : public List<Sensor> {
   JsonDocument getTypes() {
     JsonDocument doc;
     forEach([&](Sensor* current) {
-      doc[current->name] = Observable::Sensor::sensorTypeName(current->type);
+      doc[current->name] = sensorTypeName(current->type);
     });
     return doc;
   }
@@ -71,7 +69,7 @@ class SensorsList : public List<Sensor> {
 
  private:
   bool add(const char* name, SensorType type,
-           Observable::ObservableObject<int16_t>::ValueProviderFunction
+           ObservableObject<int16_t>::ValueProviderFunction
                valueProvider) {
     if (findSensor(name) != nullptr) {
       ST_LOG_WARNING(SENSORS_LIST_TAG,
@@ -94,8 +92,6 @@ class SensorsList : public List<Sensor> {
     }
   };
 };
-}  // namespace Sensor
-}  // namespace Observable
 
 #endif
 

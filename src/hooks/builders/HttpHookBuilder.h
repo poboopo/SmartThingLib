@@ -11,7 +11,6 @@
 
 static const char * HTTP_HOOK_BUILDER_TAG = "http_cb_builder";
 
-namespace Hook {
 class HttpHookBuilder {
  public:
   template <class B, typename T>
@@ -46,6 +45,5 @@ class HttpHookBuilder {
     return doc;
   }
 };
-}  // namespace Hook
 
 #endif

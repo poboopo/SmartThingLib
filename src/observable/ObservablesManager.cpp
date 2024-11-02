@@ -14,7 +14,7 @@ int16_t ObservablesManagerClass::getSensorsCount() { return _sensorsList.size();
 
 bool ObservablesManagerClass::addSensor(
     const char* name,
-    Observable::ObservableObject<int16_t>::ValueProviderFunction function) {
+    ObservableObject<int16_t>::ValueProviderFunction function) {
   return _sensorsList.add(name, function);
 }
 
@@ -27,7 +27,7 @@ bool ObservablesManagerClass::addAnalogSensor(const char* name, int pin) {
   return _sensorsList.addAnalog(name, pin);
 }
 
-const Observable::Sensor::Sensor* ObservablesManagerClass::getSensor(
+const Sensor* ObservablesManagerClass::getSensor(
     const char* name) {
   return _sensorsList.findSensor(name);
 }
@@ -36,7 +36,7 @@ const Observable::Sensor::Sensor* ObservablesManagerClass::getSensor(
 #if ENABLE_STATES
 bool ObservablesManagerClass::addDeviceState(
     const char* name,
-    Observable::ObservableObject<const char*>::ValueProviderFunction
+    ObservableObject<const char*>::ValueProviderFunction
         function) {
   return _deviceStatesList.add(name, function);
 }
@@ -45,7 +45,7 @@ JsonDocument ObservablesManagerClass::getDeviceStatesInfo() {
   return _deviceStatesList.getValues();
 }
 
-const Observable::DeviceState::DeviceState* ObservablesManagerClass::getDeviceState(
+const DeviceState* ObservablesManagerClass::getDeviceState(
     const char* name) {
   return _deviceStatesList.findState(name);
 }

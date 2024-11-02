@@ -10,16 +10,7 @@
 
 static const char * HOOKS_MANAGER_TAG = "hooks_manager";
 
-Hook::HooksManagerClass HooksManager;
-
-namespace Hook {
-#if ENABLE_SENSORS
-using namespace Observable::Sensor;
-#endif
-#if ENABLE_STATES
-using namespace Observable::DeviceState;
-#endif
-using Observable::ObservableObject;
+HooksManagerClass HooksManager;
 
 void HooksManagerClass::loadFromSettings() {
   JsonDocument hooksInfo = SettingsRepository.getHooks();
@@ -174,7 +165,7 @@ List<Watcher<String>> *HooksManagerClass::getWatchersList() {
   return &_statesWatchers;
 }
 
-int HooksManagerClass::addHook(const Observable::DeviceState::DeviceState * state, Hook<String> * hook) {
+int HooksManagerClass::addHook(const DeviceState * state, Hook<String> * hook) {
   return addHook<String>(state, hook);
 }
 #endif
@@ -190,7 +181,7 @@ List<Watcher<int16_t>> *HooksManagerClass::getWatchersList() {
   return &_sensorsWatchers;
 }
 
-int HooksManagerClass::addHook(const Observable::Sensor::Sensor * sensor, Hook<int16_t> * hook) {
+int HooksManagerClass::addHook(const Sensor * sensor, Hook<int16_t> * hook) {
   return addHook<int16_t>(sensor, hook);
 }
 #endif
@@ -448,7 +439,7 @@ boolean HooksManagerClass::callWatcherHook(List<Watcher<T>>* list, const char * 
     ST_LOG_ERROR(HOOKS_MANAGER_TAG, "Can't find hook for observable %s by id=%d", name, id);
     return false;
   }
-  const Observable::ObservableObject<T> * obs = watcher->getObservable();
+  const ObservableObject<T> * obs = watcher->getObservable();
   if (obs == nullptr) {
     ST_LOG_ERROR(HOOKS_MANAGER_TAG, "OBSERVABLE NULLPTR! HOW???");
     return false;
@@ -600,6 +591,5 @@ JsonDocument HooksManagerClass::getHookJsonFromList(
   JsonDocument doc;
   return doc;
 }
-}  // namespace Hook
 
 #endif

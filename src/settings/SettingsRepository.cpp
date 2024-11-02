@@ -263,7 +263,7 @@ bool SettingsRepositoryClass::dropWiFi() {
 }
 
 JsonDocument SettingsRepositoryClass::getConfig() {
-  Config::ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
+  ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
   if (entriesList->size() == 0) {
     JsonDocument doc;
     return doc;
@@ -275,7 +275,7 @@ JsonDocument SettingsRepositoryClass::getConfig() {
 
 bool SettingsRepositoryClass::setConfig(JsonDocument conf) {
   bool res = false;
-  Config::ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
+  ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
   if (entriesList->size() == 0) {
     return res;
   }

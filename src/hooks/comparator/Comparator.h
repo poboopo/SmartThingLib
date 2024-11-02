@@ -3,7 +3,6 @@
 #define COMPARATOR_H
 #include "logs/BetterLogger.h"
 
-namespace Hook {
 enum CompareType { EQ, NEQ, GTE, LTE };
 
 inline String compareTypeToString(CompareType type) {
@@ -39,5 +38,4 @@ inline CompareType compareTypeFromString(String type, CompareType defValue) {
   }
   return defValue;
 }
-}  // namespace Hook
 #endif

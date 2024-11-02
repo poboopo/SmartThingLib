@@ -16,7 +16,6 @@
 
 static const char * HTTP_HOOK_TAG = "http_hook";
 
-namespace Hook {
 template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
 class HttpHook : public T {
  public:
@@ -133,5 +132,4 @@ class HttpHook : public T {
     }
   }
 };
-}  // namespace Hook
 #endif

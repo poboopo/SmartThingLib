@@ -46,7 +46,7 @@ class SmartThingClass {
   bool wifiConnected();
 
   JsonDocument getConfigInfoJson();
-  Config::ConfigEntriesList * getConfigInfo() {
+  ConfigEntriesList * getConfigInfo() {
     return &_configEntriesList;
   }
   bool addConfigEntry(const char* name, const char* caption, const char* type);
@@ -83,7 +83,7 @@ class SmartThingClass {
   #endif
   void sendBeacon();
 
-  Config::ConfigEntriesList _configEntriesList;
+  ConfigEntriesList _configEntriesList;
 };
 
 extern SmartThingClass SmartThing;

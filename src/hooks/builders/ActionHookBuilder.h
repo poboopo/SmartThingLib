@@ -11,7 +11,6 @@
 
 static const char * ACTION_HOOK_BUILDER_TAG = "action_cb_builder";
 
-namespace Hook {
 class ActionHookBuilder {
  public:
   template <class B, typename T>
@@ -40,7 +39,6 @@ class ActionHookBuilder {
     return doc;
   }
 };
-}  // namespace Hook
 #endif
 
 #endif

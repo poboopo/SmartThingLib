@@ -5,7 +5,6 @@
 
 static const char * NOTIFICATION_HOOK_BUILDER_TAG = "notification_cb_builder";
 
-namespace Hook {
 class NotificationHookBuilder {
   public:
     template <class B, typename T>
@@ -48,6 +47,5 @@ class NotificationHookBuilder {
       return doc;
     }
 };
-}
 
 #endif

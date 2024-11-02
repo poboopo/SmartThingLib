@@ -21,7 +21,7 @@ static const char * WATCHER_TAG = "watcher";
 template <typename T>
 class Watcher {
  public:
-  Watcher(const Observable::ObservableObject<T> *observable, T initialValue)
+  Watcher(const ObservableObject<T> *observable, T initialValue)
       : _observable(observable),
         _oldValue(initialValue),
         _hookIdSequence(0){};
@@ -41,7 +41,7 @@ class Watcher {
       ST_LOG_DEBUG(WATCHER_TAG, "No hook's, creating empty array");
       return doc;
     }
-    _hooks.forEach([&](Hook::Hook<T> *current) {
+    _hooks.forEach([&](Hook<T> *current) {
       if ((current == nullptr || ignoreReadOnly) && current->isReadonly()) {
         return;
       }
@@ -56,12 +56,12 @@ class Watcher {
       return doc;
     }
     JsonDocument hooks = getObservableHooksJson(ignoreReadOnly, shortJson);
-    doc["observable"] = ((Observable::ObservableObject<T> *)_observable)->toJson();
+    doc["observable"] = ((ObservableObject<T> *)_observable)->toJson();
     doc["hooks"] = hooks;
     return doc;
   }
 
-  bool addHook(Hook::Hook<T> *hook) {
+  bool addHook(Hook<T> *hook) {
     if (hook == nullptr) {
       ST_LOG_ERROR(WATCHER_TAG, "Hook is missing!");
       return false;
@@ -94,7 +94,7 @@ class Watcher {
       ST_LOG_ERROR(WATCHER_TAG, "Failed to remove hook - id negative!");
       return false;
     }
-    Hook::Hook<T> *hook = getHookById(id);
+    Hook<T> *hook = getHookById(id);
     if (hook == nullptr) {
       ST_LOG_ERROR(WATCHER_TAG,
                    "Failed to remove hook - can't find hook with id %d",
@@ -113,11 +113,11 @@ class Watcher {
     return false;
   }
 
-  Hook::Hook<T> *getHookById(int id) {
+  Hook<T> *getHookById(int id) {
     if (id < 0) {
       return nullptr;
     }
-    return _hooks.findValue([&](Hook::Hook<T> *hook) {
+    return _hooks.findValue([&](Hook<T> *hook) {
       return hook->getId() == id;
     });
   }
@@ -126,7 +126,7 @@ class Watcher {
     if (_hooks.size() == 0) {
       return;
     }
-    _hooks.forEach([&, this](Hook::Hook<T> *current) {
+    _hooks.forEach([&, this](Hook<T> *current) {
       if (current != nullptr && current->accept(value)) {
         ST_LOG_DEBUG(
           WATCHER_TAG,
@@ -140,7 +140,7 @@ class Watcher {
     });
   };
 
-  const Observable::ObservableObject<T> *getObservable() {
+  const ObservableObject<T> *getObservable() {
     return _observable;
   };
 
@@ -149,9 +149,9 @@ class Watcher {
   uint8_t hooksCount() { return _hooks.size(); }
 
  protected:
-  const Observable::ObservableObject<T> *_observable;
+  const ObservableObject<T> *_observable;
   T _oldValue;
-  List<Hook::Hook<T>> _hooks;
+  List<Hook<T>> _hooks;
 
  private:
   int _hookIdSequence;

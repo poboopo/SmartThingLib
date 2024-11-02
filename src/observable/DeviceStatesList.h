@@ -15,12 +15,10 @@
 
 static const char * DEVICE_STATES_LIST_TAG = "device_states_list";
 
-namespace Observable {
-namespace DeviceState {
 class DeviceStatesList : public List<DeviceState> {
  public:
   bool add(const char *name,
-           Observable::ObservableObject<const char *>::ValueProviderFunction
+           ObservableObject<const char *>::ValueProviderFunction
                valueProvider) {
     if (findState(name) != nullptr) {
       ST_LOG_WARNING(DEVICE_STATES_LIST_TAG,
@@ -53,8 +51,6 @@ class DeviceStatesList : public List<DeviceState> {
         [&](DeviceState *current) { return strcmp(current->name, name) == 0; });
   };
 };
-}  // namespace DeviceState
-}  // namespace Observable
 
 #endif
 #endif

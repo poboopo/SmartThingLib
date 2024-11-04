@@ -29,7 +29,7 @@ class ConfigRequestHandler : public RequestHandler {
     if (url.equals("/config/values")) {
       if (request->method() == HTTP_GET) {
         JsonDocument config = SettingsRepository.getConfig();
-        ConfigEntriesList * list = SmartThing.getConfigInfo();
+        ConfigEntriesList * list = SettingsRepository.getConfigInfo();
         JsonObject obj = config.as<JsonObject>();
 
         // jest'
@@ -70,14 +70,13 @@ class ConfigRequestHandler : public RequestHandler {
           callHooks();
           return request->beginResponse(200);
         } else {
-          st_log_error(CONFIG_LOG_TAG, "Failed to remove config %s - no such key",
-                      name);
+          st_log_error(CONFIG_LOG_TAG, "Failed to remove config %s - no such key", name);
           return request->beginResponse(404, "content/json", buildErrorJson("No such key"));
         }
       }
     }
     if (request->method() == HTTP_GET && url.equals("/config/info")) {
-        JsonDocument doc = SmartThing.getConfigInfoJson();
+        JsonDocument doc = SettingsRepository.getConfigInfoJson();
         String response;
         serializeJson(doc, response);
         return request->beginResponse(200, CONTENT_TYPE_JSON, response);

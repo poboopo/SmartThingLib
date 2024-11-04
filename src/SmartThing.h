@@ -44,12 +44,6 @@ class SmartThingClass {
   const char * getName();
   const char * getIp();
   bool wifiConnected();
-
-  JsonDocument getConfigInfoJson();
-  ConfigEntriesList * getConfigInfo() {
-    return &_configEntriesList;
-  }
-  bool addConfigEntry(const char* name, const char* caption, ConfigEntryType type = CONFIG_STRING);
  private:
   bool _initialized = false;
   unsigned long _lastBeacon = 0;
@@ -82,8 +76,6 @@ class SmartThingClass {
   void asyncLoop();
   #endif
   void sendBeacon();
-
-  ConfigEntriesList _configEntriesList;
 };
 
 extern SmartThingClass SmartThing;

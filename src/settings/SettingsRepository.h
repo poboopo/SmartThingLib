@@ -2,9 +2,9 @@
 #define SettingsRepository_H
 
 #include <ArduinoJson.h>
-// #include <functional>
 
 #include "logs/BetterLogger.h"
+#include "settings/ConfigEntriesList.h"
 
 #define SSID_SETTING "ss"
 #define PASSWORD_SETTING "ps"
@@ -20,10 +20,10 @@ struct WiFiConfig {
   uint8_t mode;
 };
 
-// typedef std::function<bool(JsonPair pair)> FilterFunction;
-
 class SettingsRepositoryClass {
  private:
+  ConfigEntriesList _configEntriesList;
+
   void read(uint16_t address, char * buff, uint16_t length);
   void write(uint16_t address, const char * buff, uint16_t length);
 
@@ -49,6 +49,11 @@ class SettingsRepositoryClass {
   JsonDocument getConfig();
   bool setConfig(JsonDocument conf);
   bool dropConfig();
+  JsonDocument getConfigInfoJson();
+  ConfigEntriesList * getConfigInfo() {
+    return &_configEntriesList;
+  }
+  bool addConfigEntry(const char* name, const char* caption, ConfigEntryType type = CONFIG_STRING);
 
   #if ENABLE_HOOKS
   JsonDocument getHooks();

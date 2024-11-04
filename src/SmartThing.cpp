@@ -111,7 +111,7 @@ bool SmartThingClass::init(const char * type) {
   #endif
 
   #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
-  addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)");
+  SettingsRepository.addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)");
     #if ENABLE_STATES
     ObservablesManager.addDeviceState("logger", []() {
       return LOGGER.isConnected() ? "connected" : "disconnected";
@@ -127,7 +127,7 @@ bool SmartThingClass::init(const char * type) {
 
   #if ENABLE_HOOKS
   // For notifications
-  addConfigEntry(GATEWAY_CONFIG, "Gateway address (ip:port)");
+  SettingsRepository.addConfigEntry(GATEWAY_CONFIG, "Gateway address (ip:port)");
 
   st_log_debug(SMART_THING_TAG, "Loading hooks from settings...");
   HooksManager.loadFromSettings();
@@ -376,14 +376,6 @@ void SmartThingClass::setDnsName() {
   free(hostname);
 }
 #endif
-
-JsonDocument SmartThingClass::getConfigInfoJson() {
-  return _configEntriesList.toJson();
-}
-
-bool SmartThingClass::addConfigEntry(const char* name, const char* caption, ConfigEntryType type) {
-  return _configEntriesList.add(name, caption, type);
-}
 
 const char * SmartThingClass::getType() { 
   return _type; 

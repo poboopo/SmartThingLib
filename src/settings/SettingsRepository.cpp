@@ -333,8 +333,7 @@ bool SettingsRepositoryClass::dropWiFi() {
 }
 
 JsonDocument SettingsRepositoryClass::getConfig() {
-  ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
-  if (entriesList->size() == 0) {
+  if (_configEntriesList.size() == 0) {
     JsonDocument doc;
     return doc;
   }
@@ -345,8 +344,8 @@ JsonDocument SettingsRepositoryClass::getConfig() {
 
 bool SettingsRepositoryClass::setConfig(JsonDocument conf) {
   bool res = false;
-  ConfigEntriesList * entriesList = SmartThing.getConfigInfo();
-  if (entriesList->size() == 0) {
+  // todo validate config entries
+  if (_configEntriesList.size() == 0) {
     return res;
   }
 
@@ -369,6 +368,14 @@ bool SettingsRepositoryClass::dropConfig() {
     st_log_error(SETTINGS_MANAGER_TAG, "Configuration drop failed");
   }
   return res;
+}
+
+JsonDocument SettingsRepositoryClass::getConfigInfoJson() {
+  return _configEntriesList.toJson();
+}
+
+bool SettingsRepositoryClass::addConfigEntry(const char* name, const char* caption, ConfigEntryType type) {
+  return _configEntriesList.add(name, caption, type);
 }
 
 #if ENABLE_HOOKS

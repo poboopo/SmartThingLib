@@ -71,7 +71,7 @@ class HttpHook : public T {
 
  private:
   String _url;
-  String _method;
+  String _method; // todo enum
   String _payload;
   int16_t _lastResponseCode = 0;
   V _currentValue;

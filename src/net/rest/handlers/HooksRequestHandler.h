@@ -147,8 +147,7 @@ class HooksRequestHandler : public RequestHandler {
               buildErrorJson("Observable type, name or id args are missing!"));
         }
 
-        if (HooksManager.deleteHook(type.c_str(), name.c_str(),
-                                            id.toInt())) {
+        if (HooksManager.deleteHook(type.c_str(), name.c_str(), id.toInt())) {
           HooksManager.saveHooksToSettings();
           return request->beginResponse(200);
         } else {

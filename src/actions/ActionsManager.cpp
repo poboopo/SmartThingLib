@@ -31,7 +31,6 @@ bool ActionsManagerClass::add(const char* actionName, const char* caption, Actio
   }
 };
 
-// todo rename to call
 ActionResult ActionsManagerClass::call(const char* name) {
   st_log_debug(ACTIONS_TAG, "Trying to call action %s", name);
   const Action* action = findAction(name);
@@ -94,7 +93,9 @@ void ActionsManagerClass::scheduled() {
 JsonDocument ActionsManagerClass::toJson() {
   JsonDocument doc;
   doc.to<JsonArray>();
+  #if ENABLE_ACTIONS_SCHEDULER
   unsigned long currentMillis = millis();
+  #endif
   forEach([&](Action* current) {
     JsonDocument action;
     action[ACTIONS_JSON_NAME] = current->name;

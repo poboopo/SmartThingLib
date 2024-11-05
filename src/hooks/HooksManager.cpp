@@ -458,12 +458,6 @@ boolean HooksManagerClass::callWatcherHook(List<Watcher<T>>* list, const char * 
 void HooksManagerClass::saveHooksToSettings() {
   st_log_debug(HOOKS_MANAGER_TAG, "Saving hooks");
   SettingsRepository.setHooks(allHooksToJson(true, true));
-  // if (SettingsRepository.save()) {
-  //   st_log_debug(HOOKS_MANAGER_TAG, "Hooks were saved");
-  // } else {
-  //   // todo reboot?
-  //   st_log_error(HOOKS_MANAGER_TAG, "Hooks save failed");
-  // }
 }
 
 JsonDocument HooksManagerClass::allHooksToJson(bool ignoreReadOnly, bool shortJson) {

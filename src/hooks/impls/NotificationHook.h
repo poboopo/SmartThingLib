@@ -23,6 +23,7 @@
 
 static const char * NOTIFICATION_HOOK_TAG = "notification_hook";
 
+// todo extend http hook
 template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
 class NotificationHook : public T {
   public:

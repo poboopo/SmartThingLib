@@ -185,16 +185,19 @@ class BetterLogger {
 
   bool connect(const char * ip, int port) {
     IPAddress address;
-    address.fromString(ip);
-    #if LOGGER_TYPE == TCP_LOGGER
-    _connected = _tcp.connect(address, port);
-    #endif
-    #if LOGGER_TYPE == MULTICAST_LOGGER
-    _connected = _udp.beginMulticast(address, port);
-    if (_connected) {
-      _ip = WiFi.localIP();
+    if (address.fromString(ip)) {
+      #if LOGGER_TYPE == TCP_LOGGER
+      _connected = _tcp.connect(address, port);
+      #endif
+      #if LOGGER_TYPE == MULTICAST_LOGGER
+      _connected = _udp.beginMulticast(address, port);
+      if (_connected) {
+        _ip = WiFi.localIP();
+      }
+      #endif
+    } else {
+      error(LOGGER_TAG, "IP parsing error (ip=%s)", ip);
     }
-    #endif
     return _connected;
   }
 
@@ -209,6 +212,7 @@ class BetterLogger {
     _udp.stop();
     #endif
     _connected = false;
+    warning(LOGGER_TAG, "Disconnected from the server");
   }
 
   void parseAddressAndConnect() {
@@ -223,6 +227,7 @@ class BetterLogger {
     int ind = _fullAddr.indexOf(":");
     if (ind < 0) {
       error(LOGGER_TAG, "Bad server fullAddr: %s, need ip:port", _fullAddr.c_str());
+      _fullAddr.clear();
       return;
     }
 
@@ -233,17 +238,19 @@ class BetterLogger {
       return;
     }
     if (port.isEmpty()) {
-      error(LOGGER_TAG, "Failed to parse server port");
+      _fullAddr.clear();
+      error(LOGGER_TAG, "Server port empty");
       return;
     }
 
-    info(LOGGER_TAG, "Trying to connect to logger server [%s, %s]", ip.c_str(), port.c_str());
     disconnect();
+    info(LOGGER_TAG, "Trying to connect to logger server [%s, %s]", ip.c_str(), port.c_str());
     if (connect(ip.c_str(), port.toInt())) {
       Serial.println();
       Serial.println("Remote logger connected! Serial output disabled while remote logger connected!");
       info(LOGGER_TAG, "Logger connected!");
     } else {
+      _fullAddr.clear();
       error(LOGGER_TAG, "Failed to connect");
     }
   };

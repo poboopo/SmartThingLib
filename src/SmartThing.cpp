@@ -20,7 +20,14 @@
 #define SMART_THING_ACTIONS_SCHEDULE_DELAY 200 //ms
 #endif
 
-#define WIPE_PIN 19
+#ifndef WIPE_PIN
+  #ifdef ARDUINO_ARCH_ESP32
+    #define WIPE_PIN 19
+  #endif
+  #ifdef ARDUINO_ARCH_ESP8266
+    #define WIPE_PIN D4
+  #endif
+#endif
 #define WIPE_TIMEOUT 5000
 #define WIFI_SETUP_TIMEOUT 10000
 
@@ -96,12 +103,9 @@ bool SmartThingClass::init(const char * type) {
   digitalWrite(LED_PIN, LOW);
 
   delay(50);
-  // todo esp8266
-  #ifdef ARDUINO_ARCH_ESP32
   if (!digitalRead(WIPE_PIN)) {
     wipeSettings();
   }
-  #endif
 
   #ifdef ARDUINO_ARCH_ESP32
   st_log_debug(SMART_THING_TAG, "Creating loop task");
@@ -220,7 +224,6 @@ void SmartThingClass::asyncLoop() {
 }
 #endif
 
-// todo move to different async task
 void SmartThingClass::sendBeacon() {
   if (!wifiConnected() || _broadcastMessage == nullptr) {
     return;

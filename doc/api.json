@@ -512,7 +512,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/hooksList"
+                  "$ref": "#components/schemas/HooksList"
                 }
               }
             }
@@ -872,6 +872,13 @@
           "trigger": {
             "description": "Trigger value, when hook gonna ba called"
           },
+          "compareType": {
+            "description": "Trigger compare type"
+          },
+          "triggerEnabled": {
+            "description": "Is trigger enabled",
+            "type": "boolean"
+          },
           "readonly": {
             "description": "Is hook readonly",
             "type": "boolean"
@@ -912,7 +919,7 @@
               }
             },
             "hooks": {
-              "$ref": "#components/schemas/hooksList"
+              "$ref": "#components/schemas/HooksList"
             }
           }
         }
@@ -952,17 +959,31 @@
             ],
             "properties": {
               "id": {
-                "description": "Hook id. Just index in list.",
+                "description": "Hook id",
                 "type": "integer"
               },
-              "type": {
-                "description": "Hook type. Get it from template.",
-                "type": "string",
-                "example": "http_hook/action_hook"
+              "caption": {
+                "description": "Hook caption",
+                "type": "string"
               },
               "trigger": {
-                "description": "Hook trigger value",
-                "type": "string"
+                "description": "Trigger value, when hook gonna ba called"
+              },
+              "compareType": {
+                "description": "Trigger compare type"
+              },
+              "triggerEnabled": {
+                "description": "Is trigger enabled",
+                "type": "boolean"
+              },
+              "readonly": {
+                "description": "Is hook readonly",
+                "type": "boolean"
+              },
+              "type": {
+                "description": "Hook type",
+                "type": "string",
+                "example": "lambda_hook/http_hook/action_hook"
               }
             }
           }

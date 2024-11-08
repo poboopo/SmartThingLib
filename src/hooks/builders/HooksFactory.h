@@ -52,8 +52,7 @@ class HooksFactory {
         st_log_error(HOOKS_FACTORY_TAG, "Unkonwn hook type: %s", type);
       }
       if (hook == nullptr) {
-
-      st_log_debug(HOOKS_FACTORY_TAG,
+        st_log_debug(HOOKS_FACTORY_TAG,
                   "-----------------------BUILD-FAILED---------------------");
         return nullptr;
       }
@@ -64,31 +63,39 @@ class HooksFactory {
         st_log_debug(HOOKS_FACTORY_TAG, "Id=%u", id);
       } else {
         hook->setId(-1);
-        st_log_debug(HOOKS_FACTORY_TAG, "Id is empty");
+        st_log_debug(HOOKS_FACTORY_TAG, "Id is missing");
       }
 
-      String trigger = doc[CB_BUILDER_TRIGGER];
-      if (trigger.isEmpty() || trigger.equals("null")) {
-        hook->disableTrigger();
-        st_log_debug(HOOKS_FACTORY_TAG, "Trigger disabled");
-      } else {
-        hook->enableTrigger();
-        hook->setTriggerValue(doc[CB_BUILDER_TRIGGER].as<T>());
-        
-        st_log_debug(HOOKS_FACTORY_TAG, "Trigger=%s", trigger.c_str());
-      }
-
-      String compare = doc[CB_BUILDER_COMPARE];
-      if (!compare.isEmpty()) {
-        hook->setCompareType(compare);
-        st_log_debug(HOOKS_FACTORY_TAG, "compareType=%s", compare.c_str());
-      }
-
-      setTypeSpecificValues(hook, doc);
+      update<T>(hook, doc);
 
       st_log_debug(HOOKS_FACTORY_TAG,
                   "------------------------BUILD-END-----------------------");
       return hook;
+    }
+
+    template <typename T>
+    static void update(Hook<T> * hook, JsonObject doc) {
+      if (doc.containsKey("triggerEnabled")) {
+        if (doc["triggerEnabled"].as<bool>()) {
+          hook->enableTrigger();
+          st_log_debug(HOOKS_FACTORY_TAG, "Trigger enabled");
+        } else {
+          hook->disableTrigger();
+          st_log_debug(HOOKS_FACTORY_TAG, "Trigger disabled");
+        }
+      }
+
+      hook->setTriggerValue(doc[CB_BUILDER_TRIGGER]);
+      st_log_debug(HOOKS_FACTORY_TAG, "Trigger=%s", doc[CB_BUILDER_TRIGGER].as<String>().c_str());
+
+      hook->setCompareType(doc[CB_BUILDER_COMPARE].as<const char*>());
+      st_log_debug(
+        HOOKS_FACTORY_TAG,
+        "compareType=%s",
+        compareTypeToString(hook->getCompareType()).c_str()
+      );
+
+      setTypeSpecificValues(hook, doc);
     }
 
     static JsonDocument getTemplates(const char * type) {

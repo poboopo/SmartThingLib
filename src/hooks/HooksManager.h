@@ -90,9 +90,6 @@ class HooksManagerClass {
   bool updateHook(List<Watcher<T>>* list, const char* name,
                       JsonObject hookObject);
 
-  template<typename T>
-  void updateTypeSpecificHookValues(Hook<T> * hook, JsonObject hookObject);
-
   template <typename T>
   void checkWatchers(List<Watcher<T>>* list);
 

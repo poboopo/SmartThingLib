@@ -34,7 +34,7 @@ class HttpHook : public T {
     }
   };
 
-  void addCustomJsonValues(JsonDocument &doc, boolean shortJson) {
+  void populateJsonWithCustomValues(JsonDocument &doc, boolean shortJson) const {
     if (!shortJson) {
       doc["lastResponseCode"] = _lastResponseCode;
     }

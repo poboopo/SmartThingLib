@@ -24,35 +24,34 @@ class Hook {
     virtual bool accept(T &value) = 0;
     virtual void call(T &value) = 0;
     virtual void updateCustom(JsonObject doc) {};
-    virtual void addCustomJsonValues(JsonDocument &doc, boolean shortJson) {};
+    virtual void populateJsonWithCustomValues(JsonDocument &doc, boolean shortJson) const {};
     virtual void disableTrigger() { _triggerDisabled = true; };
     virtual void enableTrigger() { _triggerDisabled = false; };
+    virtual bool triggerDisabled() const { return _triggerDisabled; };
 
-    virtual JsonDocument toJson(bool shortJson) {
+    virtual JsonDocument toJson(bool shortJson) const {
       JsonDocument doc;
       doc["id"] = _id;
       doc["readonly"] = _readonly;
       doc["type"] = _type;
-      if (_triggerDisabled) {
-        doc["trigger"] = nullptr;
-      } else {
-        doc["trigger"] = _triggerValue;
-      }
+      doc["triggerEnabled"] = !_triggerDisabled;
+      doc["trigger"] = _triggerValue;
       doc["compareType"] = compareTypeToString(_compareType);
 
-      addCustomJsonValues(doc, shortJson);
+      populateJsonWithCustomValues(doc, shortJson);
       return doc;
     }
 
     void setId(int id) { _id = id; }
     const int getId() const { return _id; }
-    void setCompareType(String type) {
+    void setCompareType(const char * type) {
       _compareType = compareTypeFromString(type, CompareType::EQ);
     }
     void setCompareType(CompareType type) { _compareType = type; }
+    CompareType getCompareType() const { return _compareType; }
     void setTriggerValue(T triggerValue) { _triggerValue = triggerValue; }
     void setReadOnly(bool readOnly) { _readonly = readOnly; }
-    bool isReadonly() { return _readonly; }
+    bool isReadonly() const { return _readonly; }
     const char *type() const { return _type; }
 
   protected:
@@ -105,7 +104,7 @@ class SensorHook: public Hook<int16_t> {
       doc["threshold"] = _threshold;
       doc["compareType"] = compareTypeToString(_compareType);
 
-      addCustomJsonValues(doc, shortJson);
+      populateJsonWithCustomValues(doc, shortJson);
       return doc;
     }
 

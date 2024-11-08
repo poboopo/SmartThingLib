@@ -27,7 +27,7 @@ class ActionHook : public T {
       ActionsManager.call(_action);
     }
 
-    void addCustomJsonValues(JsonDocument &doc, boolean shortJson) {
+    void populateJsonWithCustomValues(JsonDocument &doc, boolean shortJson) const {
       doc["action"] = _action;
     };
 

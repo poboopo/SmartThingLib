@@ -40,7 +40,7 @@ class NotificationHook : public T {
       }
     }
 
-    void addCustomJsonValues(JsonDocument &doc, boolean shortJson) {
+    void populateJsonWithCustomValues(JsonDocument &doc, boolean shortJson) const {
       doc[MESSAGE_FIELD] = _message.c_str();
       doc[NOTIFICATION_TYPE_FIELD] = _notificationType.c_str();
     }

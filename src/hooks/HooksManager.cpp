@@ -268,45 +268,11 @@ bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
     return false;
   }
 
-  if (hookObject.containsKey("trigger")) {
-    String trigger = hookObject["trigger"].as<String>();
-    if (trigger.isEmpty() || trigger.equals("null")) {
-      hook->disableTrigger();
-      st_log_debug(HOOKS_MANAGER_TAG, "Trigger disabled");
-    } else {
-      hook->enableTrigger();
-      hook->setTriggerValue(hookObject["trigger"]);
-      st_log_debug(HOOKS_MANAGER_TAG, "New triggeValuer=%s", trigger.c_str());
-    }
-  }
-
-  if (hookObject.containsKey("compareType")) {
-    String compareType = hookObject["compareType"].as<String>();
-    hook->setCompareType(compareType);
-    st_log_debug(HOOKS_MANAGER_TAG, "New compareType=%s", compareType.c_str());
-  }
-
+  HooksFactory::update<T>(hook, hookObject);
   hook->updateCustom(hookObject);
-  updateTypeSpecificHookValues(hook, hookObject);
 
-  st_log_info(HOOKS_MANAGER_TAG,
-              "Hook id=%d for observable [%s] was updated!", id, name);
+  st_log_info(HOOKS_MANAGER_TAG, "Hook id=%d for observable [%s] was updated!", id, name);
   return true;
-}
-
-#if ENABLE_SENSORS 
-template<>
-void HooksManagerClass::updateTypeSpecificHookValues(Hook<int16_t> * hook, JsonObject hookObject) {
-  if (hookObject.containsKey("threshold")) {
-    int16_t threshold = hookObject["threshold"];
-    ((SensorHook *) hook)->setThreshold(threshold);
-    st_log_debug(HOOKS_MANAGER_TAG, "New threshold=%d", threshold);
-  }
-}
-#endif
-
-template<>
-void HooksManagerClass::updateTypeSpecificHookValues(Hook<String> * hook, JsonObject hookObject) {
 }
 
 template <typename T>

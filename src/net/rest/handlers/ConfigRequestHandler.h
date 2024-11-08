@@ -39,7 +39,7 @@ class ConfigRequestHandler : public RequestHandler {
             if (entry->type == CONFIG_INTEGER) {
               obj[entry->name] = obj[entry->name].as<int>();
             } else if (entry->type == CONFIG_BOOLEAN) {
-              obj[entry->name] = obj[entry->name].as<bool>();
+              obj[entry->name] = obj[entry->name].as<String>().equals("true");
             }
           }
         });

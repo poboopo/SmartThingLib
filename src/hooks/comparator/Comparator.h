@@ -3,37 +3,42 @@
 #define COMPARATOR_H
 #include "logs/BetterLogger.h"
 
+static const char * COMPARE_EQ = "eq";
+static const char * COMPARE_NEQ = "neq";
+static const char * COMPARE_GTE = "gte";
+static const char * COMPARE_LTE = "lte";
+
 enum CompareType { EQ, NEQ, GTE, LTE };
 
 inline String compareTypeToString(CompareType type) {
   switch (type) {
     case EQ:
-      return "eq";
+      return COMPARE_EQ;
     case NEQ:
-      return "neq";
+      return COMPARE_NEQ;
     case GTE:
-      return "gte";
+      return COMPARE_GTE;
     case LTE:
-      return "lte";
+      return COMPARE_LTE;
     default:
       return "";
   }
 }
 
-inline CompareType compareTypeFromString(String type, CompareType defValue) {
-  if (type.isEmpty()) {
+inline CompareType compareTypeFromString(const char * type, CompareType defValue) {
+  if (type == nullptr || strlen(type) == 0) {
     return defValue;
   }
-  if (type.equals("eq")) {
+  if (strcmp(type, COMPARE_EQ) == 0) {
     return CompareType::EQ;
   }
-  if (type.equals("neq")) {
+  if (strcmp(type, COMPARE_NEQ) == 0) {
     return CompareType::NEQ;
   }
-  if (type.equals("gte")) {
+  if (strcmp(type, COMPARE_GTE) == 0) {
     return CompareType::GTE;
   }
-  if (type.equals("lte")) {
+  if (strcmp(type, COMPARE_LTE) == 0) {
     return CompareType::LTE;
   }
   return defValue;

@@ -292,7 +292,6 @@ WiFiConfig SettingsRepositoryClass::getWiFi() {
       escaped = false;
     }
   }
-  settings.ssid = "PUK";
   settings.mode = buff.toInt();
   return settings;
 }

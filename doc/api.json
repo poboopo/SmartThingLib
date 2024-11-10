@@ -709,7 +709,7 @@
             "description": "Device firmware version",
             "type": "string"
           },
-          "smtVersion": {
+          "stVersion": {
             "description": "SmartThing library version",
             "type": "string"
           },

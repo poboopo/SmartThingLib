@@ -28,7 +28,7 @@ class InfoRequestHandler : public RequestHandler {
         #ifdef __VERSION
         jsonDoc["version"] = __VERSION;
         #endif
-        jsonDoc["smtVersion"] = SMART_THING_VERSION;
+        jsonDoc["stVersion"] = SMART_THING_VERSION;
         jsonDoc["name"] = SmartThing.getName();
         jsonDoc["type"] = SmartThing.getType();
         jsonDoc["ip"] = SmartThing.getIp();

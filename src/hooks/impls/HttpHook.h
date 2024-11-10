@@ -20,7 +20,7 @@ template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T
 class HttpHook : public T {
  public:
   HttpHook(const char *url, bool readonly)
-      : T(HTTP_HOOK_TAG, readonly), _url(url), _method("GET") {
+      : T(HTTP_HOOK, readonly), _url(url), _method("GET") {
     fixUrl();
   };
   virtual ~HttpHook() {};

@@ -62,9 +62,6 @@ class ConfigEntriesList : public List<ConfigEntry> {
     });
     return doc;
   }
-  bool haveConfigEntry(const char * name) {
-    return findConfigEntry(name) != nullptr;
-  }
  private:
   const ConfigEntry* findConfigEntry(const char* name) {
     if (strlen(name) == 0) {

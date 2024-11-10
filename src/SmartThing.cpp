@@ -369,7 +369,7 @@ void SmartThingClass::updateBroadCastMessage() {
 void SmartThingClass::setDnsName() {
   // todo add hostname exists check
   char * hostname = (char *) malloc(strlen(_name) + 5);
-  sprintf(hostname, "%s-smt", _name);
+  sprintf(hostname, "%s-st", _name);
   esp_err_t err = mdns_hostname_set(hostname);
   if (err != ESP_OK) {
     st_log_error(SMART_THING_TAG, "Failed to set mdns hostname! (code=%s)", esp_err_to_name(err));

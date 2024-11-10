@@ -26,7 +26,7 @@
 #define WIFI_MODE_AP WIFI_AP
 #endif
 
-#define ST_DEFAULT_NAME "smt-device"
+#define ST_DEFAULT_NAME "st-device"
 #define DEVICE_NAME_LENGTH_MAX 16
 
 class SmartThingClass {

@@ -15,7 +15,7 @@ static const char * ACTION_HOOK_TAG = "action_hook";
 template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
 class ActionHook : public T {
   public:
-    ActionHook(const char *action, bool readOnly): T(ACTION_HOOK_TAG, readOnly) {
+    ActionHook(const char *action, bool readOnly): T(ACTION_HOOK, readOnly) {
       _action = (char *) malloc(strlen(action) + 1);
       strcpy(_action, action);
     };

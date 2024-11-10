@@ -7,15 +7,13 @@
 #include "hooks/impls/Hook.h"
 #include "logs/BetterLogger.h"
 
-static const char * LAMBDA_HOOK_TAG = "lambda_hook";
-
 template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
 class LambdaHook : public T {
  public:
   typedef std::function<void(V &value)> CustomHook;
 
   LambdaHook(CustomHook customHook, bool readOnly)
-      : T(LAMBDA_HOOK_TAG, readOnly),
+      : T(LAMBDA_HOOK, readOnly),
         _customHook(customHook){};
   virtual ~LambdaHook() {};
 

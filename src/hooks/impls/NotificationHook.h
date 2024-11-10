@@ -28,7 +28,7 @@ template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T
 class NotificationHook : public T {
   public:
     NotificationHook(const char * message, bool readOnly)
-      : T(NOTIFICATION_HOOK_TAG, readOnly), _message(message), _notificationType(NOTIFICATION_INFO) {};
+      : T(NOTIFICATION_HOOK, readOnly), _message(message), _notificationType(NOTIFICATION_INFO) {};
     virtual ~NotificationHook() {};
 
     void call(V &value) {

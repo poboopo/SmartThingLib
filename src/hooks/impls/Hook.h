@@ -8,10 +8,32 @@
 #include "hooks/comparator/Comparator.h"
 #include "logs/BetterLogger.h"
 
+enum HookType {
+  LAMBDA_HOOK,
+  ACTION_HOOK,
+  HTTP_HOOK,
+  NOTIFICATION_HOOK
+};
+
+inline const char * hookTypeStr(HookType type) {
+  switch (type) {
+    case LAMBDA_HOOK:
+      return "lambda";
+    case ACTION_HOOK:
+      return "action";
+    case HTTP_HOOK:
+      return "http";
+    case NOTIFICATION_HOOK:
+      return "notification";
+    default:
+      return "unknown";
+  }
+}
+
 template <typename T>
 class Hook {
   public:
-    Hook(const char *type, bool readonly, int id = -1, bool triggerDisabled = true, CompareType compare = EQ)
+    Hook(HookType type, bool readonly, int id = -1, bool triggerDisabled = true, CompareType compare = EQ)
         : _type(type),
           _readonly(readonly),
           _id(id),
@@ -33,7 +55,7 @@ class Hook {
       JsonDocument doc;
       doc["id"] = _id;
       doc["readonly"] = _readonly;
-      doc["type"] = _type;
+      doc["type"] = hookTypeStr(_type);
       doc["triggerEnabled"] = !_triggerDisabled;
       doc["trigger"] = _triggerValue;
       doc["compareType"] = compareTypeToString(_compareType);
@@ -52,10 +74,10 @@ class Hook {
     void setTriggerValue(T triggerValue) { _triggerValue = triggerValue; }
     void setReadOnly(bool readOnly) { _readonly = readOnly; }
     bool isReadonly() const { return _readonly; }
-    const char *type() const { return _type; }
+    HookType type() const { return _type; }
 
   protected:
-    const char *_type;
+    HookType _type;
     bool _readonly;
     int _id;
     CompareType _compareType;
@@ -66,7 +88,7 @@ class Hook {
 #if ENABLE_SENSORS
 class SensorHook: public Hook<int16_t> {
   public:
-    SensorHook(const char *type, bool readonly): Hook<int16_t>(type, readonly) {};
+    SensorHook(HookType type, bool readonly): Hook<int16_t>(type, readonly) {};
     bool accept(int16_t &value) {
       if (abs(value - _previousValue) < _threshold) {
         return false;
@@ -127,7 +149,7 @@ class SensorHook: public Hook<int16_t> {
 #if ENABLE_STATES
 class StateHook: public Hook<String> {
   public:
-    StateHook(const char *type, bool readonly): Hook<String>(type, readonly) {};
+    StateHook(HookType type, bool readonly): Hook<String>(type, readonly) {};
     bool accept(String &value) {
       if (_triggerDisabled) {
         return true;

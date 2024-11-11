@@ -57,7 +57,7 @@ class HooksFactory {
         return nullptr;
       }
 
-      if (doc.containsKey("id") && doc["id"].is<int>()) {
+      if ( doc["id"].is<int>()) {
         uint8_t id = doc["id"];
         hook->setId(id);
         st_log_debug(HOOKS_FACTORY_TAG, "Id=%u", id);
@@ -75,7 +75,7 @@ class HooksFactory {
 
     template <typename T>
     static void update(Hook<T> * hook, JsonObject doc) {
-      if (doc.containsKey("triggerEnabled")) {
+      if (doc["triggerEnabled"].is<bool>()) {
         if (doc["triggerEnabled"].as<bool>()) {
           hook->enableTrigger();
           st_log_debug(HOOKS_FACTORY_TAG, "Trigger enabled");
@@ -125,8 +125,8 @@ class HooksFactory {
     }
     #if ENABLE_SENSORS
     static void setTypeSpecificValues(Hook<int16_t> * hook, JsonObject doc) {
-      if (doc.containsKey("threshold")) {
-        int16_t threshold = doc["threshold"];
+      if (doc["threshold"].is<int>()) {
+        int threshold = doc["threshold"];
         ((SensorHook *) hook)->setThreshold(threshold);
         st_log_debug(HOOKS_FACTORY_TAG, "Threshold=%d", threshold);
       }

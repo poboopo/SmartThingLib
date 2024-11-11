@@ -35,7 +35,7 @@ class ConfigRequestHandler : public RequestHandler {
         // jest'
         // hard typization required only over rest, that's why
         list->forEach([obj](ConfigEntry * entry) {
-          if (entry->type != CONFIG_STRING && obj.containsKey(entry->name)) {
+          if (entry->type != CONFIG_STRING && obj[entry->name].is<const char*>()) {
             if (entry->type == CONFIG_INTEGER) {
               obj[entry->name] = obj[entry->name].as<int>();
             } else if (entry->type == CONFIG_BOOLEAN) {
@@ -63,7 +63,7 @@ class ConfigRequestHandler : public RequestHandler {
         String name = request->arg("name");
 
         JsonDocument config = SettingsRepository.getConfig();
-        if (config.containsKey(name)) {
+        if (config[name].is<JsonVariant>()) {
           st_log_warning(CONFIG_LOG_TAG, "Removing config value %s", name);
           config.remove(name);
           SettingsRepository.setConfig(config);

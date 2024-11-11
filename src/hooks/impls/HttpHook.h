@@ -44,18 +44,18 @@ class HttpHook : public T {
   };
 
   void updateCustom(JsonObject doc) {
-    if (doc.containsKey("url")) {
+    if (doc["url"].is<const char*>()) {
       _url = doc["url"].as<String>();
       fixUrl();
       st_log_debug(HTTP_HOOK_TAG, "Hook's url was updated to %s",
                    _url.c_str());
     }
-    if (doc.containsKey("method")) {
+    if (doc["method"].is<const char*>()) {
       _method = doc["method"].as<String>();
       st_log_debug(HTTP_HOOK_TAG, "Hook's method was updated to %s",
                    _method.c_str());
     }
-    if (doc.containsKey("payload")) {
+    if (doc["payload"].is<const char*>()) {
       _payload = doc["payload"].as<String>();
       st_log_debug(HTTP_HOOK_TAG, "Hook's payload was updated to %s",
                    _payload.c_str());

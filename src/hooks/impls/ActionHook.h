@@ -32,7 +32,7 @@ class ActionHook : public T {
     };
 
     void updateCustom(JsonObject obj) {
-      if (obj.containsKey("action")) {
+      if (obj["action"].is<const char*>()) {
         String newAction = obj["action"].as<String>();
         if (newAction.isEmpty()) {
           st_log_error(ACTION_HOOK_TAG, "Action is missing!");

@@ -50,7 +50,7 @@ void ActionsManagerClass::loadFromSettings() {
   }
 
   forEach([&](Action * action) {
-    if (config.containsKey(action->name)) {
+    if (config[action->name].is<const char*>()) {
       unsigned long callDelay = config[action->name];
       action->callDelay = callDelay;
     }

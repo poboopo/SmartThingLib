@@ -10,6 +10,7 @@
 #endif
 #include <type_traits>
 
+#include "SmartThing.h"
 #include "hooks/impls/Hook.h"
 #include "settings/SettingsRepository.h"
 #include "utils/StringUtils.h"
@@ -46,10 +47,10 @@ class NotificationHook : public T {
     }
 
     void updateCustom(JsonObject obj) {
-      if (obj.containsKey(MESSAGE_FIELD)) {
+      if (obj[MESSAGE_FIELD].is<const char*>()) {
         _message = obj[MESSAGE_FIELD].as<String>();
       }
-      if (obj.containsKey(NOTIFICATION_TYPE_FIELD)) {
+      if (obj[NOTIFICATION_TYPE_FIELD].is<const char*>()) {
         _notificationType = obj[NOTIFICATION_TYPE_FIELD].as<String>();
         if (_notificationType.isEmpty()) {
           _notificationType = NOTIFICATION_INFO;

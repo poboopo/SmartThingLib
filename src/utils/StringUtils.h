@@ -31,7 +31,7 @@ inline String replaceValues(const char * input, String &value) {
       if (input[i] == '}') {
         if (key.equals(VALUE_DYNAMIC_PARAM)) {
           result += value;
-        } else if (conf.containsKey(key)) {
+        } else if (conf[key].is<const char*>()) {
           result += conf[key].as<String>();
         }
         opened = false;

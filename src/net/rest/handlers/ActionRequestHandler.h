@@ -66,7 +66,7 @@ class ActionRequestHandler : public RequestHandler {
       }
       JsonDocument doc;
       deserializeJson(doc, _body);
-      if (!doc.containsKey(ACTIONS_JSON_NAME) || !doc.containsKey(ACTIONS_JSON_DELAY)) {
+      if (!doc[ACTIONS_JSON_NAME].is<JsonVariant>() || !doc[ACTIONS_JSON_DELAY].is<JsonVariant>()) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Name and callDelay params reuqired in body"));
       }
       

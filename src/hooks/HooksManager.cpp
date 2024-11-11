@@ -220,7 +220,7 @@ bool HooksManagerClass::updateHook(JsonDocument doc) {
     st_log_error(HOOKS_MANAGER_TAG, "Hook object is missing!");
     return false;
   }
-  if (!hookObject.containsKey("id")) {
+  if (!hookObject["id"].is<JsonVariant>()) {
     st_log_error(HOOKS_MANAGER_TAG, "Hook id property is missing!");
     return false;
   }
@@ -251,7 +251,7 @@ template <typename T>
 bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
                                            const char *name,
                                            JsonObject hookObject) {
-  if (!hookObject.containsKey("id")) {
+  if (!hookObject["id"].is<JsonVariant>()) {
     st_log_error(HOOKS_MANAGER_TAG,
                  "Id value in hook object is missing!");
     return false;

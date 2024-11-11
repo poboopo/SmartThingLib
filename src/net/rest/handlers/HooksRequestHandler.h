@@ -41,7 +41,7 @@ class HooksRequestHandler : public RequestHandler {
           return request->beginResponse(400, CONTENT_TYPE_JSON,
                       buildErrorJson("Type parameter are missing!"));
         }
-        JsonDocument doc = HooksFactory::getTemplates(type.c_str());
+        JsonDocument doc = HooksFactory::getTemplates(observableTypeFromStr(type.c_str()));
         String response;
         serializeJson(doc, response);
         return request->beginResponse(200, CONTENT_TYPE_JSON, response);

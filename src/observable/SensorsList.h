@@ -57,7 +57,7 @@ class SensorsList : public List<Sensor> {
   JsonDocument getTypes() {
     JsonDocument doc;
     forEach([&](Sensor* current) {
-      doc[current->name] = sensorTypeName(current->type);
+      doc[current->name] = sensorTypeName(current->sensorType);
     });
     return doc;
   }
@@ -79,7 +79,7 @@ class SensorsList : public List<Sensor> {
     Sensor* sensor = new Sensor();
     sensor->name = name;
     sensor->valueProvider = valueProvider;
-    sensor->type = type;
+    sensor->sensorType = type;
     if (append(sensor) > -1) {
       st_log_debug(SENSORS_LIST_TAG, "Added new sensor %s", name);
       return true;

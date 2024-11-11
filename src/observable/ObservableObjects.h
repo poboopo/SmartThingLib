@@ -6,24 +6,51 @@
 #include <ArduinoJson.h>
 #include <functional>
 
-#define STATE_TYPE "state"
-#define SENSOR_TYPE "sensor"
+static const char * _state = "state";
+static const char * _sensor = "sensor";
+
+enum ObservableType {
+  UNKNOWN_OBS_TYPE,
+  OBS_STATE,
+  OBS_SENSOR
+};
+
+inline const char * observableTypeToStr(ObservableType type) {
+  switch (type) {
+    case OBS_STATE:
+      return _state;
+    case OBS_SENSOR:
+      return _sensor;
+    default:
+      return "unknown";
+  }
+}
+
+inline ObservableType observableTypeFromStr(const char * type) {
+  if (strcmp(type, _state) == 0) {
+    return OBS_STATE;
+  }
+  if (strcmp(type, _sensor) == 0) {
+    return OBS_SENSOR;
+  }
+  return UNKNOWN_OBS_TYPE;
+}
 
 template <class T>
 struct ObservableObject {
 public:
-  ObservableObject(const char* objType) : type(objType){};
+  ObservableObject(ObservableType objType) : type(objType){};
   typedef std::function<T(void)> ValueProviderFunction;
 
   const char* name;
-  const char* type;
+  ObservableType type;
 
   ValueProviderFunction valueProvider;
 
   JsonDocument toJson() {
     JsonDocument doc;
     doc["name"] = name;
-    doc["type"] = type;
+    doc["type"] = observableTypeToStr(type);
     return doc;
   };
 };
@@ -44,15 +71,15 @@ inline const char* sensorTypeName(SensorType type) {
 
 struct Sensor : public ObservableObject<int16_t> {
 public:
-  Sensor() : ObservableObject<int16_t>(SENSOR_TYPE){};
+  Sensor() : ObservableObject<int16_t>(OBS_SENSOR){};
   int pin;
-  SensorType type;
+  SensorType sensorType;
 };
 #endif
 
 #if ENABLE_STATES
 struct DeviceState : public ObservableObject<String> {
-  DeviceState() : ObservableObject<String>(STATE_TYPE){};
+  DeviceState() : ObservableObject<String>(OBS_STATE){};
 };
 #endif
 

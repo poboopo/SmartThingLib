@@ -130,7 +130,7 @@ class Watcher {
       if (current != nullptr && current->accept(value)) {
         st_log_debug(
           WATCHER_TAG,
-          "Calling hook [id=%d] for observable [%s]%s",
+          "Calling hook [id=%d] for observable [%u]%s",
           current->getId(),
           _observable->type,
           _observable->name

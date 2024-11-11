@@ -98,7 +98,7 @@ class HooksFactory {
       setTypeSpecificValues(hook, doc);
     }
 
-    static JsonDocument getTemplates(const char * type) {
+    static JsonDocument getTemplates(ObservableType type) {
       JsonDocument doc;
       doc["default"] = getDefaultTemplate(type);
       #if ENABLE_ACTIONS
@@ -112,14 +112,17 @@ class HooksFactory {
     }
   
   private:
-    static JsonDocument getDefaultTemplate(const char * type) {
+    static JsonDocument getDefaultTemplate(ObservableType type) {
       JsonDocument doc;
-      if (strcmp(type, SENSOR_TYPE) == 0) {
-        deserializeJson(doc, DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON);
-      } else if (strcmp(type, STATE_TYPE) == 0) {
-        deserializeJson(doc, DEFAULT_STATES_HOOKS_TEMPLATES_JSON);
-      } else {
-        deserializeJson(doc, "{}");
+      switch (type) {
+        case OBS_SENSOR:
+          deserializeJson(doc, DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON);
+          break;
+        case OBS_STATE:
+          deserializeJson(doc, DEFAULT_STATES_HOOKS_TEMPLATES_JSON);
+          break;
+        default:
+          deserializeJson(doc, "{}");
       }
       return doc;
     }

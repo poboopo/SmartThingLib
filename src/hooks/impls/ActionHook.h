@@ -39,6 +39,7 @@ class ActionHook : public T {
           return;
         }
         free(_action);
+        // todo find action and use it's pointer to name
         _action = (char *) malloc(newAction.length() + 1);
         strcpy(_action, newAction.c_str());
         st_log_debug(ACTION_HOOK_TAG, "New hook action: %s",  _action);

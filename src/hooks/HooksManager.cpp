@@ -61,9 +61,9 @@ int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
     return -1;
   }
 
-  const char *type = observableInfo["type"];
+  ObservableType type = observableTypeFromStr(observableInfo["type"]);
   const char *name = observableInfo["name"];
-  if (type == nullptr || name == nullptr) {
+  if ((type != OBS_SENSOR && type != OBS_STATE) || name == nullptr) {
     st_log_error(HOOKS_MANAGER_TAG,
                  "Parameters observable type or name are missing!");
     return -1;
@@ -72,13 +72,13 @@ int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
   st_log_debug(HOOKS_MANAGER_TAG, "Trying to build hook for [%s] %s", type, name);
 
   #if ENABLE_STATES
-  if (strcmp(type, STATE_TYPE) == 0) {
+  if (type = OBS_STATE) {
     return addHook<String>(ObservablesManager.getDeviceState(name),
                                HooksFactory::build<StateHook, String>(hook));
   }
   #endif
   #if ENABLE_SENSORS 
-  if (strcmp(type, SENSOR_TYPE) == 0) {
+  if (type == OBS_SENSOR) {
     return addHook<int16_t>(ObservablesManager.getSensor(name),
                                 HooksFactory::build<SensorHook, int16_t>(hook));
   }
@@ -113,7 +113,7 @@ int HooksManagerClass::addHook(const ObservableObject<T> *obj,
     return -1;
   }
   _hooksCount++;
-  st_log_info(HOOKS_MANAGER_TAG, "Added new hook(id=%d) for %s [%s]",
+  st_log_info(HOOKS_MANAGER_TAG, "Added new hook(id=%d) for %u [%s]",
               hook->getId(), obj->type, obj->name);
   return hook->getId();
 }
@@ -121,7 +121,7 @@ int HooksManagerClass::addHook(const ObservableObject<T> *obj,
 template <typename T>
 Watcher<T> *HooksManagerClass::getWatcherOrCreate(
     const ObservableObject<T> *obj) {
-  if (obj == nullptr || obj->type == nullptr) {
+  if (obj == nullptr) {
     st_log_error(HOOKS_MANAGER_TAG, "Observable object is missing");
     return nullptr;
   }
@@ -134,20 +134,20 @@ Watcher<T> *HooksManagerClass::getWatcherOrCreate(
 
   Watcher<T> *watcher = getWatcher<T>(watchersList, obj);
   if (watcher == nullptr) {
-    st_log_debug(HOOKS_MANAGER_TAG, "Creating new watcher for %s [%s]",
+    st_log_debug(HOOKS_MANAGER_TAG, "Creating new watcher for %u [%s]",
                  obj->type, obj->name);
     watcher = createWatcher<T>(obj);
     if (watchersList->append(watcher) < 0) {
       st_log_error(HOOKS_MANAGER_TAG,
-                   "Failed to append new watcher in list for %s [%s]",
+                   "Failed to append new watcher in list for %u [%s]",
                    obj->type, obj->name);
       delete watcher;
       return nullptr;
     }
-    st_log_info(HOOKS_MANAGER_TAG, "Added new watcher for %s [%s]",
+    st_log_info(HOOKS_MANAGER_TAG, "Added new watcher for %u [%s]",
                 obj->type, obj->name);
   } else {
-    st_log_debug(HOOKS_MANAGER_TAG, "Watcher for %s [%s] already exists!",
+    st_log_debug(HOOKS_MANAGER_TAG, "Watcher for %u [%s] already exists!",
                  obj->type, obj->name);
   }
   return watcher;

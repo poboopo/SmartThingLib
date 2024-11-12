@@ -37,7 +37,7 @@ class NotificationHook : public T {
       if (WiFi.isConnected()) {
         createRequestTask();
       } else {
-        st_log_error(HTTP_HOOK_TAG, "WiFi not connected!");
+        st_log_error(NOTIFICATION_HOOK_TAG, "WiFi not connected!");
       }
     }
 

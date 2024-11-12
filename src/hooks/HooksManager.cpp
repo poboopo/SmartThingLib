@@ -63,13 +63,13 @@ int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
 
   ObservableType type = observableTypeFromStr(observableInfo["type"]);
   const char *name = observableInfo["name"];
-  if ((type != OBS_SENSOR && type != OBS_STATE) || name == nullptr) {
+  if (type == UNKNOWN_OBS_TYPE || name == nullptr) {
     st_log_error(HOOKS_MANAGER_TAG,
                  "Parameters observable type or name are missing!");
     return -1;
   }
 
-  st_log_debug(HOOKS_MANAGER_TAG, "Trying to build hook for [%s] %s", type, name);
+  st_log_debug(HOOKS_MANAGER_TAG, "Trying to build hook for [%u] %s", type, name);
 
   #if ENABLE_STATES
   if (type = OBS_STATE) {
@@ -84,8 +84,7 @@ int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
   }
   #endif
 
-  st_log_error(HOOKS_MANAGER_TAG, "Unkown observable object type: %s",
-               type);
+  st_log_error(HOOKS_MANAGER_TAG, "Observable object type not supported: %u", type);
   return -1;
 }
 

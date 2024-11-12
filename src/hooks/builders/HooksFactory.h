@@ -28,36 +28,40 @@ class HooksFactory {
     // B - base class for hook (SensorHook/StateHook)
     template <class B, typename T>
     static Hook<T>* build(JsonObject doc) {
-      const char* type = doc["type"];
-      if (type == nullptr) {
-        st_log_error(HOOKS_FACTORY_TAG, "Hook type is missing!");
+      HookType type = hookTypeFromStr(doc["type"]);
+      if (type == UNKNOWN_HOOK) {
+        st_log_error(HOOKS_FACTORY_TAG, "Can't select hook type!");
         return nullptr;
       }
 
       st_log_debug(HOOKS_FACTORY_TAG,
                   "-----------------------BUILD-START-----------------------");
-      st_log_debug(HOOKS_FACTORY_TAG, "Building hook type=%s", type);
+      st_log_debug(HOOKS_FACTORY_TAG, "Building hook type=%u", type);
 
       Hook<T>* hook = nullptr;
-      #if ENABLE_ACTIONS 
-      if (strcmp(type, ACTION_HOOK_TAG) == 0) {
-        hook = ActionHookBuilder::build<B, T>(doc, false);
-      } else 
-      #endif
-      if (strcmp(type, HTTP_HOOK_TAG) == 0) {
-        hook = HttpHookBuilder::build<B, T>(doc, false);
-      } else if (strcmp(type, NOTIFICATION_HOOK_TAG) == 0) {
-        hook = NotificationHookBuilder::build<B, T>(doc, false);
-      } else {
-        st_log_error(HOOKS_FACTORY_TAG, "Unkonwn hook type: %s", type);
+      switch (type) {
+        #if ENABLE_ACTIONS 
+        case ACTION_HOOK:
+          hook = ActionHookBuilder::build<B, T>(doc, false);
+          break;
+        #endif
+        case HTTP_HOOK:
+          hook = HttpHookBuilder::build<B, T>(doc, false);
+          break;
+        case NOTIFICATION_HOOK:
+          hook = NotificationHookBuilder::build<B, T>(doc, false);
+          break;
+        default:
+          st_log_error(HOOKS_FACTORY_TAG, "Hook of type %u not supported", type);
       }
+
       if (hook == nullptr) {
         st_log_debug(HOOKS_FACTORY_TAG,
                   "-----------------------BUILD-FAILED---------------------");
         return nullptr;
       }
 
-      if ( doc["id"].is<int>()) {
+      if (doc["id"].is<int>()) {
         uint8_t id = doc["id"];
         hook->setId(id);
         st_log_debug(HOOKS_FACTORY_TAG, "Id=%u", id);
@@ -103,11 +107,11 @@ class HooksFactory {
       doc["default"] = getDefaultTemplate(type);
       #if ENABLE_ACTIONS
       if (ActionsManager.count() > 0) {
-        doc[ACTION_HOOK_TAG] = ActionHookBuilder::getTemplate();
+        doc[_actionHookStr] = ActionHookBuilder::getTemplate();
       }
       #endif
-      doc[HTTP_HOOK_TAG] = HttpHookBuilder::getTemplate();
-      doc[NOTIFICATION_HOOK_TAG] = NotificationHookBuilder::getTemplate();
+      doc[_httpHookStr] = HttpHookBuilder::getTemplate();
+      doc[_lambdaHookStr] = NotificationHookBuilder::getTemplate();
       return doc;
     }
   

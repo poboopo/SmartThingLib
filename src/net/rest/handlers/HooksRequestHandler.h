@@ -95,14 +95,14 @@ class HooksRequestHandler : public RequestHandler {
           return request->beginResponse(500);
         }
       }
-    }
-    if (request->url().equals(HOOKS_RQ_PATH)) {
-      if (request->method() == HTTP_GET) {
-        JsonDocument doc = HooksManager.allHooksToJson(false, false);
+      if (request->url().equals(HOOKS_RQ_PATH)) {
+        JsonDocument doc = HooksManager.allHooksToJson();
         String response;
         serializeJson(doc, response);
         return request->beginResponse(200, CONTENT_TYPE_JSON, response);
       }
+    }
+    if (request->url().equals(HOOKS_RQ_PATH)) {
       if (request->method() == HTTP_POST) {
         if (_body.isEmpty()) {
           return request->beginResponse(400, CONTENT_TYPE_JSON, "Body is missing!");

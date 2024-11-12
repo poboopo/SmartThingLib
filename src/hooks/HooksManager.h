@@ -36,7 +36,7 @@ class HooksManagerClass {
   boolean callHook(const char * type, const char * name, int id, String value);
 
   JsonDocument getWatchersInfo();
-  JsonDocument allHooksToJson(bool ignoreReadOnly, bool shortJson);
+  JsonDocument allHooksToJson(bool ignoreReadOnly = false, bool shortJson = false);
   JsonDocument getObservableHooksJson(const char* type,
                                                  const char* name);
   JsonDocument getHookJsonById(const char* type, const char* name, int id);

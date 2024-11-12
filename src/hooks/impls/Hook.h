@@ -8,26 +8,51 @@
 #include "hooks/comparator/Comparator.h"
 #include "logs/BetterLogger.h"
 
+static const char * _lambdaHookStr = "lambda";
+static const char * _actionHookStr = "action";
+static const char * _httpHookStr = "http";
+static const char * _notificationHookStr = "notification";
+
 enum HookType {
+  UNKNOWN_HOOK,
   LAMBDA_HOOK,
   ACTION_HOOK,
   HTTP_HOOK,
   NOTIFICATION_HOOK
 };
 
-inline const char * hookTypeStr(HookType type) {
+inline const char * hookTypeToStr(HookType type) {
   switch (type) {
     case LAMBDA_HOOK:
-      return "lambda";
+      return _lambdaHookStr;
     case ACTION_HOOK:
-      return "action";
+      return _actionHookStr;
     case HTTP_HOOK:
-      return "http";
+      return _httpHookStr;
     case NOTIFICATION_HOOK:
-      return "notification";
+      return _notificationHookStr;
     default:
       return "unknown";
   }
+}
+
+inline HookType hookTypeFromStr(const char * type) {
+  if (type == nullptr) {
+    return UNKNOWN_HOOK;
+  }
+  if (strcmp(type, _actionHookStr) == 0) {
+    return ACTION_HOOK;
+  }
+  if (strcmp(type, _httpHookStr) == 0) {
+    return HTTP_HOOK;
+  }
+  if (strcmp(type, _notificationHookStr) == 0) {
+    return NOTIFICATION_HOOK;
+  }
+  if (strcmp(type, _lambdaHookStr) == 0) {
+    return LAMBDA_HOOK;
+  }
+  return UNKNOWN_HOOK;
 }
 
 template <typename T>
@@ -55,7 +80,7 @@ class Hook {
       JsonDocument doc;
       doc["id"] = _id;
       doc["readonly"] = _readonly;
-      doc["type"] = hookTypeStr(_type);
+      doc["type"] = hookTypeToStr(_type);
       doc["triggerEnabled"] = !_triggerDisabled;
       doc["trigger"] = _triggerValue;
       doc["compareType"] = compareTypeToString(_compareType);

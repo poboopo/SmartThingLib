@@ -19,7 +19,7 @@ class ActionHookBuilder {
       st_log_error(_ACTION_HOOK_BUILDER_TAG, "Json document is empty!");
       return nullptr;
     }
-    const char* action = doc["action"];
+    const char* action = doc[_actionHookField];
     if (action == nullptr || strlen(action) == 0) {
       st_log_error(_ACTION_HOOK_BUILDER_TAG, "Action can't be blank!");
       return nullptr;
@@ -32,7 +32,7 @@ class ActionHookBuilder {
   }
   static JsonDocument getTemplate() {
     JsonDocument doc;
-    JsonObject actionObj = doc["action"].to<JsonObject>();
+    JsonObject actionObj = doc[_actionHookField].to<JsonObject>();
     actionObj["required"] = true;
     JsonObject valuesObj = actionObj["values"].to<JsonObject>();
 

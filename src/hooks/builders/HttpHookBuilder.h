@@ -19,16 +19,16 @@ class HttpHookBuilder {
       st_log_error(_HTTP_HOOK_BUILDER_TAG, "Json document is empty!");
       return nullptr;
     }
-    const char* url = doc["url"];
+    const char* url = doc[_urlHookField];
     if (url == nullptr || strlen(url) == 0) {
       st_log_error(_HTTP_HOOK_BUILDER_TAG, "Url can't be blank!");
       return nullptr;
     }
-    String method = doc["method"];
+    String method = doc[_methodHookField];
     if (method.isEmpty()) {
       method = "GET";
     }
-    const char* payload = doc["payload"];
+    const char* payload = doc[_payloadHookField];
 
     HttpHook<B, T>* hook = new HttpHook<B, T>(url, readOnly);
     hook->setPayload(payload);

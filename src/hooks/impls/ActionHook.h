@@ -11,6 +11,7 @@
 #include "logs/BetterLogger.h"
 
 static const char * _ACTION_HOOK_TAG = "action_hook";
+static const char * _actionHookField = "action";
 
 template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
 class ActionHook : public T {
@@ -28,12 +29,12 @@ class ActionHook : public T {
     }
 
     void populateJsonWithCustomValues(JsonDocument &doc, boolean shortJson) const {
-      doc["action"] = _action;
+      doc[_actionHookField] = _action;
     };
 
     void updateCustom(JsonObject obj) {
-      if (obj["action"].is<const char*>()) {
-        String newAction = obj["action"].as<String>();
+      if (obj[_actionHookField].is<const char*>()) {
+        String newAction = obj[_actionHookField].as<String>();
         if (newAction.isEmpty()) {
           st_log_error(_ACTION_HOOK_TAG, "Action is missing!");
           return;

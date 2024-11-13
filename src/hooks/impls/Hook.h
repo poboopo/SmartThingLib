@@ -8,10 +8,18 @@
 #include "hooks/comparator/Comparator.h"
 #include "logs/BetterLogger.h"
 
-static const char * _lambdaHookStr = "lambda";
-static const char * _actionHookStr = "action";
-static const char * _httpHookStr = "http";
-static const char * _notificationHookStr = "notification";
+static const char * _lambdaHookType = "lambda";
+static const char * _actionHookType = "action";
+static const char * _httpHookType = "http";
+static const char * _notificationHookType = "notification";
+
+static const char * _idHookField = "id";
+static const char * _readonlyHookField = "readonly";
+static const char * _typeHookField = "type";
+static const char * _triggerEnabledHookField = "triggerEnabled";
+static const char * _triggerHookField = "trigger";
+static const char * _compareTypeHookField = "compareType";
+static const char * _thresholdHookField = "threshold";
 
 enum HookType {
   UNKNOWN_HOOK,
@@ -24,13 +32,13 @@ enum HookType {
 inline const char * hookTypeToStr(HookType type) {
   switch (type) {
     case LAMBDA_HOOK:
-      return _lambdaHookStr;
+      return _lambdaHookType;
     case ACTION_HOOK:
-      return _actionHookStr;
+      return _actionHookType;
     case HTTP_HOOK:
-      return _httpHookStr;
+      return _httpHookType;
     case NOTIFICATION_HOOK:
-      return _notificationHookStr;
+      return _notificationHookType;
     default:
       return "unknown";
   }
@@ -40,16 +48,16 @@ inline HookType hookTypeFromStr(const char * type) {
   if (type == nullptr) {
     return UNKNOWN_HOOK;
   }
-  if (strcmp(type, _actionHookStr) == 0) {
+  if (strcmp(type, _actionHookType) == 0) {
     return ACTION_HOOK;
   }
-  if (strcmp(type, _httpHookStr) == 0) {
+  if (strcmp(type, _httpHookType) == 0) {
     return HTTP_HOOK;
   }
-  if (strcmp(type, _notificationHookStr) == 0) {
+  if (strcmp(type, _notificationHookType) == 0) {
     return NOTIFICATION_HOOK;
   }
-  if (strcmp(type, _lambdaHookStr) == 0) {
+  if (strcmp(type, _lambdaHookType) == 0) {
     return LAMBDA_HOOK;
   }
   return UNKNOWN_HOOK;
@@ -78,12 +86,12 @@ class Hook {
 
     virtual JsonDocument toJson(bool shortJson) const {
       JsonDocument doc;
-      doc["id"] = _id;
-      doc["readonly"] = _readonly;
-      doc["type"] = hookTypeToStr(_type);
-      doc["triggerEnabled"] = !_triggerDisabled;
-      doc["trigger"] = _triggerValue;
-      doc["compareType"] = compareTypeToString(_compareType);
+      doc[_idHookField] = _id;
+      doc[_readonlyHookField] = _readonly;
+      doc[_typeHookField] = hookTypeToStr(_type);
+      doc[_triggerEnabledHookField] = !_triggerDisabled;
+      doc[_triggerHookField] = _triggerValue;
+      doc[_compareTypeHookField] = compareTypeToString(_compareType);
 
       populateJsonWithCustomValues(doc, shortJson);
       return doc;
@@ -140,16 +148,13 @@ class SensorHook: public Hook<int16_t> {
     
     JsonDocument toJson(bool shortJson) {
       JsonDocument doc;
-      doc["id"] = _id;
-      doc["readonly"] = _readonly;
-      doc["type"] = _type;
-      if (_triggerDisabled) {
-        doc["trigger"] = nullptr;
-      } else {
-        doc["trigger"] = _triggerValue;
-      }
-      doc["threshold"] = _threshold;
-      doc["compareType"] = compareTypeToString(_compareType);
+      doc[_idHookField] = _id;
+      doc[_readonlyHookField] = _readonly;
+      doc[_typeHookField] = hookTypeToStr(_type);
+      doc[_triggerEnabledHookField] = !_triggerDisabled;
+      doc[_triggerHookField] = _triggerValue;
+      doc[_compareTypeHookField] = compareTypeToString(_compareType);
+      doc[_thresholdHookField] = _threshold;
 
       populateJsonWithCustomValues(doc, shortJson);
       return doc;

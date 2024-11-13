@@ -11,9 +11,6 @@
 #include "hooks/impls/Hook.h"
 #include "hooks/impls/HttpHook.h"
 
-#define CB_BUILDER_TRIGGER "trigger"
-#define CB_BUILDER_COMPARE "compareType"
-
 #define DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON                                  \
   "{\"threshold\":{\"required\":false},\"trigger\":{\"required\":false},\"compareType\":{\"required\":true," \
   "\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}"
@@ -28,7 +25,7 @@ class HooksFactory {
     // B - base class for hook (SensorHook/StateHook)
     template <class B, typename T>
     static Hook<T>* build(JsonObject doc) {
-      HookType type = hookTypeFromStr(doc["type"]);
+      HookType type = hookTypeFromStr(doc[_typeHookField]);
       if (type == UNKNOWN_HOOK) {
         st_log_error(_HOOKS_FACTORY_TAG, "Can't select hook type!");
         return nullptr;
@@ -61,8 +58,8 @@ class HooksFactory {
         return nullptr;
       }
 
-      if (doc["id"].is<int>()) {
-        uint8_t id = doc["id"];
+      if (doc[_idHookField].is<int>()) {
+        uint8_t id = doc[_idHookField];
         hook->setId(id);
         st_log_debug(_HOOKS_FACTORY_TAG, "Id=%u", id);
       } else {
@@ -79,8 +76,8 @@ class HooksFactory {
 
     template <typename T>
     static void update(Hook<T> * hook, JsonObject doc) {
-      if (doc["triggerEnabled"].is<bool>()) {
-        if (doc["triggerEnabled"].as<bool>()) {
+      if (doc[_triggerEnabledHookField].is<bool>()) {
+        if (doc[_triggerEnabledHookField].as<bool>()) {
           hook->enableTrigger();
           st_log_debug(_HOOKS_FACTORY_TAG, "Trigger enabled");
         } else {
@@ -89,10 +86,10 @@ class HooksFactory {
         }
       }
 
-      hook->setTriggerValue(doc[CB_BUILDER_TRIGGER]);
-      st_log_debug(_HOOKS_FACTORY_TAG, "Trigger=%s", doc[CB_BUILDER_TRIGGER].as<String>().c_str());
+      hook->setTriggerValue(doc[_triggerHookField]);
+      st_log_debug(_HOOKS_FACTORY_TAG, "Trigger=%s", doc[_triggerHookField].as<String>().c_str());
 
-      hook->setCompareType(doc[CB_BUILDER_COMPARE].as<const char*>());
+      hook->setCompareType(doc[_compareTypeHookField].as<const char*>());
       st_log_debug(
         _HOOKS_FACTORY_TAG,
         "compareType=%s",
@@ -107,11 +104,11 @@ class HooksFactory {
       doc["default"] = getDefaultTemplate(type);
       #if ENABLE_ACTIONS
       if (ActionsManager.count() > 0) {
-        doc[_actionHookStr] = ActionHookBuilder::getTemplate();
+        doc[_actionHookType] = ActionHookBuilder::getTemplate();
       }
       #endif
-      doc[_httpHookStr] = HttpHookBuilder::getTemplate();
-      doc[_lambdaHookStr] = NotificationHookBuilder::getTemplate();
+      doc[_httpHookType] = HttpHookBuilder::getTemplate();
+      doc[_notificationHookType] = NotificationHookBuilder::getTemplate();
       return doc;
     }
   
@@ -132,8 +129,8 @@ class HooksFactory {
     }
     #if ENABLE_SENSORS
     static void setTypeSpecificValues(Hook<int16_t> * hook, JsonObject doc) {
-      if (doc["threshold"].is<int>()) {
-        int threshold = doc["threshold"];
+      if (doc[_thresholdHookField].is<int>()) {
+        int threshold = doc[_thresholdHookField];
         ((SensorHook *) hook)->setThreshold(threshold);
         st_log_debug(_HOOKS_FACTORY_TAG, "Threshold=%d", threshold);
       }

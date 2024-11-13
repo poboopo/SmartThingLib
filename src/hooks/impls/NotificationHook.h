@@ -15,14 +15,14 @@
 #include "settings/SettingsRepository.h"
 #include "utils/StringUtils.h"
 
-#define MESSAGE_FIELD "message"
-#define NOTIFICATION_TYPE_FIELD "ntfType"
-
-#define NOTIFICATION_INFO "info"
-#define NOTIFICATION_WARNING "warning"
-#define NOTIFICATION_ERROR "error"
 
 static const char * _NOTIFICATION_HOOK_TAG = "notification_hook";
+static const char * _messageHookField = "message";
+static const char * _nftHookField =  "ntfType";
+
+static const char * NOTIFICATION_INFO = "info";
+static const char * NOTIFICATION_WARNING = "warning";
+static const char * NOTIFICATION_ERROR = "error";
 
 // todo extend http hook
 template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
@@ -42,16 +42,16 @@ class NotificationHook : public T {
     }
 
     void populateJsonWithCustomValues(JsonDocument &doc, boolean shortJson) const {
-      doc[MESSAGE_FIELD] = _message.c_str();
-      doc[NOTIFICATION_TYPE_FIELD] = _notificationType.c_str();
+      doc[_messageHookField] = _message.c_str();
+      doc[_nftHookField] = _notificationType.c_str();
     }
 
     void updateCustom(JsonObject obj) {
-      if (obj[MESSAGE_FIELD].is<const char*>()) {
-        _message = obj[MESSAGE_FIELD].as<String>();
+      if (obj[_messageHookField].is<const char*>()) {
+        _message = obj[_messageHookField].as<String>();
       }
-      if (obj[NOTIFICATION_TYPE_FIELD].is<const char*>()) {
-        _notificationType = obj[NOTIFICATION_TYPE_FIELD].as<String>();
+      if (obj[_nftHookField].is<const char*>()) {
+        _notificationType = obj[_nftHookField].as<String>();
         if (_notificationType.isEmpty()) {
           _notificationType = NOTIFICATION_INFO;
         }

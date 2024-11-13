@@ -14,7 +14,7 @@
 #include "net/rest/WebPageAssets.h"
 
 #define HOOK_NAME_ARG "name"
-#define HOOK_OBSERVABLE_TYPE "type"
+#define HOOK_OBSERVABLE_TYPE "type" // todo const char
 #define HOOK_ID_ARG "id"
 #define HOOKS_RQ_PATH "/hooks"
 

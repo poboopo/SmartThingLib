@@ -13,14 +13,14 @@ class NotificationHookBuilder {
         st_log_error(_NOTIFICATION_HOOK_BUILDER_TAG, "Json document is empty!");
         return nullptr;
       }
-      const char * message = doc[MESSAGE_FIELD];
+      const char * message = doc[_messageHookField];
       if (message == nullptr || strlen(message) == 0) {
         st_log_error(_NOTIFICATION_HOOK_BUILDER_TAG, "Message can't be empty");
         return nullptr;
       }
 
       NotificationHook<B, T> * hook = new NotificationHook<B, T>(message, readOnly);
-      const char * type = doc[NOTIFICATION_TYPE_FIELD];
+      const char * type = doc[_nftHookField];
       if (type != nullptr && strlen(type) > 0) {
         hook->setNotificationType(type);
       }
@@ -35,10 +35,10 @@ class NotificationHookBuilder {
     }
     static JsonDocument getTemplate() {
       JsonDocument doc;
-      JsonObject msg = doc[MESSAGE_FIELD].to<JsonObject>();
+      JsonObject msg = doc[_messageHookField].to<JsonObject>();
       msg["required"] = true;
       
-      JsonObject type = doc[NOTIFICATION_TYPE_FIELD].to<JsonObject>();
+      JsonObject type = doc[_nftHookField].to<JsonObject>();
       JsonArray ar = type["values"].to<JsonArray>();
       ar.add(NOTIFICATION_INFO);
       ar.add(NOTIFICATION_WARNING);

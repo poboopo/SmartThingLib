@@ -15,6 +15,9 @@
 #include "utils/StringUtils.h"
 
 static const char * _HTTP_HOOK_TAG = "http_hook";
+static const char * _urlHookField = "url";
+static const char * _methodHookField = "method";
+static const char * _payloadHookField = "payload";
 
 template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
 class HttpHook : public T {
@@ -38,25 +41,25 @@ class HttpHook : public T {
     if (!shortJson) {
       doc["lastResponseCode"] = _lastResponseCode;
     }
-    doc["url"] = _url;
-    doc["method"] = _method;
-    doc["payload"] = _payload;
+    doc[_urlHookField] = _url;
+    doc[_methodHookField] = _method;
+    doc[_payloadHookField] = _payload;
   };
 
   void updateCustom(JsonObject doc) {
-    if (doc["url"].is<const char*>()) {
-      _url = doc["url"].as<String>();
+    if (doc[_urlHookField].is<const char*>()) {
+      _url = doc[_urlHookField].as<String>();
       fixUrl();
       st_log_debug(_HTTP_HOOK_TAG, "Hook's url was updated to %s",
                    _url.c_str());
     }
-    if (doc["method"].is<const char*>()) {
-      _method = doc["method"].as<String>();
+    if (doc[_methodHookField].is<const char*>()) {
+      _method = doc[_methodHookField].as<String>();
       st_log_debug(_HTTP_HOOK_TAG, "Hook's method was updated to %s",
                    _method.c_str());
     }
-    if (doc["payload"].is<const char*>()) {
-      _payload = doc["payload"].as<String>();
+    if (doc[_payloadHookField].is<const char*>()) {
+      _payload = doc[_payloadHookField].as<String>();
       st_log_debug(_HTTP_HOOK_TAG, "Hook's payload was updated to %s",
                    _payload.c_str());
     }

@@ -5,7 +5,7 @@
 #include "logs/BetterLogger.h"
 
 #define DANGER_RQ_PATH "/danger"
-static const char * DANGER_RQ_TAG = "danger_handler";
+static const char * _DANGER_RQ_TAG = "danger_handler";
 
 class DangerRequestHandler : public AsyncWebHandler {
  public:
@@ -28,7 +28,7 @@ class DangerRequestHandler : public AsyncWebHandler {
     }
 
     String url = request->url();
-    st_log_request(DANGER_RQ_TAG, request->methodToString(), url.c_str(), "");
+    st_log_request(_DANGER_RQ_TAG, request->methodToString(), url.c_str(), "");
 
     if (url.equals("/danger/restart")) {
       st_log_request(DANGER_RQ_PATH, request->methodToString(), request->url().c_str(), "");
@@ -42,7 +42,7 @@ class DangerRequestHandler : public AsyncWebHandler {
     if (url.equals("/danger/wipe")) {
       st_log_request(DANGER_RQ_PATH, request->methodToString(), request->url().c_str(), "");
 
-      st_log_warning(DANGER_RQ_TAG, "Wiping all settings!");
+      st_log_warning(_DANGER_RQ_TAG, "Wiping all settings!");
       SettingsRepository.clear();
 
       AsyncWebServerResponse * response = request->beginResponse(200);
@@ -54,7 +54,7 @@ class DangerRequestHandler : public AsyncWebHandler {
  private:
   void restart() {
     delay(1500);
-    st_log_info(DANGER_RQ_TAG, "---------RESTART---------");
+    st_log_info(_DANGER_RQ_TAG, "---------RESTART---------");
     delay(500);
     ESP.restart();
   }

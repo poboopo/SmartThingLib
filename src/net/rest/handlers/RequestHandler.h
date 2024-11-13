@@ -6,7 +6,7 @@
 #include "net/rest/RestController.h"
 #include "net/rest/handlers/HandlerUtils.h"
 
-static const char * REQUEST_HANDLER_TAG = "request";
+static const char * _REQUEST_HANDLER_TAG = "request";
 
 class RequestHandler : public AsyncWebHandler {
   public:
@@ -23,10 +23,10 @@ class RequestHandler : public AsyncWebHandler {
         return;
       }
 
-      st_log_request(REQUEST_HANDLER_TAG, request->methodToString(), request->url().c_str(), _body.c_str());
+      st_log_request(_REQUEST_HANDLER_TAG, request->methodToString(), request->url().c_str(), _body.c_str());
       AsyncWebServerResponse * asyncResponse = processRequest(request);
       if (asyncResponse == nullptr) {
-        st_log_error(REQUEST_HANDLER_TAG, "Response = nullptr! Sending 404 response");
+        st_log_error(_REQUEST_HANDLER_TAG, "Response = nullptr! Sending 404 response");
         asyncResponse = request->beginResponse(404);
       } 
 

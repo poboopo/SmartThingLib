@@ -13,7 +13,7 @@
 #include "observable/ObservableObjects.h"
 #include "utils/List.h"
 
-static const char * DEVICE_STATES_LIST_TAG = "device_states_list";
+static const char * _DEVICE_STATES_LIST_TAG = "device_states_list";
 
 class DeviceStatesList : public List<DeviceState> {
  public:
@@ -21,7 +21,7 @@ class DeviceStatesList : public List<DeviceState> {
            ObservableObject<const char *>::ValueProviderFunction
                valueProvider) {
     if (findState(name) != nullptr) {
-      st_log_warning(DEVICE_STATES_LIST_TAG,
+      st_log_warning(_DEVICE_STATES_LIST_TAG,
                      "State with name %s already exist! Skipping...", name);
       return false;
     }
@@ -29,13 +29,13 @@ class DeviceStatesList : public List<DeviceState> {
     state->name = name;
     state->valueProvider = valueProvider;
     if (append(state) > -1) {
-      st_log_debug(DEVICE_STATES_LIST_TAG, "Added new device state %s", name);
+      st_log_debug(_DEVICE_STATES_LIST_TAG, "Added new device state %s", name);
       return true;
     } else {
       if (state != nullptr) {
         delete state;
       }
-      st_log_error(DEVICE_STATES_LIST_TAG, "Dailed to add new device state %s", name);
+      st_log_error(_DEVICE_STATES_LIST_TAG, "Dailed to add new device state %s", name);
       return false;
     }
   };

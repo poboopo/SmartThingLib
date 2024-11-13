@@ -9,7 +9,7 @@
 #include "net/rest/WebPageAssets.h"
 
 #define STATE_RQ_PATH "/state"
-static const char * STATE_RQ_TAG = "state_handler";
+static const char * _STATE_RQ_TAG = "state_handler";
 
 class StateRequestHandler : public AsyncWebHandler {
  public:
@@ -39,7 +39,7 @@ class StateRequestHandler : public AsyncWebHandler {
   };
  private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
-    st_log_request(STATE_RQ_TAG, request->methodToString(), request->url().c_str(), "");
+    st_log_request(_STATE_RQ_TAG, request->methodToString(), request->url().c_str(), "");
 
     #if ENABLE_WEB_PAGE
     if (request->url().equals("/states/script.js")) {

@@ -15,7 +15,7 @@
 #include "net/rest/handlers/DangerRequestHandler.h"
 #include "net/rest/WebPageAssets.h"
 
-static const char * WEB_SERVER_TAG = "web_server";
+static const char * _WEB_SERVER_TAG = "web_server";
 
 String resetReasonAsString() {
   #ifdef ARDUINO_ARCH_ESP8266
@@ -58,7 +58,7 @@ void RestControllerClass::begin() {
   setupHandler();
   _server.begin();
   _setupFinished = true;
-  st_log_info(WEB_SERVER_TAG, "Web service started");
+  st_log_info(_WEB_SERVER_TAG, "Web service started");
 }
 
 void RestControllerClass::reload() {
@@ -89,13 +89,13 @@ void RestControllerClass::setupHandler() {
   #endif
 
   _server.on("/health", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    st_log_request(WEB_SERVER_TAG, request->methodToString(), "/health", "");
+    st_log_request(_WEB_SERVER_TAG, request->methodToString(), "/health", "");
     request->send(200, "text/plain", "I am alive!!! :)");
   });
 
 #if ENABLE_WEB_PAGE
   _server.on("/", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    st_log_request(WEB_SERVER_TAG, request->methodToString(), "/", "");
+    st_log_request(_WEB_SERVER_TAG, request->methodToString(), "/", "");
     request->send_P(200, "text/html", WEB_PAGE_MAIN);
   });
   _server.on("/assets/script.js", HTTP_GET, [this](AsyncWebServerRequest * request) {
@@ -106,13 +106,13 @@ void RestControllerClass::setupHandler() {
   });
 #else
   _server.on("/", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    st_log_request(WEB_SERVER_TAG, request->methodToString(), "/", "");
+    st_log_request(_WEB_SERVER_TAG, request->methodToString(), "/", "");
     request->send(200, "text/plain", "Web control panel is not included in this build!");
   });
 #endif
 
   _server.on("/features", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    st_log_request(WEB_SERVER_TAG, request->methodToString(), "/features", "");
+    st_log_request(_WEB_SERVER_TAG, request->methodToString(), "/features", "");
     JsonDocument doc;
     doc["web"] = ENABLE_WEB_PAGE == 1;
     doc["actions"] = ENABLE_ACTIONS == 1;
@@ -130,7 +130,7 @@ void RestControllerClass::setupHandler() {
   });
 
   _server.on("/metrics", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    st_log_request(WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
+    st_log_request(_WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
     JsonDocument doc;
     doc["uptime"] = millis();
 
@@ -165,10 +165,10 @@ void RestControllerClass::setupHandler() {
   });
 
   _server.on("/restart", HTTP_GET, [&](AsyncWebServerRequest * request) {
-    st_log_request(WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
+    st_log_request(_WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
 
     request->send(200);
-    st_log_info(WEB_SERVER_TAG, "---------RESTART---------");
+    st_log_info(_WEB_SERVER_TAG, "---------RESTART---------");
     _restartHandler();
 
     delay(2000);

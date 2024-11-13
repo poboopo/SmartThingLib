@@ -2,7 +2,7 @@
 
 #if ENABLE_ACTIONS
 
-static const char * ACTIONS_TAG = "actions_manager";
+static const char * _ACTIONS_TAG = "actions_manager";
 
 ActionsManagerClass ActionsManager;
 
@@ -12,30 +12,30 @@ size_t ActionsManagerClass::count() {
 
 bool ActionsManagerClass::add(const char* actionName, const char* caption, ActionHandler handler) {
   if (findAction(actionName) != nullptr) {
-    st_log_warning(ACTIONS_TAG,
+    st_log_warning(_ACTIONS_TAG,
                     "Handler for action %s already exists! Skipping...",
                     actionName);
     return false;
   }
   Action* action = new Action(actionName, caption, handler);
   if (append(action) > -1) {
-    st_log_debug(ACTIONS_TAG, "Added new action handler - %s:%s",
+    st_log_debug(_ACTIONS_TAG, "Added new action handler - %s:%s",
                   actionName, caption);
     return true;
   } else {
     if (action != nullptr) {
       delete action;
     }
-    st_log_error(ACTIONS_TAG, "Failed to add new action handler - %s:%s", actionName, caption);
+    st_log_error(_ACTIONS_TAG, "Failed to add new action handler - %s:%s", actionName, caption);
     return false;
   }
 };
 
 ActionResult ActionsManagerClass::call(const char* name) {
-  st_log_debug(ACTIONS_TAG, "Trying to call action %s", name);
+  st_log_debug(_ACTIONS_TAG, "Trying to call action %s", name);
   const Action* action = findAction(name);
   if (action == nullptr) {
-    st_log_error(ACTIONS_TAG, "Can't find action with name %s", name);
+    st_log_error(_ACTIONS_TAG, "Can't find action with name %s", name);
     return ActionResult(false, "Failed to find action");
   }
   return action->handler();
@@ -45,7 +45,7 @@ ActionResult ActionsManagerClass::call(const char* name) {
 void ActionsManagerClass::loadFromSettings() {
   JsonDocument config = SettingsRepository.getActions();
   if (config.size() == 0) {
-    st_log_debug(ACTIONS_TAG, "Actions config empty");
+    st_log_debug(_ACTIONS_TAG, "Actions config empty");
     return;
   }
 
@@ -58,10 +58,10 @@ void ActionsManagerClass::loadFromSettings() {
 }
 
 bool ActionsManagerClass::updateActionSchedule(const char * name, unsigned long newDelay) {
-  st_log_debug(ACTIONS_TAG, "Trying to update action %s delay", name);
+  st_log_debug(_ACTIONS_TAG, "Trying to update action %s delay", name);
   Action* action = findAction(name);
   if (action == nullptr) {
-    st_log_error(ACTIONS_TAG, "Can't find action with name %s", name);
+    st_log_error(_ACTIONS_TAG, "Can't find action with name %s", name);
     return false;
   } else {
     JsonDocument config = SettingsRepository.getActions();
@@ -73,7 +73,7 @@ bool ActionsManagerClass::updateActionSchedule(const char * name, unsigned long 
     SettingsRepository.setActions(config);
 
     action->callDelay = newDelay;
-    st_log_info(ACTIONS_TAG, "Action %s delay was update to %lu", name, newDelay);
+    st_log_info(_ACTIONS_TAG, "Action %s delay was update to %lu", name, newDelay);
     return true;
   }
 }
@@ -82,7 +82,7 @@ void ActionsManagerClass::scheduled() {
   unsigned long current = millis();
   forEach([&](Action * action) {
     if (action->callDelay > 0 && current - action->lastCall > action->callDelay) {
-      st_log_debug(ACTIONS_TAG, "Scheduled call of %s", action->name);
+      st_log_debug(_ACTIONS_TAG, "Scheduled call of %s", action->name);
       action->handler();
       action->lastCall = current;
     }

@@ -21,7 +21,7 @@
   "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true," \
   "\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}"
 
-static const char * HOOKS_FACTORY_TAG = "hooks_factory";
+static const char * _HOOKS_FACTORY_TAG = "hooks_factory";
 
 class HooksFactory {
   public:
@@ -30,13 +30,13 @@ class HooksFactory {
     static Hook<T>* build(JsonObject doc) {
       HookType type = hookTypeFromStr(doc["type"]);
       if (type == UNKNOWN_HOOK) {
-        st_log_error(HOOKS_FACTORY_TAG, "Can't select hook type!");
+        st_log_error(_HOOKS_FACTORY_TAG, "Can't select hook type!");
         return nullptr;
       }
 
-      st_log_debug(HOOKS_FACTORY_TAG,
+      st_log_debug(_HOOKS_FACTORY_TAG,
                   "-----------------------BUILD-START-----------------------");
-      st_log_debug(HOOKS_FACTORY_TAG, "Building hook type=%u", type);
+      st_log_debug(_HOOKS_FACTORY_TAG, "Building hook type=%u", type);
 
       Hook<T>* hook = nullptr;
       switch (type) {
@@ -52,11 +52,11 @@ class HooksFactory {
           hook = NotificationHookBuilder::build<B, T>(doc, false);
           break;
         default:
-          st_log_error(HOOKS_FACTORY_TAG, "Hook of type %u not supported", type);
+          st_log_error(_HOOKS_FACTORY_TAG, "Hook of type %u not supported", type);
       }
 
       if (hook == nullptr) {
-        st_log_debug(HOOKS_FACTORY_TAG,
+        st_log_debug(_HOOKS_FACTORY_TAG,
                   "-----------------------BUILD-FAILED---------------------");
         return nullptr;
       }
@@ -64,15 +64,15 @@ class HooksFactory {
       if (doc["id"].is<int>()) {
         uint8_t id = doc["id"];
         hook->setId(id);
-        st_log_debug(HOOKS_FACTORY_TAG, "Id=%u", id);
+        st_log_debug(_HOOKS_FACTORY_TAG, "Id=%u", id);
       } else {
         hook->setId(-1);
-        st_log_debug(HOOKS_FACTORY_TAG, "Id is missing");
+        st_log_debug(_HOOKS_FACTORY_TAG, "Id is missing");
       }
 
       update<T>(hook, doc);
 
-      st_log_debug(HOOKS_FACTORY_TAG,
+      st_log_debug(_HOOKS_FACTORY_TAG,
                   "------------------------BUILD-END-----------------------");
       return hook;
     }
@@ -82,19 +82,19 @@ class HooksFactory {
       if (doc["triggerEnabled"].is<bool>()) {
         if (doc["triggerEnabled"].as<bool>()) {
           hook->enableTrigger();
-          st_log_debug(HOOKS_FACTORY_TAG, "Trigger enabled");
+          st_log_debug(_HOOKS_FACTORY_TAG, "Trigger enabled");
         } else {
           hook->disableTrigger();
-          st_log_debug(HOOKS_FACTORY_TAG, "Trigger disabled");
+          st_log_debug(_HOOKS_FACTORY_TAG, "Trigger disabled");
         }
       }
 
       hook->setTriggerValue(doc[CB_BUILDER_TRIGGER]);
-      st_log_debug(HOOKS_FACTORY_TAG, "Trigger=%s", doc[CB_BUILDER_TRIGGER].as<String>().c_str());
+      st_log_debug(_HOOKS_FACTORY_TAG, "Trigger=%s", doc[CB_BUILDER_TRIGGER].as<String>().c_str());
 
       hook->setCompareType(doc[CB_BUILDER_COMPARE].as<const char*>());
       st_log_debug(
-        HOOKS_FACTORY_TAG,
+        _HOOKS_FACTORY_TAG,
         "compareType=%s",
         compareTypeToString(hook->getCompareType()).c_str()
       );
@@ -135,7 +135,7 @@ class HooksFactory {
       if (doc["threshold"].is<int>()) {
         int threshold = doc["threshold"];
         ((SensorHook *) hook)->setThreshold(threshold);
-        st_log_debug(HOOKS_FACTORY_TAG, "Threshold=%d", threshold);
+        st_log_debug(_HOOKS_FACTORY_TAG, "Threshold=%d", threshold);
       }
     }
     #endif

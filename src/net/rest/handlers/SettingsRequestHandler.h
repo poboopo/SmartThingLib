@@ -7,7 +7,7 @@
 #include "net/rest/handlers/RequestHandler.h"
 
 #define SETTINGS_RQ_PATH "/settings"
-static const char * SETTINGS_RQ_TAG = "settings_handler";
+static const char * _SETTINGS_RQ_TAG = "settings_handler";
 
 class SettingsRequestHandler : public RequestHandler {
  public:
@@ -29,10 +29,10 @@ class SettingsRequestHandler : public RequestHandler {
       if (_body.isEmpty()) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, ERROR_BODY_MISSING);
       }
-      st_log_debug(SETTINGS_RQ_TAG, "Trying to import settings: %s", _body.c_str());
+      st_log_debug(_SETTINGS_RQ_TAG, "Trying to import settings: %s", _body.c_str());
       if (SettingsRepository.importSettings(_body)) {
-        st_log_debug(SETTINGS_RQ_TAG, "Successfully imported settings!");
-        st_log_warning(SETTINGS_RQ_TAG, "Restarting in 5 sec!");
+        st_log_debug(_SETTINGS_RQ_TAG, "Successfully imported settings!");
+        st_log_warning(_SETTINGS_RQ_TAG, "Restarting in 5 sec!");
         delay(5000);
         ESP.restart();
         return request->beginResponse(200); // not reacheable

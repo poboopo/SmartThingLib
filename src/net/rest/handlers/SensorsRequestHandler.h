@@ -9,7 +9,7 @@
 #include "net/rest/WebPageAssets.h"
 
 #define SENSORS_RQ_PATH "/sensors"
-static const char * SENSORS_RQ_TAG = "sensors_handler";
+static const char * _SENSORS_RQ_TAG = "sensors_handler";
 
 class SensorsRequestHandler : public AsyncWebHandler {
  public:
@@ -40,7 +40,7 @@ class SensorsRequestHandler : public AsyncWebHandler {
  private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     String url = request->url();
-    st_log_request(SENSORS_RQ_TAG, request->methodToString(), url.c_str(), "");
+    st_log_request(_SENSORS_RQ_TAG, request->methodToString(), url.c_str(), "");
 
     #if ENABLE_WEB_PAGE
     if (url.equals("/sensors/script.js")) {

@@ -9,24 +9,24 @@
 #include "logs/BetterLogger.h"
 #include "actions/ActionsManager.h"
 
-static const char * ACTION_HOOK_BUILDER_TAG = "action_cb_builder";
+static const char * _ACTION_HOOK_BUILDER_TAG = "action_cb_builder";
 
 class ActionHookBuilder {
  public:
   template <class B, typename T>
   static Hook<T>* build(JsonObject doc, bool readOnly) {
     if (doc.size() == 0) {
-      st_log_error(ACTION_HOOK_BUILDER_TAG, "Json document is empty!");
+      st_log_error(_ACTION_HOOK_BUILDER_TAG, "Json document is empty!");
       return nullptr;
     }
     const char* action = doc["action"];
     if (action == nullptr || strlen(action) == 0) {
-      st_log_error(ACTION_HOOK_BUILDER_TAG, "Action can't be blank!");
+      st_log_error(_ACTION_HOOK_BUILDER_TAG, "Action can't be blank!");
       return nullptr;
     }
 
     ActionHook<B, T>* hook = new ActionHook<B, T>(action, readOnly);
-    st_log_debug(ACTION_HOOK_BUILDER_TAG, "Action hook created: action=%s", action);
+    st_log_debug(_ACTION_HOOK_BUILDER_TAG, "Action hook created: action=%s", action);
 
     return hook;
   }

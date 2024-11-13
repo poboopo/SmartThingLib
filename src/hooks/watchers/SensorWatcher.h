@@ -25,8 +25,6 @@ class SensorWatcher : public Watcher<int16_t> {
         return false;
       }
       if (newValue != _oldValue) {
-        // st_log_debug(SENSOR_WATCHER_TAG, "Sensor [%s] value changed %d->%d.",
-        //              _observable->name, _oldValue, newValue);
         callHooks(newValue);
         _oldValue = newValue;
         return true;

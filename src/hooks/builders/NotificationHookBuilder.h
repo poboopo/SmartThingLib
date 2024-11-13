@@ -3,19 +3,19 @@
 
 #include "hooks/impls/NotificationHook.h"
 
-static const char * NOTIFICATION_HOOK_BUILDER_TAG = "notification_cb_builder";
+static const char * _NOTIFICATION_HOOK_BUILDER_TAG = "notification_cb_builder";
 
 class NotificationHookBuilder {
   public:
     template <class B, typename T>
     static Hook<T>* build(JsonObject doc, bool readOnly) {
       if (doc.size() == 0) {
-        st_log_error(NOTIFICATION_HOOK_BUILDER_TAG, "Json document is empty!");
+        st_log_error(_NOTIFICATION_HOOK_BUILDER_TAG, "Json document is empty!");
         return nullptr;
       }
       const char * message = doc[MESSAGE_FIELD];
       if (message == nullptr || strlen(message) == 0) {
-        st_log_error(NOTIFICATION_HOOK_BUILDER_TAG, "Message can't be empty");
+        st_log_error(_NOTIFICATION_HOOK_BUILDER_TAG, "Message can't be empty");
         return nullptr;
       }
 
@@ -25,7 +25,7 @@ class NotificationHookBuilder {
         hook->setNotificationType(type);
       }
       st_log_debug(
-        NOTIFICATION_HOOK_BUILDER_TAG,
+        _NOTIFICATION_HOOK_BUILDER_TAG,
         "Notification hook created: type=%s, message=%s",
         hook->getNoticationType().c_str(),
         message

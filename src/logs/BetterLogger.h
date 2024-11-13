@@ -37,7 +37,7 @@
 #define st_log_error(tag, format, ...)
 #endif
 
-static const char * LOGGER_TAG = "logger";
+static const char * _LOGGER_TAG = "logger";
 
 class BetterLogger {
  public:
@@ -77,7 +77,7 @@ class BetterLogger {
       return;
     }
     _fullAddr = fullAddr;
-    warning(LOGGER_TAG, "Server log address was updated to %s", fullAddr.c_str());
+    warning(_LOGGER_TAG, "Server log address was updated to %s", fullAddr.c_str());
     parseAddressAndConnect();
     #endif
   }
@@ -196,7 +196,7 @@ class BetterLogger {
       }
       #endif
     } else {
-      error(LOGGER_TAG, "IP parsing error (ip=%s)", ip);
+      error(_LOGGER_TAG, "IP parsing error (ip=%s)", ip);
     }
     return _connected;
   }
@@ -212,13 +212,13 @@ class BetterLogger {
     _udp.stop();
     #endif
     _connected = false;
-    warning(LOGGER_TAG, "Disconnected from the server");
+    warning(_LOGGER_TAG, "Disconnected from the server");
   }
 
   void parseAddressAndConnect() {
     if (_fullAddr.isEmpty() || _fullAddr.equals("null")) {
       if (_connected) {
-        warning(LOGGER_TAG, "Server info was deleted, disconnecting");
+        warning(_LOGGER_TAG, "Server info was deleted, disconnecting");
         disconnect();
       }
       return;
@@ -226,7 +226,7 @@ class BetterLogger {
 
     int ind = _fullAddr.indexOf(":");
     if (ind < 0) {
-      error(LOGGER_TAG, "Bad server fullAddr: %s, need ip:port", _fullAddr.c_str());
+      error(_LOGGER_TAG, "Bad server fullAddr: %s, need ip:port", _fullAddr.c_str());
       _fullAddr.clear();
       return;
     }
@@ -234,24 +234,24 @@ class BetterLogger {
     String ip = _fullAddr.substring(0, ind);
     String port = _fullAddr.substring(ind + 1);
     if (ip.isEmpty()) {
-      error(LOGGER_TAG, "Failed to parse server ip");
+      error(_LOGGER_TAG, "Failed to parse server ip");
       return;
     }
     if (port.isEmpty()) {
       _fullAddr.clear();
-      error(LOGGER_TAG, "Server port empty");
+      error(_LOGGER_TAG, "Server port empty");
       return;
     }
 
     disconnect();
-    info(LOGGER_TAG, "Trying to connect to logger server [%s, %s]", ip.c_str(), port.c_str());
+    info(_LOGGER_TAG, "Trying to connect to logger server [%s, %s]", ip.c_str(), port.c_str());
     if (connect(ip.c_str(), port.toInt())) {
       Serial.println();
       Serial.println("Remote logger connected! Serial output disabled while remote logger connected!");
-      info(LOGGER_TAG, "Logger connected!");
+      info(_LOGGER_TAG, "Logger connected!");
     } else {
       _fullAddr.clear();
-      error(LOGGER_TAG, "Failed to connect");
+      error(_LOGGER_TAG, "Failed to connect");
     }
   };
   #endif

@@ -14,7 +14,7 @@
 #include "logs/BetterLogger.h"
 #include "utils/StringUtils.h"
 
-static const char * HTTP_HOOK_TAG = "http_hook";
+static const char * _HTTP_HOOK_TAG = "http_hook";
 
 template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
 class HttpHook : public T {
@@ -30,7 +30,7 @@ class HttpHook : public T {
     if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
       createRequestTask();
     } else {
-      st_log_error(HTTP_HOOK_TAG, "WiFi not connected!");
+      st_log_error(_HTTP_HOOK_TAG, "WiFi not connected!");
     }
   };
 
@@ -47,17 +47,17 @@ class HttpHook : public T {
     if (doc["url"].is<const char*>()) {
       _url = doc["url"].as<String>();
       fixUrl();
-      st_log_debug(HTTP_HOOK_TAG, "Hook's url was updated to %s",
+      st_log_debug(_HTTP_HOOK_TAG, "Hook's url was updated to %s",
                    _url.c_str());
     }
     if (doc["method"].is<const char*>()) {
       _method = doc["method"].as<String>();
-      st_log_debug(HTTP_HOOK_TAG, "Hook's method was updated to %s",
+      st_log_debug(_HTTP_HOOK_TAG, "Hook's method was updated to %s",
                    _method.c_str());
     }
     if (doc["payload"].is<const char*>()) {
       _payload = doc["payload"].as<String>();
-      st_log_debug(HTTP_HOOK_TAG, "Hook's payload was updated to %s",
+      st_log_debug(_HTTP_HOOK_TAG, "Hook's payload was updated to %s",
                    _payload.c_str());
     }
   };
@@ -78,7 +78,7 @@ class HttpHook : public T {
 
   void createRequestTask() {
     if (_sending) {
-      st_log_debug(HTTP_HOOK_TAG, "Request task already exist! Skipping");
+      st_log_debug(_HTTP_HOOK_TAG, "Request task already exist! Skipping");
       return;
     }
     #ifdef ARDUINO_ARCH_ESP32
@@ -104,8 +104,8 @@ class HttpHook : public T {
     String urlResolved = replaceValues(_url.c_str(), valueStr);
     String payloadResolved = replaceValues(_payload.c_str(), valueStr);
 
-    st_log_debug(HTTP_HOOK_TAG, "Resolved url and payload: %s, %s", urlResolved.c_str(), payloadResolved.c_str());
-    st_log_debug(HTTP_HOOK_TAG, "Sending request [%s] %s :: %s", _method.c_str(), urlResolved.c_str(), payloadResolved.c_str());
+    st_log_debug(_HTTP_HOOK_TAG, "Resolved url and payload: %s, %s", urlResolved.c_str(), payloadResolved.c_str());
+    st_log_debug(_HTTP_HOOK_TAG, "Sending request [%s] %s :: %s", _method.c_str(), urlResolved.c_str(), payloadResolved.c_str());
 
     HTTPClient client;
     client.setTimeout(2000);
@@ -122,7 +122,7 @@ class HttpHook : public T {
     _lastResponseCode = client.sendRequest(_method.c_str(), payloadResolved.c_str());
     client.end();
 
-    st_log_info(HTTP_HOOK_TAG, "Request %s finished with code %d", urlResolved.c_str(), _lastResponseCode);
+    st_log_info(_HTTP_HOOK_TAG, "Request %s finished with code %d", urlResolved.c_str(), _lastResponseCode);
   }
 
   void fixUrl() {

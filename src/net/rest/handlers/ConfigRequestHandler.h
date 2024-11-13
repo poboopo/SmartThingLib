@@ -10,7 +10,7 @@
 #include "net/rest/handlers/RequestHandler.h"
 
 #define CONFIG_PATH "/config"
-static const char * CONFIG_LOG_TAG = "config_handler";
+static const char * _CONFIG_LOG_TAG = "config_handler";
 
 class ConfigRequestHandler : public RequestHandler {
  public:
@@ -64,13 +64,13 @@ class ConfigRequestHandler : public RequestHandler {
 
         JsonDocument config = SettingsRepository.getConfig();
         if (config[name].is<JsonVariant>()) {
-          st_log_warning(CONFIG_LOG_TAG, "Removing config value %s", name);
+          st_log_warning(_CONFIG_LOG_TAG, "Removing config value %s", name);
           config.remove(name);
           SettingsRepository.setConfig(config);
           callHooks();
           return request->beginResponse(200);
         } else {
-          st_log_error(CONFIG_LOG_TAG, "Failed to remove config %s - no such key", name);
+          st_log_error(_CONFIG_LOG_TAG, "Failed to remove config %s - no such key", name);
           return request->beginResponse(404, "content/json", buildErrorJson("No such key"));
         }
       }

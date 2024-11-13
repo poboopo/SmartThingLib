@@ -11,7 +11,7 @@
 #include "observable/ObservableObjects.h"
 #include "utils/List.h"
 
-static const char * SENSORS_LIST_TAG = "sensors_list";
+static const char * _SENSORS_LIST_TAG = "sensors_list";
 
 class SensorsList : public List<Sensor> {
  public:
@@ -22,7 +22,7 @@ class SensorsList : public List<Sensor> {
   };
   bool addDigital(const char* name, int pin) {
     if (pin < 0) {
-      st_log_warning(SENSORS_LIST_TAG,
+      st_log_warning(_SENSORS_LIST_TAG,
                      "Pin value can't be negative for sensor! Skipping...");
       return false;
     }
@@ -35,7 +35,7 @@ class SensorsList : public List<Sensor> {
   };
   bool addAnalog(const char* name, int pin) {
     if (pin < 0) {
-      st_log_warning(SENSORS_LIST_TAG,
+      st_log_warning(_SENSORS_LIST_TAG,
                      "Pin value can't be negative for sensor! Skipping...");
       return false;
     }
@@ -72,7 +72,7 @@ class SensorsList : public List<Sensor> {
            ObservableObject<int16_t>::ValueProviderFunction
                valueProvider) {
     if (findSensor(name) != nullptr) {
-      st_log_warning(SENSORS_LIST_TAG,
+      st_log_warning(_SENSORS_LIST_TAG,
                      "Sensor with name %s already exist! Skipping...", name);
       return false;
     }
@@ -81,13 +81,13 @@ class SensorsList : public List<Sensor> {
     sensor->valueProvider = valueProvider;
     sensor->sensorType = type;
     if (append(sensor) > -1) {
-      st_log_debug(SENSORS_LIST_TAG, "Added new sensor %s", name);
+      st_log_debug(_SENSORS_LIST_TAG, "Added new sensor %s", name);
       return true;
     } else {
       if (sensor != nullptr) {
         delete sensor;
       }
-      st_log_error(SENSORS_LIST_TAG, "Failed to add new sensor %s", name);
+      st_log_error(_SENSORS_LIST_TAG, "Failed to add new sensor %s", name);
       return false;
     }
   };

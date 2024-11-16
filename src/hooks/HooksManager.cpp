@@ -49,8 +49,7 @@ int HooksManagerClass::createHookFromJson(const char *json) {
   return createHookFromJson(doc["observable"], doc["hook"]);
 }
 
-int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
-                                                  JsonObject hook) {
+int HooksManagerClass::createHookFromJson(JsonObject observableInfo, JsonObject hook) {
   if (observableInfo.size() == 0) {
     st_log_error(_HOOKS_MANAGER_TAG,
                  "ObservableInfo object can't be empty!");
@@ -69,18 +68,16 @@ int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
     return -1;
   }
 
-  st_log_debug(_HOOKS_MANAGER_TAG, "Trying to build hook for [%u] %s", type, name);
+  st_log_debug(_HOOKS_MANAGER_TAG, "Trying to build hook for %s (obs type=%s)", name, observableTypeToStr(type));
 
   #if ENABLE_STATES
-  if (type = OBS_STATE) {
-    return addHook<String>(ObservablesManager.getDeviceState(name),
-                               HooksFactory::build<StateHook, String>(hook));
+  if (type == OBS_STATE) {
+    return addHook<String>(ObservablesManager.getDeviceState(name), HooksFactory::build<StateHook, String>(hook));
   }
   #endif
   #if ENABLE_SENSORS 
   if (type == OBS_SENSOR) {
-    return addHook<int16_t>(ObservablesManager.getSensor(name),
-                                HooksFactory::build<SensorHook, int16_t>(hook));
+    return addHook<int16_t>(ObservablesManager.getSensor(name), HooksFactory::build<SensorHook, int16_t>(hook));
   }
   #endif
 

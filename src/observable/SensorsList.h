@@ -64,7 +64,10 @@ class SensorsList : public List<Sensor> {
 
   const Sensor* findSensor(const char* name) {
     return findValue(
-        [&](Sensor* current) { return strcmp(current->name, name) == 0; });
+      [&](Sensor* current) {
+        return strcmp(current->name, name) == 0;
+      }
+    );
   };
 
  private:

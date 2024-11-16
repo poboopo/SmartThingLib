@@ -27,8 +27,7 @@ bool ObservablesManagerClass::addAnalogSensor(const char* name, int pin) {
   return _sensorsList.addAnalog(name, pin);
 }
 
-const Sensor* ObservablesManagerClass::getSensor(
-    const char* name) {
+const Sensor* ObservablesManagerClass::getSensor(const char* name) {
   return _sensorsList.findSensor(name);
 }
 #endif

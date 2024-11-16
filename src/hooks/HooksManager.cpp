@@ -89,8 +89,7 @@ int HooksManagerClass::createHookFromJson(JsonObject observableInfo,
 }
 
 template <class T>
-int HooksManagerClass::addHook(const ObservableObject<T> *obj,
-                                       Hook<T> *hook) {
+int HooksManagerClass::addHook(const ObservableObject<T> *obj, Hook<T> *hook) {
   if (obj == nullptr) {
     st_log_error(_HOOKS_MANAGER_TAG,
                  "Observable object is missing, cancelling hook creation");

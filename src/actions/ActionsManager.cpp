@@ -41,6 +41,10 @@ ActionResult ActionsManagerClass::call(const char* name) {
   return action->handler();
 };
 
+const Action * ActionsManagerClass::get(const char* name) const {
+  return findAction(name);
+}
+
 #if ENABLE_ACTIONS_SCHEDULER
 void ActionsManagerClass::loadFromSettings() {
   JsonDocument config = SettingsRepository.getActions();
@@ -111,7 +115,7 @@ JsonDocument ActionsManagerClass::toJson() {
   return doc;
 };
 
-Action* ActionsManagerClass::findAction(const char* name) {
+Action* ActionsManagerClass::findAction(const char* name) const {
   return findValue([&](Action* current) { return strcmp(current->name, name) == 0; });
 }
 

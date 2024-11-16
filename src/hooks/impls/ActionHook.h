@@ -17,12 +17,14 @@ template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T
 class ActionHook : public T {
   public:
     ActionHook(const char *action, bool readOnly): T(ACTION_HOOK, readOnly) {
-      _action = (char *) malloc(strlen(action) + 1);
-      strcpy(_action, action);
+      updateAction(action);
     };
     virtual ~ActionHook() {};
 
     void call(V &value) {
+      if (_action == nullptr) {
+        return;
+      }
       // replace ${value} in _action?
       st_log_debug(_ACTION_HOOK_TAG, "Calling action  %s", _action);
       ActionsManager.call(_action);
@@ -39,16 +41,28 @@ class ActionHook : public T {
           st_log_error(_ACTION_HOOK_TAG, "Action is missing!");
           return;
         }
-        free(_action);
-        // todo find action and use it's pointer to name
-        _action = (char *) malloc(newAction.length() + 1);
-        strcpy(_action, newAction.c_str());
-        st_log_debug(_ACTION_HOOK_TAG, "New hook action: %s",  _action);
+        if (updateAction(newAction.c_str())) {
+          st_log_debug(_ACTION_HOOK_TAG, "New hook action: %s",  _action);
+        }
       }
     }
 
   private:
-    char * _action;
+    const char * _action;
+
+    bool updateAction(const char * name) {
+      if (name == nullptr) {
+        st_log_error(_ACTION_HOOK_TAG, "Action name missing!");
+        return false;
+      }
+      const Action * action = ActionsManager.get(name);
+      if (action == nullptr) {
+        st_log_error(_ACTION_HOOK_TAG, "Can't find action %s", name);
+        return false;
+      }
+      _action = action->name;
+      return true;
+    }
 };
 
 #endif

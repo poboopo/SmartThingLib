@@ -73,7 +73,7 @@ class NotificationHook : public T {
     bool _sending = false;
   private:
     String _message;
-    String _notificationType;
+    String _notificationType; // todo enum
     V _currentValue;
 
     void createRequestTask() {

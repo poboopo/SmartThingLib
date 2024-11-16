@@ -52,7 +52,9 @@ class ActionsManagerClass : protected List<Action> {
 
   bool add(const char* actionName, const char* caption, ActionHandler handler);
 
-  ActionResult call(const char* name) ;
+  ActionResult call(const char* name);
+
+  const Action * get(const char* name) const;
 
   #if ENABLE_ACTIONS_SCHEDULER
   void loadFromSettings();
@@ -65,7 +67,7 @@ class ActionsManagerClass : protected List<Action> {
   JsonDocument toJson();
 
  private:
-  Action* findAction(const char* name);
+  Action* findAction(const char* name) const;
 };
 
 extern ActionsManagerClass ActionsManager;

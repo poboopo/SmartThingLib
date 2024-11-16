@@ -91,7 +91,7 @@ class List {
   };
 
   // todo const?
-  T *findValue(FindFunction findFunc) {
+  T *findValue(FindFunction findFunc) const {
     if (_count == 0) {
       return nullptr;
     }

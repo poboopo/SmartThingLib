@@ -29,12 +29,12 @@ bool eepromBegin() {
 #endif
 
 enum DataIndex {
-  NAME_INDEX,
   WIFI_INDEX,
+  NAME_INDEX,
   CONFIG_INDEX,
   HOOKS_INDEX,
   ACTIONS_INDEX,
-  FIRST_INDEX = NAME_INDEX,
+  FIRST_INDEX = WIFI_INDEX,
   LAST_INDEX = ACTIONS_INDEX
 };
 
@@ -310,7 +310,7 @@ bool SettingsRepositoryClass::setWiFi(WiFiConfig settings) {
   );
 
   bool res = false;
-  if (writeData(WIFI_INDEX, buff)) {
+  if (writeData(WIFI_INDEX, buff) > 0) {
     st_log_debug(_SETTINGS_MANAGER_TAG, "WiFi config updated: %s", buff);
     res = true;
   } else {

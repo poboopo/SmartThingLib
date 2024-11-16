@@ -93,23 +93,23 @@ void RestControllerClass::setupHandler() {
     request->send(200, "text/plain", "I am alive!!! :)");
   });
 
-#if ENABLE_WEB_PAGE
   _server.on("/", HTTP_GET, [this](AsyncWebServerRequest * request) {
     st_log_request(_WEB_SERVER_TAG, request->methodToString(), "/", "");
     request->send_P(200, "text/html", WEB_PAGE_MAIN);
   });
-  _server.on("/assets/script.js", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    request->send_P(200, "text/javascript", SCRIPT_PAGE_MAIN);
-  });
+
+  #if ENABLE_WEB_PAGE 
   _server.on("/assets/styles.css", HTTP_GET, [this](AsyncWebServerRequest * request) {
     request->send_P(200, "text/css", STYLE_PAGE_MAIN);
   });
-#else
-  _server.on("/", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    st_log_request(_WEB_SERVER_TAG, request->methodToString(), "/", "");
-    request->send(200, "text/plain", "Web control panel is not included in this build!");
+  _server.on("/assets/script.js", HTTP_GET, [this](AsyncWebServerRequest * request) {
+    request->send_P(200, "text/javascript", SCRIPT_PAGE_MAIN);
   });
-#endif
+  #else
+  _server.on("/minimal/script.js", HTTP_GET, [this](AsyncWebServerRequest * request) {
+    request->send_P(200, "text/javascript", SCRIPT_PAGE_MAIN);
+  });
+  #endif
 
   _server.on("/features", HTTP_GET, [this](AsyncWebServerRequest * request) {
     st_log_request(_WEB_SERVER_TAG, request->methodToString(), "/features", "");

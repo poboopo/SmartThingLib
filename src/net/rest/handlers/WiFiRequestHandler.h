@@ -52,13 +52,13 @@ class WiFiRequesthandler : public RequestHandler {
         return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Ssid is missing"));
       }
       if (ssid.length() > 32) {
-        return request->beginResponse(400, CONTENT_TYPE_JSON,  buildErrorJson("Ssid is too long (32 symbols max)"));
+        return request->beginResponse(400, CONTENT_TYPE_JSON,  buildErrorJson("Ssid is too big (32 symbols max)"));
       }
       String password = jsonDoc["password"].as<String>();
       if (password.length() > 0 && password.length() < 8) {
         return request->beginResponse(
             400, CONTENT_TYPE_JSON,
-            buildErrorJson("Password is too short (8 symbols or blank)"));
+            buildErrorJson("Bad password (it should be blank or contains at least 8 symbols)"));
       }
       int mode = jsonDoc["mode"].as<int>();
       if (mode != WIFI_MODE_AP && mode != WIFI_MODE_STA) {

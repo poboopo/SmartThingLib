@@ -19,29 +19,19 @@
 class HooksManagerClass {
  public:
   void loadFromSettings();
-  int createHookFromJson(const char* json);
-  int createHookFromJson(JsonObject observableInfo,
-                             JsonObject hookInfo);
 
-  #if ENABLE_SENSORS
-  int addHook(const Sensor * sensor, Hook<int16_t> * hook);
-  #endif
-  #if ENABLE_STATES
-  int addHook(const DeviceState * state, Hook<String> * hook);
-  #endif
+  int addHook(ObservableType observableType, const char * observableName, const char * data);
+
   bool deleteHook(const char* type, const char* name, int id);
   bool updateHook(JsonDocument doc);
 
   void check();
   boolean callHook(const char * type, const char * name, int id, String value);
 
-  JsonDocument getWatchersInfo();
-  JsonDocument allHooksToJson(bool ignoreReadOnly = false, bool shortJson = false);
   JsonDocument getObservableHooksJson(const char* type,
                                                  const char* name);
-  JsonDocument getHookJsonById(const char* type, const char* name, int id);
 
-  void saveHooksToSettings();
+  bool saveInSettings();
 
   int16_t getTotalHooksCount() { return _hooksCount; }
 
@@ -56,12 +46,14 @@ class HooksManagerClass {
 
   int _hooksCount = 0;
 
-  template <typename T>
-  int addHook(const ObservableObject<T>* obj,
-                  Hook<T>* hook);
+  template<typename T>
+  bool loadHooks(const ObservableObject<T> * observable, const char * data, int * address, int length);
+
+  template<typename T>
+  int addHook(const ObservableObject<T> * observable, const char * data);
 
   template <typename T>
-  void collectInfo(List<Watcher<T>>* list, JsonArray* array);
+  int addHook(const ObservableObject<T>* obj, Hook<T>* hook);
 
   template <typename T>
   Watcher<T>* getWatcher(List<Watcher<T>>* list,
@@ -80,15 +72,11 @@ class HooksManagerClass {
                                                          const char* name);
 
   template <typename T>
-  JsonDocument getHookJsonFromList(List<Watcher<T>>* list,
-                                              const char* name, int id);
-
-  template <typename T>
   bool deleteHookFromList(List<Watcher<T>>* list, const char* name, int id);
 
   template <typename T>
   bool updateHook(List<Watcher<T>>* list, const char* name,
-                      JsonObject hookObject);
+                      JsonDocument &hookObject);
 
   template <typename T>
   void checkWatchers(List<Watcher<T>>* list);

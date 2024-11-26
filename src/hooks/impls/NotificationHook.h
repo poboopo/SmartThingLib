@@ -18,21 +18,59 @@
 
 static const char * _NOTIFICATION_HOOK_TAG = "notification_hook";
 static const char * _messageHookField = "message";
-static const char * _nftHookField =  "ntfType";
+static const char * _nftHookField =  "ntfType"; // todo can rename now
 
-static const char * NOTIFICATION_INFO = "info";
-static const char * NOTIFICATION_WARNING = "warning";
-static const char * NOTIFICATION_ERROR = "error";
+// todo enum
+static const char * _notificationInfoStr = "info";
+static const char * _notificationWarningStr = "warning";
+static const char * _notificationErrorStr = "error";
+
+enum NotificationType {
+  NOTIFICATION_UNKNOWN,
+  NOTIFICATION_INFO,
+  NOTIFICATION_WARNING,
+  NOTIFICATION_ERROR
+};
+
+inline const char * notificationTypeToStr(NotificationType type) {
+  switch (type) {
+    case NOTIFICATION_INFO:
+      return _notificationInfoStr;
+    case NOTIFICATION_WARNING:
+      return _notificationWarningStr;
+    case NOTIFICATION_ERROR:
+      return _notificationErrorStr;
+  }
+  return "";
+}
+
+inline NotificationType notificationTypeFromStr(const char * type, NotificationType defaultValue = NOTIFICATION_UNKNOWN) {
+  if (type == nullptr) {
+    return defaultValue;
+  }
+
+  if (strcmp(_notificationInfoStr, type)) {
+    return NOTIFICATION_INFO;
+  }
+  if (strcmp(_notificationWarningStr, type)) {
+    return NOTIFICATION_WARNING;
+  }
+  if (strcmp(_notificationErrorStr, type)) {
+    return NOTIFICATION_ERROR;
+  }
+
+  return defaultValue;
+}
 
 // todo extend http hook
-template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
-class NotificationHook : public T {
+template<class T, CHECK_HOOK_DATA_TYPE>
+class NotificationHook : public SELECT_HOOK_BASE_CLASS {
   public:
-    NotificationHook(const char * message, bool readOnly)
-      : T(NOTIFICATION_HOOK, readOnly), _message(message), _notificationType(NOTIFICATION_INFO) {};
+    NotificationHook(NotificationType notificationType, const char * message)
+      : SELECT_HOOK_BASE_CLASS(NOTIFICATION_HOOK), _message(message), _notificationType(notificationType) {};
     virtual ~NotificationHook() {};
 
-    void call(V &value) {
+    void call(T &value) {
       _currentValue = value;
       if (WiFi.isConnected()) {
         createRequestTask();
@@ -41,40 +79,51 @@ class NotificationHook : public T {
       }
     }
 
-    void populateJsonWithCustomValues(JsonDocument &doc, boolean shortJson) const {
-      doc[_messageHookField] = _message.c_str();
-      doc[_nftHookField] = _notificationType.c_str();
+    String getMessage() {
+      return _message;
     }
-
-    void updateCustom(JsonObject obj) {
-      if (obj[_messageHookField].is<const char*>()) {
-        _message = obj[_messageHookField].as<String>();
-      }
-      if (obj[_nftHookField].is<const char*>()) {
-        _notificationType = obj[_nftHookField].as<String>();
-        if (_notificationType.isEmpty()) {
-          _notificationType = NOTIFICATION_INFO;
-        }
-      }
-    }
-
     void setMessage(const char * message) {
       _message = message;
     }
-    void setNotificationType(const char * type) {
+    void setNotificationType(NotificationType type) {
       _notificationType = type;
     }
-    String getNoticationType() {
+    NotificationType getNoticationType() {
       return _notificationType;
     }
     #ifdef ARDUINO_ARCH_ESP32
     TaskHandle_t _requestTask = NULL;
     #endif
     bool _sending = false;
+
+  protected:
+    String customValuesString() {
+      String tmp = _message;
+      tmp.replace(";", "|;");
+      char buff[2 + tmp.length()];
+      sprintf(buff, "%d%s", _notificationType, tmp.c_str());
+      tmp = buff;
+      return tmp;
+    }
+
+    void populateJsonWithCustomValues(JsonDocument &doc) const {
+      doc[_messageHookField] = _message.c_str();
+      doc[_nftHookField] = _notificationType;
+    }
+
+    void updateCustom(JsonDocument &doc) {
+      if (doc[_messageHookField].is<const char*>()) {
+        _message = doc[_messageHookField].as<String>();
+      }
+      if (doc[_nftHookField].is<const char*>()) {
+        _notificationType = notificationTypeFromStr(doc[_nftHookField].as<const char*>());
+      }
+    }
+    
   private:
     String _message;
-    String _notificationType; // todo enum
-    V _currentValue;
+    NotificationType _notificationType; // todo enum
+    T _currentValue;
 
     void createRequestTask() {
       if (_sending) {
@@ -116,7 +165,7 @@ class NotificationHook : public T {
 
       JsonObject notification = doc["notification"].to<JsonObject>();
       notification["message"] = messageResolved;
-      notification["type"] = _notificationType;
+      notification["type"] = notificationTypeToStr(_notificationType);
 
       String payload;
       serializeJson(doc, payload);

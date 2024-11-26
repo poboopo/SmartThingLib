@@ -520,56 +520,6 @@
         }
       }
     },
-    "/hooks/by/id": {
-      "get": {
-        "tags": [
-          "Hook"
-        ],
-        "description": "Get hook by id",
-        "parameters": [
-          {
-            "name": "type",
-            "in": "query",
-            "description": "Observable type",
-            "example": "sensor/state",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "description": "Observable name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "query",
-            "description": "Hook id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of hooks",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#components/schemas/Hook"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/hooks/templates": {
       "get": {
         "tags": [

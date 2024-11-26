@@ -32,8 +32,6 @@ class SensorWatcher : public Watcher<int16_t> {
     }
     return false;
   };
-
-  const char* getObservableInfo() { return _observable->name; };
 };
 #endif
 #endif

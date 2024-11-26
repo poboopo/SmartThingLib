@@ -13,15 +13,15 @@
 static const char * _ACTION_HOOK_TAG = "action_hook";
 static const char * _actionHookField = "action";
 
-template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
-class ActionHook : public T {
+template<class T, CHECK_HOOK_DATA_TYPE>
+class ActionHook : public SELECT_HOOK_BASE_CLASS {
   public:
-    ActionHook(const char *action, bool readOnly): T(ACTION_HOOK, readOnly) {
+    ActionHook(const char *action): SELECT_HOOK_BASE_CLASS(ACTION_HOOK), _action(nullptr) {
       updateAction(action);
     };
     virtual ~ActionHook() {};
 
-    void call(V &value) {
+    void call(T &value) {
       if (_action == nullptr) {
         return;
       }
@@ -30,11 +30,16 @@ class ActionHook : public T {
       ActionsManager.call(_action);
     }
 
-    void populateJsonWithCustomValues(JsonDocument &doc, boolean shortJson) const {
+  protected:
+    String customValuesString() {
+      return _action;
+    }
+    
+    void populateJsonWithCustomValues(JsonDocument &doc) const {
       doc[_actionHookField] = _action;
     };
 
-    void updateCustom(JsonObject obj) {
+    void updateCustom(JsonDocument &obj) {
       if (obj[_actionHookField].is<const char*>()) {
         String newAction = obj[_actionHookField].as<String>();
         if (newAction.isEmpty()) {

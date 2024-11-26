@@ -2,8 +2,10 @@
 
 #if ENABLE_HOOKS 
 
+#include <type_traits>
+
 #include "observable/ObservablesManager.h"
-#include "hooks/builders/HooksFactory.h"
+#include "hooks/builders/HooksBuilder.h"
 #include "hooks/watchers/DeviceStateWatcher.h"
 #include "hooks/watchers/SensorWatcher.h"
 #include "settings/SettingsRepository.h"
@@ -12,77 +14,57 @@ static const char * _HOOKS_MANAGER_TAG = "hooks_manager";
 
 HooksManagerClass HooksManager;
 
-void HooksManagerClass::loadFromSettings() {
-  JsonDocument hooksInfo = SettingsRepository.getHooks();
-  if (hooksInfo.size() == 0) {
-    st_log_debug(_HOOKS_MANAGER_TAG, "There is no hooks in settings");
-    return;
-  }
-
-  bool needGhostDelete = false;
-  for (unsigned int i = 0; i < hooksInfo.size(); i++) {
-    JsonObject config = hooksInfo[i];
-    JsonObject observable = config["observable"];
-    JsonArray hooks = config["hooks"];
-    for (unsigned int j = 0; j < hooks.size(); j++) {
-      needGhostDelete = needGhostDelete || createHookFromJson(observable, hooks[j]) < 0;
-    }
-  }
-
-  if (needGhostDelete) {
-    st_log_warning(_HOOKS_MANAGER_TAG, "Have some ghost hooks to delete, trying to save correct hooks list");
-    saveHooksToSettings();
-    st_log_info(_HOOKS_MANAGER_TAG, "Ghost hooks removed");
-  }
-}
-
-int HooksManagerClass::createHookFromJson(const char *json) {
-  if (json == nullptr) {
-    st_log_error(_HOOKS_MANAGER_TAG, "Json is null!");
+int HooksManagerClass::addHook(ObservableType observableType, const char * observableName, const char * data) {
+  if (observableType == UNKNOWN_OBS_TYPE) {
+    st_log_error(_HOOKS_MANAGER_TAG, "Unkown observable type");
     return -1;
   }
-  st_log_debug(_HOOKS_MANAGER_TAG, "Creating hook from json: %s", json);
-
-  JsonDocument doc;
-  deserializeJson(doc, json);
-
-  return createHookFromJson(doc["observable"], doc["hook"]);
-}
-
-int HooksManagerClass::createHookFromJson(JsonObject observableInfo, JsonObject hook) {
-  if (observableInfo.size() == 0) {
-    st_log_error(_HOOKS_MANAGER_TAG,
-                 "ObservableInfo object can't be empty!");
-    return -1;
-  }
-  if (hook.size() == 0) {
-    st_log_error(_HOOKS_MANAGER_TAG, "Hook object can't be empty!");
-    return -1;
-  }
-
-  ObservableType type = observableTypeFromStr(observableInfo["type"]);
-  const char *name = observableInfo["name"];
-  if (type == UNKNOWN_OBS_TYPE || name == nullptr) {
-    st_log_error(_HOOKS_MANAGER_TAG,
-                 "Parameters observable type or name are missing!");
-    return -1;
-  }
-
-  st_log_debug(_HOOKS_MANAGER_TAG, "Trying to build hook for %s (obs type=%s)", name, observableTypeToStr(type));
 
   #if ENABLE_STATES
-  if (type == OBS_STATE) {
-    return addHook<String>(ObservablesManager.getDeviceState(name), HooksFactory::build<StateHook, String>(hook));
+  if (observableType == OBS_STATE) {
+    return HooksManager.addHook<STATE_DATA_TYPE>(ObservablesManager.getObservableObject<STATE_DATA_TYPE>(observableName), data);
   }
   #endif
   #if ENABLE_SENSORS 
-  if (type == OBS_SENSOR) {
-    return addHook<int16_t>(ObservablesManager.getSensor(name), HooksFactory::build<SensorHook, int16_t>(hook));
+  if (observableType == OBS_SENSOR) {
+    return HooksManager.addHook<SENSOR_DATA_TYPE>(ObservablesManager.getObservableObject<SENSOR_DATA_TYPE>(observableName), data);
   }
   #endif
-
-  st_log_error(_HOOKS_MANAGER_TAG, "Observable object type not supported: %u", type);
+  
+  st_log_error(_HOOKS_MANAGER_TAG, "This observable type is not supported");
   return -1;
+}
+
+template<typename T>
+int HooksManagerClass::addHook(const ObservableObject<T> * observable, const char * data) {
+  if (observable == nullptr) {
+    st_log_error(_HOOKS_MANAGER_TAG, "Observable obejct is missing");
+    return -1;
+  }
+
+  if (data == nullptr || strlen(data) == 0) {
+    st_log_error(_HOOKS_MANAGER_TAG, "Hook's data string can't be empty");
+    return -1;
+  }
+
+  st_log_info(_HOOKS_MANAGER_TAG, "Trying to build hook for %s (observable type=%s)", observable->name, observableTypeToStr(observable->type));
+  st_log_debug(_HOOKS_MANAGER_TAG, "Hook string: %s", data);
+  
+  int id = -1;
+  Hook<T> * hook = HooksBuilder::build<T>(data);
+  if (hook != nullptr) {
+    id = addHook<T>(observable, hook);
+  }
+  
+  if (id == -1) {
+    st_log_error(_HOOKS_MANAGER_TAG, "Failed to build hook from string: %s", data);
+    
+    if (hook != nullptr) {
+      delete hook;
+    }
+  }
+
+  return id;
 }
 
 template <class T>
@@ -108,8 +90,8 @@ int HooksManagerClass::addHook(const ObservableObject<T> *obj, Hook<T> *hook) {
     return -1;
   }
   _hooksCount++;
-  st_log_info(_HOOKS_MANAGER_TAG, "Added new hook(id=%d) for %u [%s]",
-              hook->getId(), obj->type, obj->name);
+  st_log_info(_HOOKS_MANAGER_TAG, "Added new hook(id=%d) for %u [%s]", hook->getId(), obj->type, obj->name);
+
   return hook->getId();
 }
 
@@ -160,9 +142,6 @@ List<Watcher<String>> *HooksManagerClass::getWatchersList() {
   return &_statesWatchers;
 }
 
-int HooksManagerClass::addHook(const DeviceState * state, Hook<String> * hook) {
-  return addHook<String>(state, hook);
-}
 #endif
 
 #if ENABLE_SENSORS 
@@ -176,9 +155,6 @@ List<Watcher<int16_t>> *HooksManagerClass::getWatchersList() {
   return &_sensorsWatchers;
 }
 
-int HooksManagerClass::addHook(const Sensor * sensor, Hook<int16_t> * hook) {
-  return addHook<int16_t>(sensor, hook);
-}
 #endif
 
 bool HooksManagerClass::deleteHook(const char *type, const char *name,
@@ -205,7 +181,7 @@ bool HooksManagerClass::deleteHook(const char *type, const char *name,
 
 bool HooksManagerClass::updateHook(JsonDocument doc) {
   JsonObject observable = doc["observable"];
-  JsonObject hookObject = doc["hook"];
+  JsonDocument hookObject = doc["hook"];
 
   if (observable.size() == 0) {
     st_log_error(_HOOKS_MANAGER_TAG, "Observable object is missing!");
@@ -245,7 +221,7 @@ bool HooksManagerClass::updateHook(JsonDocument doc) {
 template <typename T>
 bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
                                            const char *name,
-                                           JsonObject hookObject) {
+                                           JsonDocument &hookObject) {
   if (!hookObject[_idHookField].is<JsonVariant>()) {
     st_log_error(_HOOKS_MANAGER_TAG,
                  "Id value in hook object is missing!");
@@ -263,7 +239,21 @@ bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
     return false;
   }
 
-  HooksFactory::update<T>(hook, hookObject);
+  if (hookObject[_triggerEnabledHookField].is<bool>()) {
+    bool enabled = hookObject[_triggerEnabledHookField].as<bool>();
+    hook->setTriggerEnabled(enabled);
+    st_log_debug(_HOOKS_MANAGER_TAG, "trigger %s", enabled ? "enabled" : "disabled");
+  }
+
+  hook->setCompareType(hookObject[_compareTypeHookField].as<const char*>());
+  st_log_debug(
+    _HOOKS_MANAGER_TAG,
+    "compareType=%s",
+    compareTypeToString(hook->getCompareType()).c_str()
+  );
+
+  HooksBuilder::parseTrigger(hook, hookObject);
+
   hook->updateCustom(hookObject);
 
   st_log_info(_HOOKS_MANAGER_TAG, "Hook id=%d for observable [%s] was updated!", id, name);
@@ -333,13 +323,6 @@ Watcher<T> *HooksManagerClass::getWatcherByObservableName(
   return list->findValue([name](Watcher<T> *current) {
     return strcmp(current->getObservable()->name, name) == 0;
   });
-}
-
-template <typename T>
-void HooksManagerClass::collectInfo(List<Watcher<T>> *list,
-                                        JsonArray *array) {
-  list->forEach(
-      [&](Watcher<T> *current) { array->add(current->getObservableInfo()); });
 }
 
 void HooksManagerClass::check() {
@@ -416,59 +399,117 @@ boolean HooksManagerClass::callWatcherHook(List<Watcher<T>>* list, const char * 
   return true;
 }
 
-void HooksManagerClass::saveHooksToSettings() {
-  st_log_debug(_HOOKS_MANAGER_TAG, "Saving hooks");
-  SettingsRepository.setHooks(allHooksToJson(true, true));
-}
 
-JsonDocument HooksManagerClass::allHooksToJson(bool ignoreReadOnly, bool shortJson) {
-  JsonDocument doc;
-  doc.to<JsonArray>();
-  if (_hooksCount == 0) {
-    st_log_debug(_HOOKS_MANAGER_TAG, "No hooks, creating empty doc");
-    return doc;
+int indexOf(char target, const char * data, int length = -1) {
+  if (data == nullptr || strlen(data) == 0) {
+    return -1;
   }
 
-  #if ENABLE_SENSORS 
-  _sensorsWatchers.forEach([&](Watcher<int16_t> *watcher) {
-    if (watcher == nullptr) {
-      return;
+  if (length = -1) {
+    length = strlen(data);
+  }
+
+  for (int i = 0; i < length; i++) {
+    if (data[i] == target) {
+      return i;
     }
-    JsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
-    if (!wjs.isNull()) doc.add(wjs);
-  });
-  #endif
+  }
+
+  return -1;
+}
+
+void HooksManagerClass::loadFromSettings() {
+  String fromSettings = SettingsRepository.getHooks();
+
+  if (fromSettings.isEmpty()) {
+    st_log_info(_HOOKS_MANAGER_TAG, "No hooks in settings");
+    return;
+  }
+
+  bool failedBuild = false;
+  int address = 0, tmp = 0;
+  int dataLength = fromSettings.length();
+  const char * data = fromSettings.c_str();
+
+  st_log_debug(_HOOKS_MANAGER_TAG, "Building hooks from settings");
+  while(address < dataLength) {
+    ObservableType type = static_cast<ObservableType>(data[address] - '0');
+    String name;
+
+    for (address = address + 1; address < dataLength; address++) {
+      if (data[address] == '\t') {
+        break;
+      }
+      name += data[address];
+    }
+
+    address++;
+    if (type == OBS_SENSOR) {
+      failedBuild = loadHooks<SENSOR_DATA_TYPE>(ObservablesManager.getObservableObject<SENSOR_DATA_TYPE>(name.c_str()), data, &address, dataLength) || failedBuild;
+    } else if (type == OBS_STATE) {
+      failedBuild = loadHooks<STATE_DATA_TYPE>(ObservablesManager.getObservableObject<STATE_DATA_TYPE>(name.c_str()), data, &address, dataLength) || failedBuild;
+    } else {
+      st_log_error(_HOOKS_MANAGER_TAG, "Unkonwn observable hook type: %d", type);
+    }
+
+    address++;
+  }
+
+  st_log_debug(_HOOKS_MANAGER_TAG, "Hooks loaded! Total count: %d", _hooksCount);
+
+  if (failedBuild) {
+    st_log_warning(_HOOKS_MANAGER_TAG, "Have some ghost hooks to delete (Failed build). Trying to save correct hooks list");
+    if (saveInSettings()) {
+      st_log_warning(_HOOKS_MANAGER_TAG, "Ghost hooks removed");
+    }
+  }
+}
+
+template<typename T>
+bool HooksManagerClass::loadHooks(const ObservableObject<T> * observable, const char * data, int * address, int length) {
+  bool res = false;
+  String buff; // todo remove, pass hook length
+
+  for (; (*address) < length; (*address)++) {
+    if (data[(*address)] == '\t' || data[(*address)] == '\n') {
+      res = addHook(observable, buff.c_str()) == -1 || res;
+      buff.clear();
+    } else {
+      buff += data[(*address)];
+    }
+
+    if (data[(*address)] == '\n') {
+      break;
+    }
+  }
+
+  return res;
+}
+
+bool HooksManagerClass::saveInSettings() {
+  st_log_debug(_HOOKS_MANAGER_TAG, "Saving hooks");
+  String data = "";
+
   #if ENABLE_STATES
   _statesWatchers.forEach([&](Watcher<String> *watcher) {
     if (watcher == nullptr) {
       return;
     }
-    JsonDocument wjs = watcher->toJson(ignoreReadOnly, shortJson);
-    if (!wjs.isNull()) doc.add(wjs);
+    data += watcher->toString();
+    data += "\n";
   });
   #endif
-  return doc;
-}
-
-JsonDocument HooksManagerClass::getWatchersInfo() {
-  JsonDocument doc;
   #if ENABLE_SENSORS 
-  if (_sensorsWatchers.size() > 0) {
-    st_log_debug(_HOOKS_MANAGER_TAG,
-                 "Collecting info from sensors watchers");
-    JsonArray array = doc[SENSOR_WATCHER_TYPE].to<JsonArray>();
-    collectInfo<int16_t>(&_sensorsWatchers, &array);
-  }
+  _sensorsWatchers.forEach([&](Watcher<int16_t> *watcher) {
+    if (watcher == nullptr) {
+      return;
+    }
+    data += watcher->toString();
+    data += "\n";
+  });
   #endif
-  #if ENABLE_STATES
-  if (_statesWatchers.size() > 0) {
-    st_log_debug(_HOOKS_MANAGER_TAG,
-                 "Collecting info from device state watchers");
-    JsonArray array = doc[STATE_WATCHER_TYPE].to<JsonArray>();
-    collectInfo<String>(&_statesWatchers, &array);
-  }
-  #endif
-  return doc;
+
+  return SettingsRepository.setHooks(data);
 }
 
 JsonDocument HooksManagerClass::getObservableHooksJson(const char *type, const char *name) {
@@ -495,49 +536,6 @@ JsonDocument HooksManagerClass::getObservableHooksJsonFromList(List<Watcher<T>> 
     Watcher<T> *watcher = getWatcherByObservableName(list, name);
     if (watcher != nullptr) {
       return watcher->getObservableHooksJson();
-    } else {
-      st_log_warning(_HOOKS_MANAGER_TAG,
-                     "Can't find watcher for observable [%s]", name);
-    }
-  }
-  JsonDocument doc;
-  return doc;
-}
-
-JsonDocument HooksManagerClass::getHookJsonById(const char *type,
-                                                               const char *name,
-                                                               int id) {
-  #if ENABLE_SENSORS 
-  if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
-    return getHookJsonFromList<int16_t>(&_sensorsWatchers, name, id);
-  } 
-  #endif
-  #if ENABLE_STATES
-  if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
-    return getHookJsonFromList<String>(&_statesWatchers, name, id);
-  }
-  #endif
-  st_log_error(_HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
-  JsonDocument doc;
-  return doc;
-}
-
-template <typename T>
-JsonDocument HooksManagerClass::getHookJsonFromList(
-    List<Watcher<T>> *list, const char *name, int id) {
-  if (name == nullptr || strlen(name) == 0) {
-    st_log_error(_HOOKS_MANAGER_TAG, "Name of observable is missing!");
-  } else {
-    Watcher<T> *watcher = getWatcherByObservableName(list, name);
-    if (watcher != nullptr) {
-      Hook<T> *hook = watcher->getHookById(id);
-      if (hook != nullptr) {
-        return hook->toJson(false);
-      } else {
-        st_log_warning(_HOOKS_MANAGER_TAG,
-                       "Can't find hook with id [%d] in watcher for [%s]",
-                       id, name);
-      }
     } else {
       st_log_warning(_HOOKS_MANAGER_TAG,
                      "Can't find watcher for observable [%s]", name);

@@ -35,8 +35,6 @@ class DeviceStateWatcher : public Watcher<String> {
     }
     return false;
   };
-
-  const char* getObservableInfo() { return _observable->name; };
 };
 
 #endif

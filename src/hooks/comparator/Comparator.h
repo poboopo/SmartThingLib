@@ -8,7 +8,7 @@ static const char * COMPARE_NEQ = "neq";
 static const char * COMPARE_GTE = "gte";
 static const char * COMPARE_LTE = "lte";
 
-enum CompareType { EQ, NEQ, GTE, LTE };
+enum CompareType { UNKNOWN_COMPARE, EQ, NEQ, GTE, LTE };
 
 inline String compareTypeToString(CompareType type) {
   switch (type) {
@@ -25,7 +25,7 @@ inline String compareTypeToString(CompareType type) {
   }
 }
 
-inline CompareType compareTypeFromString(const char * type, CompareType defValue) {
+inline CompareType compareTypeFromString(const char * type, CompareType defValue = UNKNOWN_COMPARE) {
   if (type == nullptr || strlen(type) == 0) {
     return defValue;
   }

@@ -19,65 +19,91 @@ static const char * _urlHookField = "url";
 static const char * _methodHookField = "method";
 static const char * _payloadHookField = "payload";
 
-template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
-class HttpHook : public T {
- public:
-  HttpHook(const char *url, bool readonly)
-      : T(HTTP_HOOK, readonly), _url(url), _method("GET") {
-    fixUrl();
-  };
-  virtual ~HttpHook() {};
-
-  void call(V &value) {
-    _currentValue = value;
-    if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
-      createRequestTask();
-    } else {
-      st_log_error(_HTTP_HOOK_TAG, "WiFi not connected!");
-    }
-  };
-
-  void populateJsonWithCustomValues(JsonDocument &doc, boolean shortJson) const {
-    if (!shortJson) {
-      doc["lastResponseCode"] = _lastResponseCode;
-    }
-    doc[_urlHookField] = _url;
-    doc[_methodHookField] = _method;
-    doc[_payloadHookField] = _payload;
-  };
-
-  void updateCustom(JsonObject doc) {
-    if (doc[_urlHookField].is<const char*>()) {
-      _url = doc[_urlHookField].as<String>();
+template<class T, CHECK_HOOK_DATA_TYPE>
+class HttpHook : public SELECT_HOOK_BASE_CLASS {
+  public:
+    HttpHook(const char *url, const char * method, const char * payload)
+        : SELECT_HOOK_BASE_CLASS(HTTP_HOOK), _url(url), _method(method), _payload(payload) {
       fixUrl();
-      st_log_debug(_HTTP_HOOK_TAG, "Hook's url was updated to %s",
-                   _url.c_str());
-    }
-    if (doc[_methodHookField].is<const char*>()) {
-      _method = doc[_methodHookField].as<String>();
-      st_log_debug(_HTTP_HOOK_TAG, "Hook's method was updated to %s",
-                   _method.c_str());
-    }
-    if (doc[_payloadHookField].is<const char*>()) {
-      _payload = doc[_payloadHookField].as<String>();
-      st_log_debug(_HTTP_HOOK_TAG, "Hook's payload was updated to %s",
-                   _payload.c_str());
-    }
-  };
-  void setPayload(const char *payload) { _payload = payload; }
-  void setMethod(const char *method) { _method = method; }
+      if (method == nullptr || strlen(method) == 0) {
+        method = "GET";
+      } 
+    };
+    virtual ~HttpHook() {};
 
-  #ifdef ARDUINO_ARCH_ESP32
-  TaskHandle_t _requestTask = NULL;  // not safe
-  #endif
-  bool _sending = false;
+    void call(T &value) {
+      _currentValue = value;
+      if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
+        createRequestTask();
+      } else {
+        st_log_error(_HTTP_HOOK_TAG, "WiFi not connected!");
+      }
+    };
 
+    void setPayload(const char *payload) { _payload = payload; }
+    void setMethod(const char *method) { _method = method; }
+
+    #ifdef ARDUINO_ARCH_ESP32
+    TaskHandle_t _requestTask = NULL;  // not safe todo setter?
+    #endif
+    bool _sending = false;
+    
+  protected:
+    String customValuesString() {
+      String tmp;
+      String res;
+
+      for (int i = 0; i < 3; i++) {
+        switch(i) {
+          case 0:
+            tmp = _url;
+            break;
+          case 1:
+            tmp = _method;
+            break;
+          case 2:
+            tmp = _payload;
+            break;
+        }
+        tmp.replace(";", "|;");
+        res += tmp;
+        res += ';';
+      }
+      
+      return res;
+    }
+
+    void populateJsonWithCustomValues(JsonDocument &doc) const {
+      doc["lastResponseCode"] = _lastResponseCode;
+      doc[_urlHookField] = _url;
+      doc[_methodHookField] = _method;
+      doc[_payloadHookField] = _payload;
+    };
+
+    void updateCustom(JsonDocument &doc) {
+      if (doc[_urlHookField].is<const char*>()) {
+        _url = doc[_urlHookField].as<String>();
+        fixUrl();
+        st_log_debug(_HTTP_HOOK_TAG, "Hook's url was updated to %s",
+                    _url.c_str());
+      }
+      if (doc[_methodHookField].is<const char*>()) {
+        _method = doc[_methodHookField].as<String>();
+        st_log_debug(_HTTP_HOOK_TAG, "Hook's method was updated to %s",
+                    _method.c_str());
+      }
+      if (doc[_payloadHookField].is<const char*>()) {
+        _payload = doc[_payloadHookField].as<String>();
+        st_log_debug(_HTTP_HOOK_TAG, "Hook's payload was updated to %s",
+                    _payload.c_str());
+      }
+    };
  private:
   String _url;
   String _method; // todo enum
   String _payload;
   int16_t _lastResponseCode = 0;
-  V _currentValue;
+  T _currentValue;
 
   void createRequestTask() {
     if (_sending) {

@@ -5,7 +5,8 @@ ObservablesManagerClass ObservablesManager;
 #if ENABLE_SENSORS 
 JsonDocument ObservablesManagerClass::getSensorsValues() {
   return _sensorsList.getValues();
-} 
+}
+
 JsonDocument ObservablesManagerClass::getSensorsTypes() {
   return _sensorsList.getTypes();
 }
@@ -27,8 +28,14 @@ bool ObservablesManagerClass::addAnalogSensor(const char* name, int pin) {
   return _sensorsList.addAnalog(name, pin);
 }
 
-const Sensor* ObservablesManagerClass::getSensor(const char* name) {
+template<>
+const ObservableObject<SENSOR_DATA_TYPE> * ObservablesManagerClass::getObservableObject(const char * name) {
   return _sensorsList.findSensor(name);
+}
+
+const Sensor* ObservablesManagerClass::getSensor(const char* name) {
+  const ObservableObject<SENSOR_DATA_TYPE> * obj = getObservableObject<SENSOR_DATA_TYPE>(name);
+  return obj == nullptr ? nullptr : (const Sensor *) obj;
 }
 #endif
 
@@ -44,9 +51,14 @@ JsonDocument ObservablesManagerClass::getDeviceStatesInfo() {
   return _deviceStatesList.getValues();
 }
 
-const DeviceState* ObservablesManagerClass::getDeviceState(
-    const char* name) {
+template<>
+const ObservableObject<STATE_DATA_TYPE> * ObservablesManagerClass::getObservableObject(const char * name) {
   return _deviceStatesList.findState(name);
+}
+
+const DeviceState* ObservablesManagerClass::getDeviceState(const char* name) {
+  const ObservableObject<STATE_DATA_TYPE> * obj = getObservableObject<STATE_DATA_TYPE>(name);
+  return obj == nullptr ? nullptr : (const DeviceState *) obj;
 }
 
 int16_t ObservablesManagerClass::getDeviceStatesCount() {

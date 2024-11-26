@@ -10,7 +10,6 @@
 #include "logs/BetterLogger.h"
 #include "utils/List.h"
 
-#define WATCHER_INFO_DOC_SIZE 128
 static const char * _WATCHER_TAG = "watcher";
 
 /*
@@ -28,13 +27,27 @@ class Watcher {
   virtual ~Watcher() {};
 
   virtual bool check() = 0;
-  virtual const char *getObservableInfo() = 0;
 
-  JsonDocument getObservableHooksJson() {
-    return getObservableHooksJson(false, false);
+  String toString() {
+    if (_hooks.size() == 0) {
+      return "";
+    }
+
+    String result = _observable->toString();
+
+    _hooks.forEach([&](Hook<T> * hook) {
+      if (hook == nullptr || hook->isReadonly()) {
+        return;
+      }
+
+      result += "\t";
+      result += hook->toString();
+    });
+
+    return result;
   }
 
-  JsonDocument getObservableHooksJson(bool ignoreReadOnly, bool shortJson) {
+  JsonDocument getObservableHooksJson() {
     JsonDocument doc;
     doc.to<JsonArray>();
     if (_hooks.size() == 0) {
@@ -42,20 +55,20 @@ class Watcher {
       return doc;
     }
     _hooks.forEach([&](Hook<T> *current) {
-      if ((current == nullptr || ignoreReadOnly) && current->isReadonly()) {
+      if (current == nullptr && current->isReadonly()) {
         return;
       }
-      doc.add(current->toJson(shortJson));
+      doc.add(current->toJson());
     });
     return doc;
   };
 
-  JsonDocument toJson(bool ignoreReadOnly, bool shortJson) {
+  JsonDocument toJson() {
     JsonDocument doc;
     if (_hooks.size() == 0) {
       return doc;
     }
-    JsonDocument hooks = getObservableHooksJson(ignoreReadOnly, shortJson);
+    JsonDocument hooks = getObservableHooksJson();
     doc["observable"] = ((ObservableObject<T> *)_observable)->toJson();
     doc["hooks"] = hooks;
     return doc;
@@ -68,7 +81,6 @@ class Watcher {
     }
 
     if (hook->isReadonly()) {
-      st_log_debug(_WATCHER_TAG, "Hook is readonly, skipping id generation");
       hook->setId(-1);
     } else if (hook->getId() < 0) {
       int id = getNextHookId();
@@ -76,16 +88,13 @@ class Watcher {
         st_log_error(_WATCHER_TAG, "Failed to generate new id for hook");
         return false;
       }
-      st_log_debug(_WATCHER_TAG, "Generated new hook id=%d", id);
       hook->setId(id);
     } else if (getHookById(hook->getId()) != nullptr) {
-      st_log_error(_WATCHER_TAG, "Hook with id=%d already exists!",
-                   hook->getId());
+      st_log_error(_WATCHER_TAG, "Hook with id=%d already exists!", hook->getId());
       return false;
     }
 
     _hooks.append(hook);
-    st_log_debug(_WATCHER_TAG, "New hook added id=%d", hook->getId());
     return true;
   };
 

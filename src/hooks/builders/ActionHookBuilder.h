@@ -13,23 +13,22 @@ static const char * _ACTION_HOOK_BUILDER_TAG = "action_cb_builder";
 
 class ActionHookBuilder {
  public:
-  template <class B, typename T>
-  static Hook<T>* build(JsonObject doc, bool readOnly) {
-    if (doc.size() == 0) {
-      st_log_error(_ACTION_HOOK_BUILDER_TAG, "Json document is empty!");
-      return nullptr;
-    }
+  template <typename T>
+  static Hook<T>* build(JsonDocument doc) {
     const char* action = doc[_actionHookField];
     if (action == nullptr || strlen(action) == 0) {
       st_log_error(_ACTION_HOOK_BUILDER_TAG, "Action can't be blank!");
       return nullptr;
     }
-
-    ActionHook<B, T>* hook = new ActionHook<B, T>(action, readOnly);
-    st_log_debug(_ACTION_HOOK_BUILDER_TAG, "Action hook created: action=%s", action);
-
-    return hook;
+    return build<T>(action);
   }
+
+  template <typename T>
+  static Hook<T>* build(const char * action) {
+    st_log_debug(_ACTION_HOOK_BUILDER_TAG, "Action hook data:action=%s", action);
+    return new ActionHook<T>(action);
+  }
+
   static JsonDocument getTemplate() {
     JsonDocument doc;
     JsonObject actionObj = doc[_actionHookField].to<JsonObject>();

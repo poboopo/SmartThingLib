@@ -6,6 +6,9 @@
 #include <ArduinoJson.h>
 #include <functional>
 
+#define SENSOR_DATA_TYPE int16_t
+#define STATE_DATA_TYPE String
+
 static const char * _state = "state";
 static const char * _sensor = "sensor";
 
@@ -53,6 +56,13 @@ public:
     doc["type"] = observableTypeToStr(type);
     return doc;
   };
+
+  String toString() const {
+    String res;
+    res += type;
+    res += name;
+    return res;
+  }
 };
 
 #if ENABLE_SENSORS
@@ -69,17 +79,17 @@ inline const char* sensorTypeName(SensorType type) {
   return "type_not_found_how";
 };
 
-struct Sensor : public ObservableObject<int16_t> {
+struct Sensor : public ObservableObject<SENSOR_DATA_TYPE> {
 public:
-  Sensor() : ObservableObject<int16_t>(OBS_SENSOR){};
+  Sensor() : ObservableObject<SENSOR_DATA_TYPE>(OBS_SENSOR){};
   int pin;
   SensorType sensorType;
 };
 #endif
 
 #if ENABLE_STATES
-struct DeviceState : public ObservableObject<String> {
-  DeviceState() : ObservableObject<String>(OBS_STATE){};
+struct DeviceState : public ObservableObject<STATE_DATA_TYPE> {
+  DeviceState() : ObservableObject<STATE_DATA_TYPE>(OBS_STATE){};
 };
 #endif
 

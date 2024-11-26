@@ -13,32 +13,60 @@ static const char * _HTTP_HOOK_BUILDER_TAG = "http_cb_builder";
 
 class HttpHookBuilder {
  public:
-  template <class B, typename T>
-  static Hook<T>* build(JsonObject doc, bool readOnly) {
-    if (doc.size() == 0) {
-      st_log_error(_HTTP_HOOK_BUILDER_TAG, "Json document is empty!");
-      return nullptr;
-    }
-    const char* url = doc[_urlHookField];
-    if (url == nullptr || strlen(url) == 0) {
-      st_log_error(_HTTP_HOOK_BUILDER_TAG, "Url can't be blank!");
-      return nullptr;
-    }
-    String method = doc[_methodHookField];
-    if (method.isEmpty()) {
-      method = "GET";
-    }
-    const char* payload = doc[_payloadHookField];
-
-    HttpHook<B, T>* hook = new HttpHook<B, T>(url, readOnly);
-    hook->setPayload(payload);
-    hook->setMethod(method.c_str());
-    st_log_debug(_HTTP_HOOK_BUILDER_TAG,
-                 "Http hook created: url=%s, method=%s, payload=%s", url,
-                 method.c_str(), payload == nullptr ? "-" : payload);
-
-    return hook;
+  template <typename T>
+  static Hook<T>* build(JsonDocument doc) {
+    return build<T>(doc[_urlHookField], doc[_methodHookField], doc[_payloadHookField]);
   }
+
+  template <typename T>
+  static Hook<T> * build(const char * data) {
+    String url, method, payload;
+    uint8_t step = 0;
+
+    for (int i = 0; i < strlen(data); i++) {
+      if (data[i] == ';') {
+        step++;
+        continue;
+      }
+
+      switch (step) {
+        case 0:
+          url += data[i];
+          break;
+        case 1:
+          method += data[i];
+          break;
+        case 2:
+          payload += data[i];
+          break;
+      }
+    }
+
+    url.replace("|;", ";");
+    method.replace("|;", ";");
+    payload.replace("|;", ";");
+
+    return build<T>(url.c_str(), method.c_str(), payload.c_str());
+  }
+
+  template<typename T>
+  static Hook<T> * build(const char * url, const char * method, const char * payload) {
+    if (url == nullptr || strlen(url) == 0) {
+      st_log_error(_HTTP_HOOK_BUILDER_TAG, "Url can't be empty!");
+      return nullptr;
+    }
+
+    st_log_debug(
+      _HTTP_HOOK_BUILDER_TAG,
+      "Http hook data:url=%s,method=%s,payload=%s",
+      url,
+      method == nullptr || strlen(method) == 0 ? "GET" : method,
+      payload == nullptr ? "[empty]" : payload
+    );
+
+    return new HttpHook<T>(url, method, payload);
+  }
+
   static JsonDocument getTemplate() {
     JsonDocument doc;
     deserializeJson(doc, HTTP_HOOKS_TEMPLATES_JSON);

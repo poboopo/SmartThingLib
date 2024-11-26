@@ -56,8 +56,8 @@ class SettingsRepositoryClass {
   bool addConfigEntry(const char* name, const char* caption, ConfigEntryType type = CONFIG_STRING);
 
   #if ENABLE_HOOKS
-  JsonDocument getHooks();
-  bool setHooks(JsonDocument doc);
+  String getHooks();
+  bool setHooks(String &data);
   bool dropHooks();
   #endif
 
@@ -67,7 +67,7 @@ class SettingsRepositoryClass {
   #endif
 
   String exportSettings();
-  bool importSettings(String dump);
+  bool importSettings(String &dump);
   
   void clear();
 };

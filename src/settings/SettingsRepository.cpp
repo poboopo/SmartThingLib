@@ -15,6 +15,9 @@
 #define GROUP_ACTIONS "actions"
 #define GROUP_NAME "name"
 
+#define SEPARATOR_CHAR ';'
+#define END_CHAR '\n' 
+
 #ifdef ARDUINO_ARCH_ESP32
 bool eepromBegin() {
   return EEPROM.begin(EEPROM_LOAD_SIZE);
@@ -195,7 +198,7 @@ JsonDocument SettingsRepositoryClass::stringToObject(String& data) {
 
       if (!escaped && tmp == '|') {
         escaped = true;
-      } else if (!escaped && tmp == ':') {
+      } else if (!escaped && tmp == ';') {
         if (buildKey) {
           key = buff;
           buff.clear();
@@ -207,7 +210,7 @@ JsonDocument SettingsRepositoryClass::stringToObject(String& data) {
           buildKey = true;
         }
       } else {
-        if (escaped && tmp != ':') {
+        if (escaped && tmp != ';') {
           buff += '|';
         }
         buff += tmp;
@@ -229,13 +232,13 @@ String SettingsRepositoryClass::objectToString(JsonDocument doc) {
         continue;
       }
       String key = pair.key().c_str();
-      key.replace(":", "|:");
-      value.replace(":", "|:");
+      key.replace(";", "|;");
+      value.replace(";", "|;");
 
       res += key;
-      res += ":";
+      res += ';';
       res += value;
-      res += ":";
+      res += ';';
     }
   }
   res.remove(res.length() - 1);
@@ -276,7 +279,7 @@ WiFiConfig SettingsRepositoryClass::getWiFi() {
     tmp = settingsStr.charAt(i);
     if (!escaped && tmp == '|') {
       escaped = true;
-    } else if (!escaped && tmp == ':') {
+    } else if (!escaped && tmp == ';') {
       if (ssid) {
         settings.ssid = buff;
         ssid = false;
@@ -285,7 +288,7 @@ WiFiConfig SettingsRepositoryClass::getWiFi() {
       }
       buff.clear();
     } else {
-      if (escaped && tmp != ':') {
+      if (escaped && tmp != ';') {
         buff += '|';
       }
       buff += tmp;
@@ -297,13 +300,13 @@ WiFiConfig SettingsRepositoryClass::getWiFi() {
 }
 
 bool SettingsRepositoryClass::setWiFi(WiFiConfig settings) {
-  settings.ssid.replace(":", "|:");
-  settings.password.replace(":", "|:");
+  settings.ssid.replace(";", "|;");
+  settings.password.replace(";", "|;");
 
   char * buff = (char *) malloc(settings.ssid.length() + settings.password.length() + 4);
   sprintf(
     buff,
-    "%s:%s:%d",
+    "%s;%s;%d",
     settings.ssid.c_str(),
     settings.password.c_str(),
     settings.mode
@@ -378,24 +381,19 @@ bool SettingsRepositoryClass::addConfigEntry(const char* name, const char* capti
 }
 
 #if ENABLE_HOOKS
-bool SettingsRepositoryClass::setHooks(JsonDocument doc) {
+bool SettingsRepositoryClass::setHooks(String &data) {
   bool res = false;
-  String data;
-  serializeJson(doc, data);
-  if (writeData(HOOKS_INDEX, data.equals("[]") ? "" : data.c_str()) >= 0) {
-    st_log_debug(_SETTINGS_MANAGER_TAG, "Hooks updated");
+  if (writeData(HOOKS_INDEX, data.c_str()) >= 0) {
+    st_log_debug(_SETTINGS_MANAGER_TAG, "Hooks data updated");
     res = true;
   } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, "Failed to update hooks");
+    st_log_error(_SETTINGS_MANAGER_TAG, "Failed to update hooks data");
   }
   return res;
 }
 
-JsonDocument SettingsRepositoryClass::getHooks() {
-  JsonDocument doc;
-  String data = readData(HOOKS_INDEX, "[]");
-  deserializeJson(doc, data);
-  return doc;
+String SettingsRepositoryClass::getHooks() {
+  return readData(HOOKS_INDEX, "");
 }
 
 bool SettingsRepositoryClass::dropHooks() {
@@ -454,6 +452,10 @@ String SettingsRepositoryClass::exportSettings() {
     EEPROM.end(); 
     result = buff;
     free(buff);
+
+    result.replace("\n", "\\n");
+    result.replace("\t", "\\t");
+
     return result;
   } else {
     st_log_error(_SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
@@ -461,7 +463,7 @@ String SettingsRepositoryClass::exportSettings() {
   }
 }
 
-bool SettingsRepositoryClass::importSettings(String dump) {
+bool SettingsRepositoryClass::importSettings(String &dump) {
   if (dump.length() < LENGTH_PARTITION_SIZE) {
     st_log_error(_SETTINGS_MANAGER_TAG, "Bad dump - too short");
     return false;

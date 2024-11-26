@@ -16,7 +16,7 @@ class ObservablesManagerClass {
       );
     bool addDigitalSensor(const char* name, int pin);
     bool addAnalogSensor(const char* name, int pin);
-    const Sensor* getSensor(const char* name);
+    const Sensor* getSensor(const char* name); // todo remove
     JsonDocument getSensorsValues();
     JsonDocument getSensorsTypes();
     int16_t getSensorsCount();
@@ -25,12 +25,14 @@ class ObservablesManagerClass {
     #if ENABLE_STATES
     bool addDeviceState(const char* name, ObservableObject<const char*>::ValueProviderFunction valueProvider);
 
-    const DeviceState* getDeviceState(
-        const char* name);
+    const DeviceState* getDeviceState(const char* name); // todo remove
     JsonDocument getDeviceStatesInfo();
 
     int16_t getDeviceStatesCount();
     #endif
+
+    template<typename T>
+    const ObservableObject<T> * getObservableObject(const char * name);
   private:
     #if ENABLE_SENSORS
     SensorsList _sensorsList;

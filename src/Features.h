@@ -27,8 +27,12 @@
 #define ENABLE_STATES 1
 #endif
 
-#ifndef ENABLE_HOOKS
-#define ENABLE_HOOKS 1
+#if ENABLE_SENSORS && ENABLE_STATES
+  #ifndef ENABLE_HOOKS
+    #define ENABLE_HOOKS 1
+  #endif
+#else
+  #define ENABLE_HOOKS 0
 #endif
 
 #if ENABLE_ACTIONS

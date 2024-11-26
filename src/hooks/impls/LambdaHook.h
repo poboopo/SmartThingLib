@@ -7,17 +7,17 @@
 #include "hooks/impls/Hook.h"
 #include "logs/BetterLogger.h"
 
-template<class T, typename V, typename std::enable_if<std::is_base_of<Hook<V>, T>::value>::type* = nullptr>
-class LambdaHook : public T {
+template<class T, CHECK_HOOK_DATA_TYPE>
+class LambdaHook : public SELECT_HOOK_BASE_CLASS {
  public:
-  typedef std::function<void(V &value)> CustomHook;
+  typedef std::function<void(T &value)> CustomHook;
 
-  LambdaHook(CustomHook customHook, bool readOnly)
-      : T(LAMBDA_HOOK, readOnly),
+  LambdaHook(CustomHook customHook)
+      : SELECT_HOOK_BASE_CLASS(LAMBDA_HOOK),
         _customHook(customHook){};
   virtual ~LambdaHook() {};
 
-  void call(V &value) { _customHook(value); };
+  void call(T &value) { _customHook(value); };
 
  private:
   CustomHook _customHook;

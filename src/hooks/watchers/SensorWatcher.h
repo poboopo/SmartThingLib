@@ -11,10 +11,10 @@
 
 #define SENSOR_WATCHER_TYPE "sensor"
 
-class SensorWatcher : public Watcher<int16_t> {
+class SensorWatcher : public Watcher<SENSOR_DATA_TYPE> {
  public:
   SensorWatcher(const Sensor* sensor)
-      : Watcher<int16_t>(sensor, -1){};
+      : Watcher<SENSOR_DATA_TYPE>(sensor, -1){};
   virtual ~SensorWatcher() {};
 
   bool check() {

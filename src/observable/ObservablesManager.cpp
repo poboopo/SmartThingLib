@@ -15,7 +15,7 @@ int16_t ObservablesManagerClass::getSensorsCount() { return _sensorsList.size();
 
 bool ObservablesManagerClass::addSensor(
     const char* name,
-    ObservableObject<int16_t>::ValueProviderFunction function) {
+    ObservableObject<SENSOR_DATA_TYPE>::ValueProviderFunction function) {
   return _sensorsList.add(name, function);
 }
 

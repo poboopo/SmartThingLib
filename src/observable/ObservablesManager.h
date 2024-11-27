@@ -12,7 +12,7 @@ class ObservablesManagerClass {
     #if ENABLE_SENSORS
     bool addSensor(
         const char* name,
-        ObservableObject<int16_t>::ValueProviderFunction valueProvider
+        ObservableObject<SENSOR_DATA_TYPE>::ValueProviderFunction valueProvider
       );
     bool addDigitalSensor(const char* name, int pin);
     bool addAnalogSensor(const char* name, int pin);

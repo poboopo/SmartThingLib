@@ -132,13 +132,13 @@ Watcher<T> *HooksManagerClass::getWatcherOrCreate(
 
 #if ENABLE_STATES
 template <>
-Watcher<String> *HooksManagerClass::createWatcher(
-    const ObservableObject<String> *obj) {
+Watcher<STATE_DATA_TYPE> *HooksManagerClass::createWatcher(
+    const ObservableObject<STATE_DATA_TYPE> *obj) {
   return new DeviceStateWatcher((DeviceState *)obj);
 }
 
 template <>
-List<Watcher<String>> *HooksManagerClass::getWatchersList() {
+List<Watcher<STATE_DATA_TYPE>> *HooksManagerClass::getWatchersList() {
   return &_statesWatchers;
 }
 
@@ -146,12 +146,12 @@ List<Watcher<String>> *HooksManagerClass::getWatchersList() {
 
 #if ENABLE_SENSORS 
 template <>
-Watcher<int16_t> *HooksManagerClass::createWatcher(const ObservableObject<int16_t> *obj) {
+Watcher<SENSOR_DATA_TYPE> *HooksManagerClass::createWatcher(const ObservableObject<SENSOR_DATA_TYPE> *obj) {
   return new SensorWatcher((Sensor *)obj);
 }
 
 template <>
-List<Watcher<int16_t>> *HooksManagerClass::getWatchersList() {
+List<Watcher<SENSOR_DATA_TYPE>> *HooksManagerClass::getWatchersList() {
   return &_sensorsWatchers;
 }
 
@@ -166,12 +166,12 @@ bool HooksManagerClass::deleteHook(const char *type, const char *name,
 
   #if ENABLE_SENSORS
   if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
-    return deleteHookFromList<int16_t>(&_sensorsWatchers, name, id);
+    return deleteHookFromList<SENSOR_DATA_TYPE>(&_sensorsWatchers, name, id);
   } 
   #endif
   #if ENABLE_STATES
   if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
-    return deleteHookFromList<String>(&_statesWatchers, name, id);
+    return deleteHookFromList<STATE_DATA_TYPE>(&_statesWatchers, name, id);
   }
   #endif
 
@@ -205,12 +205,12 @@ bool HooksManagerClass::updateHook(JsonDocument doc) {
 
   #if ENABLE_SENSORS
   if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
-    return updateHook<int16_t>(&_sensorsWatchers, name, hookObject);
+    return updateHook<SENSOR_DATA_TYPE>(&_sensorsWatchers, name, hookObject);
   }
   #endif
   #if ENABLE_STATES
   if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
-    return updateHook<String>(&_statesWatchers, name, hookObject);
+    return updateHook<STATE_DATA_TYPE>(&_statesWatchers, name, hookObject);
   }
   #endif
   st_log_error(_HOOKS_MANAGER_TAG, "Observable type [%s] not supported!",
@@ -328,12 +328,12 @@ Watcher<T> *HooksManagerClass::getWatcherByObservableName(
 void HooksManagerClass::check() {
   #if ENABLE_SENSORS 
   if (_sensorsWatchers.size() > 0) {
-    checkWatchers<int16_t>(&_sensorsWatchers);
+    checkWatchers<SENSOR_DATA_TYPE>(&_sensorsWatchers);
   }
   #endif
   #if ENABLE_STATES
   if (_statesWatchers.size() > 0) {
-    checkWatchers<String>(&_statesWatchers);
+    checkWatchers<STATE_DATA_TYPE>(&_statesWatchers);
   }
   #endif
 }
@@ -359,12 +359,12 @@ boolean HooksManagerClass::callHook(const char * type, const char * name, int id
   );
   #if ENABLE_SENSORS
   if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
-    return callWatcherHook<int16_t>(&_sensorsWatchers, name, id, emptyValue ? 0 : value.toInt(), emptyValue);
+    return callWatcherHook<SENSOR_DATA_TYPE>(&_sensorsWatchers, name, id, emptyValue ? 0 : value.toInt(), emptyValue);
   }
   #endif
   #if ENABLE_STATES
   if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
-    return callWatcherHook<String>(&_statesWatchers, name, id, value, emptyValue);
+    return callWatcherHook<STATE_DATA_TYPE>(&_statesWatchers, name, id, value, emptyValue);
   }
   #endif
   st_log_error(_HOOKS_MANAGER_TAG, "Type %s not supported!", type);
@@ -491,7 +491,7 @@ bool HooksManagerClass::saveInSettings() {
   String data = "";
 
   #if ENABLE_STATES
-  _statesWatchers.forEach([&](Watcher<String> *watcher) {
+  _statesWatchers.forEach([&](Watcher<STATE_DATA_TYPE> *watcher) {
     if (watcher == nullptr) {
       return;
     }
@@ -500,7 +500,7 @@ bool HooksManagerClass::saveInSettings() {
   });
   #endif
   #if ENABLE_SENSORS 
-  _sensorsWatchers.forEach([&](Watcher<int16_t> *watcher) {
+  _sensorsWatchers.forEach([&](Watcher<SENSOR_DATA_TYPE> *watcher) {
     if (watcher == nullptr) {
       return;
     }
@@ -515,12 +515,12 @@ bool HooksManagerClass::saveInSettings() {
 JsonDocument HooksManagerClass::getObservableHooksJson(const char *type, const char *name) {
   #if ENABLE_SENSORS 
   if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
-    return getObservableHooksJsonFromList<int16_t>(&_sensorsWatchers, name);
+    return getObservableHooksJsonFromList<SENSOR_DATA_TYPE>(&_sensorsWatchers, name);
   } 
   #endif
   #if ENABLE_STATES
   if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
-    return getObservableHooksJsonFromList<String>(&_statesWatchers, name);
+    return getObservableHooksJsonFromList<STATE_DATA_TYPE>(&_statesWatchers, name);
   }
   #endif
   st_log_error(_HOOKS_MANAGER_TAG, "Type [%s] not supported", type);

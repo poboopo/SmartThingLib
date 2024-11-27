@@ -19,14 +19,70 @@ static const char * _urlHookField = "url";
 static const char * _methodHookField = "method";
 static const char * _payloadHookField = "payload";
 
+static const char * _methodGet = "GET";
+static const char * _methodPost = "POST";
+static const char * _methodPut = "PUT";
+static const char * _methodPatch = "PATCH";
+static const char * _methodDelete = "DELETE";
+
+enum RequestMethod {
+  UNKOWN_METHOD,
+  GET_METHOD,
+  POST_METHOD,
+  PUT_METHOD,
+  PATCH_METHOD,
+  DELETE_METHOD
+};
+
+inline const char * requestMethodToStr(RequestMethod method) {
+  switch (method) {
+    case GET_METHOD:
+      return _methodGet;
+    case POST_METHOD:
+      return _methodPost;
+    case PUT_METHOD:
+      return _methodPut;
+    case PATCH_METHOD:
+      return _methodPatch;
+    case DELETE_METHOD:
+      return _methodDelete;
+    default:
+      return "";
+  }
+}
+
+inline RequestMethod requestMethodFromStr(const char * method) {
+  if (method == nullptr || strlen(method) == 0) {
+    return UNKOWN_METHOD;
+  }
+
+  if (strcmp(method, _methodGet) == 0) {
+    return GET_METHOD;
+  }
+  if (strcmp(method, _methodPost) == 0) {
+    return POST_METHOD;
+  }
+  if (strcmp(method, _methodPut) == 0) {
+    return PUT_METHOD;
+  }
+  if (strcmp(method, _methodPatch) == 0) {
+    return PATCH_METHOD;
+  }
+  if (strcmp(method, _methodDelete) == 0) {
+    return DELETE_METHOD;
+  }
+
+  return UNKOWN_METHOD;
+}
+
 template<class T, CHECK_HOOK_DATA_TYPE>
 class HttpHook : public SELECT_HOOK_BASE_CLASS {
   public:
-    HttpHook(const char *url, const char * method, const char * payload)
+    HttpHook(const char *url, RequestMethod method, const char * payload)
         : SELECT_HOOK_BASE_CLASS(HTTP_HOOK), _url(url), _method(method), _payload(payload) {
       fixUrl();
-      if (method == nullptr || strlen(method) == 0) {
-        method = "GET";
+      if (method == UNKOWN_METHOD) {
+        method = GET_METHOD;
       } 
     };
     virtual ~HttpHook() {};
@@ -59,7 +115,7 @@ class HttpHook : public SELECT_HOOK_BASE_CLASS {
             tmp = _url;
             break;
           case 1:
-            tmp = _method;
+            tmp = String(_method);
             break;
           case 2:
             tmp = _payload;
@@ -87,23 +143,28 @@ class HttpHook : public SELECT_HOOK_BASE_CLASS {
         st_log_debug(_HTTP_HOOK_TAG, "Hook's url was updated to %s",
                     _url.c_str());
       }
-      if (doc[_methodHookField].is<const char*>()) {
-        _method = doc[_methodHookField].as<String>();
-        st_log_debug(_HTTP_HOOK_TAG, "Hook's method was updated to %s",
-                    _method.c_str());
+
+      if (doc[_methodHookField].is<JsonVariant>()) {
+        int method = doc[_methodHookField].as<int>();
+        if (method < GET_METHOD || method > DELETE_METHOD) {
+          st_log_error(_HTTP_HOOK_TAG, "Bad method code: %d", method);
+        } else {
+          _method = static_cast<RequestMethod>(method);
+          st_log_debug(_HTTP_HOOK_TAG, "Hook's method was updated to %s", requestMethodToStr(_method));
+        }
       }
+
       if (doc[_payloadHookField].is<const char*>()) {
         _payload = doc[_payloadHookField].as<String>();
-        st_log_debug(_HTTP_HOOK_TAG, "Hook's payload was updated to %s",
-                    _payload.c_str());
+        st_log_debug(_HTTP_HOOK_TAG, "Hook's payload was updated to %s", _payload.c_str());
       }
     };
  private:
   String _url;
-  String _method; // todo enum
+  RequestMethod _method;
   String _payload;
   int16_t _lastResponseCode = 0;
-  T _currentValue;
+  T _currentValue; // todo try to remove
 
   void createRequestTask() {
     if (_sending) {
@@ -134,7 +195,7 @@ class HttpHook : public SELECT_HOOK_BASE_CLASS {
     String payloadResolved = replaceValues(_payload.c_str(), valueStr);
 
     st_log_debug(_HTTP_HOOK_TAG, "Resolved url and payload: %s, %s", urlResolved.c_str(), payloadResolved.c_str());
-    st_log_debug(_HTTP_HOOK_TAG, "Sending request [%s] %s :: %s", _method.c_str(), urlResolved.c_str(), payloadResolved.c_str());
+    st_log_debug(_HTTP_HOOK_TAG, "Sending request [%s] %s :: %s", requestMethodToStr(_method), urlResolved.c_str(), payloadResolved.c_str());
 
     HTTPClient client;
     client.setTimeout(2000);
@@ -148,7 +209,7 @@ class HttpHook : public SELECT_HOOK_BASE_CLASS {
     if (!payloadResolved.isEmpty()) {
       client.addHeader("Content-Type", "application/json");
     }
-    _lastResponseCode = client.sendRequest(_method.c_str(), payloadResolved.c_str());
+    _lastResponseCode = client.sendRequest(requestMethodToStr(_method), payloadResolved.c_str());
     client.end();
 
     st_log_info(_HTTP_HOOK_TAG, "Request %s finished with code %d", urlResolved.c_str(), _lastResponseCode);

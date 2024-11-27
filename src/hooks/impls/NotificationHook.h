@@ -20,7 +20,6 @@ static const char * _NOTIFICATION_HOOK_TAG = "notification_hook";
 static const char * _messageHookField = "message";
 static const char * _nftHookField =  "ntfType"; // todo can rename now
 
-// todo enum
 static const char * _notificationInfoStr = "info";
 static const char * _notificationWarningStr = "warning";
 static const char * _notificationErrorStr = "error";
@@ -49,13 +48,13 @@ inline NotificationType notificationTypeFromStr(const char * type, NotificationT
     return defaultValue;
   }
 
-  if (strcmp(_notificationInfoStr, type)) {
+  if (strcmp(_notificationInfoStr, type) == 0) {
     return NOTIFICATION_INFO;
   }
-  if (strcmp(_notificationWarningStr, type)) {
+  if (strcmp(_notificationWarningStr, type) == 0) {
     return NOTIFICATION_WARNING;
   }
-  if (strcmp(_notificationErrorStr, type)) {
+  if (strcmp(_notificationErrorStr, type) == 0) {
     return NOTIFICATION_ERROR;
   }
 
@@ -115,8 +114,13 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
       if (doc[_messageHookField].is<const char*>()) {
         _message = doc[_messageHookField].as<String>();
       }
-      if (doc[_nftHookField].is<const char*>()) {
-        _notificationType = notificationTypeFromStr(doc[_nftHookField].as<const char*>());
+      if (doc[_nftHookField].is<JsonVariant>()) {
+        int type = doc[_nftHookField].as<int>();
+        if (type < NOTIFICATION_INFO || type > NOTIFICATION_ERROR) {
+          st_log_error(_NOTIFICATION_HOOK_TAG, "Unknown notification type: %d", type);
+        } else {
+          _notificationType = static_cast<NotificationType>(type);
+        }
       }
     }
     

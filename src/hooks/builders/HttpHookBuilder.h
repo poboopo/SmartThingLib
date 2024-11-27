@@ -4,18 +4,13 @@
 #include "hooks/impls/HttpHook.h"
 #include "logs/BetterLogger.h"
 
-#define HTTP_HOOKS_TEMPLATES_JSON                                      \
-  "{\"url\": {\"required\": true},\"method\": {\"required\": "             \
-  "false,\"values\": [\"GET\",\"POST\",\"DELETE\",\"PUT\"]},\"payload\": " \
-  "{\"required\": false}}"
-
 static const char * _HTTP_HOOK_BUILDER_TAG = "http_cb_builder";
 
 class HttpHookBuilder {
  public:
   template <typename T>
   static Hook<T>* build(JsonDocument doc) {
-    return build<T>(doc[_urlHookField], doc[_methodHookField], doc[_payloadHookField]);
+    return build<T>(doc[_urlHookField], static_cast<RequestMethod>(doc[_methodHookField].as<int>()), doc[_payloadHookField]);
   }
 
   template <typename T>
@@ -46,13 +41,17 @@ class HttpHookBuilder {
     method.replace("|;", ";");
     payload.replace("|;", ";");
 
-    return build<T>(url.c_str(), method.c_str(), payload.c_str());
+    return build<T>(url.c_str(), static_cast<RequestMethod>(method.toInt()), payload.c_str());
   }
 
   template<typename T>
-  static Hook<T> * build(const char * url, const char * method, const char * payload) {
+  static Hook<T> * build(const char * url, RequestMethod method, const char * payload) {
     if (url == nullptr || strlen(url) == 0) {
       st_log_error(_HTTP_HOOK_BUILDER_TAG, "Url can't be empty!");
+      return nullptr;
+    }
+    if (method < GET_METHOD || method > DELETE_METHOD) {
+      st_log_error(_HTTP_HOOK_BUILDER_TAG, "Bad method code: %d", method);
       return nullptr;
     }
 
@@ -60,7 +59,7 @@ class HttpHookBuilder {
       _HTTP_HOOK_BUILDER_TAG,
       "Http hook data:url=%s,method=%s,payload=%s",
       url,
-      method == nullptr || strlen(method) == 0 ? "GET" : method,
+      requestMethodToStr(method),
       payload == nullptr ? "[empty]" : payload
     );
 
@@ -69,7 +68,22 @@ class HttpHookBuilder {
 
   static JsonDocument getTemplate() {
     JsonDocument doc;
-    deserializeJson(doc, HTTP_HOOKS_TEMPLATES_JSON);
+    JsonObject url = doc[_urlHookField].to<JsonObject>();
+    url["required"] = true;
+
+    JsonObject payload = doc[_payloadHookField].to<JsonObject>();
+    payload["required"] = false;
+
+    JsonObject method = doc[_methodHookField].to<JsonObject>();
+    method["required"] = true;
+    
+    JsonObject obj = method["values"].to<JsonObject>();
+
+    obj[String(GET_METHOD)] = _methodGet;
+    obj[String(POST_METHOD)] = _methodPost;
+    obj[String(PUT_METHOD)] = _methodPut;
+    obj[String(PATCH_METHOD)] = _methodPatch;
+    obj[String(DELETE_METHOD)] = _methodDelete;
     return doc;
   }
 };

@@ -19,7 +19,7 @@ class NotificationHookBuilder {
 
     template <typename T>
     static Hook<T> * build(NotificationType type, String message) {
-      if (type == NOTIFICATION_UNKNOWN) {
+      if (type < NOTIFICATION_INFO || type > NOTIFICATION_ERROR) {
         st_log_error(_NOTIFICATION_HOOK_BUILDER_TAG, "Unknown notification type!");
         return nullptr;
       }

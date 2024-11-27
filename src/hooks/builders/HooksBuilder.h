@@ -124,6 +124,7 @@ class HooksBuilder {
       return hook;
     }
 
+    // todo probably should just hardcode json string
     static String getTemplates(ObservableType type) {
       JsonDocument doc;
       doc["default"] = getDefaultTemplate(type);

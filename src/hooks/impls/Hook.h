@@ -5,67 +5,12 @@
 #include <functional>
 
 #include "Features.h"
-#include "hooks/comparator/Comparator.h"
 #include "logs/BetterLogger.h"
+#include "hooks/impls/HookConstans.h"
 #include "observable/ObservableObjects.h"
 
 #define CHECK_HOOK_DATA_TYPE typename std::enable_if<std::is_same<T, SENSOR_DATA_TYPE>::value || std::is_same<T, STATE_DATA_TYPE>::value>::type* = nullptr
 #define SELECT_HOOK_BASE_CLASS std::conditional<std::is_same<T, SENSOR_DATA_TYPE>::value, SensorHook, StateHook>::type
-
-static const char * _lambdaHookType = "lambda";
-static const char * _actionHookType = "action";
-static const char * _httpHookType = "http";
-static const char * _notificationHookType = "notification";
-
-static const char * _idHookField = "id";
-static const char * _readonlyHookField = "readonly";
-static const char * _typeHookField = "type";
-static const char * _triggerEnabledHookField = "triggerEnabled";
-static const char * _triggerHookField = "trigger";
-static const char * _compareTypeHookField = "compareType";
-static const char * _thresholdHookField = "threshold";
-
-enum HookType {
-  UNKNOWN_HOOK,
-  LAMBDA_HOOK,
-  ACTION_HOOK,
-  HTTP_HOOK,
-  NOTIFICATION_HOOK
-};
-
-inline const char * hookTypeToStr(HookType type) {
-  switch (type) {
-    case LAMBDA_HOOK:
-      return _lambdaHookType;
-    case ACTION_HOOK:
-      return _actionHookType;
-    case HTTP_HOOK:
-      return _httpHookType;
-    case NOTIFICATION_HOOK:
-      return _notificationHookType;
-    default:
-      return "unknown";
-  }
-}
-
-inline HookType hookTypeFromStr(const char * type) {
-  if (type == nullptr) {
-    return UNKNOWN_HOOK;
-  }
-  if (strcmp(type, _actionHookType) == 0) {
-    return ACTION_HOOK;
-  }
-  if (strcmp(type, _httpHookType) == 0) {
-    return HTTP_HOOK;
-  }
-  if (strcmp(type, _notificationHookType) == 0) {
-    return NOTIFICATION_HOOK;
-  }
-  if (strcmp(type, _lambdaHookType) == 0) {
-    return LAMBDA_HOOK;
-  }
-  return UNKNOWN_HOOK;
-}
 
 template <typename T>
 class Hook {

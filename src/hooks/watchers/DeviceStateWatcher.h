@@ -11,10 +11,10 @@
 
 #define STATE_WATCHER_TYPE "state"
 
-class DeviceStateWatcher : public Watcher<String> {
+class DeviceStateWatcher : public Watcher<STATE_DATA_TYPE> {
  public:
   DeviceStateWatcher(const DeviceState* deviceState)
-      : Watcher<String>(deviceState, ""){};
+      : Watcher<STATE_DATA_TYPE>(deviceState, ""){};
   virtual ~DeviceStateWatcher() {};
 
   bool check() {

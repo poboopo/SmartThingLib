@@ -16,7 +16,7 @@ static const char * _SENSORS_LIST_TAG = "sensors_list";
 class SensorsList : public List<Sensor> {
  public:
   bool add(const char* name,
-           ObservableObject<int16_t>::ValueProviderFunction
+           ObservableObject<SENSOR_DATA_TYPE>::ValueProviderFunction
                valueProvider) {
     return add(name, TYPE_CUSTOM, valueProvider);
   };
@@ -72,7 +72,7 @@ class SensorsList : public List<Sensor> {
 
  private:
   bool add(const char* name, SensorType type,
-           ObservableObject<int16_t>::ValueProviderFunction
+           ObservableObject<SENSOR_DATA_TYPE>::ValueProviderFunction
                valueProvider) {
     if (findSensor(name) != nullptr) {
       st_log_warning(_SENSORS_LIST_TAG,

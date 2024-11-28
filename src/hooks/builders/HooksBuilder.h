@@ -1,7 +1,6 @@
 #ifndef HOOKS_BUILDER_H
 #define HOOKS_BUILDER_H
 
-#include <ArduinoJson.h>
 #include <type_traits>
 
 #include "Features.h"
@@ -15,18 +14,18 @@
 const char * const _HOOKS_BUILDER_TAG = "hooks_factory";
 
 #ifdef ENABLE_ACTIONS
-  const char * const PROGMEM TEMPLATES_JSON = "{\"default\":%s,\"%s\":%s,\"%s\":%s,\"%s\":%s}";
-  const char * const PROGMEM ACTION_HOOK_TEMPLATE = "{\"action\":{\"required\":true,\"values\":{%s}}}";
+  const char * const TEMPLATES_JSON = "{\"default\":%s,\"%s\":%s,\"%s\":%s,\"%s\":%s}";
+  const char * const ACTION_HOOK_TEMPLATE = "{\"action\":{\"required\":true,\"values\":{%s}}}";
   int const TEMPLATE_JSON_LENGTH = 24;
   int const ACTION_HOOK_TEMPLATE_LENGTH = 42;
 #else
   const char * const TEMPLATES_JSON = "{\"default\":%s,\"%s\":%s,\"%s\":%s}";
   int const TEMPLATE_JSON_LENGTH = 20;
 #endif
-const char * const PROGMEM DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON = "{\"threshold\":{\"required\":false},\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}";
-const char * const PROGMEM DEFAULT_STATES_HOOKS_TEMPLATES_JSON = "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}";
-const char * const PROGMEM HTTP_HOOK_TEMPLATE = "{\"url\":{\"required\":true},\"payload\":{\"required\":false},\"method\":{\"required\":true,\"values\":{\"1\":\"GET\",\"2\":\"POST\",\"3\":\"PUT\",\"4\":\"PATCH\",\"5\":\"DELETE\"}}}";
-const char * const PROGMEM NOTIFICATION_HOOK_TEMPLATE = "{\"message\":{\"required\":true},\"ntfType\":{\"values\":{\"1\":\"info\",\"2\":\"warning\",\"3\":\"error\"}}}";
+const char * const DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON = "{\"threshold\":{\"required\":false},\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}";
+const char * const DEFAULT_STATES_HOOKS_TEMPLATES_JSON = "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}";
+const char * const HTTP_HOOK_TEMPLATE = "{\"url\":{\"required\":true},\"payload\":{\"required\":false},\"method\":{\"required\":true,\"values\":{\"1\":\"GET\",\"2\":\"POST\",\"3\":\"PUT\",\"4\":\"PATCH\",\"5\":\"DELETE\"}}}";
+const char * const NOTIFICATION_HOOK_TEMPLATE = "{\"message\":{\"required\":true},\"ntfType\":{\"values\":{\"1\":\"info\",\"2\":\"warning\",\"3\":\"error\"}}}";
 
 class HooksBuilder {
   public:

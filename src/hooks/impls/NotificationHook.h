@@ -18,7 +18,7 @@
 
 const char * const _NOTIFICATION_HOOK_TAG = "notification_hook";
 const char * const _messageHookField = "message";
-const char * const _nftHookField =  "ntfType"; // todo can rename now
+const char * const _nftHookField =  "notificationType";
 
 const char * const _notificationInfoStr = "info";
 const char * const _notificationWarningStr = "warning";

@@ -40,21 +40,6 @@ class NotificationHookBuilder {
 
       return new NotificationHook<T>(type, message.c_str());
     }
-
-    static JsonDocument getTemplate() {
-      JsonDocument doc;
-      JsonObject msg = doc[_messageHookField].to<JsonObject>();
-      msg["required"] = true;
-      
-      JsonObject type = doc[_nftHookField].to<JsonObject>();
-      JsonObject obj = type["values"].to<JsonObject>();
-
-      obj[String(NOTIFICATION_INFO)] = _notificationInfoStr;
-      obj[String(NOTIFICATION_WARNING)] = _notificationWarningStr;
-      obj[String(NOTIFICATION_ERROR)] = _notificationErrorStr;
-
-      return doc;
-    }
 };
 
 #endif

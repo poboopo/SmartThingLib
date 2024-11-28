@@ -94,6 +94,10 @@ void ActionsManagerClass::scheduled() {
 }
 #endif
 
+void ActionsManagerClass::forEachAction(ForEachIndexFunction forFunc) {
+  forEach(forFunc);
+}
+
 JsonDocument ActionsManagerClass::toJson() {
   JsonDocument doc;
   doc.to<JsonArray>();

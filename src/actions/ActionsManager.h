@@ -55,6 +55,7 @@ class ActionsManagerClass : protected List<Action> {
   ActionResult call(const char* name);
 
   const Action * get(const char* name) const;
+  void forEachAction(ForEachIndexFunction forFunc);
 
   #if ENABLE_ACTIONS_SCHEDULER
   void loadFromSettings();

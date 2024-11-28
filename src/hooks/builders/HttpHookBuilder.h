@@ -65,27 +65,6 @@ class HttpHookBuilder {
 
     return new HttpHook<T>(url, method, payload);
   }
-
-  static JsonDocument getTemplate() {
-    JsonDocument doc;
-    JsonObject url = doc[_urlHookField].to<JsonObject>();
-    url["required"] = true;
-
-    JsonObject payload = doc[_payloadHookField].to<JsonObject>();
-    payload["required"] = false;
-
-    JsonObject method = doc[_methodHookField].to<JsonObject>();
-    method["required"] = true;
-    
-    JsonObject obj = method["values"].to<JsonObject>();
-
-    obj[String(GET_METHOD)] = _methodGet;
-    obj[String(POST_METHOD)] = _methodPost;
-    obj[String(PUT_METHOD)] = _methodPut;
-    obj[String(PATCH_METHOD)] = _methodPatch;
-    obj[String(DELETE_METHOD)] = _methodDelete;
-    return doc;
-  }
 };
 
 #endif

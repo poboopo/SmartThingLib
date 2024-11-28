@@ -104,6 +104,7 @@ class List {
     }
     return nullptr;
   };
+  
   int16_t indexOf(T *value) {
     if (_count == 0) {
       return -1;

@@ -34,16 +34,16 @@
 #define MULTICAST_GROUP IPAddress(224, 1, 1, 1)
 #define MULTICAST_PORT 7778
 
-static const char * _SMART_THING_TAG = "smart_thing";
+const char * const _SMART_THING_TAG = "smart_thing";
 #ifdef ARDUINO_ARCH_ESP32
-static const char * beaconTemplate = "%s$%s$%s$%s$esp32";
-static size_t beaconExtraSize = 9;
+const char * const beaconTemplate = "%s$%s$%s$%s$esp32";
+const size_t beaconExtraSize = 9;
 #endif
 #ifdef ARDUINO_ARCH_ESP8266
-static const char * beaconTemplate = "%s$%s$%s$%s$esp8266";
-static int beaconExtraSize = 11;
+const char * const beaconTemplate = "%s$%s$%s$%s$esp8266";
+const int beaconExtraSize = 11;
 #endif
-static size_t versionLen = strlen(SMART_THING_VERSION);
+const size_t versionLen = strlen(SMART_THING_VERSION);
 
 SmartThingClass SmartThing;
 

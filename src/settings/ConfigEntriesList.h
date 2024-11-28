@@ -6,7 +6,7 @@
 #include "utils/List.h"
 #include "logs/BetterLogger.h"
 
-static const char * _CONFIG_ENTRIES_LIST_TAG = "config_entries_list";
+const char * const _CONFIG_ENTRIES_LIST_TAG = "config_entries_list";
 
 enum ConfigEntryType {
   CONFIG_STRING,

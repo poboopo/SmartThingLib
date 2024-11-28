@@ -2,7 +2,7 @@
 
 #if ENABLE_ACTIONS
 
-static const char * _ACTIONS_TAG = "actions_manager";
+const char * const _ACTIONS_TAG = "actions_manager";
 
 ActionsManagerClass ActionsManager;
 

@@ -15,7 +15,7 @@
 #include "net/rest/handlers/DangerRequestHandler.h"
 #include "net/rest/WebPageAssets.h"
 
-static const char * _WEB_SERVER_TAG = "web_server";
+const char * const _WEB_SERVER_TAG = "web_server";
 
 String resetReasonAsString() {
   #ifdef ARDUINO_ARCH_ESP8266

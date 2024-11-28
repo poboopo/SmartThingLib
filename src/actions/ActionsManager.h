@@ -11,11 +11,11 @@
 #include "logs/BetterLogger.h"
 #include "settings/SettingsRepository.h"
 
-static const char * ACTIONS_JSON_NAME = "name";
-static const char * ACTIONS_JSON_CAPTION = "caption";
+const char * const ACTIONS_JSON_NAME = "name";
+const char * const ACTIONS_JSON_CAPTION = "caption";
 #if ENABLE_ACTIONS_SCHEDULER
-static const char * ACTIONS_JSON_LAST_CALL = "lastCall";
-static const char * ACTIONS_JSON_DELAY = "callDelay";
+const char * const ACTIONS_JSON_LAST_CALL = "lastCall";
+const char * const ACTIONS_JSON_DELAY = "callDelay";
 #endif
 
 struct ActionResult {

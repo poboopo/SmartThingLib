@@ -13,7 +13,7 @@
 #include "observable/ObservableObjects.h"
 #include "utils/List.h"
 
-static const char * _DEVICE_STATES_LIST_TAG = "device_states_list";
+const char * const _DEVICE_STATES_LIST_TAG = "device_states_list";
 
 class DeviceStatesList : public List<DeviceState> {
  public:

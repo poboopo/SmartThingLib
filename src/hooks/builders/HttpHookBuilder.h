@@ -4,7 +4,7 @@
 #include "hooks/impls/HttpHook.h"
 #include "logs/BetterLogger.h"
 
-static const char * _HTTP_HOOK_BUILDER_TAG = "http_cb_builder";
+const char * const _HTTP_HOOK_BUILDER_TAG = "http_cb_builder";
 
 class HttpHookBuilder {
  public:

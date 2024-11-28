@@ -3,23 +3,23 @@
 
 #include <Arduino.h>
 
-static const char * _lambdaHookType = "lambda";
-static const char * _actionHookType = "action";
-static const char * _httpHookType = "http";
-static const char * _notificationHookType = "notification";
+const char * const _lambdaHookType = "lambda";
+const char * const _actionHookType = "action";
+const char * const _httpHookType = "http";
+const char * const _notificationHookType = "notification";
 
-static const char * _idHookField = "id";
-static const char * _readonlyHookField = "readonly";
-static const char * _typeHookField = "type";
-static const char * _triggerEnabledHookField = "triggerEnabled";
-static const char * _triggerHookField = "trigger";
-static const char * _compareTypeHookField = "compareType";
-static const char * _thresholdHookField = "threshold";
+const char * const _idHookField = "id";
+const char * const _readonlyHookField = "readonly";
+const char * const _typeHookField = "type";
+const char * const _triggerEnabledHookField = "triggerEnabled";
+const char * const _triggerHookField = "trigger";
+const char * const _compareTypeHookField = "compareType";
+const char * const _thresholdHookField = "threshold";
 
-static const char * COMPARE_EQ = "eq";
-static const char * COMPARE_NEQ = "neq";
-static const char * COMPARE_GTE = "gte";
-static const char * COMPARE_LTE = "lte";
+const char * const COMPARE_EQ = "eq";
+const char * const COMPARE_NEQ = "neq";
+const char * const COMPARE_GTE = "gte";
+const char * const COMPARE_LTE = "lte";
 
 enum HookType {
   UNKNOWN_HOOK,

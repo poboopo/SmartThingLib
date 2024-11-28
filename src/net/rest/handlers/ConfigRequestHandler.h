@@ -10,7 +10,7 @@
 #include "net/rest/handlers/RequestHandler.h"
 
 #define CONFIG_PATH "/config"
-static const char * _CONFIG_LOG_TAG = "config_handler";
+const char * const _CONFIG_LOG_TAG = "config_handler";
 
 class ConfigRequestHandler : public RequestHandler {
  public:

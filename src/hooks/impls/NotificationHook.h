@@ -16,13 +16,13 @@
 #include "utils/StringUtils.h"
 
 
-static const char * _NOTIFICATION_HOOK_TAG = "notification_hook";
-static const char * _messageHookField = "message";
-static const char * _nftHookField =  "ntfType"; // todo can rename now
+const char * const _NOTIFICATION_HOOK_TAG = "notification_hook";
+const char * const _messageHookField = "message";
+const char * const _nftHookField =  "ntfType"; // todo can rename now
 
-static const char * _notificationInfoStr = "info";
-static const char * _notificationWarningStr = "warning";
-static const char * _notificationErrorStr = "error";
+const char * const _notificationInfoStr = "info";
+const char * const _notificationWarningStr = "warning";
+const char * const _notificationErrorStr = "error";
 
 enum NotificationType {
   NOTIFICATION_UNKNOWN,

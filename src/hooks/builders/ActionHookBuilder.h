@@ -9,7 +9,7 @@
 #include "logs/BetterLogger.h"
 #include "actions/ActionsManager.h"
 
-static const char * _ACTION_HOOK_BUILDER_TAG = "action_cb_builder";
+const char * const _ACTION_HOOK_BUILDER_TAG = "action_cb_builder";
 
 class ActionHookBuilder {
  public:

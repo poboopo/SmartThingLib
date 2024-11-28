@@ -37,7 +37,7 @@
 #define st_log_error(tag, format, ...)
 #endif
 
-static const char * _LOGGER_TAG = "logger";
+const char * const _LOGGER_TAG = "logger";
 
 class BetterLogger {
  public:

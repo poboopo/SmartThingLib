@@ -18,7 +18,7 @@
 #define HOOK_ID_ARG "id"
 #define HOOKS_RQ_PATH "/hooks"
 
-static const char * _HOOKS_RQ_TAG = "hooks_handler";
+const char * const _HOOKS_RQ_TAG = "hooks_handler";
 
 // todo split to methods
 class HooksRequestHandler : public RequestHandler {

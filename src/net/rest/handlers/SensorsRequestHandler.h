@@ -9,7 +9,7 @@
 #include "net/rest/WebPageAssets.h"
 
 #define SENSORS_RQ_PATH "/sensors"
-static const char * _SENSORS_RQ_TAG = "sensors_handler";
+const char * const _SENSORS_RQ_TAG = "sensors_handler";
 
 class SensorsRequestHandler : public AsyncWebHandler {
  public:

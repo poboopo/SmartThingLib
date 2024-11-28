@@ -10,7 +10,7 @@
 #include "logs/BetterLogger.h"
 #include "utils/List.h"
 
-static const char * _WATCHER_TAG = "watcher";
+const char * const _WATCHER_TAG = "watcher";
 
 /*
     Класс наблюдатель за объектами

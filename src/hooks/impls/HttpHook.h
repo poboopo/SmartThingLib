@@ -14,16 +14,16 @@
 #include "logs/BetterLogger.h"
 #include "utils/StringUtils.h"
 
-static const char * _HTTP_HOOK_TAG = "http_hook";
-static const char * _urlHookField = "url";
-static const char * _methodHookField = "method";
-static const char * _payloadHookField = "payload";
+const char * const _HTTP_HOOK_TAG = "http_hook";
+const char * const _urlHookField = "url";
+const char * const _methodHookField = "method";
+const char * const _payloadHookField = "payload";
 
-static const char * _methodGet = "GET";
-static const char * _methodPost = "POST";
-static const char * _methodPut = "PUT";
-static const char * _methodPatch = "PATCH";
-static const char * _methodDelete = "DELETE";
+const char * const _methodGet = "GET";
+const char * const _methodPost = "POST";
+const char * const _methodPut = "PUT";
+const char * const _methodPatch = "PATCH";
+const char * const _methodDelete = "DELETE";
 
 enum RequestMethod {
   UNKOWN_METHOD,

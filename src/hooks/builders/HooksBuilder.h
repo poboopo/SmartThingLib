@@ -16,11 +16,11 @@ const char * const _HOOKS_BUILDER_TAG = "hooks_factory";
 #ifdef ENABLE_ACTIONS
   const char * const TEMPLATES_JSON = "{\"default\":%s,\"%s\":%s,\"%s\":%s,\"%s\":%s}";
   const char * const ACTION_HOOK_TEMPLATE = "{\"action\":{\"required\":true,\"values\":{%s}}}";
-  int const TEMPLATE_JSON_LENGTH = 24;
-  int const ACTION_HOOK_TEMPLATE_LENGTH = 42;
+  const size_t TEMPLATE_JSON_LENGTH = 24;
+  const size_t ACTION_HOOK_TEMPLATE_LENGTH = 42;
 #else
   const char * const TEMPLATES_JSON = "{\"default\":%s,\"%s\":%s,\"%s\":%s}";
-  int const TEMPLATE_JSON_LENGTH = 20;
+  const size_t TEMPLATE_JSON_LENGTH = 20;
 #endif
 const char * const DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON = "{\"threshold\":{\"required\":false},\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}";
 const char * const DEFAULT_STATES_HOOKS_TEMPLATES_JSON = "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}";
@@ -133,8 +133,8 @@ class HooksBuilder {
     static String getTemplates(ObservableType type) {
       const char * defTemp = getDefaultTemplate(type);
 
-      int nameLen = strlen(_httpHookType) + strlen(_notificationHookType);
-      int tempLen = strlen(defTemp) + strlen(HTTP_HOOK_TEMPLATE) + strlen(NOTIFICATION_HOOK_TEMPLATE);
+      size_t nameLen = strlen(_httpHookType) + strlen(_notificationHookType);
+      size_t tempLen = strlen(defTemp) + strlen(HTTP_HOOK_TEMPLATE) + strlen(NOTIFICATION_HOOK_TEMPLATE);
       
       #if ENABLE_ACTIONS
         int actionCount = ActionsManager.count();
@@ -154,7 +154,7 @@ class HooksBuilder {
           });
         }
 
-        int actionTempLen = actionsBuff.length() + ACTION_HOOK_TEMPLATE_LENGTH;
+        size_t actionTempLen = actionsBuff.length() + ACTION_HOOK_TEMPLATE_LENGTH;
         char actionTemp[actionTempLen + 1];
         sprintf(actionTemp, ACTION_HOOK_TEMPLATE, actionsBuff.c_str());
 

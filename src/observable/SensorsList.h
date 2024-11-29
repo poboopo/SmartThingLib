@@ -11,7 +11,7 @@
 #include "observable/ObservableObjects.h"
 #include "utils/List.h"
 
-static const char * _SENSORS_LIST_TAG = "sensors_list";
+const char * const _SENSORS_LIST_TAG = "sensors_list";
 
 class SensorsList : public List<Sensor> {
  public:

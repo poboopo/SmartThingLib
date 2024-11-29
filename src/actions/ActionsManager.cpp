@@ -2,7 +2,7 @@
 
 #if ENABLE_ACTIONS
 
-static const char * _ACTIONS_TAG = "actions_manager";
+const char * const _ACTIONS_TAG = "actions_manager";
 
 ActionsManagerClass ActionsManager;
 
@@ -93,6 +93,10 @@ void ActionsManagerClass::scheduled() {
   });
 }
 #endif
+
+void ActionsManagerClass::forEachAction(ForEachIndexFunction forFunc) {
+  forEach(forFunc);
+}
 
 JsonDocument ActionsManagerClass::toJson() {
   JsonDocument doc;

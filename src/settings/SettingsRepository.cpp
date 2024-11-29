@@ -41,8 +41,8 @@ enum DataIndex {
   LAST_INDEX = ACTIONS_INDEX
 };
 
-static const char * _SETTINGS_MANAGER_TAG = "settings_manager";
-static const char * EEPROM_OPEN_ERROR = "Failed to open EEPROM";
+const char * const _SETTINGS_MANAGER_TAG = "settings_manager";
+const char * const EEPROM_OPEN_ERROR = "Failed to open EEPROM";
 
 SettingsRepositoryClass SettingsRepository;
 

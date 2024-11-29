@@ -10,8 +10,8 @@
 #include "hooks/impls/Hook.h"
 #include "logs/BetterLogger.h"
 
-static const char * _ACTION_HOOK_TAG = "action_hook";
-static const char * _actionHookField = "action";
+const char * const _ACTION_HOOK_TAG = "action_hook";
+const char * const _actionHookField = "action";
 
 template<class T, CHECK_HOOK_DATA_TYPE>
 class ActionHook : public SELECT_HOOK_BASE_CLASS {

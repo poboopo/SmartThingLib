@@ -6,7 +6,7 @@
 #include "net/rest/RestController.h"
 #include "net/rest/handlers/HandlerUtils.h"
 
-static const char * _REQUEST_HANDLER_TAG = "request";
+const char * const _REQUEST_HANDLER_TAG = "request";
 
 class RequestHandler : public AsyncWebHandler {
   public:
@@ -17,7 +17,7 @@ class RequestHandler : public AsyncWebHandler {
       if (request->method() == HTTP_OPTIONS) {
         AsyncWebServerResponse * response = request->beginResponse(200);
         response->addHeader("Access-Control-Allow-Origin", "*");
-        response->addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response->addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         response->addHeader("Access-Control-Allow-Headers", "Content-Type");
         request->send(response);
         return;
@@ -25,11 +25,11 @@ class RequestHandler : public AsyncWebHandler {
 
       st_log_request(_REQUEST_HANDLER_TAG, request->methodToString(), request->url().c_str(), _body.c_str());
       AsyncWebServerResponse * asyncResponse = processRequest(request);
-      // todo if 500 or 400 - try to read exception
+
       if (asyncResponse == nullptr) {
         st_log_error(_REQUEST_HANDLER_TAG, "Response = nullptr! Sending 404 response");
         asyncResponse = request->beginResponse(404);
-      } 
+      }
 
       asyncResponse->addHeader("Access-Control-Allow-Origin", "*");
       request->send(asyncResponse);

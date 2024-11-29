@@ -10,7 +10,7 @@
 #include "hooks/watchers/SensorWatcher.h"
 #include "settings/SettingsRepository.h"
 
-static const char * _HOOKS_MANAGER_TAG = "hooks_manager";
+const char * const _HOOKS_MANAGER_TAG = "hooks_manager";
 
 HooksManagerClass HooksManager;
 

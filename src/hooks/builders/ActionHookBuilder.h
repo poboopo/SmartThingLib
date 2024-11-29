@@ -9,7 +9,7 @@
 #include "logs/BetterLogger.h"
 #include "actions/ActionsManager.h"
 
-static const char * _ACTION_HOOK_BUILDER_TAG = "action_cb_builder";
+const char * const _ACTION_HOOK_BUILDER_TAG = "action_cb_builder";
 
 class ActionHookBuilder {
  public:
@@ -27,21 +27,6 @@ class ActionHookBuilder {
   static Hook<T>* build(const char * action) {
     st_log_debug(_ACTION_HOOK_BUILDER_TAG, "Action hook data:action=%s", action);
     return new ActionHook<T>(action);
-  }
-
-  static JsonDocument getTemplate() {
-    JsonDocument doc;
-    JsonObject actionObj = doc[_actionHookField].to<JsonObject>();
-    actionObj["required"] = true;
-    JsonObject valuesObj = actionObj["values"].to<JsonObject>();
-
-    JsonDocument actions = ActionsManager.toJson();
-    JsonArray actionsArray = actions.as<JsonArray>();
-    for (JsonObject action: actionsArray) {
-      const char * name = action[ACTIONS_JSON_NAME];
-      valuesObj[name] = action[ACTIONS_JSON_CAPTION];
-    }
-    return doc;
   }
 };
 #endif

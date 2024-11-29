@@ -9,7 +9,7 @@
 #include "net/rest/WebPageAssets.h"
 
 #define STATE_RQ_PATH "/state"
-static const char * _STATE_RQ_TAG = "state_handler";
+const char * const _STATE_RQ_TAG = "state_handler";
 
 class StateRequestHandler : public AsyncWebHandler {
  public:

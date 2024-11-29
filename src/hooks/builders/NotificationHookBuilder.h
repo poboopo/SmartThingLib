@@ -3,7 +3,7 @@
 
 #include "hooks/impls/NotificationHook.h"
 
-static const char * _NOTIFICATION_HOOK_BUILDER_TAG = "notification_cb_builder";
+const char * const _NOTIFICATION_HOOK_BUILDER_TAG = "notification_cb_builder";
 
 class NotificationHookBuilder {
   public:
@@ -19,7 +19,7 @@ class NotificationHookBuilder {
 
     template <typename T>
     static Hook<T> * build(NotificationType type, String message) {
-      if (type == NOTIFICATION_UNKNOWN) {
+      if (type < NOTIFICATION_INFO || type > NOTIFICATION_ERROR) {
         st_log_error(_NOTIFICATION_HOOK_BUILDER_TAG, "Unknown notification type!");
         return nullptr;
       }
@@ -39,21 +39,6 @@ class NotificationHookBuilder {
       );
 
       return new NotificationHook<T>(type, message.c_str());
-    }
-
-    static JsonDocument getTemplate() {
-      JsonDocument doc;
-      JsonObject msg = doc[_messageHookField].to<JsonObject>();
-      msg["required"] = true;
-      
-      JsonObject type = doc[_nftHookField].to<JsonObject>();
-      JsonObject obj = type["values"].to<JsonObject>();
-
-      obj[String(NOTIFICATION_INFO)] = _notificationInfoStr;
-      obj[String(NOTIFICATION_WARNING)] = _notificationWarningStr;
-      obj[String(NOTIFICATION_ERROR)] = _notificationErrorStr;
-
-      return doc;
     }
 };
 

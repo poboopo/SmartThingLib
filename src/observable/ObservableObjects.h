@@ -9,8 +9,8 @@
 #define SENSOR_DATA_TYPE int16_t
 #define STATE_DATA_TYPE String
 
-static const char * _state = "state";
-static const char * _sensor = "sensor";
+const char * const _state = "state";
+const char * const _sensor = "sensor";
 
 enum ObservableType {
   UNKNOWN_OBS_TYPE,

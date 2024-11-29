@@ -1,7 +1,6 @@
-#ifndef HOOKS_FACTORY_H
-#define HOOKS_FACTORY_H
+#ifndef HOOKS_BUILDER_H
+#define HOOKS_BUILDER_H
 
-#include <ArduinoJson.h>
 #include <type_traits>
 
 #include "Features.h"
@@ -12,14 +11,21 @@
 #include "hooks/impls/Hook.h"
 #include "hooks/impls/HttpHook.h"
 
-static const char * _HOOKS_BUILDER_TAG = "hooks_factory";
+const char * const _HOOKS_BUILDER_TAG = "hooks_factory";
 
-#define DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON                                  \
-  "{\"threshold\":{\"required\":false},\"trigger\":{\"required\":false},\"compareType\":{\"required\":true," \
-  "\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}"
-#define DEFAULT_STATES_HOOKS_TEMPLATES_JSON                                  \
-  "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true," \
-  "\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}"
+#ifdef ENABLE_ACTIONS
+  const char * const TEMPLATES_JSON = "{\"default\":%s,\"%s\":%s,\"%s\":%s,\"%s\":%s}";
+  const char * const ACTION_HOOK_TEMPLATE = "{\"action\":{\"required\":true,\"values\":{%s}}}";
+  const size_t TEMPLATE_JSON_LENGTH = 24;
+  const size_t ACTION_HOOK_TEMPLATE_LENGTH = 42;
+#else
+  const char * const TEMPLATES_JSON = "{\"default\":%s,\"%s\":%s,\"%s\":%s}";
+  const size_t TEMPLATE_JSON_LENGTH = 20;
+#endif
+const char * const DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON = "{\"threshold\":{\"required\":false},\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}";
+const char * const DEFAULT_STATES_HOOKS_TEMPLATES_JSON = "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}";
+const char * const HTTP_HOOK_TEMPLATE = "{\"url\":{\"required\":true},\"payload\":{\"required\":false},\"method\":{\"required\":true,\"values\":{\"1\":\"GET\",\"2\":\"POST\",\"3\":\"PUT\",\"4\":\"PATCH\",\"5\":\"DELETE\"}}}";
+const char * const NOTIFICATION_HOOK_TEMPLATE = "{\"message\":{\"required\":true},\"notificationType\":{\"values\":{\"1\":\"info\",\"2\":\"warning\",\"3\":\"error\"}}}";
 
 class HooksBuilder {
   public:
@@ -125,19 +131,59 @@ class HooksBuilder {
     }
 
     static String getTemplates(ObservableType type) {
-      JsonDocument doc;
-      doc["default"] = getDefaultTemplate(type);
-      #if ENABLE_ACTIONS
-      if (ActionsManager.count() > 0) {
-        doc[_actionHookType] = ActionHookBuilder::getTemplate();
-      }
-      #endif
-      doc[_httpHookType] = HttpHookBuilder::getTemplate();
-      doc[_notificationHookType] = NotificationHookBuilder::getTemplate();
+      const char * defTemp = getDefaultTemplate(type);
 
-      String result;
-      serializeJson(doc, result);
+      size_t nameLen = strlen(_httpHookType) + strlen(_notificationHookType);
+      size_t tempLen = strlen(defTemp) + strlen(HTTP_HOOK_TEMPLATE) + strlen(NOTIFICATION_HOOK_TEMPLATE);
       
+      #if ENABLE_ACTIONS
+        int actionCount = ActionsManager.count();
+        String actionsBuff;
+
+        if (actionCount > 0) {
+          ActionsManager.forEachAction([&](Action* action, int index) {
+            char data[strlen(action->name) + strlen(action->caption) + 6];
+            sprintf(
+              data,
+              "\"%s\":\"%s\"%s",
+              action->name,
+              action->caption,
+              index == actionCount - 1 ? "" : ","
+            );
+            actionsBuff += data;
+          });
+        }
+
+        size_t actionTempLen = actionsBuff.length() + ACTION_HOOK_TEMPLATE_LENGTH;
+        char actionTemp[actionTempLen + 1];
+        sprintf(actionTemp, ACTION_HOOK_TEMPLATE, actionsBuff.c_str());
+
+        nameLen += strlen(_actionHookType);
+        tempLen += actionTempLen;
+      #endif
+
+      char buff[TEMPLATE_JSON_LENGTH + nameLen + tempLen + 1];
+
+      #if ENABLE_ACTIONS
+      sprintf(
+        buff,
+        TEMPLATES_JSON,
+        defTemp,
+        _actionHookType, actionTemp,
+        _httpHookType, HTTP_HOOK_TEMPLATE,
+        _notificationHookType, NOTIFICATION_HOOK_TEMPLATE
+      );
+      #else
+      sprintf(
+        buff,
+        TEMPLATES_JSON,
+        defTemp,
+        _httpHookType, HTTP_HOOK_TEMPLATE,
+        _notificationHookType, NOTIFICATION_HOOK_TEMPLATE
+      );
+      #endif
+
+      String result = buff;
       return result;
     }
   
@@ -205,19 +251,15 @@ class HooksBuilder {
     }
     #endif
 
-    static JsonDocument getDefaultTemplate(ObservableType type) {
-      JsonDocument doc;
+    static const char * getDefaultTemplate(ObservableType type) {
       switch (type) {
         case OBS_SENSOR:
-          deserializeJson(doc, DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON);
-          break;
+          return DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON;
         case OBS_STATE:
-          deserializeJson(doc, DEFAULT_STATES_HOOKS_TEMPLATES_JSON);
-          break;
+          return DEFAULT_STATES_HOOKS_TEMPLATES_JSON;
         default:
-          deserializeJson(doc, "{}");
+          return "{}";
       }
-      return doc;
     }
 };
 

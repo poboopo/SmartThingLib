@@ -5,6 +5,13 @@ on:
     branches: [ "master", "develop" ]
   pull_request:
     branches: [ "master", "develop" ]
+  workflow_run:
+    workflows:
+      - Validate
+    types:
+      - completed
+    branches:
+      - master
 
 jobs:
   build-esp32:

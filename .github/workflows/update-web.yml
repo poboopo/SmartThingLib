@@ -3,9 +3,15 @@ name: Update web header
 on:
   repository_dispatch:
     types: [ui_update]
+  workflow_dispatch:
+    inputs:
+      commitMessage:
+        description: Commit message
+        required: true
+        type: string
 
 env:
-  COMMIT_MESSAGE: ${{ github.event.client_payload.message }}
+  COMMIT_MESSAGE: "${{ github.event.client_payload.message }}${{ inputs.commitMessage }}"
 
 permissions:
   contents: write

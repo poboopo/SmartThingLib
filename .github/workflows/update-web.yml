@@ -21,9 +21,7 @@ jobs:
         with:
           path: ./lib
           ref: develop
-      - run: |
-          export LIB_DIR="$(pwd)/lib"
-          echo $LIB_DIR
+      - run: export LIB_DIR="$(pwd)/lib"
       - name: Checkout web repository
         uses: actions/checkout@master
         with:
@@ -37,7 +35,7 @@ jobs:
         working-directory: ./web
         run: |
           npm ci
-          npm run deploy-header --dest $LIB_DIR
+          npm run deploy-header --dest=$LIB_DIR
       - name: Commit and push changes
         working-directory: ./lib
         run: |

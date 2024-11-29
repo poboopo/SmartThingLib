@@ -16,26 +16,32 @@ jobs:
         node-version: [22.x]
 
     steps:
-      - run: echo $COMMIT_MESSAGE
       - name: Checkout lib repository
         uses: actions/checkout@v4
         with:
           path: ./lib
+          ref: develop
       - run: |
           export LIB_DIR="$(pwd)/lib"
           echo $LIB_DIR
-          ls -l
       - name: Checkout web repository
         uses: actions/checkout@master
         with:
           repository: PavelProjects/SmartThingLibWeb
           path: ./web
-      - run: cd ./web
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - run: npm ci
-      - name: Update header header
-        run: npm run deploy-header --dest $LIB_DIR
+      - name: Update web header
+        working-directory: ./web
+        run: |
+          npm ci
+          npm run deploy-header --dest $LIB_DIR
+      - name: Commit and push changes
+        working-directory: ./lib
+        run: |
+          git config --global user.name 'web-updater[bot]'
+          git config --global user.email '<>'
+          git commit -am "Auto web assets update: $COMMIT_MESSAGE"
+          git push origin develop

@@ -1,4 +1,4 @@
-name: Esp test firmware build
+name: Validate
 
 on:
   push:

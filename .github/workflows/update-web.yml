@@ -35,7 +35,9 @@ jobs:
         working-directory: ./web
         run: |
           npm ci
-          npm run deploy-header --dest=$LIB_DIR
+          npm run build-header
+      - name: Copy header file
+        run: cp ./web/dist/WebPageAssets.h ./lib//src/net/rest/WebPageAssets.h
       - name: Commit and push changes
         working-directory: ./lib
         run: |

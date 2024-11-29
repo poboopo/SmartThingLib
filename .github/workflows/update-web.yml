@@ -52,5 +52,11 @@ jobs:
         run: |
           git config --global user.name 'web-updater[bot]'
           git config --global user.email '<>'
-          git commit -am "Web assets header update: $COMMIT_MESSAGE"
-          git push origin develop
+          if ! git diff-index --quiet HEAD --;
+          then
+            echo "Web assets changed, commiting"
+            git commit -am "Web assets header update: $COMMIT_MESSAGE"
+            git push origin develop
+          else
+            echo "Web assets not changed"
+          fi

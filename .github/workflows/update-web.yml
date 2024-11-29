@@ -30,7 +30,7 @@ jobs:
         with:
           repository: PavelProjects/SmartThingLibWeb
           path: ./web
-      - run: ls -l
+      - run: cd ./web
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:

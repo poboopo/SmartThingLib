@@ -52,10 +52,10 @@ jobs:
         run: |
           git config --global user.name 'web-updater[bot]'
           git config --global user.email '<>'
+          git add src/net/rest/WebPageAssets.h
           if ! git diff-index --quiet HEAD --;
           then
             echo "Web assets changed, commiting"
-            git add src/net/rest/WebPageAssets.h
             git commit -am "Web assets header update: $COMMIT_MESSAGE"
             git push origin develop
           else

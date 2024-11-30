@@ -4,7 +4,7 @@
 
 /*
   Build version: 0.0.0
-  Build date: 2024-11-30T12:18:57.816Z
+  Build date: 2024-11-30T20:50:08.741Z
 */
 
 #include "Features.h"
@@ -64,6 +64,11 @@ const char* WEB_PAGE_MAIN = R"=====(<html>
       <select id="mode"></select>
     </div>
     <button id="swifi">Save</button>
+    <h2>Danger</h2>
+    <div>
+      <button id="restart" style="background-color: red;">Restart device</button>
+      <button id="factoryReset" style="background-color: red;">Factory reset</button>
+    </div>
   </body>
   
   <style>
@@ -87,7 +92,7 @@ const char* WEB_PAGE_MAIN = R"=====(<html>
   </style>
 </html>)=====";
 
-const char* SCRIPT_PAGE_MAIN = R"=====(const e="/wifi",n="/info/system";let{hostname:t}=window.location;"localhost"===t&&(t="192.168.0.108");const o=e=>document.getElementById(e),a=(e,n,t)=>{const o=document.createElement(e);return n&&(o.innerHTML=n),t&&(o.value=t),o},s=e=>{o("tst").appendChild(a("li",e))},d=(e,n,o,a)=>{const s=new XMLHttpRequest;s.onloadend=()=>{a(s.response?JSON.parse(s.response):null,s.status)},s.open(e,`http://${t}${n}`,!0),s.setRequestHeader("Accept","application/json"),o&&s.setRequestHeader("Content-Type","application/json"),s.send(o?JSON.stringify(o):null)},i=()=>{d("PUT",n,{name:o("name").value},((e,n)=>{s(200===n?"Name updated":"Failed to update name: "+(null==e?void 0:e.error))}))},l=()=>{d("POST",e,{ssid:o("ssid").value,password:o("password").value,mode:o("mode").value},((e,n)=>{s(200===n?"WiFi updated! Restart device to reconnect":"WiFi update failed: "+(null==e?void 0:e.error))}))};document.addEventListener("DOMContentLoaded",(()=>{o("sname").onclick=i,o("swifi").onclick=l,d("GET",n,null,((e,n)=>{if(200!==n)return void s("Failed to load device info");o("name").value=e.name;const t=o("info");Object.entries(e).forEach((([e,n])=>{if("name"!==e){const o=a("input",null,n);o.disabled=!0,t.append(a("label",e),o)}}))})),d("GET",e,null,((e,n)=>{if(200!==n)return void s("Failed to load wifi info");const{settings:t,modes:d}=e,i=o("mode");Object.entries(d).forEach((([e,n])=>{i.appendChild(a("option",n,e))})),o("ssid").value=t.ssid,o("password").value=t.password,i.value=t.mode}))}));)=====";
+const char* SCRIPT_PAGE_MAIN = R"=====(const e="/wifi",t="/info/system",n="/danger",o="POST";let{hostname:s}=window.location;"localhost"===s&&(s="192.168.1.9");const i=e=>document.getElementById(e),a=(e,t,n)=>{const o=document.createElement(e);return t&&(o.innerHTML=t),n&&(o.value=n),o},d=e=>{i("tst").appendChild(a("li",e))},l=(e,t,n,o)=>{const i=new XMLHttpRequest;i.onloadend=()=>{o(i.response?JSON.parse(i.response):null,i.status)},i.open(e,`http://${s}${t}`,!0),i.setRequestHeader("Accept","application/json"),n&&i.setRequestHeader("Content-Type","application/json"),i.send(n?JSON.stringify(n):null)},r=()=>{l("PUT",t,{name:i("name").value},((e,t)=>{d(200===t?"Name updated":"Failed to update name: "+(null==e?void 0:e.error))}))},u=()=>{l(o,e,{ssid:i("ssid").value,password:i("password").value,mode:i("mode").value},((e,t)=>{d(200===t?"WiFi updated! Restart device to reconnect":"WiFi update failed: "+(null==e?void 0:e.error))}))},c=()=>{confirm("Are you sure you want to restart device right now?")&&l(o,n+"/restart",null,(()=>{d("Device should restart")}))},p=()=>{confirm("Are you sure you want to make FACTORY RESET?")&&confirm("Factory reset will wipe ALL settings. This can't be undone! Are you sure?")&&l(o,n+"/wipe",null,(()=>{d("Settings wiped"),d("Device should restart")}))};document.addEventListener("DOMContentLoaded",(()=>{i("sname").onclick=r,i("swifi").onclick=u,i("restart").onclick=c,i("factoryReset").onclick=p,l("GET",t,null,((e,t)=>{if(200!==t)return void d("Failed to load device info");i("name").value=e.name;const n=i("info");Object.entries(e).forEach((([e,t])=>{if("name"!==e){const o=a("input",null,t);o.disabled=!0,n.append(a("label",e),o)}}))})),l("GET",e,null,((e,t)=>{if(200!==t)return void d("Failed to load wifi info");const{settings:n,modes:o}=e,s=i("mode");Object.entries(o).forEach((([e,t])=>{s.appendChild(a("option",t,e))})),i("ssid").value=n.ssid,i("password").value=n.password,s.value=n.mode}))}));)=====";
 #endif
 
 #endif

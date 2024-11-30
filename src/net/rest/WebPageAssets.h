@@ -2,6 +2,11 @@
 #ifndef WEB_ASSETS_H
 #define WEB_ASSETS_H
 
+/*
+  Build version: 0.0.0
+  Build date: 2024-11-30T12:18:57.816Z
+*/
+
 #include "Features.h"
 #if ENABLE_WEB_PAGE 
 const char* WEB_PAGE_MAIN = R"=====(<!DOCTYPE html>

@@ -9,8 +9,6 @@
 #include "observable/ObservableObjects.h"
 #include "logs/BetterLogger.h"
 
-#define STATE_WATCHER_TYPE "state"
-
 class DeviceStateWatcher : public Watcher<STATE_DATA_TYPE> {
  public:
   DeviceStateWatcher(const DeviceState* deviceState)

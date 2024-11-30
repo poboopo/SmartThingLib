@@ -3,20 +3,12 @@
 
 #include <EEPROM.h>
 
+#define EEPROM_LOAD_SIZE 1024
+
 // [offsets][name][wifi][config][hooks][actions]
 #define SETTINGS_TEMPLATE "%03d%03d%03d%03d%03d%s%s%s%s%s"
 #define LENGTH_PARTITION_SIZE 3
 #define DATA_OFFSET 15
-#define DEFAULT_NAME_LENGTH 10
-
-#define GROUP_CONFIG "configuration"
-#define GROUP_WIFI "wifi"
-#define GROUP_HOOKS "hooks"
-#define GROUP_ACTIONS "actions"
-#define GROUP_NAME "name"
-
-#define SEPARATOR_CHAR ';'
-#define END_CHAR '\n' 
 
 #ifdef ARDUINO_ARCH_ESP32
 bool eepromBegin() {

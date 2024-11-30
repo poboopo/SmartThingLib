@@ -6,13 +6,8 @@
 #include "logs/BetterLogger.h"
 #include "settings/ConfigEntriesList.h"
 
-#define SSID_SETTING "ss"
-#define PASSWORD_SETTING "ps"
-#define WIFI_MODE_SETTING "md"
 #define LOGGER_ADDRESS_CONFIG "laddr"
 #define GATEWAY_CONFIG "gtw"
-
-#define EEPROM_LOAD_SIZE 1024
 
 struct WiFiConfig {
   String ssid;

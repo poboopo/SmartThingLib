@@ -13,10 +13,10 @@
 #include "net/rest/handlers/RequestHandler.h"
 #include "net/rest/WebPageAssets.h"
 
-#define HOOK_NAME_ARG "name"
-#define HOOK_OBSERVABLE_TYPE "type" // todo const char
-#define HOOK_ID_ARG "id"
-#define HOOKS_RQ_PATH "/hooks"
+const char * const _hooksObsNameArg = "name";
+const char * const _hooksObsTypeArg = "type";
+const char * const _hookIdArg = "id";
+const char * const _hooksPath = "/hooks";
 
 const char * const _HOOKS_RQ_TAG = "hooks_handler";
 
@@ -25,7 +25,7 @@ class HooksRequestHandler : public RequestHandler {
   public:
     HooksRequestHandler(){};
     bool canHandle(AsyncWebServerRequest *request) {
-      return request->url().startsWith(HOOKS_RQ_PATH) &&
+      return request->url().startsWith(_hooksPath) &&
             (request->method() == HTTP_GET || request->method() == HTTP_PUT || request->method() == HTTP_POST ||
               request->method() == HTTP_DELETE || request->method() == HTTP_OPTIONS);
     };
@@ -37,7 +37,7 @@ class HooksRequestHandler : public RequestHandler {
         }
         #endif
         if (request->url().equals("/hooks/templates")) {
-          String type = request->arg(HOOK_OBSERVABLE_TYPE);
+          String type = request->arg(_hooksObsTypeArg);
           if (type.isEmpty()) {
             return request->beginResponse(400, CONTENT_TYPE_JSON,
                         buildErrorJson("Type parameter are missing!"));
@@ -46,8 +46,8 @@ class HooksRequestHandler : public RequestHandler {
           return request->beginResponse(200, CONTENT_TYPE_JSON, response);
         }
         if (request->url().equals("/hooks/by/observable")) {
-          String type = request->arg(HOOK_OBSERVABLE_TYPE);
-          String name = request->arg(HOOK_NAME_ARG);
+          String type = request->arg(_hooksObsTypeArg);
+          String name = request->arg(_hooksObsNameArg);
 
           if (type.isEmpty() || name.isEmpty()) {
             return request->beginResponse(
@@ -61,9 +61,9 @@ class HooksRequestHandler : public RequestHandler {
           return request->beginResponse(200, CONTENT_TYPE_JSON, response);
         }
         if (request->url().equals("/hooks/test")) {
-          String type = request->arg(HOOK_OBSERVABLE_TYPE);
-          String name = request->arg(HOOK_NAME_ARG);
-          String id = request->arg(HOOK_ID_ARG);
+          String type = request->arg(_hooksObsTypeArg);
+          String name = request->arg(_hooksObsNameArg);
+          String id = request->arg(_hookIdArg);
           String value = request->arg("value");
 
           if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
@@ -78,7 +78,7 @@ class HooksRequestHandler : public RequestHandler {
           }
         }
       }
-      if (request->url().equals(HOOKS_RQ_PATH)) {
+      if (request->url().equals(_hooksPath)) {
         // todo switch
         if (request->method() == HTTP_POST) {
           if (_body.isEmpty()) {
@@ -92,8 +92,8 @@ class HooksRequestHandler : public RequestHandler {
             return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Observable or hook object are missing"));
           }
 
-          ObservableType type = observableTypeFromStr(doc["observable"]["type"]);
-          const char *name = doc["observable"]["name"];
+          ObservableType type = observableTypeFromStr(doc["observable"][_hooksObsTypeArg]);
+          const char *name = doc["observable"][_hooksObsNameArg];
           if (type == UNKNOWN_OBS_TYPE || name == nullptr) {
             return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Parameters observable type or name are missing!"));
           }
@@ -115,7 +115,6 @@ class HooksRequestHandler : public RequestHandler {
             return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Body is missing!"));
           }
 
-          st_log_info(_HOOKS_RQ_TAG, "Updating hook");
           JsonDocument doc;
           deserializeJson(doc, _body);
           if (HooksManager.updateHook(doc)) {
@@ -128,9 +127,9 @@ class HooksRequestHandler : public RequestHandler {
           }
         }
         if (request->method() == HTTP_DELETE) {
-          String type = request->arg(HOOK_OBSERVABLE_TYPE);
-          String name = request->arg(HOOK_NAME_ARG);
-          String id = request->arg(HOOK_ID_ARG);
+          String type = request->arg(_hooksObsTypeArg);
+          String name = request->arg(_hooksObsNameArg);
+          String id = request->arg(_hookIdArg);
 
           if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
             return request->beginResponse(

@@ -9,8 +9,6 @@
 #include "observable/ObservableObjects.h"
 #include "logs/BetterLogger.h"
 
-#define SENSOR_WATCHER_TYPE "sensor"
-
 class SensorWatcher : public Watcher<SENSOR_DATA_TYPE> {
  public:
   SensorWatcher(const Sensor* sensor)

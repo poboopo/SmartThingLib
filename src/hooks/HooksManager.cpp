@@ -10,13 +10,24 @@
 #include "hooks/watchers/SensorWatcher.h"
 #include "settings/SettingsRepository.h"
 
-const char * const _HOOKS_MANAGER_TAG = "hooks_manager";
+#if ENABLE_LOGGER
+  const char * const _HOOKS_MANAGER_TAG = "hooks_manager";
+
+  const char * const _errorUnkownObsType = "Unknown observable type";
+  const char * const _errorObsNameMissing = "Observable name is missing";
+  const char * const _errorObsTypeNotSupported = "Observable type [%s] not supported";
+  const char * const _errorObsObjectMissing = "Observable object is missing";
+#endif
 
 HooksManagerClass HooksManager;
 
 int HooksManagerClass::addHook(ObservableType observableType, const char * observableName, const char * data) {
   if (observableType == UNKNOWN_OBS_TYPE) {
-    st_log_error(_HOOKS_MANAGER_TAG, "Unkown observable type");
+    st_log_error(_HOOKS_MANAGER_TAG, _errorUnkownObsType);
+    return -1;
+  }
+  if (observableName == nullptr || strlen(observableName) == 0) {
+    st_log_error(_HOOKS_MANAGER_TAG, _errorObsNameMissing);
     return -1;
   }
 
@@ -38,7 +49,7 @@ int HooksManagerClass::addHook(ObservableType observableType, const char * obser
 template<typename T>
 int HooksManagerClass::addHook(const ObservableObject<T> * observable, const char * data) {
   if (observable == nullptr) {
-    st_log_error(_HOOKS_MANAGER_TAG, "Observable obejct is missing");
+    st_log_error(_HOOKS_MANAGER_TAG, _errorObsObjectMissing);
     return -1;
   }
 
@@ -70,8 +81,7 @@ int HooksManagerClass::addHook(const ObservableObject<T> * observable, const cha
 template <class T>
 int HooksManagerClass::addHook(const ObservableObject<T> *obj, Hook<T> *hook) {
   if (obj == nullptr) {
-    st_log_error(_HOOKS_MANAGER_TAG,
-                 "Observable object is missing, cancelling hook creation");
+    st_log_error(_HOOKS_MANAGER_TAG, _errorObsObjectMissing);
     return -1;
   }
   if (hook == nullptr) {
@@ -96,10 +106,9 @@ int HooksManagerClass::addHook(const ObservableObject<T> *obj, Hook<T> *hook) {
 }
 
 template <typename T>
-Watcher<T> *HooksManagerClass::getWatcherOrCreate(
-    const ObservableObject<T> *obj) {
+Watcher<T> *HooksManagerClass::getWatcherOrCreate(const ObservableObject<T> *obj) {
   if (obj == nullptr) {
-    st_log_error(_HOOKS_MANAGER_TAG, "Observable object is missing");
+    st_log_error(_HOOKS_MANAGER_TAG, _errorObsObjectMissing);
     return nullptr;
   }
 
@@ -157,25 +166,31 @@ List<Watcher<SENSOR_DATA_TYPE>> *HooksManagerClass::getWatchersList() {
 
 #endif
 
-bool HooksManagerClass::deleteHook(const char *type, const char *name,
-                                           int id) {
-  if (type == nullptr || strlen(type) == 0) {
-    st_log_error(_HOOKS_MANAGER_TAG, "Type of observable is missing!");
+bool HooksManagerClass::deleteHook(const char *type, const char *name, int id) {
+  ObservableType obsType = observableTypeFromStr(type);
+
+  if (obsType == UNKNOWN_OBS_TYPE) {
+    st_log_error(_HOOKS_MANAGER_TAG, _errorUnkownObsType);
+    return -1;
+  }
+  if (name == nullptr || strlen(name) == 0) {
+    st_log_error(_HOOKS_MANAGER_TAG, _errorObsNameMissing);
     return -1;
   }
 
+
   #if ENABLE_SENSORS
-  if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
+  if (obsType == OBS_SENSOR) {
     return deleteHookFromList<SENSOR_DATA_TYPE>(&_sensorsWatchers, name, id);
   } 
   #endif
   #if ENABLE_STATES
-  if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
+  if (obsType == OBS_STATE) {
     return deleteHookFromList<STATE_DATA_TYPE>(&_statesWatchers, name, id);
   }
   #endif
 
-  st_log_error(_HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
+  st_log_error(_HOOKS_MANAGER_TAG, _errorObsTypeNotSupported, type);
   return -1;
 }
 
@@ -184,7 +199,7 @@ bool HooksManagerClass::updateHook(JsonDocument doc) {
   JsonDocument hookObject = doc["hook"];
 
   if (observable.size() == 0) {
-    st_log_error(_HOOKS_MANAGER_TAG, "Observable object is missing!");
+    st_log_error(_HOOKS_MANAGER_TAG, _errorObsObjectMissing);
     return false;
   }
   if (hookObject.size() == 0) {
@@ -197,24 +212,23 @@ bool HooksManagerClass::updateHook(JsonDocument doc) {
   }
 
   const char *name = observable["name"];
-  const char *type = observable["type"];
-  if (name == nullptr || type == nullptr) {
+  ObservableType type = observableTypeFromStr(observable["type"]);
+  if (name == nullptr || type == UNKNOWN_OBS_TYPE) {
     st_log_error(_HOOKS_MANAGER_TAG, "Observable name or type is missing!");
     return false;
   }
 
   #if ENABLE_SENSORS
-  if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
+  if (type == OBS_SENSOR) {
     return updateHook<SENSOR_DATA_TYPE>(&_sensorsWatchers, name, hookObject);
   }
   #endif
   #if ENABLE_STATES
-  if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
+  if (type == OBS_STATE) {
     return updateHook<STATE_DATA_TYPE>(&_statesWatchers, name, hookObject);
   }
   #endif
-  st_log_error(_HOOKS_MANAGER_TAG, "Observable type [%s] not supported!",
-               type);
+  st_log_error(_HOOKS_MANAGER_TAG, _errorObsTypeNotSupported, type);
   return false;
 }
 
@@ -235,9 +249,11 @@ bool HooksManagerClass::updateHook(List<Watcher<T>> *list,
   }
   if (hook->isReadonly()) {
     st_log_error(_HOOKS_MANAGER_TAG,
-                 "Hook %d for observable [%s] is readonly!", id, name);
+                 "Hook id=%d for observable [%s] is readonly!", id, name);
     return false;
   }
+
+  st_log_info(_HOOKS_MANAGER_TAG, "Trying to update hook id=%d for observable [%s]", id, name);
 
   if (hookObject[_triggerEnabledHookField].is<bool>()) {
     bool enabled = hookObject[_triggerEnabledHookField].as<bool>();
@@ -344,10 +360,17 @@ void HooksManagerClass::checkWatchers(List<Watcher<T>> *list) {
 }
 
 boolean HooksManagerClass::callHook(const char * type, const char * name, int id, String value) {
-  if (strlen(type) == 0 || strlen(name) == 0) {
-    st_log_error(_HOOKS_MANAGER_TAG, "Empty type or name!");
+  ObservableType observableType = observableTypeFromStr(type);
+
+  if (observableType == UNKNOWN_OBS_TYPE) {
+    st_log_error(_HOOKS_MANAGER_TAG, _errorUnkownObsType);
     return false;
   }
+  if (name == nullptr || strlen(name) == 0) {
+    st_log_error(_HOOKS_MANAGER_TAG, _errorObsNameMissing);
+    return false;
+  }
+
   boolean emptyValue = value.isEmpty();
   st_log_info(
     _HOOKS_MANAGER_TAG,
@@ -357,17 +380,19 @@ boolean HooksManagerClass::callHook(const char * type, const char * name, int id
     id,
     emptyValue ? "" : value.c_str()
   );
+
   #if ENABLE_SENSORS
-  if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
+  if (observableType == OBS_SENSOR) {
     return callWatcherHook<SENSOR_DATA_TYPE>(&_sensorsWatchers, name, id, emptyValue ? 0 : value.toInt(), emptyValue);
   }
   #endif
   #if ENABLE_STATES
-  if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
+  if (observableType == OBS_STATE) {
     return callWatcherHook<STATE_DATA_TYPE>(&_statesWatchers, name, id, value, emptyValue);
   }
   #endif
-  st_log_error(_HOOKS_MANAGER_TAG, "Type %s not supported!", type);
+
+  st_log_error(_HOOKS_MANAGER_TAG, "Type %s is not supported!", type);
   return false;
 }
 
@@ -449,7 +474,7 @@ void HooksManagerClass::loadFromSettings() {
     } else if (type == OBS_STATE) {
       failedBuild = loadHooks<STATE_DATA_TYPE>(ObservablesManager.getObservableObject<STATE_DATA_TYPE>(name.c_str()), data, &address, dataLength) || failedBuild;
     } else {
-      st_log_error(_HOOKS_MANAGER_TAG, "Unkonwn observable hook type: %d", type);
+      st_log_error(_HOOKS_MANAGER_TAG, _errorUnkownObsType);
     }
 
     address++;
@@ -513,18 +538,30 @@ bool HooksManagerClass::saveInSettings() {
 }
 
 JsonDocument HooksManagerClass::getObservableHooksJson(const char *type, const char *name) {
+  ObservableType observableType = observableTypeFromStr(type);
+  JsonDocument doc;
+
+  if (observableType == UNKNOWN_OBS_TYPE) {
+    st_log_error(_HOOKS_MANAGER_TAG, _errorUnkownObsType);
+    return doc;
+  }
+  if (name == nullptr || strlen(name) == 0) {
+    st_log_error(_HOOKS_MANAGER_TAG, _errorObsNameMissing);
+    return doc;
+  }
+
   #if ENABLE_SENSORS 
-  if (strcmp(type, SENSOR_WATCHER_TYPE) == 0) {
+  if (observableType == OBS_SENSOR) {
     return getObservableHooksJsonFromList<SENSOR_DATA_TYPE>(&_sensorsWatchers, name);
   } 
   #endif
   #if ENABLE_STATES
-  if (strcmp(type, STATE_WATCHER_TYPE) == 0) {
+  if (observableType == OBS_STATE) {
     return getObservableHooksJsonFromList<STATE_DATA_TYPE>(&_statesWatchers, name);
   }
   #endif
-  st_log_error(_HOOKS_MANAGER_TAG, "Type [%s] not supported", type);
-  JsonDocument doc;
+
+  st_log_error(_HOOKS_MANAGER_TAG, _errorObsTypeNotSupported, type);
   return doc;
 }
 

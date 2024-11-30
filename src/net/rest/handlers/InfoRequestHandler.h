@@ -53,7 +53,7 @@ class InfoRequestHandler : public RequestHandler {
         if (strlen(newName) == 0 || strlen(newName) > DEVICE_NAME_LENGTH_MAX) {
           return request->beginResponse(
               400, CONTENT_TYPE_JSON,
-              buildErrorJson("Name is missing or too long (max 10 symbols)"));
+              buildErrorJson("Name is missing or too long (max 16 symbols)"));
         }
 
         SmartThing.updateDeviceName(newName);

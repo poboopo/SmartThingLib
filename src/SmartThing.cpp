@@ -90,14 +90,13 @@ bool SmartThingClass::init(const char * type) {
   }
   st_log_debug(_SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
 
-  #ifdef ARDUINO_ARCH_ESP32
   st_log_debug(
     _SMART_THING_TAG,
     "Wipe pin=%d, timeout=%d",
     WIPE_PIN, WIPE_TIMEOUT
   );
   pinMode(WIPE_PIN, INPUT_PULLUP);
-  #endif
+
   st_log_debug(_SMART_THING_TAG, "Led pin=%d", LED_PIN);
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
@@ -326,6 +325,7 @@ void SmartThingClass::wipeSettings() {
     st_log_warning(_SMART_THING_TAG, "Settings were wiped!");
   }
   digitalWrite(LED_PIN, LOW);
+  ESP.restart();
 }
 
 void SmartThingClass::updateDeviceName(String name) {

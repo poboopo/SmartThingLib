@@ -164,17 +164,6 @@ void RestControllerClass::setupHandler() {
     request->send(resp);
   });
 
-  _server.on("/restart", HTTP_GET, [&](AsyncWebServerRequest * request) {
-    st_log_request(_WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
-
-    request->send(200);
-    st_log_info(_WEB_SERVER_TAG, "---------RESTART---------");
-    _restartHandler();
-
-    delay(2000);
-    ESP.restart();
-  });
-
   _server.onNotFound(
       [&](AsyncWebServerRequest * request) { request->send(404, "text/plain", "Page not found"); });
 }

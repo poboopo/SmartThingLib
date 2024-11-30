@@ -424,25 +424,6 @@ boolean HooksManagerClass::callWatcherHook(List<Watcher<T>>* list, const char * 
   return true;
 }
 
-
-int indexOf(char target, const char * data, int length = -1) {
-  if (data == nullptr || strlen(data) == 0) {
-    return -1;
-  }
-
-  if (length = -1) {
-    length = strlen(data);
-  }
-
-  for (int i = 0; i < length; i++) {
-    if (data[i] == target) {
-      return i;
-    }
-  }
-
-  return -1;
-}
-
 void HooksManagerClass::loadFromSettings() {
   String fromSettings = SettingsRepository.getHooks();
 
@@ -452,7 +433,7 @@ void HooksManagerClass::loadFromSettings() {
   }
 
   bool failedBuild = false;
-  int address = 0, tmp = 0;
+  int address = 0;
   int dataLength = fromSettings.length();
   const char * data = fromSettings.c_str();
 

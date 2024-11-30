@@ -15,7 +15,6 @@
 #include "settings/SettingsRepository.h"
 #include "utils/StringUtils.h"
 
-
 const char * const _NOTIFICATION_HOOK_TAG = "notification_hook";
 const char * const _messageHookField = "message";
 const char * const _nftHookField =  "notificationType";
@@ -39,8 +38,9 @@ inline const char * notificationTypeToStr(NotificationType type) {
       return _notificationWarningStr;
     case NOTIFICATION_ERROR:
       return _notificationErrorStr;
+    default:
+      return "unknown";
   }
-  return "";
 }
 
 inline NotificationType notificationTypeFromStr(const char * type, NotificationType defaultValue = NOTIFICATION_UNKNOWN) {

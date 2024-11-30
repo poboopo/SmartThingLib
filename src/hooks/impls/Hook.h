@@ -17,12 +17,12 @@ class Hook {
   static_assert(std::is_same<T, SENSOR_DATA_TYPE>::value || std::is_same<T, STATE_DATA_TYPE>::value);
 
   public:
-    Hook(HookType type, int id = -1, bool triggerEnabled = false, CompareType compare = EQ)
+    Hook(HookType type, int id = -1, bool triggerEnabled = false, CompareType compare = EQ, bool readOnly = true)
         : _type(type),
           _id(id),
-          _compareType(compare),
           _triggerEnabled(triggerEnabled),
-          _readonly(true) {};
+          _compareType(compare),
+          _readonly(readOnly) {};
 
     virtual ~Hook() {};
 
@@ -80,11 +80,11 @@ class Hook {
 
   protected:
     HookType _type;
-    bool _readonly;
     int _id;
-    CompareType _compareType;
     bool _triggerEnabled;
+    CompareType _compareType;
     T _triggerValue;
+    bool _readonly;
 
     virtual String triggerString() = 0;
     virtual String customValuesString() = 0;

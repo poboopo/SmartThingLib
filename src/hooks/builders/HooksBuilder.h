@@ -81,7 +81,7 @@ class HooksBuilder {
         char idStr[] = {data[1], data[2]};
         id = atoi(idStr);
 
-        for (dataOffset = 5; dataOffset < strlen(data); dataOffset++) {
+        for (dataOffset = 5; dataOffset < (int) strlen(data); dataOffset++) {
           if (data[dataOffset] == ';') {
             break;
           }
@@ -226,7 +226,7 @@ class HooksBuilder {
       String buff;
       int tmp;
 
-      for (int i = 0; i < trigger.length(); i++) {
+      for (unsigned int i = 0; i < trigger.length(); i++) {
         if (trigger.charAt(i) == '_') {
           tmp = buff.toInt();
           st_log_debug(_HOOKS_BUILDER_TAG, "trigger=%d", tmp);

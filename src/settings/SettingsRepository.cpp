@@ -34,7 +34,7 @@ enum DataIndex {
 };
 
 const char * const _SETTINGS_MANAGER_TAG = "settings_manager";
-const char * const EEPROM_OPEN_ERROR = "Failed to open EEPROM";
+const char * const _errorEepromOpen = "Failed to open EEPROM";
 
 SettingsRepositoryClass SettingsRepository;
 
@@ -50,7 +50,7 @@ void SettingsRepositoryClass::clear() {
     EEPROM.end();
     st_log_warning(_SETTINGS_MANAGER_TAG, "EEPROM clear");
   } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(_SETTINGS_MANAGER_TAG, _errorEepromOpen);
   }
 }
 
@@ -116,7 +116,7 @@ String SettingsRepositoryClass::readData(uint8_t index, const char * defaultValu
     EEPROM.end();
     return result;
   } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(_SETTINGS_MANAGER_TAG, _errorEepromOpen);
     return defaultValue;
   }
 }
@@ -173,7 +173,7 @@ int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
     free(buffTail);
     return dataLen;
   } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(_SETTINGS_MANAGER_TAG, _errorEepromOpen);
     return -1;
   }
 }
@@ -450,7 +450,7 @@ String SettingsRepositoryClass::exportSettings() {
 
     return result;
   } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(_SETTINGS_MANAGER_TAG, _errorEepromOpen);
     return result;
   }
 }
@@ -488,7 +488,7 @@ bool SettingsRepositoryClass::importSettings(String &dump) {
     st_log_warning(_SETTINGS_MANAGER_TAG, "Dump write finished");
     return true;
   } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(_SETTINGS_MANAGER_TAG, _errorEepromOpen);
     return false;
   }
 }

@@ -71,10 +71,9 @@ int SettingsRepositoryClass::getLength(uint8_t index) {
   if (index < FIRST_INDEX || index > LAST_INDEX) {
     return -1;
   }
-  char * buff = (char *) malloc(LENGTH_PARTITION_SIZE + 1);
+  char buff[LENGTH_PARTITION_SIZE + 1];
   read(index * LENGTH_PARTITION_SIZE, buff, LENGTH_PARTITION_SIZE);
   int result = atoi(buff);
-  free(buff);
   return result;
 }
 
@@ -82,12 +81,9 @@ int SettingsRepositoryClass::writeLength(uint8_t index, int length) {
   if (index < FIRST_INDEX || index > LAST_INDEX) {
     return -1;
   }
-  char * buff = (char *) malloc(LENGTH_PARTITION_SIZE + 1);
+  char buff[LENGTH_PARTITION_SIZE + 1];
   sprintf(buff, "%03d", length);
-
   write(index * LENGTH_PARTITION_SIZE, buff, LENGTH_PARTITION_SIZE);
-
-  free(buff);
   return length;
 }
 
@@ -107,11 +103,10 @@ String SettingsRepositoryClass::readData(uint8_t index, const char * defaultValu
       offset += getLength(i);
     }
 
-    char * buff = (char *) malloc(targetLength + 1);
+    char buff[targetLength + 1];
     read(offset, buff, targetLength);
 
     String result = buff;
-    free(buff);
 
     EEPROM.end();
     return result;
@@ -141,11 +136,9 @@ int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
       offset += tmp;
     }
 
-    char * oldData = (char *) malloc(targetLength + 1);
+    char oldData[targetLength + 1];
     read(offset, oldData, targetLength);
-    int cmp = strcmp(oldData, data);
-    free(oldData);
-    if (cmp == 0) {
+    if (strcmp(oldData, data) == 0) {
       st_log_debug(_SETTINGS_MANAGER_TAG, "Old data equals new, not writing");
       return targetLength;
     }
@@ -158,7 +151,7 @@ int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
       tailLength += tmp;
     }
 
-    char * buffTail = (char *) malloc(tailLength + 1);
+    char buffTail[tailLength + 1];
     read(offset + targetLength, buffTail, tailLength);
     
     int dataLen = strlen(data);
@@ -170,7 +163,6 @@ int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
     EEPROM.commit();
     EEPROM.end();
 
-    free(buffTail);
     return dataLen;
   } else {
     st_log_error(_SETTINGS_MANAGER_TAG, _errorEepromOpen);
@@ -295,7 +287,7 @@ bool SettingsRepositoryClass::setWiFi(WiFiConfig settings) {
   settings.ssid.replace(";", "|;");
   settings.password.replace(";", "|;");
 
-  char * buff = (char *) malloc(settings.ssid.length() + settings.password.length() + 4);
+  char buff[settings.ssid.length() + settings.password.length() + 4];
   sprintf(
     buff,
     "%s;%s;%d",
@@ -311,7 +303,6 @@ bool SettingsRepositoryClass::setWiFi(WiFiConfig settings) {
   } else {
     st_log_error(_SETTINGS_MANAGER_TAG, "WiFi config update failed");
   }
-  free(buff);
   return res;
 }
 
@@ -428,7 +419,7 @@ String SettingsRepositoryClass::exportSettings() {
       actualSize += getLength(i);
     }
 
-    char * buff = (char *) malloc(actualSize + 1);
+    char buff[actualSize + 1];
     for (uint16_t i = 0; i < actualSize; i++) {
       tmp = EEPROM.read(i);
       if (tmp == 0) {
@@ -443,7 +434,6 @@ String SettingsRepositoryClass::exportSettings() {
     buff[actualSize] = 0;
     EEPROM.end(); 
     result = buff;
-    free(buff);
 
     result.replace("\n", "\\n");
     result.replace("\t", "\\t");

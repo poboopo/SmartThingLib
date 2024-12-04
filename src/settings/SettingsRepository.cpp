@@ -422,12 +422,8 @@ String SettingsRepositoryClass::exportSettings() {
     char buff[actualSize + 1];
     for (uint16_t i = 0; i < actualSize; i++) {
       tmp = EEPROM.read(i);
-      if (tmp == 0) {
-        if (i < DATA_OFFSET) {
-          tmp = '0';
-        } else {
-          continue;
-        }
+      if (i < DATA_OFFSET && (tmp < '0' || tmp > '9')) {
+        tmp = '0';
       }
       buff[i] = (char) tmp;
     }
@@ -451,11 +447,16 @@ bool SettingsRepositoryClass::importSettings(String &dump) {
     return false;
   }
 
+  if (dump.charAt(0) == '{' || dump.charAt(0) == '[') {
+    st_log_error(_SETTINGS_MANAGER_TAG, "Bad dump - got json?");
+    return false;
+  }
+
   bool valid = true;
-  char tmp;
-  for (uint8_t i = 0; i < LENGTH_PARTITION_SIZE; i++) {
-    tmp = dump.charAt(i);
-    if ('0' > tmp && tmp > '9') {
+  uint8_t tmp;
+  for (uint8_t i = 0; i < DATA_OFFSET; i++) {
+    tmp = dump.charAt(i) - '0';
+    if ('0' < tmp || tmp > '9') {
       valid = false;
       break;
     }
@@ -466,6 +467,9 @@ bool SettingsRepositoryClass::importSettings(String &dump) {
     return false;
   }
 
+  dump.replace("\\n", "\n");
+  dump.replace("\\t", "\t");
+  
   if (eepromBegin()) {
     st_log_warning(_SETTINGS_MANAGER_TAG, "Writing dump in eeprom (size=%d)", dump.length());
     st_log_debug(_SETTINGS_MANAGER_TAG, "Dump=%s", dump.c_str());

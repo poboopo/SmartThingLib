@@ -32,8 +32,8 @@ class WiFiRequesthandler : public RequestHandler {
       settings["mode"] = config.mode;
 
       JsonObject modes = jsonDoc["modes"].to<JsonObject>();
-      modes[String(WIFI_MODE_STA)] = "STA";
-      modes[String(WIFI_MODE_AP)] = "AP";
+      modes[String(WIFI_MODE_STA)] = "Connect to existing point";
+      modes[String(WIFI_MODE_AP)] = "Create access point";
 
       String response;
       serializeJson(jsonDoc, response);

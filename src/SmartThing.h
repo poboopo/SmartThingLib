@@ -6,8 +6,6 @@
 
 #include "hooks/HooksManager.h"
 #include "settings/ConfigEntriesList.h"
-#include "observable/DeviceStatesList.h"
-#include "observable/SensorsList.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
 #include "settings/SettingsRepository.h"

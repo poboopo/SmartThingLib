@@ -8,7 +8,7 @@
   "servers": [
     {
       "description": "Test device",
-      "url": "http://192.168.1.13"
+      "url": "http://192.168.1.11"
     }
   ],
   "paths": {
@@ -289,9 +289,9 @@
     "/sensors": {
       "get": {
         "tags": [
-          "Sensors and states"
+          "Sensors"
         ],
-        "description": "Get device sensors values",
+        "description": "Get sensors values",
         "responses": {
           "200": {
             "description": "Sensors values",
@@ -306,39 +306,19 @@
         }
       }
     },
-    "/sensors/types": {
+    "/sensors/full": {
       "get": {
         "tags": [
-          "Sensors and states"
+          "Sensors"
         ],
-        "description": "Get device sensors types",
+        "description": "Get full sensors information",
         "responses": {
           "200": {
-            "description": "Sensors types",
+            "description": "Sensors information",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/SensorsTypes"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/state": {
-      "get": {
-        "tags": [
-          "Sensors and states"
-        ],
-        "description": "Get device states values",
-        "responses": {
-          "200": {
-            "description": "Device states values",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#components/schemas/DeviceStates"
+                  "$ref": "#components/schemas/SensorsFull"
                 }
               }
             }
@@ -765,47 +745,34 @@
         }
       },
       "SensorsValues": {
-        "description": "Sensors values response",
+        "description": "Compact sensors values response",
         "type": "object",
-        "properties": {
-          "sensor_name": {
-            "description": "Sensor value",
-            "type": "integer"
-          }
-        },
         "example": {
           "button": 1,
-          "position": 13,
-          "light": 510
-        }
-      },
-      "SensorsTypes": {
-        "description": "Sensors types info",
-        "properties": {
-          "sensor_name": {
-            "description": "Sensor type",
-            "type": "string"
-          }
-        },
-        "example": {
-          "button": "digital"
-        }
-      },
-      "DeviceStates": {
-        "description": "Device states response",
-        "type": "object",
-        "properties": {
-          "device_state": {
-            "type": "string",
-            "description": "Device state value"
-          }
-        },
-        "example": {
           "wifi": "connected",
-          "led": "on",
-          "position": "open",
-          "automode": "true"
+          "led": "off"
         }
+      },
+      "SensorsFull": {
+        "description": "Full sensors information response",
+        "type": "array",
+        "example": [
+          {
+            "name": "button",
+            "value": 1,
+            "type": "sensor"
+          },
+          {
+            "name": "wifi",
+            "value": "connected",
+            "type": "state"
+          },
+          {
+            "name": "led",
+            "value": "off",
+            "type": "state"
+          }
+        ]
       },
       "Hook": {
         "description": "Hook",

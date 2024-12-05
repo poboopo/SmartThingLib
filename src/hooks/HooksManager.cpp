@@ -281,8 +281,6 @@ Hook<T> *HooksManagerClass::getHookFromWatcherList(
     List<Watcher<T>> *list, const char *name, int id) {
   Watcher<T> *watcher = getWatcherByObservableName(list, name);
   if (watcher == nullptr) {
-    st_log_warning(_HOOKS_MANAGER_TAG,
-                   "Can't find watcher for observable %s", name);
     return nullptr;
   }
   Hook<T> *hook = watcher->getHookById(id);
@@ -554,9 +552,6 @@ JsonDocument HooksManagerClass::getObservableHooksJsonFromList(List<Watcher<T>> 
     Watcher<T> *watcher = getWatcherByObservableName(list, name);
     if (watcher != nullptr) {
       return watcher->getObservableHooksJson();
-    } else {
-      st_log_warning(_HOOKS_MANAGER_TAG,
-                     "Can't find watcher for observable [%s]", name);
     }
   }
   JsonDocument doc;

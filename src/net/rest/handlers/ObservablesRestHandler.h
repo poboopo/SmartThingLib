@@ -1,23 +1,26 @@
-#ifndef SENSORS_RQ_H
-#define SENSORS_RQ_H
+#ifndef OBSERVABLES_RQ_H
+#define OBSERVABLES_RQ_H
 
 #include "Features.h"
-#if ENABLE_SENSORS 
 
+#if ENABLE_SENSORS || ENABLE_STATES
+
+#include <ESPAsyncWebServer.h>
 #include "observable/ObservablesManager.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/WebPageAssets.h"
 
-#define SENSORS_RQ_PATH "/sensors"
-const char * const _SENSORS_RQ_TAG = "sensors_handler";
+#define OBSERVABLES_RQ_PATH "/sensors"
+const char * const _OBSERVABLES_RQ_TAG = "observables-handler";
 
-class SensorsRequestHandler : public AsyncWebHandler {
+// todo rename?
+class ObservablesRequestHandler : public AsyncWebHandler {
  public:
-  SensorsRequestHandler(){};
-  virtual ~SensorsRequestHandler() {};
+  ObservablesRequestHandler(){};
+  virtual ~ObservablesRequestHandler() {};
 
   bool canHandle(AsyncWebServerRequest *request) {
-    return request->url().startsWith(SENSORS_RQ_PATH) &&
+    return request->url().startsWith(OBSERVABLES_RQ_PATH) &&
            (request->method() == HTTP_GET || request->method() == HTTP_OPTIONS);
   };
 
@@ -39,19 +42,23 @@ class SensorsRequestHandler : public AsyncWebHandler {
   };
  private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
-    String url = request->url();
-    st_log_request(_SENSORS_RQ_TAG, request->methodToString(), url.c_str(), "");
+    st_log_request(_OBSERVABLES_RQ_TAG, request->methodToString(), request->url().c_str(), "");
+
+    bool urlForFull = request->url().equals("/sensors/full");
+    if (request->url().equals(OBSERVABLES_RQ_PATH) || urlForFull) {
+      JsonDocument data = ObservablesManager.getObservablesInfo(urlForFull);
+      String response;
+      serializeJson(data, response);
+      return request->beginResponse(200, "application/json", response);
+    }
 
     #if ENABLE_WEB_PAGE
-    if (url.equals("/sensors/script.js")) {
-      return request->beginResponse(200, CONTENT_TYPE_JS, SCRIPT_SENSORS_TAB);
+    if (request->url().equals("/sensors/script.js")) {
+      return request->beginResponse(200, "text/javascript", SCRIPT_SENSORS_TAB);
     }
     #endif
 
-    JsonDocument data = url.equals("/sensors/types") ? ObservablesManager.getSensorsTypes() : ObservablesManager.getSensorsValues();
-    String response;
-    serializeJson(data, response);
-    return request->beginResponse(200, CONTENT_TYPE_JSON, response);
+    return nullptr;
   }
 };
 

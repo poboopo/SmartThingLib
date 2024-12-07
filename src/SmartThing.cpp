@@ -340,7 +340,10 @@ void SmartThingClass::updateDeviceName(String name) {
     st_log_error(_SMART_THING_TAG, "Name update failed");
     return;
   }
-  free(_name);
+
+  if (_name != nullptr && _name != ST_DEFAULT_NAME) {
+    free(_name);
+  }
   _name = (char *) malloc(name.length() + 1);
   strcpy(_name, name.c_str());
 

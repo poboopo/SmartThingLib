@@ -92,7 +92,7 @@ class HooksRequestHandler : public RequestHandler {
             return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Observable or hook object are missing"));
           }
 
-          ObservableType type = observableTypeFromStr(doc["observable"][_hooksObsTypeArg]);
+          SensorType type = observableTypeFromStr(doc["observable"][_hooksObsTypeArg]);
           const char *name = doc["observable"][_hooksObsNameArg];
           if (type == UNKNOWN_OBS_TYPE || name == nullptr) {
             return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Parameters observable type or name are missing!"));

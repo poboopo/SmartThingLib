@@ -5,7 +5,7 @@
 #include <ArduinoJson.h>
 
 #include "Features.h"
-#include "observable/ObservableObject.h"
+#include "sensors/Sensor.h"
 #include "utils/List.h"
 #include "logs/BetterLogger.h"
 
@@ -13,17 +13,17 @@
 
 const char * const _OBSERVABLES_MANAGER_TAG = "observables-manager";
 
-class ObservablesManagerClass {
+class SensorsManagerClass {
   public:
     #if ENABLE_SENSORS
-      bool addSensor(const char * name, typename ObservableObject<NUMBER_SENSOR_TYPE>::ValueProvider valueProvider) {
+      bool addSensor(const char * name, typename Sensor<NUMBER_SENSOR_TYPE>::ValueProvider valueProvider) {
         return addSensor<NUMBER_SENSOR_TYPE>(name, valueProvider);
       }
       bool addDigitalSensor(const char* name, uint8_t pin, uint8_t mode = INPUT_PULLUP);
       bool addAnalogSensor(const char* name, uint8_t pin);
     #endif
     #if ENABLE_STATES
-      bool addSensor(const char * name, typename ObservableObject<TEXT_SENSOR_TYPE>::ValueProvider valueProvider) {
+      bool addSensor(const char * name, typename Sensor<TEXT_SENSOR_TYPE>::ValueProvider valueProvider) {
         return addSensor<TEXT_SENSOR_TYPE>(name, valueProvider);
       }
     #endif
@@ -34,15 +34,15 @@ class ObservablesManagerClass {
     template<typename T>
     bool addSensor(
       const char* name,
-      typename ObservableObject<T>::ValueProvider valueProvider
+      typename Sensor<T>::ValueProvider valueProvider
     )  {
       bool exists = false;
       #if ENABLE_SENSORS
-        exists = getObservableObject<NUMBER_SENSOR_TYPE>(name) != nullptr;
+        exists = getSensor<NUMBER_SENSOR_TYPE>(name) != nullptr;
       #endif
 
       #if ENABLE_STATES
-        exists = exists || getObservableObject<TEXT_SENSOR_TYPE>(name) != nullptr;
+        exists = exists || getSensor<TEXT_SENSOR_TYPE>(name) != nullptr;
       #endif
 
       if (exists) {
@@ -50,7 +50,7 @@ class ObservablesManagerClass {
         return false;
       }
 
-      ObservableObject<T> * sensor = new ObservableObject<T>(name, valueProvider);
+      Sensor<T> * sensor = new Sensor<T>(name, valueProvider);
       if (getList<T>()->append(sensor) > -1) {
         st_log_debug(_OBSERVABLES_MANAGER_TAG, "Added new device state %s", name);
         return true;
@@ -64,28 +64,28 @@ class ObservablesManagerClass {
     }
 
     template<typename T>
-    const ObservableObject<T> * getObservableObject(const char * name) {
-      return getList<T>()->findValue([&](ObservableObject<T> * current) {
+    const Sensor<T> * getSensor(const char * name) {
+      return getList<T>()->findValue([&](Sensor<T> * current) {
           return strcmp(current->name(), name) == 0;
       });
     }
   private:
     #if ENABLE_SENSORS
-      List<ObservableObject<NUMBER_SENSOR_TYPE>> _sensorsList;
+      List<Sensor<NUMBER_SENSOR_TYPE>> _sensorsList;
     #endif
 
     #if ENABLE_STATES
-      List<ObservableObject<TEXT_SENSOR_TYPE>> _deviceStatesList;
+      List<Sensor<TEXT_SENSOR_TYPE>> _deviceStatesList;
     #endif
 
     template<typename T>
-    List<ObservableObject<T>> * getList();
+    List<Sensor<T>> * getList();
 
     template<typename T>
-    void collectObservablesInfoFull(List<ObservableObject<T>> * values, JsonArray &array, ObservableType type) {
+    void collectObservablesInfoFull(List<Sensor<T>> * values, JsonArray &array, SensorType type) {
       const char * typeStr = observableTypeToStr(type);
 
-      values->forEach([&](ObservableObject<T> * obj) {
+      values->forEach([&](Sensor<T> * obj) {
         JsonDocument doc;
         doc["name"] = obj->name();
         doc["value"] = obj->provideValue();
@@ -96,7 +96,7 @@ class ObservablesManagerClass {
     }
 };
 
-extern ObservablesManagerClass ObservablesManager;
+extern SensorsManagerClass SensorsManager;
 
 #endif
 

@@ -1,25 +1,25 @@
-#include "observable/ObservablesManager.h"
+#include "sensors/SensorsManager.h"
 #include "logs/BetterLogger.h"
 
-ObservablesManagerClass ObservablesManager;
+SensorsManagerClass SensorsManager;
 
 #if ENABLE_SENSORS
 template<>
-List<ObservableObject<NUMBER_SENSOR_TYPE>> * ObservablesManagerClass::getList() {
+List<Sensor<NUMBER_SENSOR_TYPE>> * SensorsManagerClass::getList() {
   return &_sensorsList;
 }
 #endif
 
 #if ENABLE_STATES
 template<>
-List<ObservableObject<TEXT_SENSOR_TYPE>> * ObservablesManagerClass::getList() {
+List<Sensor<TEXT_SENSOR_TYPE>> * SensorsManagerClass::getList() {
   return &_deviceStatesList;
 }
 #endif
 
 #if ENABLE_SENSORS
 
-bool ObservablesManagerClass::addDigitalSensor(const char* name, uint8_t pin, uint8_t mode) {
+bool SensorsManagerClass::addDigitalSensor(const char* name, uint8_t pin, uint8_t mode) {
   pinMode(pin, mode);
   return addSensor<NUMBER_SENSOR_TYPE>(name, [pin]() {
     if (pin > 0) {
@@ -29,7 +29,7 @@ bool ObservablesManagerClass::addDigitalSensor(const char* name, uint8_t pin, ui
   });
 }
 
-bool ObservablesManagerClass::addAnalogSensor(const char* name, uint8_t pin) {
+bool SensorsManagerClass::addAnalogSensor(const char* name, uint8_t pin) {
   return addSensor<NUMBER_SENSOR_TYPE>(name, [pin]() {
     if (pin > 0) {
       return (int)analogRead(pin);
@@ -40,7 +40,7 @@ bool ObservablesManagerClass::addAnalogSensor(const char* name, uint8_t pin) {
 
 #endif
 
-size_t ObservablesManagerClass::getSensorsCount() {
+size_t SensorsManagerClass::getSensorsCount() {
   size_t result = 0;
   
   #ifdef ENABLE_SENSORS
@@ -54,7 +54,7 @@ size_t ObservablesManagerClass::getSensorsCount() {
   return result;
 }
 
-JsonDocument ObservablesManagerClass::getObservablesInfo(bool full) {
+JsonDocument SensorsManagerClass::getObservablesInfo(bool full) {
   JsonDocument doc;
   
   if (full) {
@@ -73,13 +73,13 @@ JsonDocument ObservablesManagerClass::getObservablesInfo(bool full) {
     JsonObject object = doc.as<JsonObject>();
 
     #if ENABLE_SENSORS
-      _sensorsList.forEach([&](ObservableObject<NUMBER_SENSOR_TYPE> * obj) {
+      _sensorsList.forEach([&](Sensor<NUMBER_SENSOR_TYPE> * obj) {
         object[obj->name()] = obj->provideValue();
       });
     #endif
 
     #if ENABLE_STATES
-    _deviceStatesList.forEach([&](ObservableObject<TEXT_SENSOR_TYPE> * obj) {
+    _deviceStatesList.forEach([&](Sensor<TEXT_SENSOR_TYPE> * obj) {
       object[obj->name()] = obj->provideValue();
     });
     #endif

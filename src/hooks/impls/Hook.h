@@ -7,7 +7,7 @@
 #include "Features.h"
 #include "logs/BetterLogger.h"
 #include "hooks/impls/HookConstans.h"
-#include "observable/ObservableObject.h"
+#include "sensors/Sensor.h"
 
 #define CHECK_HOOK_DATA_TYPE typename std::enable_if<std::is_same<T, NUMBER_SENSOR_TYPE>::value || std::is_same<T, TEXT_SENSOR_TYPE>::value>::type* = nullptr
 #define SELECT_HOOK_BASE_CLASS std::conditional<std::is_same<T, NUMBER_SENSOR_TYPE>::value, SensorHook, StateHook>::type

@@ -9,7 +9,7 @@
 #include <functional>
 
 #include "hooks/impls/Hook.h"
-#include "observable/ObservableObject.h"
+#include "sensors/Sensor.h"
 #include "logs/BetterLogger.h"
 #include "utils/List.h"
 
@@ -23,7 +23,7 @@ const char * const _WATCHER_TAG = "watcher";
 template <typename T>
 class Watcher {
  public:
-  Watcher(const ObservableObject<T> *observable)
+  Watcher(const Sensor<T> *observable)
       : _observable(observable),
         _hookIdSequence(0) {
     setInitialValue();
@@ -132,7 +132,7 @@ class Watcher {
       return doc;
     }
     JsonDocument hooks = getObservableHooksJson();
-    doc["observable"] = ((ObservableObject<T> *)_observable)->toJson();
+    doc["observable"] = ((Sensor<T> *)_observable)->toJson();
     doc["hooks"] = hooks;
     return doc;
   }
@@ -152,7 +152,7 @@ class Watcher {
     return doc;
   }
 
-  const ObservableObject<T> *getObservable() {
+  const Sensor<T> *getObservable() {
     return _observable;
   };
 
@@ -161,7 +161,7 @@ class Watcher {
   uint8_t hooksCount() { return _hooks.size(); }
 
  protected:
-  const ObservableObject<T> *_observable;
+  const Sensor<T> *_observable;
   T _oldValue;
   List<Hook<T>> _hooks;
 

@@ -10,14 +10,14 @@
 #include "hooks/impls/Hook.h"
 #include "hooks/impls/LambdaHook.h"
 #include "hooks/watcher/Watcher.h"
-#include "observable/ObservableObject.h"
+#include "sensors/Sensor.h"
 #include "utils/List.h"
 
 class HooksManagerClass {
  public:
   void loadFromSettings();
 
-  int addHook(ObservableType observableType, const char * observableName, const char * data);
+  int addHook(SensorType observableType, const char * observableName, const char * data);
 
   bool deleteHook(const char* type, const char* name, int id);
   bool updateHook(JsonDocument doc);
@@ -43,16 +43,16 @@ class HooksManagerClass {
   int _hooksCount = 0;
 
   template<typename T>
-  bool loadHooks(const ObservableObject<T> * observable, const char * data, int * address, int length);
+  bool loadHooks(const Sensor<T> * observable, const char * data, int * address, int length);
 
   template<typename T>
-  int addHook(const ObservableObject<T> * observable, const char * data);
+  int addHook(const Sensor<T> * observable, const char * data);
 
   template <typename T>
-  int addHook(const ObservableObject<T>* obj, Hook<T>* hook);
+  int addHook(const Sensor<T>* obj, Hook<T>* hook);
 
   template <typename T>
-  Watcher<T>* getWatcher(const ObservableObject<T>* observable);
+  Watcher<T>* getWatcher(const Sensor<T>* observable);
 
   template <typename T>
   Watcher<T>* getWatcherByObservableName(const char* name);
@@ -77,7 +77,7 @@ class HooksManagerClass {
 
   template <typename T>
   Watcher<T>* getWatcherOrCreate(
-      const ObservableObject<T>* obj);
+      const Sensor<T>* obj);
 
   template <typename T>
   List<Watcher<T>>* getWatchersList();

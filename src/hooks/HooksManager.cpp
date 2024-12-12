@@ -13,7 +13,8 @@
   const char * const _HOOKS_MANAGER_TAG = "hooks_manager";
 
   const char * const _errorSensorNameMissing = "Sensor name is missing";
-  const char * const _errorObsObjectMissing = "Sensor object is missing";
+  const char * const _errorSensorObjectMissing = "Sensor object is missing";
+  const char * const _errorNoSuchSensor = "No such sensor";
 #endif
 
 HooksManagerClass HooksManager;
@@ -44,7 +45,7 @@ int HooksManagerClass::addHook(const char * sensorName, const char * data) {
 template<typename T>
 int HooksManagerClass::addHook(const Sensor<T> * sensor, const char * data) {
   if (sensor == nullptr) {
-    st_log_error(_HOOKS_MANAGER_TAG, _errorObsObjectMissing);
+    st_log_error(_HOOKS_MANAGER_TAG, _errorSensorObjectMissing);
     return -1;
   }
 
@@ -76,7 +77,7 @@ int HooksManagerClass::addHook(const Sensor<T> * sensor, const char * data) {
 template <typename T>
 int HooksManagerClass::addHook(const Sensor<T> *sensor, Hook<T> *hook) {
   if (sensor == nullptr) {
-    st_log_error(_HOOKS_MANAGER_TAG, _errorObsObjectMissing);
+    st_log_error(_HOOKS_MANAGER_TAG, _errorSensorObjectMissing);
     return -1;
   }
   if (hook == nullptr) {
@@ -103,7 +104,7 @@ int HooksManagerClass::addHook(const Sensor<T> *sensor, Hook<T> *hook) {
 template <typename T>
 Watcher<T> *HooksManagerClass::getWatcherOrCreate(const Sensor<T> *sensor) {
   if (sensor == nullptr) {
-    st_log_error(_HOOKS_MANAGER_TAG, _errorObsObjectMissing);
+    st_log_error(_HOOKS_MANAGER_TAG, _errorSensorObjectMissing);
     return nullptr;
   }
 
@@ -336,14 +337,14 @@ boolean HooksManagerClass::callWatcherHook(const char * name, int id, T value, b
     st_log_error(_HOOKS_MANAGER_TAG, "Can't find hook for sensor %s by id=%d", name, id);
     return false;
   }
-  const Sensor<T> * obs = watcher->getSensor();
-  if (obs == nullptr) {
-    st_log_error(_HOOKS_MANAGER_TAG, "OBSERVABLE NULLPTR! HOW???");
+  const Sensor<T> * sensor = watcher->getSensor();
+  if (sensor == nullptr) {
+    st_log_error(_HOOKS_MANAGER_TAG, "SENSOR NULLPTR! HOW???");
     return false;
   }
   if (emptyValue) {
     st_log_info(_HOOKS_MANAGER_TAG, "Extracting value and calling hook");
-    T v = obs->provideValue();
+    T v = sensor->provideValue();
     hook->call(v);
   } else {
     st_log_info(_HOOKS_MANAGER_TAG, "Calling hook with provided value");

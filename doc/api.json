@@ -306,45 +306,7 @@
         }
       }
     },
-    "/sensors/full": {
-      "get": {
-        "tags": [
-          "Sensors"
-        ],
-        "description": "Get full sensors information",
-        "responses": {
-          "200": {
-            "description": "Sensors information",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#components/schemas/SensorsFull"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/hooks": {
-      "get": {
-        "tags": [
-          "Hook"
-        ],
-        "description": "Get all device hooks",
-        "responses": {
-          "200": {
-            "description": "List of hooks",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#components/schemas/SensorsHooks"
-                }
-              }
-            }
-          }
-        }
-      },
       "post": {
         "tags": [
           "Hook"
@@ -414,17 +376,7 @@
         "description": "Delete sensor's hook",
         "parameters": [
           {
-            "name": "type",
-            "description": "Sensor type",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "sensor/state"
-          },
-          {
-            "name": "name",
+            "name": "sensor",
             "description": "Sensor name",
             "in": "query",
             "required": true,
@@ -467,17 +419,7 @@
         "description": "Get hooks for sensor object (sensor or state)",
         "parameters": [
           {
-            "name": "type",
-            "in": "query",
-            "description": "Sensor type",
-            "example": "sensor/state",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "name",
+            "name": "sensor",
             "in": "query",
             "description": "Sensor name",
             "required": true,
@@ -506,6 +448,17 @@
           "Hook"
         ],
         "description": "Get hooks templates for creation",
+        "parameters": [
+          {
+            "name": "sensor",
+            "in": "query",
+            "description": "Sensor name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#components/responses/HookTemplates"
@@ -521,17 +474,7 @@
         "description": "Test hook call",
         "parameters": [
           {
-            "name": "type",
-            "in": "query",
-            "description": "Sensor type",
-            "example": "sensor/state",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "name",
+            "name": "sensor",
             "in": "query",
             "description": "Sensor name",
             "required": true,
@@ -587,7 +530,6 @@
                     "actions": true,
                     "actionsScheduler": true,
                     "sensors": true,
-                    "states": true,
                     "hooks": true,
                     "logger": true
                   }
@@ -745,34 +687,13 @@
         }
       },
       "SensorsValues": {
-        "description": "Compact sensors values response",
+        "description": "Sensors values response",
         "type": "object",
         "example": {
           "button": 1,
           "wifi": "connected",
           "led": "off"
         }
-      },
-      "SensorsFull": {
-        "description": "Full sensors information response",
-        "type": "array",
-        "example": [
-          {
-            "name": "button",
-            "value": 1,
-            "type": "sensor"
-          },
-          {
-            "name": "wifi",
-            "value": "connected",
-            "type": "state"
-          },
-          {
-            "name": "led",
-            "value": "off",
-            "type": "state"
-          }
-        ]
       },
       "Hook": {
         "description": "Hook",
@@ -814,33 +735,6 @@
           "$ref": "#components/schemas/Hook"
         }
       },
-      "SensorsHooks": {
-        "description": "List of all device hooks",
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "sensor": {
-              "description": "Sensor object info (sensor or device state)",
-              "type": "object",
-              "properties": {
-                "name": {
-                  "description": "Sensor's name",
-                  "type": "string"
-                },
-                "type": {
-                  "description": "Sensor's type",
-                  "type": "string",
-                  "example": "sensor/state"
-                }
-              }
-            },
-            "hooks": {
-              "$ref": "#components/schemas/HooksList"
-            }
-          }
-        }
-      },
       "HookRequest": {
         "description": "Create hook body",
         "type": "object",
@@ -850,23 +744,8 @@
         ],
         "properties": {
           "sensor": {
-            "description": "Sensor info",
-            "type": "object",
-            "required": [
-              "type",
-              "name"
-            ],
-            "properties": {
-              "type": {
-                "description": "Sensor type",
-                "type": "string",
-                "example": "sensor/state"
-              },
-              "name": {
-                "description": "Sensor name",
-                "type": "string"
-              }
-            }
+            "description": "Sensor name",
+            "type": "string"
           },
           "hook": {
             "description": "Hook info. Only base fields, take others from template.",
@@ -904,7 +783,8 @@
               }
             }
           }
-        }
+        },
+        "example": {"sensor":"wifi","hook":{"type":"action","action":"led_off","trigger":"test","compareType":"eq"}}
       }
     },
     "responses": {

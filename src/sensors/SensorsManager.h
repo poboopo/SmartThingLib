@@ -1,5 +1,5 @@
-#ifndef OBSERVABLES_MANAGER_H
-#define OBSERVABLES_MANAGER_H
+#ifndef SENSORS_MANAGER_H
+#define SENSORS_MANAGER_H
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
@@ -11,7 +11,7 @@
 
 #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
 
-const char * const _OBSERVABLES_MANAGER_TAG = "sensors-manager";
+const char * const _SENSORS_MANAGER_TAG = "sensors-manager";
 
 class SensorsManagerClass {
   public:
@@ -46,19 +46,19 @@ class SensorsManagerClass {
       #endif
 
       if (exists) {
-        st_log_warning(_OBSERVABLES_MANAGER_TAG, "Sensor with name %s already exist! Skipping...", name);
+        st_log_warning(_SENSORS_MANAGER_TAG, "Sensor with name %s already exist! Skipping...", name);
         return false;
       }
 
       Sensor<T> * sensor = new Sensor<T>(name, valueProvider);
       if (getList<T>()->append(sensor) > -1) {
-        st_log_debug(_OBSERVABLES_MANAGER_TAG, "Added new device state %s", name);
+        st_log_debug(_SENSORS_MANAGER_TAG, "Added new device state %s", name);
         return true;
       } else {
         if (sensor != nullptr) {
           delete sensor;
         }
-        st_log_error(_OBSERVABLES_MANAGER_TAG, "Dailed to add new device state %s", name);
+        st_log_error(_SENSORS_MANAGER_TAG, "Dailed to add new device state %s", name);
         return false;
       }
     }

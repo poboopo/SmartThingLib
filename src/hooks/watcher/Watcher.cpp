@@ -3,8 +3,8 @@
 
 template<>
 bool Watcher<NUMBER_SENSOR_TYPE>::check() {
-  if (_observable != nullptr) {
-    NUMBER_SENSOR_TYPE newValue = _observable->provideValue();
+  if (_sensor != nullptr) {
+    NUMBER_SENSOR_TYPE newValue = _sensor->provideValue();
     if (_oldValue == -1) {
       _oldValue = newValue;
       return false;
@@ -20,10 +20,10 @@ bool Watcher<NUMBER_SENSOR_TYPE>::check() {
 
 template<>
 bool Watcher<TEXT_SENSOR_TYPE>::check() {
-  if (_observable == nullptr) {
+  if (_sensor == nullptr) {
     return false;
   }
-  TEXT_SENSOR_TYPE newValue = _observable->provideValue();
+  TEXT_SENSOR_TYPE newValue = _sensor->provideValue();
   if (_oldValue.isEmpty()) {
     _oldValue = newValue;
     return false;

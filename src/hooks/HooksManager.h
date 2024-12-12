@@ -17,51 +17,51 @@ class HooksManagerClass {
  public:
   void loadFromSettings();
 
-  int addHook(SensorType observableType, const char * observableName, const char * data);
+  int addHook(const char * sensorName, const char * data);
 
-  bool deleteHook(const char* type, const char* name, int id);
+  bool deleteHook(const char* name, int id);
   bool updateHook(JsonDocument doc);
 
   void check();
-  boolean callHook(const char * type, const char * name, int id, String value);
+  boolean callHook(const char * name, int id, String value);
 
-  JsonDocument getObservableHooksJson(const char* type, const char* name);
+  JsonDocument getSensorHooksJson(const char* name);
 
   bool saveInSettings();
 
   int16_t getTotalHooksCount() { return _hooksCount; }
 
  private:
-  #if ENABLE_SENSORS 
+  #if ENABLE_NUMBER_SENSORS 
   List<Watcher<NUMBER_SENSOR_TYPE>> _sensorsWatchers;
   #endif
 
-  #if ENABLE_STATES
+  #if ENABLE_TEXT_SENSORS
   List<Watcher<TEXT_SENSOR_TYPE>> _statesWatchers;
   #endif
 
   int _hooksCount = 0;
 
   template<typename T>
-  bool loadHooks(const Sensor<T> * observable, const char * data, int * address, int length);
+  bool loadHooks(const Sensor<T> * sensor, const char * data, int * address, int length);
 
   template<typename T>
-  int addHook(const Sensor<T> * observable, const char * data);
+  int addHook(const Sensor<T> * sensor, const char * data);
 
   template <typename T>
   int addHook(const Sensor<T>* obj, Hook<T>* hook);
 
   template <typename T>
-  Watcher<T>* getWatcher(const Sensor<T>* observable);
+  Watcher<T>* getWatcher(const Sensor<T>* sensor);
 
   template <typename T>
-  Watcher<T>* getWatcherByObservableName(const char* name);
+  Watcher<T>* getWatcherBySensorName(const char* name);
 
   template <typename T>
   Hook<T>* getHookFromWatcher(const char* name, int id);
 
   template <typename T>
-  JsonDocument getObservableHooksJson(const char* name);
+  JsonDocument getSensorHooksJson(const char* name);
 
   template <typename T>
   bool deleteHook(const char* name, int id);

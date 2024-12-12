@@ -23,8 +23,8 @@ const char * const _WATCHER_TAG = "watcher";
 template <typename T>
 class Watcher {
  public:
-  Watcher(const Sensor<T> *observable)
-      : _observable(observable),
+  Watcher(const Sensor<T> *sensor)
+      : _sensor(sensor),
         _hookIdSequence(0) {
     setInitialValue();
   };
@@ -40,10 +40,9 @@ class Watcher {
       if (current != nullptr && current->accept(value)) {
         st_log_debug(
           _WATCHER_TAG,
-          "Calling hook [id=%d] for observable [%u]%s",
+          "Calling hook [id=%d] for sensor %s",
           current->getId(),
-          _observable->type(),
-          _observable->name()
+          _sensor->name()
         );
         current->call(value);
       }
@@ -112,7 +111,7 @@ class Watcher {
       return "";
     }
 
-    String result = _observable->toString();
+    String result = _sensor->name();
 
     _hooks.forEach([&](Hook<T> * hook) {
       if (hook == nullptr || hook->isReadonly()) {
@@ -131,12 +130,12 @@ class Watcher {
     if (_hooks.size() == 0) {
       return doc;
     }
-    JsonDocument hooks = getObservableHooksJson();
-    doc["observable"] = ((Sensor<T> *)_observable)->toJson();
+    JsonDocument hooks = getSensorHooksJson();
+    doc["sensor"] = _sensor->name();
     doc["hooks"] = hooks;
     return doc;
   }
-  JsonDocument getObservableHooksJson() {
+  JsonDocument getSensorHooksJson() {
     JsonDocument doc;
     doc.to<JsonArray>();
     if (_hooks.size() == 0) {
@@ -152,8 +151,8 @@ class Watcher {
     return doc;
   }
 
-  const Sensor<T> *getObservable() {
-    return _observable;
+  const Sensor<T> *getSensor() {
+    return _sensor;
   };
 
   bool haveHooks() { return _hooks.size() != 0; }
@@ -161,7 +160,7 @@ class Watcher {
   uint8_t hooksCount() { return _hooks.size(); }
 
  protected:
-  const Sensor<T> *_observable;
+  const Sensor<T> *_sensor;
   T _oldValue;
   List<Hook<T>> _hooks;
 

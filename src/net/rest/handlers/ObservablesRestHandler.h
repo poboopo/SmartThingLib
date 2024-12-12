@@ -6,7 +6,7 @@
 #if ENABLE_SENSORS || ENABLE_STATES
 
 #include <ESPAsyncWebServer.h>
-#include "observable/ObservablesManager.h"
+#include "sensors/SensorsManager.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/WebPageAssets.h"
 
@@ -46,7 +46,7 @@ class ObservablesRequestHandler : public AsyncWebHandler {
 
     bool urlForFull = request->url().equals("/sensors/full");
     if (request->url().equals(OBSERVABLES_RQ_PATH) || urlForFull) {
-      JsonDocument data = ObservablesManager.getObservablesInfo(urlForFull);
+      JsonDocument data = SensorsManager.getObservablesInfo(urlForFull);
       String response;
       serializeJson(data, response);
       return request->beginResponse(200, "application/json", response);

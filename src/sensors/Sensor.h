@@ -12,13 +12,13 @@
 const char * const _state = "state";
 const char * const _sensor = "sensor";
 
-enum ObservableType {
+enum SensorType {
   UNKNOWN_OBS_TYPE,
   OBS_STATE,
   OBS_SENSOR
 };
 
-inline const char * observableTypeToStr(ObservableType type) {
+inline const char * observableTypeToStr(SensorType type) {
   switch (type) {
     case OBS_STATE:
       return _state;
@@ -29,7 +29,7 @@ inline const char * observableTypeToStr(ObservableType type) {
   }
 }
 
-inline ObservableType observableTypeFromStr(const char * type) {
+inline SensorType observableTypeFromStr(const char * type) {
   if (strcmp(type, _state) == 0) {
     return OBS_STATE;
   }
@@ -40,11 +40,11 @@ inline ObservableType observableTypeFromStr(const char * type) {
 }
 
 template <typename T>
-class ObservableObject {
+class Sensor {
   public:
     typedef std::function<T(void)> ValueProvider;
 
-    ObservableObject(const char * name, std::function<T(void)> valueProvider): 
+    Sensor(const char * name, std::function<T(void)> valueProvider): 
       _name(name), _valueProvider(valueProvider) {};
 
     const char * name() const {
@@ -55,7 +55,7 @@ class ObservableObject {
       return _valueProvider();
     }
 
-    ObservableType type() const;
+    SensorType type() const;
 
     JsonDocument toJson() {
       JsonDocument doc;

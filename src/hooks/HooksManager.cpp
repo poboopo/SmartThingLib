@@ -4,7 +4,7 @@
 
 #include <type_traits>
 
-#include "observable/ObservablesManager.h"
+#include "sensors/SensorsManager.h"
 #include "hooks/builders/HooksBuilder.h"
 #include "hooks/watcher/Watcher.h"
 #include "settings/SettingsRepository.h"
@@ -20,7 +20,7 @@
 
 HooksManagerClass HooksManager;
 
-int HooksManagerClass::addHook(ObservableType observableType, const char * observableName, const char * data) {
+int HooksManagerClass::addHook(SensorType observableType, const char * observableName, const char * data) {
   if (observableType == UNKNOWN_OBS_TYPE) {
     st_log_error(_HOOKS_MANAGER_TAG, _errorUnkownObsType);
     return -1;
@@ -32,12 +32,12 @@ int HooksManagerClass::addHook(ObservableType observableType, const char * obser
 
   #if ENABLE_STATES
   if (observableType == OBS_STATE) {
-    return HooksManager.addHook<TEXT_SENSOR_TYPE>(ObservablesManager.getObservableObject<TEXT_SENSOR_TYPE>(observableName), data);
+    return HooksManager.addHook<TEXT_SENSOR_TYPE>(SensorsManager.getSensor<TEXT_SENSOR_TYPE>(observableName), data);
   }
   #endif
   #if ENABLE_SENSORS 
   if (observableType == OBS_SENSOR) {
-    return HooksManager.addHook<NUMBER_SENSOR_TYPE>(ObservablesManager.getObservableObject<NUMBER_SENSOR_TYPE>(observableName), data);
+    return HooksManager.addHook<NUMBER_SENSOR_TYPE>(SensorsManager.getSensor<NUMBER_SENSOR_TYPE>(observableName), data);
   }
   #endif
   
@@ -46,7 +46,7 @@ int HooksManagerClass::addHook(ObservableType observableType, const char * obser
 }
 
 template<typename T>
-int HooksManagerClass::addHook(const ObservableObject<T> * observable, const char * data) {
+int HooksManagerClass::addHook(const Sensor<T> * observable, const char * data) {
   if (observable == nullptr) {
     st_log_error(_HOOKS_MANAGER_TAG, _errorObsObjectMissing);
     return -1;
@@ -78,7 +78,7 @@ int HooksManagerClass::addHook(const ObservableObject<T> * observable, const cha
 }
 
 template <typename T>
-int HooksManagerClass::addHook(const ObservableObject<T> *obj, Hook<T> *hook) {
+int HooksManagerClass::addHook(const Sensor<T> *obj, Hook<T> *hook) {
   if (obj == nullptr) {
     st_log_error(_HOOKS_MANAGER_TAG, _errorObsObjectMissing);
     return -1;
@@ -105,7 +105,7 @@ int HooksManagerClass::addHook(const ObservableObject<T> *obj, Hook<T> *hook) {
 }
 
 template <typename T>
-Watcher<T> *HooksManagerClass::getWatcherOrCreate(const ObservableObject<T> *obj) {
+Watcher<T> *HooksManagerClass::getWatcherOrCreate(const Sensor<T> *obj) {
   if (obj == nullptr) {
     st_log_error(_HOOKS_MANAGER_TAG, _errorObsObjectMissing);
     return nullptr;
@@ -133,7 +133,7 @@ Watcher<T> *HooksManagerClass::getWatcherOrCreate(const ObservableObject<T> *obj
 }
 
 bool HooksManagerClass::deleteHook(const char *type, const char *name, int id) {
-  ObservableType obsType = observableTypeFromStr(type);
+  SensorType obsType = observableTypeFromStr(type);
 
   if (obsType == UNKNOWN_OBS_TYPE) {
     st_log_error(_HOOKS_MANAGER_TAG, _errorUnkownObsType);
@@ -177,7 +177,7 @@ bool HooksManagerClass::updateHook(JsonDocument doc) {
   }
 
   const char *name = observable["name"];
-  ObservableType type = observableTypeFromStr(observable["type"]);
+  SensorType type = observableTypeFromStr(observable["type"]);
   if (name == nullptr || type == UNKNOWN_OBS_TYPE) {
     st_log_error(_HOOKS_MANAGER_TAG, "Observable name or type is missing!");
     return false;
@@ -284,7 +284,7 @@ bool HooksManagerClass::deleteHook(const char *name, int id) {
 }
 
 template <typename T>
-Watcher<T> *HooksManagerClass::getWatcher(const ObservableObject<T> *observable) {
+Watcher<T> *HooksManagerClass::getWatcher(const Sensor<T> *observable) {
   return getWatchersList<T>()->findValue([observable](Watcher<T> *current) {
     return current->getObservable() == observable;
   });
@@ -316,7 +316,7 @@ void HooksManagerClass::checkWatchers() {
 }
 
 boolean HooksManagerClass::callHook(const char * type, const char * name, int id, String value) {
-  ObservableType observableType = observableTypeFromStr(type);
+  SensorType observableType = observableTypeFromStr(type);
 
   if (observableType == UNKNOWN_OBS_TYPE) {
     st_log_error(_HOOKS_MANAGER_TAG, _errorUnkownObsType);
@@ -364,7 +364,7 @@ boolean HooksManagerClass::callWatcherHook(const char * name, int id, T value, b
     st_log_error(_HOOKS_MANAGER_TAG, "Can't find hook for observable %s by id=%d", name, id);
     return false;
   }
-  const ObservableObject<T> * obs = watcher->getObservable();
+  const Sensor<T> * obs = watcher->getObservable();
   if (obs == nullptr) {
     st_log_error(_HOOKS_MANAGER_TAG, "OBSERVABLE NULLPTR! HOW???");
     return false;
@@ -395,7 +395,7 @@ void HooksManagerClass::loadFromSettings() {
 
   st_log_debug(_HOOKS_MANAGER_TAG, "Building hooks from settings");
   while(address < dataLength) {
-    ObservableType type = static_cast<ObservableType>(data[address] - '0');
+    SensorType type = static_cast<SensorType>(data[address] - '0');
     String name;
 
     for (address = address + 1; address < dataLength; address++) {
@@ -407,9 +407,9 @@ void HooksManagerClass::loadFromSettings() {
 
     address++;
     if (type == OBS_SENSOR) {
-      failedBuild = loadHooks<NUMBER_SENSOR_TYPE>(ObservablesManager.getObservableObject<NUMBER_SENSOR_TYPE>(name.c_str()), data, &address, dataLength) || failedBuild;
+      failedBuild = loadHooks<NUMBER_SENSOR_TYPE>(SensorsManager.getSensor<NUMBER_SENSOR_TYPE>(name.c_str()), data, &address, dataLength) || failedBuild;
     } else if (type == OBS_STATE) {
-      failedBuild = loadHooks<TEXT_SENSOR_TYPE>(ObservablesManager.getObservableObject<TEXT_SENSOR_TYPE>(name.c_str()), data, &address, dataLength) || failedBuild;
+      failedBuild = loadHooks<TEXT_SENSOR_TYPE>(SensorsManager.getSensor<TEXT_SENSOR_TYPE>(name.c_str()), data, &address, dataLength) || failedBuild;
     } else {
       st_log_error(_HOOKS_MANAGER_TAG, _errorUnkownObsType);
     }
@@ -428,7 +428,7 @@ void HooksManagerClass::loadFromSettings() {
 }
 
 template<typename T>
-bool HooksManagerClass::loadHooks(const ObservableObject<T> * observable, const char * data, int * address, int length) {
+bool HooksManagerClass::loadHooks(const Sensor<T> * observable, const char * data, int * address, int length) {
   bool res = false;
   String buff; // todo remove, pass hook length
 
@@ -475,7 +475,7 @@ bool HooksManagerClass::saveInSettings() {
 }
 
 JsonDocument HooksManagerClass::getObservableHooksJson(const char *type, const char *name) {
-  ObservableType observableType = observableTypeFromStr(type);
+  SensorType observableType = observableTypeFromStr(type);
   JsonDocument doc;
 
   if (observableType == UNKNOWN_OBS_TYPE) {

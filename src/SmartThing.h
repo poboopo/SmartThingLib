@@ -10,7 +10,7 @@
 #include "net/rest/RestController.h"
 #include "settings/SettingsRepository.h"
 #include "actions/ActionsManager.h"
-#include "observable/ObservablesManager.h"
+#include "sensors/SensorsManager.h"
 #include "Features.h"
 
 #define SMART_THING_VERSION "0.7"

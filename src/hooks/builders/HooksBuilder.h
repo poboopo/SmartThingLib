@@ -130,7 +130,7 @@ class HooksBuilder {
       return hook;
     }
 
-    static String getTemplates(ObservableType type) {
+    static String getTemplates(SensorType type) {
       const char * defTemp = getDefaultTemplate(type);
 
       size_t nameLen = strlen(_httpHookType) + strlen(_notificationHookType);
@@ -251,7 +251,7 @@ class HooksBuilder {
     }
     #endif
 
-    static const char * getDefaultTemplate(ObservableType type) {
+    static const char * getDefaultTemplate(SensorType type) {
       switch (type) {
         case OBS_SENSOR:
           return DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON;

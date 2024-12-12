@@ -1,5 +1,5 @@
 #include "hooks/watcher/Watcher.h"
-#include "observable/ObservableObject.h"
+#include "sensors/Sensor.h"
 
 template<>
 bool Watcher<NUMBER_SENSOR_TYPE>::check() {

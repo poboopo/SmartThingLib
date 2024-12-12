@@ -3,7 +3,7 @@
 #include "Features.h"
 #include "logs/BetterLogger.h"
 #include "settings/SettingsRepository.h"
-#include "observable/ObservablesManager.h"
+#include "sensors/SensorsManager.h"
 #include "net/rest/handlers/ActionRequestHandler.h"
 #include "net/rest/handlers/HooksRequestHandler.h"
 #include "net/rest/handlers/ConfigRequestHandler.h"
@@ -143,7 +143,7 @@ void RestControllerClass::setupHandler() {
     #if ENABLE_SENSORS || ENABLE_STATES || ENABLE_HOOKS
     JsonObject counts = doc["counts"].to<JsonObject>();
     #if ENABLE_SENSORS || ENABLE_STATES
-    counts["sensors"] = ObservablesManager.getSensorsCount();
+    counts["sensors"] = SensorsManager.getSensorsCount();
     #endif
     #if ENABLE_HOOKS
     counts["hooks"] = HooksManager.getTotalHooksCount();

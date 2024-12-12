@@ -116,14 +116,14 @@ bool SmartThingClass::init(const char * type) {
   #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
   SettingsRepository.addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)");
     #if ENABLE_STATES
-    ObservablesManager.addSensor("logger", []() {
+    SensorsManager.addSensor("logger", []() {
       return LOGGER.isConnected() ? "connected" : "disconnected";
     });
     #endif
   #endif
 
   #if ENABLE_STATES
-  ObservablesManager.addSensor("wifi", [this]() {
+  SensorsManager.addSensor("wifi", [this]() {
     return wifiConnected() ? "connected" : "disconnected";
   });
   #endif

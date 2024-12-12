@@ -75,7 +75,7 @@ inline RequestMethod requestMethodFromStr(const char * method) {
   return UNKOWN_METHOD;
 }
 
-template<class T, CHECK_HOOK_DATA_TYPE>
+template<typename T, CHECK_HOOK_DATA_TYPE>
 class HttpHook : public SELECT_HOOK_BASE_CLASS {
   public:
     HttpHook(const char *url, RequestMethod method, const char * payload)

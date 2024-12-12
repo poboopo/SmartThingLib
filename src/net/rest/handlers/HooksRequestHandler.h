@@ -13,10 +13,9 @@
 #include "net/rest/handlers/RequestHandler.h"
 #include "net/rest/WebPageAssets.h"
 
-#define HOOK_NAME_ARG "name"
-#define HOOK_OBSERVABLE_TYPE "type" // todo const char
-#define HOOK_ID_ARG "id"
-#define HOOKS_RQ_PATH "/hooks"
+const char * const _hooksSensorNameArg = "sensor";
+const char * const _hookIdArg = "id";
+const char * const _hooksPath = "/hooks";
 
 const char * const _HOOKS_RQ_TAG = "hooks_handler";
 
@@ -25,7 +24,7 @@ class HooksRequestHandler : public RequestHandler {
   public:
     HooksRequestHandler(){};
     bool canHandle(AsyncWebServerRequest *request) {
-      return request->url().startsWith(HOOKS_RQ_PATH) &&
+      return request->url().startsWith(_hooksPath) &&
             (request->method() == HTTP_GET || request->method() == HTTP_PUT || request->method() == HTTP_POST ||
               request->method() == HTTP_DELETE || request->method() == HTTP_OPTIONS);
     };
@@ -37,48 +36,50 @@ class HooksRequestHandler : public RequestHandler {
         }
         #endif
         if (request->url().equals("/hooks/templates")) {
-          String type = request->arg(HOOK_OBSERVABLE_TYPE);
-          if (type.isEmpty()) {
+          String sensor = request->arg(_hooksSensorNameArg);
+          if (sensor.isEmpty()) {
             return request->beginResponse(400, CONTENT_TYPE_JSON,
-                        buildErrorJson("Type parameter are missing!"));
+                        buildErrorJson("Sensor sensor parameter are missing!"));
           }
-          String response = HooksBuilder::getTemplates(observableTypeFromStr(type.c_str()));;
+
+          String response = HooksBuilder::getTemplates(sensor.c_str());
           return request->beginResponse(200, CONTENT_TYPE_JSON, response);
         }
-        if (request->url().equals("/hooks/by/observable")) {
-          String type = request->arg(HOOK_OBSERVABLE_TYPE);
-          String name = request->arg(HOOK_NAME_ARG);
 
-          if (type.isEmpty() || name.isEmpty()) {
+        if (request->url().equals("/hooks/by/sensor")) {
+          String sensor = request->arg(_hooksSensorNameArg);
+
+          if (sensor.isEmpty()) {
             return request->beginResponse(
                 400, CONTENT_TYPE_JSON,
-                buildErrorJson("Observable type or name args are missing!"));
+                buildErrorJson("Sensor type or sensor args are missing!"));
           }
-          st_log_info(_HOOKS_RQ_TAG, "Searching hooks for [%s] %s", type.c_str(), name.c_str());
-          JsonDocument doc = HooksManager.getObservableHooksJson(type.c_str(), name.c_str());
+
+          st_log_debug(_HOOKS_RQ_TAG, "Searching hooks for sensor %s", sensor.c_str());
+          JsonDocument doc = HooksManager.getSensorHooksJson(sensor.c_str());
           String response;
           serializeJson(doc, response);
           return request->beginResponse(200, CONTENT_TYPE_JSON, response);
         }
+
         if (request->url().equals("/hooks/test")) {
-          String type = request->arg(HOOK_OBSERVABLE_TYPE);
-          String name = request->arg(HOOK_NAME_ARG);
-          String id = request->arg(HOOK_ID_ARG);
+          String sensor = request->arg(_hooksSensorNameArg);
+          String id = request->arg(_hookIdArg);
           String value = request->arg("value");
 
-          if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
+          if (sensor.isEmpty() || id.isEmpty()) {
             return request->beginResponse(400, CONTENT_TYPE_JSON,
-                        buildErrorJson("Type, name or id args are missing!"));
+                        buildErrorJson("Type, sensor or id args are missing!"));
           }
-          st_log_info(_HOOKS_RQ_TAG, "Making test hook call for [%s] %s, id = %s (value = %s)", type.c_str(), name.c_str(), id.c_str(), value.isEmpty() ? "none" : value.c_str());
-          if (HooksManager.callHook(type.c_str(), name.c_str(), id.toInt(), value)) {
+          st_log_info(_HOOKS_RQ_TAG, "Making test hook call for sensor %s, id = %s (value = %s)", sensor.c_str(), id.c_str(), value.isEmpty() ? "none" : value.c_str());
+          if (HooksManager.callHook(sensor.c_str(), id.toInt(), value)) {
             return request->beginResponse(200);
           } else {
             return request->beginResponse(500);
           }
         }
       }
-      if (request->url().equals(HOOKS_RQ_PATH)) {
+      if (request->url().equals(_hooksPath)) {
         // todo switch
         if (request->method() == HTTP_POST) {
           if (_body.isEmpty()) {
@@ -88,17 +89,16 @@ class HooksRequestHandler : public RequestHandler {
           JsonDocument doc;
           deserializeJson(doc, _body);
 
-          if (!doc["observable"].is<JsonVariant>() || !doc["hook"].is<JsonVariant>()) {
-            return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Observable or hook object are missing"));
+          if (!doc["sensor"].is<JsonVariant>() || !doc["hook"].is<JsonVariant>()) {
+            return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Sensor or hook object are missing"));
           }
 
-          ObservableType type = observableTypeFromStr(doc["observable"]["type"]);
-          const char *name = doc["observable"]["name"];
-          if (type == UNKNOWN_OBS_TYPE || name == nullptr) {
-            return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Parameters observable type or name are missing!"));
+          const char *sensor = doc["sensor"];
+          if (sensor == nullptr) {
+            return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Parameters sensor type or sensor are missing!"));
           }
 
-          int id = HooksManager.addHook(type, name, doc["hook"].as<String>().c_str());
+          int id = HooksManager.addHook(sensor, doc["hook"].as<String>().c_str());
 
           if (id >= 0) {
             HooksManager.saveInSettings();
@@ -115,7 +115,6 @@ class HooksRequestHandler : public RequestHandler {
             return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Body is missing!"));
           }
 
-          st_log_info(_HOOKS_RQ_TAG, "Updating hook");
           JsonDocument doc;
           deserializeJson(doc, _body);
           if (HooksManager.updateHook(doc)) {
@@ -128,17 +127,14 @@ class HooksRequestHandler : public RequestHandler {
           }
         }
         if (request->method() == HTTP_DELETE) {
-          String type = request->arg(HOOK_OBSERVABLE_TYPE);
-          String name = request->arg(HOOK_NAME_ARG);
-          String id = request->arg(HOOK_ID_ARG);
+          String sensor = request->arg(_hooksSensorNameArg);
+          String id = request->arg(_hookIdArg);
 
-          if (type.isEmpty() || name.isEmpty() || id.isEmpty()) {
-            return request->beginResponse(
-                400, CONTENT_TYPE_JSON,
-                buildErrorJson("Observable type, name or id args are missing!"));
+          if (sensor.isEmpty() || id.isEmpty()) {
+            return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Sensor sensor or id args are missing!"));
           }
 
-          if (HooksManager.deleteHook(type.c_str(), name.c_str(), id.toInt())) {
+          if (HooksManager.deleteHook(sensor.c_str(), id.toInt())) {
             HooksManager.saveInSettings();
             return request->beginResponse(200);
           } else {

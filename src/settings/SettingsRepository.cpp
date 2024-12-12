@@ -3,20 +3,12 @@
 
 #include <EEPROM.h>
 
+#define EEPROM_LOAD_SIZE 1024
+
 // [offsets][name][wifi][config][hooks][actions]
 #define SETTINGS_TEMPLATE "%03d%03d%03d%03d%03d%s%s%s%s%s"
 #define LENGTH_PARTITION_SIZE 3
 #define DATA_OFFSET 15
-#define DEFAULT_NAME_LENGTH 10
-
-#define GROUP_CONFIG "configuration"
-#define GROUP_WIFI "wifi"
-#define GROUP_HOOKS "hooks"
-#define GROUP_ACTIONS "actions"
-#define GROUP_NAME "name"
-
-#define SEPARATOR_CHAR ';'
-#define END_CHAR '\n' 
 
 #ifdef ARDUINO_ARCH_ESP32
 bool eepromBegin() {
@@ -42,7 +34,7 @@ enum DataIndex {
 };
 
 const char * const _SETTINGS_MANAGER_TAG = "settings_manager";
-const char * const EEPROM_OPEN_ERROR = "Failed to open EEPROM";
+const char * const _errorEepromOpen = "Failed to open EEPROM";
 
 SettingsRepositoryClass SettingsRepository;
 
@@ -58,7 +50,7 @@ void SettingsRepositoryClass::clear() {
     EEPROM.end();
     st_log_warning(_SETTINGS_MANAGER_TAG, "EEPROM clear");
   } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(_SETTINGS_MANAGER_TAG, _errorEepromOpen);
   }
 }
 
@@ -79,10 +71,9 @@ int SettingsRepositoryClass::getLength(uint8_t index) {
   if (index < FIRST_INDEX || index > LAST_INDEX) {
     return -1;
   }
-  char * buff = (char *) malloc(LENGTH_PARTITION_SIZE + 1);
+  char buff[LENGTH_PARTITION_SIZE + 1];
   read(index * LENGTH_PARTITION_SIZE, buff, LENGTH_PARTITION_SIZE);
   int result = atoi(buff);
-  free(buff);
   return result;
 }
 
@@ -90,12 +81,9 @@ int SettingsRepositoryClass::writeLength(uint8_t index, int length) {
   if (index < FIRST_INDEX || index > LAST_INDEX) {
     return -1;
   }
-  char * buff = (char *) malloc(LENGTH_PARTITION_SIZE + 1);
+  char buff[LENGTH_PARTITION_SIZE + 1];
   sprintf(buff, "%03d", length);
-
   write(index * LENGTH_PARTITION_SIZE, buff, LENGTH_PARTITION_SIZE);
-
-  free(buff);
   return length;
 }
 
@@ -115,16 +103,15 @@ String SettingsRepositoryClass::readData(uint8_t index, const char * defaultValu
       offset += getLength(i);
     }
 
-    char * buff = (char *) malloc(targetLength + 1);
+    char buff[targetLength + 1];
     read(offset, buff, targetLength);
 
     String result = buff;
-    free(buff);
 
     EEPROM.end();
     return result;
   } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(_SETTINGS_MANAGER_TAG, _errorEepromOpen);
     return defaultValue;
   }
 }
@@ -149,11 +136,9 @@ int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
       offset += tmp;
     }
 
-    char * oldData = (char *) malloc(targetLength + 1);
+    char oldData[targetLength + 1];
     read(offset, oldData, targetLength);
-    int cmp = strcmp(oldData, data);
-    free(oldData);
-    if (cmp == 0) {
+    if (strcmp(oldData, data) == 0) {
       st_log_debug(_SETTINGS_MANAGER_TAG, "Old data equals new, not writing");
       return targetLength;
     }
@@ -166,7 +151,7 @@ int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
       tailLength += tmp;
     }
 
-    char * buffTail = (char *) malloc(tailLength + 1);
+    char buffTail[tailLength + 1];
     read(offset + targetLength, buffTail, tailLength);
     
     int dataLen = strlen(data);
@@ -178,10 +163,9 @@ int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
     EEPROM.commit();
     EEPROM.end();
 
-    free(buffTail);
     return dataLen;
   } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(_SETTINGS_MANAGER_TAG, _errorEepromOpen);
     return -1;
   }
 }
@@ -303,7 +287,7 @@ bool SettingsRepositoryClass::setWiFi(WiFiConfig settings) {
   settings.ssid.replace(";", "|;");
   settings.password.replace(";", "|;");
 
-  char * buff = (char *) malloc(settings.ssid.length() + settings.password.length() + 4);
+  char buff[settings.ssid.length() + settings.password.length() + 4];
   sprintf(
     buff,
     "%s;%s;%d",
@@ -319,7 +303,6 @@ bool SettingsRepositoryClass::setWiFi(WiFiConfig settings) {
   } else {
     st_log_error(_SETTINGS_MANAGER_TAG, "WiFi config update failed");
   }
-  free(buff);
   return res;
 }
 
@@ -436,29 +419,24 @@ String SettingsRepositoryClass::exportSettings() {
       actualSize += getLength(i);
     }
 
-    char * buff = (char *) malloc(actualSize + 1);
+    char buff[actualSize + 1];
     for (uint16_t i = 0; i < actualSize; i++) {
       tmp = EEPROM.read(i);
-      if (tmp == 0) {
-        if (i < DATA_OFFSET) {
-          tmp = '0';
-        } else {
-          continue;
-        }
+      if (i < DATA_OFFSET && (tmp < '0' || tmp > '9')) {
+        tmp = '0';
       }
       buff[i] = (char) tmp;
     }
     buff[actualSize] = 0;
     EEPROM.end(); 
     result = buff;
-    free(buff);
 
     result.replace("\n", "\\n");
     result.replace("\t", "\\t");
 
     return result;
   } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(_SETTINGS_MANAGER_TAG, _errorEepromOpen);
     return result;
   }
 }
@@ -469,11 +447,16 @@ bool SettingsRepositoryClass::importSettings(String &dump) {
     return false;
   }
 
+  if (dump.charAt(0) == '{' || dump.charAt(0) == '[') {
+    st_log_error(_SETTINGS_MANAGER_TAG, "Bad dump - got json?");
+    return false;
+  }
+
   bool valid = true;
-  char tmp;
-  for (uint8_t i = 0; i < LENGTH_PARTITION_SIZE; i++) {
-    tmp = dump.charAt(i);
-    if ('0' > tmp && tmp > '9') {
+  uint8_t tmp;
+  for (uint8_t i = 0; i < DATA_OFFSET; i++) {
+    tmp = dump.charAt(i) - '0';
+    if ('0' < tmp || tmp > '9') {
       valid = false;
       break;
     }
@@ -484,6 +467,9 @@ bool SettingsRepositoryClass::importSettings(String &dump) {
     return false;
   }
 
+  dump.replace("\\n", "\n");
+  dump.replace("\\t", "\t");
+  
   if (eepromBegin()) {
     st_log_warning(_SETTINGS_MANAGER_TAG, "Writing dump in eeprom (size=%d)", dump.length());
     st_log_debug(_SETTINGS_MANAGER_TAG, "Dump=%s", dump.c_str());
@@ -496,7 +482,7 @@ bool SettingsRepositoryClass::importSettings(String &dump) {
     st_log_warning(_SETTINGS_MANAGER_TAG, "Dump write finished");
     return true;
   } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, EEPROM_OPEN_ERROR);
+    st_log_error(_SETTINGS_MANAGER_TAG, _errorEepromOpen);
     return false;
   }
 }

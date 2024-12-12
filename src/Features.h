@@ -12,22 +12,27 @@
 #define LOGGING_LEVEL_ERROR 40
 
 #ifndef ENABLE_WEB_PAGE
-#define ENABLE_WEB_PAGE 1
+  // esp8266 works kinda bad with full web ui
+  #ifdef ARDUINO_ARCH_ESP8266
+    #define ENABLE_WEB_PAGE 0
+  #else
+    #define ENABLE_WEB_PAGE 1
+  #endif
 #endif
 
 #ifndef ENABLE_ACTIONS
-#define ENABLE_ACTIONS 1
+  #define ENABLE_ACTIONS 1
 #endif
 
-#ifndef ENABLE_SENSORS
-#define ENABLE_SENSORS 1
+#ifndef ENABLE_NUMBER_SENSORS
+  #define ENABLE_NUMBER_SENSORS 1
 #endif
 
-#ifndef ENABLE_STATES
-#define ENABLE_STATES 1
+#ifndef ENABLE_TEXT_SENSORS
+  #define ENABLE_TEXT_SENSORS 1
 #endif
 
-#if ENABLE_SENSORS && ENABLE_STATES
+#if ENABLE_NUMBER_SENSORS && ENABLE_TEXT_SENSORS
   #ifndef ENABLE_HOOKS
     #define ENABLE_HOOKS 1
   #endif

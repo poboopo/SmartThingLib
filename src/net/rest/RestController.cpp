@@ -3,16 +3,15 @@
 #include "Features.h"
 #include "logs/BetterLogger.h"
 #include "settings/SettingsRepository.h"
-#include "observable/ObservablesManager.h"
+#include "sensors/SensorsManager.h"
 #include "net/rest/handlers/ActionRequestHandler.h"
 #include "net/rest/handlers/HooksRequestHandler.h"
 #include "net/rest/handlers/ConfigRequestHandler.h"
 #include "net/rest/handlers/InfoRequestHandler.h"
-#include "net/rest/handlers/SensorsRequestHandler.h"
-#include "net/rest/handlers/StateRequestHandler.h"
 #include "net/rest/handlers/WiFiRequestHandler.h"
 #include "net/rest/handlers/SettingsRequestHandler.h"
 #include "net/rest/handlers/DangerRequestHandler.h"
+#include "net/rest/handlers/SensorsRequestHandler.h"
 #include "net/rest/WebPageAssets.h"
 
 const char * const _WEB_SERVER_TAG = "web_server";
@@ -75,11 +74,9 @@ void RestControllerClass::setupHandler() {
   _server.addHandler(new InfoRequestHandler());
   _server.addHandler(new SettingsRequestHandler());
   _server.addHandler(new DangerRequestHandler());
-  #if ENABLE_SENSORS
+  // todo add guard macros
+  #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
   _server.addHandler(new SensorsRequestHandler());
-  #endif
-  #if ENABLE_STATES
-  _server.addHandler(new StateRequestHandler());
   #endif
   #if ENABLE_ACTIONS
   _server.addHandler(new ActionRequestHandler());
@@ -117,8 +114,7 @@ void RestControllerClass::setupHandler() {
     doc["web"] = ENABLE_WEB_PAGE == 1;
     doc["actions"] = ENABLE_ACTIONS == 1;
     doc["actionsScheduler"] = ENABLE_ACTIONS_SCHEDULER == 1;
-    doc["sensors"] = ENABLE_SENSORS == 1;
-    doc["states"] = ENABLE_STATES == 1;
+    doc["sensors"] = ENABLE_NUMBER_SENSORS == 1 || ENABLE_TEXT_SENSORS == 1;
     doc["hooks"] = ENABLE_HOOKS == 1;
     doc["logger"] = ENABLE_LOGGER == 1;
     
@@ -144,13 +140,10 @@ void RestControllerClass::setupHandler() {
     obj["maxAlloc"] = ESP.getMaxAllocHeap();
     #endif
 
-    #if ENABLE_SENSORS || ENABLE_STATES || ENABLE_HOOKS
+    #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS || ENABLE_HOOKS
     JsonObject counts = doc["counts"].to<JsonObject>();
-    #if ENABLE_SENSORS
-    counts["sensors"] = ObservablesManager.getSensorsCount();
-    #endif
-    #if ENABLE_STATES
-    counts["states"] = ObservablesManager.getDeviceStatesCount();
+    #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
+    counts["sensors"] = SensorsManager.getSensorsCount();
     #endif
     #if ENABLE_HOOKS
     counts["hooks"] = HooksManager.getTotalHooksCount();
@@ -162,17 +155,6 @@ void RestControllerClass::setupHandler() {
     AsyncWebServerResponse * resp = request->beginResponse(200, CONTENT_TYPE_JSON, response);
     resp->addHeader("Access-Control-Allow-Origin", "*");
     request->send(resp);
-  });
-
-  _server.on("/restart", HTTP_GET, [&](AsyncWebServerRequest * request) {
-    st_log_request(_WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
-
-    request->send(200);
-    st_log_info(_WEB_SERVER_TAG, "---------RESTART---------");
-    _restartHandler();
-
-    delay(2000);
-    ESP.restart();
   });
 
   _server.onNotFound(

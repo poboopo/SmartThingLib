@@ -6,13 +6,11 @@
 
 #include "hooks/HooksManager.h"
 #include "settings/ConfigEntriesList.h"
-#include "observable/DeviceStatesList.h"
-#include "observable/SensorsList.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
 #include "settings/SettingsRepository.h"
 #include "actions/ActionsManager.h"
-#include "observable/ObservablesManager.h"
+#include "sensors/SensorsManager.h"
 #include "Features.h"
 
 #define SMART_THING_VERSION "0.7"
@@ -26,8 +24,8 @@
 #define WIFI_MODE_AP WIFI_AP
 #endif
 
-#define ST_DEFAULT_NAME "st-device"
-#define DEVICE_NAME_LENGTH_MAX 16
+static const char * ST_DEFAULT_NAME = "st-device";
+static const int DEVICE_NAME_LENGTH_MAX = 16;
 
 class SmartThingClass {
  public:

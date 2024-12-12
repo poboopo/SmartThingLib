@@ -36,11 +36,11 @@
 
 const char * const _SMART_THING_TAG = "smart_thing";
 #ifdef ARDUINO_ARCH_ESP32
-const char * const beaconTemplate = "%s$%s$%s$%s$esp32";
+const char * const beaconTemplate = "%s;%s;%s;%s;esp32;%s";
 const size_t beaconExtraSize = 9;
 #endif
 #ifdef ARDUINO_ARCH_ESP8266
-const char * const beaconTemplate = "%s$%s$%s$%s$esp8266";
+const char * const beaconTemplate = "%s;%s;%s;%s;esp8266;%s";
 const int beaconExtraSize = 11;
 #endif
 const size_t versionLen = strlen(SMART_THING_VERSION);
@@ -90,14 +90,13 @@ bool SmartThingClass::init(const char * type) {
   }
   st_log_debug(_SMART_THING_TAG, "Device type/name: %s/%s", _type, _name);
 
-  #ifdef ARDUINO_ARCH_ESP32
   st_log_debug(
     _SMART_THING_TAG,
     "Wipe pin=%d, timeout=%d",
     WIPE_PIN, WIPE_TIMEOUT
   );
   pinMode(WIPE_PIN, INPUT_PULLUP);
-  #endif
+
   st_log_debug(_SMART_THING_TAG, "Led pin=%d", LED_PIN);
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
@@ -116,15 +115,15 @@ bool SmartThingClass::init(const char * type) {
 
   #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
   SettingsRepository.addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)");
-    #if ENABLE_STATES
-    ObservablesManager.addDeviceState("logger", []() {
+    #if ENABLE_TEXT_SENSORS
+    SensorsManager.addSensor("logger", []() {
       return LOGGER.isConnected() ? "connected" : "disconnected";
     });
     #endif
   #endif
 
-  #if ENABLE_STATES
-  ObservablesManager.addDeviceState("wifi", [this]() {
+  #if ENABLE_TEXT_SENSORS
+  SensorsManager.addSensor("wifi", [this]() {
     return wifiConnected() ? "connected" : "disconnected";
   });
   #endif
@@ -326,11 +325,13 @@ void SmartThingClass::wipeSettings() {
     st_log_warning(_SMART_THING_TAG, "Settings were wiped!");
   }
   digitalWrite(LED_PIN, LOW);
+  ESP.restart();
 }
 
 void SmartThingClass::updateDeviceName(String name) {
   name.trim();
   name.replace(" ", "-");
+  name.replace(";", "-");
   name.toLowerCase();
   if (name.equals(_name)) {
     return;
@@ -339,7 +340,10 @@ void SmartThingClass::updateDeviceName(String name) {
     st_log_error(_SMART_THING_TAG, "Name update failed");
     return;
   }
-  free(_name);
+
+  if (_name != nullptr && _name != ST_DEFAULT_NAME) {
+    free(_name);
+  }
   _name = (char *) malloc(name.length() + 1);
   strcpy(_name, name.c_str());
 
@@ -362,7 +366,11 @@ void SmartThingClass::updateBroadCastMessage() {
   }
   size_t size = strlen(_ip) + strlen(_type) + strlen(_name) + versionLen + beaconExtraSize + 1;
   _broadcastMessage = (char *) malloc(size);
-  sprintf(_broadcastMessage, beaconTemplate, _ip, _type, _name, SMART_THING_VERSION);
+  #ifdef __VERSION
+    sprintf(_broadcastMessage, beaconTemplate, _ip, _type, _name, SMART_THING_VERSION, String(__VERSION).c_str());
+  #else
+    sprintf(_broadcastMessage, beaconTemplate, _ip, _type, _name, SMART_THING_VERSION, "");
+  #endif
 }
 
 #ifdef ARDUINO_ARCH_ESP32

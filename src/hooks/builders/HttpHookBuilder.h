@@ -18,7 +18,7 @@ class HttpHookBuilder {
     String url, method, payload;
     uint8_t step = 0;
 
-    for (int i = 0; i < strlen(data); i++) {
+    for (unsigned int i = 0; i < strlen(data); i++) {
       if (data[i] == ';') {
         step++;
         continue;

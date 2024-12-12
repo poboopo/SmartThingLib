@@ -5,91 +5,79 @@
 #if ENABLE_HOOKS 
 
 #include <ArduinoJson.h>
-
 #include <functional>
 
 #include "hooks/impls/Hook.h"
 #include "hooks/impls/LambdaHook.h"
-#include "hooks/watchers/DeviceStateWatcher.h"
-#include "hooks/watchers/SensorWatcher.h"
-#include "hooks/watchers/Watcher.h"
-#include "observable/ObservableObjects.h"
+#include "hooks/watcher/Watcher.h"
+#include "sensors/Sensor.h"
 #include "utils/List.h"
 
 class HooksManagerClass {
  public:
   void loadFromSettings();
 
-  int addHook(ObservableType observableType, const char * observableName, const char * data);
+  int addHook(const char * sensorName, const char * data);
 
-  bool deleteHook(const char* type, const char* name, int id);
+  bool deleteHook(const char* name, int id);
   bool updateHook(JsonDocument doc);
 
   void check();
-  boolean callHook(const char * type, const char * name, int id, String value);
+  boolean callHook(const char * name, int id, String value);
 
-  JsonDocument getObservableHooksJson(const char* type,
-                                                 const char* name);
+  JsonDocument getSensorHooksJson(const char* name);
 
   bool saveInSettings();
 
   int16_t getTotalHooksCount() { return _hooksCount; }
 
  private:
-  #if ENABLE_SENSORS 
-  List<Watcher<SENSOR_DATA_TYPE>> _sensorsWatchers;
+  #if ENABLE_NUMBER_SENSORS 
+  List<Watcher<NUMBER_SENSOR_TYPE>> _sensorsWatchers;
   #endif
 
-  #if ENABLE_STATES
-  List<Watcher<STATE_DATA_TYPE>> _statesWatchers;
+  #if ENABLE_TEXT_SENSORS
+  List<Watcher<TEXT_SENSOR_TYPE>> _statesWatchers;
   #endif
 
   int _hooksCount = 0;
 
   template<typename T>
-  bool loadHooks(const ObservableObject<T> * observable, const char * data, int * address, int length);
+  bool loadHooks(const Sensor<T> * sensor, const char * data, int * address, int length);
 
   template<typename T>
-  int addHook(const ObservableObject<T> * observable, const char * data);
+  int addHook(const Sensor<T> * sensor, const char * data);
 
   template <typename T>
-  int addHook(const ObservableObject<T>* obj, Hook<T>* hook);
+  int addHook(const Sensor<T>* obj, Hook<T>* hook);
 
   template <typename T>
-  Watcher<T>* getWatcher(List<Watcher<T>>* list,
-                         const ObservableObject<T>* observable);
+  Watcher<T>* getWatcher(const Sensor<T>* sensor);
 
   template <typename T>
-  Watcher<T>* getWatcherByObservableName(List<Watcher<T>>* list,
-                                         const char* name);
+  Watcher<T>* getWatcherBySensorName(const char* name);
 
   template <typename T>
-  Hook<T>* getHookFromWatcherList(List<Watcher<T>>* list,
-                                          const char* name, int id);
+  Hook<T>* getHookFromWatcher(const char* name, int id);
 
   template <typename T>
-  JsonDocument getObservableHooksJsonFromList(List<Watcher<T>>* list,
-                                                         const char* name);
+  JsonDocument getSensorHooksJson(const char* name);
 
   template <typename T>
-  bool deleteHookFromList(List<Watcher<T>>* list, const char* name, int id);
+  bool deleteHook(const char* name, int id);
 
   template <typename T>
-  bool updateHook(List<Watcher<T>>* list, const char* name,
-                      JsonDocument &hookObject);
+  bool updateHook(const char* name, JsonDocument &hookObject);
 
   template <typename T>
-  void checkWatchers(List<Watcher<T>>* list);
+  void checkWatchers();
 
   template <typename T>
-  boolean callWatcherHook(List<Watcher<T>>* list, const char * name, int id, T value, boolean emptyValue);
+  boolean callWatcherHook(const char * name, int id, T value, boolean emptyValue);
 
   template <typename T>
   Watcher<T>* getWatcherOrCreate(
-      const ObservableObject<T>* obj);
-
-  template <typename T>
-  Watcher<T>* createWatcher(const ObservableObject<T>* obj);
+      const Sensor<T>* obj);
 
   template <typename T>
   List<Watcher<T>>* getWatchersList();

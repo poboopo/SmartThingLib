@@ -22,8 +22,8 @@ const char * const _HOOKS_BUILDER_TAG = "hooks_factory";
   const char * const TEMPLATES_JSON = "{\"default\":%s,\"%s\":%s,\"%s\":%s}";
   const size_t TEMPLATE_JSON_LENGTH = 20;
 #endif
-const char * const DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON = "{\"threshold\":{\"required\":false},\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}";
-const char * const DEFAULT_STATES_HOOKS_TEMPLATES_JSON = "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}";
+const char * const DEFAULT_NUMBER_HOOKS_TEMPLATES_JSON = "{\"threshold\":{\"required\":false},\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}";
+const char * const DEFAULT_TEXT_HOOKS_TEMPLATES_JSON = "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}";
 const char * const HTTP_HOOK_TEMPLATE = "{\"url\":{\"required\":true},\"payload\":{\"required\":false},\"method\":{\"required\":true,\"values\":{\"1\":\"GET\",\"2\":\"POST\",\"3\":\"PUT\",\"4\":\"PATCH\",\"5\":\"DELETE\"}}}";
 const char * const NOTIFICATION_HOOK_TEMPLATE = "{\"message\":{\"required\":true},\"ntfType\":{\"values\":{\"1\":\"info\",\"2\":\"warning\",\"3\":\"error\"}}}";
 
@@ -81,7 +81,7 @@ class HooksBuilder {
         char idStr[] = {data[1], data[2]};
         id = atoi(idStr);
 
-        for (dataOffset = 5; dataOffset < strlen(data); dataOffset++) {
+        for (dataOffset = 5; dataOffset < (int) strlen(data); dataOffset++) {
           if (data[dataOffset] == ';') {
             break;
           }
@@ -130,8 +130,8 @@ class HooksBuilder {
       return hook;
     }
 
-    static String getTemplates(ObservableType type) {
-      const char * defTemp = getDefaultTemplate(type);
+    static String getTemplates(const char * name) {
+      const char * defTemp = getDefaultTemplate(name);
 
       size_t nameLen = strlen(_httpHookType) + strlen(_notificationHookType);
       size_t tempLen = strlen(defTemp) + strlen(HTTP_HOOK_TEMPLATE) + strlen(NOTIFICATION_HOOK_TEMPLATE);
@@ -187,8 +187,8 @@ class HooksBuilder {
       return result;
     }
   
-    #if ENABLE_SENSORS
-    static void parseTrigger(Hook<SENSOR_DATA_TYPE> * hook, JsonDocument &doc) {
+    #if ENABLE_NUMBER_SENSORS
+    static void parseTrigger(Hook<NUMBER_SENSOR_TYPE> * hook, JsonDocument &doc) {
       st_log_debug(_HOOKS_BUILDER_TAG, "trigger=%d", doc[_triggerHookField].as<int>());
       st_log_debug(_HOOKS_BUILDER_TAG, "threshold=%d", doc[_thresholdHookField].as<int>());
       hook->setTriggerValue(doc[_triggerHookField]);
@@ -196,8 +196,8 @@ class HooksBuilder {
     }
     #endif
 
-    #if ENABLE_STATES
-    static void parseTrigger(Hook<STATE_DATA_TYPE> * hook, JsonDocument &doc) {
+    #if ENABLE_TEXT_SENSORS
+    static void parseTrigger(Hook<TEXT_SENSOR_TYPE> * hook, JsonDocument &doc) {
       st_log_debug(_HOOKS_BUILDER_TAG, "trigger=%s", doc[_triggerHookField].as<String>().c_str());
       hook->setTriggerValue(doc[_triggerHookField]);
     }
@@ -221,12 +221,12 @@ class HooksBuilder {
       return nullptr;
     }
 
-    #if ENABLE_SENSORS
-    static void parseTrigger(Hook<SENSOR_DATA_TYPE> * hook, String trigger) {
+    #if ENABLE_NUMBER_SENSORS
+    static void parseTrigger(Hook<NUMBER_SENSOR_TYPE> * hook, String trigger) {
       String buff;
       int tmp;
 
-      for (int i = 0; i < trigger.length(); i++) {
+      for (unsigned int i = 0; i < trigger.length(); i++) {
         if (trigger.charAt(i) == '_') {
           tmp = buff.toInt();
           st_log_debug(_HOOKS_BUILDER_TAG, "trigger=%d", tmp);
@@ -243,23 +243,28 @@ class HooksBuilder {
     }
     #endif
 
-    #if ENABLE_STATES
-    static void parseTrigger(Hook<STATE_DATA_TYPE> * hook, String &trigger) {
+    #if ENABLE_TEXT_SENSORS
+    static void parseTrigger(Hook<TEXT_SENSOR_TYPE> * hook, String &trigger) {
       trigger.replace("|;", ";");
       st_log_debug(_HOOKS_BUILDER_TAG, "trigger=%s", trigger.c_str());
       hook->setTriggerValue(trigger.c_str());
     }
     #endif
 
-    static const char * getDefaultTemplate(ObservableType type) {
-      switch (type) {
-        case OBS_SENSOR:
-          return DEFAULT_SENSORS_HOOKS_TEMPLATES_JSON;
-        case OBS_STATE:
-          return DEFAULT_STATES_HOOKS_TEMPLATES_JSON;
-        default:
-          return "{}";
+    static const char * getDefaultTemplate(const char * name) {
+      #if ENABLE_NUMBER_SENSORS
+      if (SensorsManager.getSensor<NUMBER_SENSOR_TYPE>(name) != nullptr) {
+        return DEFAULT_NUMBER_HOOKS_TEMPLATES_JSON;
       }
+      #endif
+
+      #if ENABLE_TEXT_SENSORS
+      if (SensorsManager.getSensor<TEXT_SENSOR_TYPE>(name) != nullptr) {
+        return DEFAULT_TEXT_HOOKS_TEMPLATES_JSON;
+      }
+      #endif
+
+      return "{}";
     }
 };
 

@@ -2,15 +2,18 @@
 #define SENSORS_RQ_H
 
 #include "Features.h"
-#if ENABLE_SENSORS 
 
-#include "observable/ObservablesManager.h"
+#if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
+
+#include <ESPAsyncWebServer.h>
+#include "sensors/SensorsManager.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/WebPageAssets.h"
 
 #define SENSORS_RQ_PATH "/sensors"
-const char * const _SENSORS_RQ_TAG = "sensors_handler";
+const char * const _SENSORS_RQ_TAG = "sensors-handler";
 
+// todo rename?
 class SensorsRequestHandler : public AsyncWebHandler {
  public:
   SensorsRequestHandler(){};
@@ -39,19 +42,22 @@ class SensorsRequestHandler : public AsyncWebHandler {
   };
  private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
-    String url = request->url();
-    st_log_request(_SENSORS_RQ_TAG, request->methodToString(), url.c_str(), "");
+    st_log_request(_SENSORS_RQ_TAG, request->methodToString(), request->url().c_str(), "");
+
+    if (request->url().equals(SENSORS_RQ_PATH)) {
+      JsonDocument data = SensorsManager.getSensorsInfo();
+      String response;
+      serializeJson(data, response);
+      return request->beginResponse(200, "application/json", response);
+    }
 
     #if ENABLE_WEB_PAGE
-    if (url.equals("/sensors/script.js")) {
-      return request->beginResponse(200, CONTENT_TYPE_JS, SCRIPT_SENSORS_TAB);
+    if (request->url().equals("/sensors/script.js")) {
+      return request->beginResponse(200, "text/javascript", SCRIPT_SENSORS_TAB);
     }
     #endif
 
-    JsonDocument data = url.equals("/sensors/types") ? ObservablesManager.getSensorsTypes() : ObservablesManager.getSensorsValues();
-    String response;
-    serializeJson(data, response);
-    return request->beginResponse(200, CONTENT_TYPE_JSON, response);
+    return nullptr;
   }
 };
 

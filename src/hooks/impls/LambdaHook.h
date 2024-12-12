@@ -7,7 +7,7 @@
 #include "hooks/impls/Hook.h"
 #include "logs/BetterLogger.h"
 
-template<class T, CHECK_HOOK_DATA_TYPE>
+template<typename T, CHECK_HOOK_DATA_TYPE>
 class LambdaHook : public SELECT_HOOK_BASE_CLASS {
  public:
   typedef std::function<void(T &value)> CustomHook;

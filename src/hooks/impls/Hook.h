@@ -7,14 +7,14 @@
 #include "Features.h"
 #include "logs/BetterLogger.h"
 #include "hooks/impls/HookConstans.h"
-#include "observable/ObservableObjects.h"
+#include "observable/ObservableObject.h"
 
-#define CHECK_HOOK_DATA_TYPE typename std::enable_if<std::is_same<T, SENSOR_DATA_TYPE>::value || std::is_same<T, STATE_DATA_TYPE>::value>::type* = nullptr
-#define SELECT_HOOK_BASE_CLASS std::conditional<std::is_same<T, SENSOR_DATA_TYPE>::value, SensorHook, StateHook>::type
+#define CHECK_HOOK_DATA_TYPE typename std::enable_if<std::is_same<T, NUMBER_SENSOR_TYPE>::value || std::is_same<T, TEXT_SENSOR_TYPE>::value>::type* = nullptr
+#define SELECT_HOOK_BASE_CLASS std::conditional<std::is_same<T, NUMBER_SENSOR_TYPE>::value, SensorHook, StateHook>::type
 
 template <typename T>
 class Hook {
-  static_assert(std::is_same<T, SENSOR_DATA_TYPE>::value || std::is_same<T, STATE_DATA_TYPE>::value);
+  static_assert(std::is_same<T, NUMBER_SENSOR_TYPE>::value || std::is_same<T, TEXT_SENSOR_TYPE>::value);
 
   public:
     Hook(HookType type, int id = -1, bool triggerEnabled = false, CompareType compare = EQ, bool readOnly = true)
@@ -93,10 +93,10 @@ class Hook {
 };
 
 #if ENABLE_SENSORS
-class SensorHook: public Hook<SENSOR_DATA_TYPE> {
+class SensorHook: public Hook<NUMBER_SENSOR_TYPE> {
   public:
-    SensorHook(HookType type): Hook<SENSOR_DATA_TYPE>(type), _threshold(0), _previousValue(0) {};
-    bool accept(SENSOR_DATA_TYPE &value) {
+    SensorHook(HookType type): Hook<NUMBER_SENSOR_TYPE>(type), _threshold(0), _previousValue(0) {};
+    bool accept(NUMBER_SENSOR_TYPE &value) {
       if (_threshold != 0 && abs(value - _previousValue) < _threshold) {
         return false;
       }
@@ -120,12 +120,12 @@ class SensorHook: public Hook<SENSOR_DATA_TYPE> {
       }
     }
 
-    void setThreshold(SENSOR_DATA_TYPE threshold) {
+    void setThreshold(NUMBER_SENSOR_TYPE threshold) {
       _threshold = threshold;
     }
   private:
-    SENSOR_DATA_TYPE _threshold;
-    SENSOR_DATA_TYPE _previousValue;
+    NUMBER_SENSOR_TYPE _threshold;
+    NUMBER_SENSOR_TYPE _previousValue;
 
   protected:
     void addTypeSpecificValues(JsonDocument &doc) const {
@@ -144,10 +144,10 @@ class SensorHook: public Hook<SENSOR_DATA_TYPE> {
 #endif
 
 #if ENABLE_STATES
-class StateHook: public Hook<STATE_DATA_TYPE> {
+class StateHook: public Hook<TEXT_SENSOR_TYPE> {
   public:
-    StateHook(HookType type): Hook<STATE_DATA_TYPE>(type) {};
-    bool accept(STATE_DATA_TYPE &value) {
+    StateHook(HookType type): Hook<TEXT_SENSOR_TYPE>(type) {};
+    bool accept(TEXT_SENSOR_TYPE &value) {
       if (!_triggerEnabled) {
         return true;
       }
@@ -161,7 +161,7 @@ class StateHook: public Hook<STATE_DATA_TYPE> {
       }
     }
   protected:
-    STATE_DATA_TYPE triggerString() {
+    TEXT_SENSOR_TYPE triggerString() {
       String copy = _triggerValue;
       copy.replace(";", "|;");
       return _triggerValue;

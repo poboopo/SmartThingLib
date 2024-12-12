@@ -142,11 +142,8 @@ void RestControllerClass::setupHandler() {
 
     #if ENABLE_SENSORS || ENABLE_STATES || ENABLE_HOOKS
     JsonObject counts = doc["counts"].to<JsonObject>();
-    #if ENABLE_SENSORS
+    #if ENABLE_SENSORS || ENABLE_STATES
     counts["sensors"] = ObservablesManager.getSensorsCount();
-    #endif
-    #if ENABLE_STATES
-    counts["states"] = ObservablesManager.getDeviceStatesCount();
     #endif
     #if ENABLE_HOOKS
     counts["hooks"] = HooksManager.getTotalHooksCount();

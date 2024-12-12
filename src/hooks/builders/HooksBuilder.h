@@ -188,7 +188,7 @@ class HooksBuilder {
     }
   
     #if ENABLE_SENSORS
-    static void parseTrigger(Hook<SENSOR_DATA_TYPE> * hook, JsonDocument &doc) {
+    static void parseTrigger(Hook<NUMBER_SENSOR_TYPE> * hook, JsonDocument &doc) {
       st_log_debug(_HOOKS_BUILDER_TAG, "trigger=%d", doc[_triggerHookField].as<int>());
       st_log_debug(_HOOKS_BUILDER_TAG, "threshold=%d", doc[_thresholdHookField].as<int>());
       hook->setTriggerValue(doc[_triggerHookField]);
@@ -197,7 +197,7 @@ class HooksBuilder {
     #endif
 
     #if ENABLE_STATES
-    static void parseTrigger(Hook<STATE_DATA_TYPE> * hook, JsonDocument &doc) {
+    static void parseTrigger(Hook<TEXT_SENSOR_TYPE> * hook, JsonDocument &doc) {
       st_log_debug(_HOOKS_BUILDER_TAG, "trigger=%s", doc[_triggerHookField].as<String>().c_str());
       hook->setTriggerValue(doc[_triggerHookField]);
     }
@@ -222,7 +222,7 @@ class HooksBuilder {
     }
 
     #if ENABLE_SENSORS
-    static void parseTrigger(Hook<SENSOR_DATA_TYPE> * hook, String trigger) {
+    static void parseTrigger(Hook<NUMBER_SENSOR_TYPE> * hook, String trigger) {
       String buff;
       int tmp;
 
@@ -244,7 +244,7 @@ class HooksBuilder {
     #endif
 
     #if ENABLE_STATES
-    static void parseTrigger(Hook<STATE_DATA_TYPE> * hook, String &trigger) {
+    static void parseTrigger(Hook<TEXT_SENSOR_TYPE> * hook, String &trigger) {
       trigger.replace("|;", ";");
       st_log_debug(_HOOKS_BUILDER_TAG, "trigger=%s", trigger.c_str());
       hook->setTriggerValue(trigger.c_str());

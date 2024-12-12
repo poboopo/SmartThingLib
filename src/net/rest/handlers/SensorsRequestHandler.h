@@ -10,8 +10,8 @@
 #include "logs/BetterLogger.h"
 #include "net/rest/WebPageAssets.h"
 
-#define OBSERVABLES_RQ_PATH "/sensors"
-const char * const _OBSERVABLES_RQ_TAG = "sensors-handler";
+#define SENSORS_RQ_PATH "/sensors"
+const char * const _SENSORS_RQ_TAG = "sensors-handler";
 
 // todo rename?
 class SensorsRequestHandler : public AsyncWebHandler {
@@ -20,7 +20,7 @@ class SensorsRequestHandler : public AsyncWebHandler {
   virtual ~SensorsRequestHandler() {};
 
   bool canHandle(AsyncWebServerRequest *request) {
-    return request->url().startsWith(OBSERVABLES_RQ_PATH) &&
+    return request->url().startsWith(SENSORS_RQ_PATH) &&
            (request->method() == HTTP_GET || request->method() == HTTP_OPTIONS);
   };
 
@@ -42,9 +42,9 @@ class SensorsRequestHandler : public AsyncWebHandler {
   };
  private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
-    st_log_request(_OBSERVABLES_RQ_TAG, request->methodToString(), request->url().c_str(), "");
+    st_log_request(_SENSORS_RQ_TAG, request->methodToString(), request->url().c_str(), "");
 
-    if (request->url().equals(OBSERVABLES_RQ_PATH)) {
+    if (request->url().equals(SENSORS_RQ_PATH)) {
       JsonDocument data = SensorsManager.getSensorsInfo();
       String response;
       serializeJson(data, response);

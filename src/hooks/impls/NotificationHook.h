@@ -62,7 +62,7 @@ inline NotificationType notificationTypeFromStr(const char * type, NotificationT
 }
 
 // todo extend http hook
-template<class T, CHECK_HOOK_DATA_TYPE>
+template<typename T, CHECK_HOOK_DATA_TYPE>
 class NotificationHook : public SELECT_HOOK_BASE_CLASS {
   public:
     NotificationHook(NotificationType notificationType, const char * message)

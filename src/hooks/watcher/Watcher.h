@@ -1,79 +1,64 @@
 #ifndef WATCHER_H
 #define WATCHER_H
 
-#include <ArduinoJson.h>
+#include "Features.h"
 
+#if ENABLE_HOOKS
+
+#include <ArduinoJson.h>
 #include <functional>
 
 #include "hooks/impls/Hook.h"
-#include "observable/ObservableObjects.h"
+#include "observable/ObservableObject.h"
 #include "logs/BetterLogger.h"
 #include "utils/List.h"
 
 const char * const _WATCHER_TAG = "watcher";
 
 /*
-    Класс наблюдатель за объектами
-    T - тип данных, которые хранит в себе объект
+    Класс наблюдатель за сенсорами
+    T - тип данных, которые хранит в себе сенсор
 */
 
 template <typename T>
 class Watcher {
  public:
-  Watcher(const ObservableObject<T> *observable, T initialValue)
+  Watcher(const ObservableObject<T> *observable)
       : _observable(observable),
-        _oldValue(initialValue),
-        _hookIdSequence(0){};
-  virtual ~Watcher() {};
-
-  virtual bool check() = 0;
-
-  String toString() {
-    if (_hooks.size() == 0) {
-      return "";
-    }
-
-    String result = _observable->toString();
-
-    _hooks.forEach([&](Hook<T> * hook) {
-      if (hook == nullptr || hook->isReadonly()) {
-        return;
-      }
-
-      result += "\t";
-      result += hook->toString();
-    });
-
-    return result;
-  }
-
-  JsonDocument getObservableHooksJson() {
-    JsonDocument doc;
-    doc.to<JsonArray>();
-    if (_hooks.size() == 0) {
-      st_log_debug(_WATCHER_TAG, "No hook's, creating empty array");
-      return doc;
-    }
-    _hooks.forEach([&](Hook<T> *current) {
-      if (current == nullptr && current->isReadonly()) {
-        return;
-      }
-      doc.add(current->toJson());
-    });
-    return doc;
+        _hookIdSequence(0) {
+    setInitialValue();
   };
+  ~Watcher() {};
 
-  JsonDocument toJson() {
-    JsonDocument doc;
+  bool check();
+
+  void callHooks(T &value) {
     if (_hooks.size() == 0) {
-      return doc;
+      return;
     }
-    JsonDocument hooks = getObservableHooksJson();
-    doc["observable"] = ((ObservableObject<T> *)_observable)->toJson();
-    doc["hooks"] = hooks;
-    return doc;
+    _hooks.forEach([&, this](Hook<T> *current) {
+      if (current != nullptr && current->accept(value)) {
+        st_log_debug(
+          _WATCHER_TAG,
+          "Calling hook [id=%d] for observable [%u]%s",
+          current->getId(),
+          _observable->type(),
+          _observable->name()
+        );
+        current->call(value);
+      }
+    });
   }
-
+ 
+  Hook<T> *getHookById(int id) {
+    if (id < 0) {
+      return nullptr;
+    }
+    return _hooks.findValue([&](Hook<T> *hook) {
+      return hook->getId() == id;
+    });
+  }
+   
   bool addHook(Hook<T> *hook) {
     if (hook == nullptr) {
       st_log_error(_WATCHER_TAG, "Hook is missing!");
@@ -96,8 +81,8 @@ class Watcher {
 
     _hooks.append(hook);
     return true;
-  };
-
+  }
+   
   bool removeHook(int id) {
     if (id < 0) {
       st_log_error(_WATCHER_TAG, "Failed to remove hook - id negative!");
@@ -106,8 +91,8 @@ class Watcher {
     Hook<T> *hook = getHookById(id);
     if (hook == nullptr) {
       st_log_error(_WATCHER_TAG,
-                   "Failed to remove hook - can't find hook with id %d",
-                   id);
+                  "Failed to remove hook - can't find hook with id %d",
+                  id);
       return false;
     }
     if (hook->isReadonly()) {
@@ -121,33 +106,51 @@ class Watcher {
     st_log_error(_WATCHER_TAG, "Failed to remove hook from list");
     return false;
   }
-
-  Hook<T> *getHookById(int id) {
-    if (id < 0) {
-      return nullptr;
+ 
+  String toString() {
+    if (_hooks.size() == 0) {
+      return "";
     }
-    return _hooks.findValue([&](Hook<T> *hook) {
-      return hook->getId() == id;
+
+    String result = _observable->toString();
+
+    _hooks.forEach([&](Hook<T> * hook) {
+      if (hook == nullptr || hook->isReadonly()) {
+        return;
+      }
+
+      result += "\t";
+      result += hook->toString();
     });
+
+    return result;
   }
 
-  void callHooks(T &value) {
+  JsonDocument toJson() {
+    JsonDocument doc;
     if (_hooks.size() == 0) {
-      return;
+      return doc;
     }
-    _hooks.forEach([&, this](Hook<T> *current) {
-      if (current != nullptr && current->accept(value)) {
-        st_log_debug(
-          _WATCHER_TAG,
-          "Calling hook [id=%d] for observable [%u]%s",
-          current->getId(),
-          _observable->type,
-          _observable->name
-        );
-        current->call(value);
+    JsonDocument hooks = getObservableHooksJson();
+    doc["observable"] = ((ObservableObject<T> *)_observable)->toJson();
+    doc["hooks"] = hooks;
+    return doc;
+  }
+  JsonDocument getObservableHooksJson() {
+    JsonDocument doc;
+    doc.to<JsonArray>();
+    if (_hooks.size() == 0) {
+      st_log_debug(_WATCHER_TAG, "No hook's, creating empty array");
+      return doc;
+    }
+    _hooks.forEach([&](Hook<T> *current) {
+      if (current == nullptr && current->isReadonly()) {
+        return;
       }
+      doc.add(current->toJson());
     });
-  };
+    return doc;
+  }
 
   const ObservableObject<T> *getObservable() {
     return _observable;
@@ -178,5 +181,9 @@ class Watcher {
     }
     return _hookIdSequence;
   }
+
+  void setInitialValue();
 };
+
+#endif
 #endif

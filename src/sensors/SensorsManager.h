@@ -9,27 +9,27 @@
 #include "utils/List.h"
 #include "logs/BetterLogger.h"
 
-#if ENABLE_SENSORS || ENABLE_STATES
+#if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
 
-const char * const _OBSERVABLES_MANAGER_TAG = "observables-manager";
+const char * const _OBSERVABLES_MANAGER_TAG = "sensors-manager";
 
 class SensorsManagerClass {
   public:
-    #if ENABLE_SENSORS
+    #if ENABLE_NUMBER_SENSORS
       bool addSensor(const char * name, typename Sensor<NUMBER_SENSOR_TYPE>::ValueProvider valueProvider) {
         return addSensor<NUMBER_SENSOR_TYPE>(name, valueProvider);
       }
       bool addDigitalSensor(const char* name, uint8_t pin, uint8_t mode = INPUT_PULLUP);
       bool addAnalogSensor(const char* name, uint8_t pin);
     #endif
-    #if ENABLE_STATES
+    #if ENABLE_TEXT_SENSORS
       bool addSensor(const char * name, typename Sensor<TEXT_SENSOR_TYPE>::ValueProvider valueProvider) {
         return addSensor<TEXT_SENSOR_TYPE>(name, valueProvider);
       }
     #endif
 
     size_t getSensorsCount();
-    JsonDocument getObservablesInfo(bool full = false);
+    JsonDocument getSensorsInfo();
 
     template<typename T>
     bool addSensor(
@@ -37,11 +37,11 @@ class SensorsManagerClass {
       typename Sensor<T>::ValueProvider valueProvider
     )  {
       bool exists = false;
-      #if ENABLE_SENSORS
+      #if ENABLE_NUMBER_SENSORS
         exists = getSensor<NUMBER_SENSOR_TYPE>(name) != nullptr;
       #endif
 
-      #if ENABLE_STATES
+      #if ENABLE_TEXT_SENSORS
         exists = exists || getSensor<TEXT_SENSOR_TYPE>(name) != nullptr;
       #endif
 
@@ -70,31 +70,17 @@ class SensorsManagerClass {
       });
     }
   private:
-    #if ENABLE_SENSORS
+    #if ENABLE_NUMBER_SENSORS
       List<Sensor<NUMBER_SENSOR_TYPE>> _sensorsList;
     #endif
 
-    #if ENABLE_STATES
+    #if ENABLE_TEXT_SENSORS
       List<Sensor<TEXT_SENSOR_TYPE>> _deviceStatesList;
     #endif
 
     template<typename T>
     List<Sensor<T>> * getList();
-
-    template<typename T>
-    void collectObservablesInfoFull(List<Sensor<T>> * values, JsonArray &array, SensorType type) {
-      const char * typeStr = observableTypeToStr(type);
-
-      values->forEach([&](Sensor<T> * obj) {
-        JsonDocument doc;
-        doc["name"] = obj->name();
-        doc["value"] = obj->provideValue();
-        doc["type"] = typeStr;
-
-        array.add(doc);
-      });
-    }
-};
+  };
 
 extern SensorsManagerClass SensorsManager;
 

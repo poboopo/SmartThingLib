@@ -1,9 +1,9 @@
-#ifndef OBSERVABLES_RQ_H
-#define OBSERVABLES_RQ_H
+#ifndef SENSORS_RQ_H
+#define SENSORS_RQ_H
 
 #include "Features.h"
 
-#if ENABLE_SENSORS || ENABLE_STATES
+#if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
 
 #include <ESPAsyncWebServer.h>
 #include "sensors/SensorsManager.h"
@@ -11,13 +11,13 @@
 #include "net/rest/WebPageAssets.h"
 
 #define OBSERVABLES_RQ_PATH "/sensors"
-const char * const _OBSERVABLES_RQ_TAG = "observables-handler";
+const char * const _OBSERVABLES_RQ_TAG = "sensors-handler";
 
 // todo rename?
-class ObservablesRequestHandler : public AsyncWebHandler {
+class SensorsRequestHandler : public AsyncWebHandler {
  public:
-  ObservablesRequestHandler(){};
-  virtual ~ObservablesRequestHandler() {};
+  SensorsRequestHandler(){};
+  virtual ~SensorsRequestHandler() {};
 
   bool canHandle(AsyncWebServerRequest *request) {
     return request->url().startsWith(OBSERVABLES_RQ_PATH) &&
@@ -44,9 +44,8 @@ class ObservablesRequestHandler : public AsyncWebHandler {
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     st_log_request(_OBSERVABLES_RQ_TAG, request->methodToString(), request->url().c_str(), "");
 
-    bool urlForFull = request->url().equals("/sensors/full");
-    if (request->url().equals(OBSERVABLES_RQ_PATH) || urlForFull) {
-      JsonDocument data = SensorsManager.getObservablesInfo(urlForFull);
+    if (request->url().equals(OBSERVABLES_RQ_PATH)) {
+      JsonDocument data = SensorsManager.getSensorsInfo();
       String response;
       serializeJson(data, response);
       return request->beginResponse(200, "application/json", response);

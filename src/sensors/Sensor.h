@@ -12,33 +12,6 @@
 const char * const _state = "state";
 const char * const _sensor = "sensor";
 
-enum SensorType {
-  UNKNOWN_OBS_TYPE,
-  OBS_STATE,
-  OBS_SENSOR
-};
-
-inline const char * observableTypeToStr(SensorType type) {
-  switch (type) {
-    case OBS_STATE:
-      return _state;
-    case OBS_SENSOR:
-      return _sensor;
-    default:
-      return "unknown";
-  }
-}
-
-inline SensorType observableTypeFromStr(const char * type) {
-  if (strcmp(type, _state) == 0) {
-    return OBS_STATE;
-  }
-  if (strcmp(type, _sensor) == 0) {
-    return OBS_SENSOR;
-  }
-  return UNKNOWN_OBS_TYPE;
-}
-
 template <typename T>
 class Sensor {
   public:
@@ -53,22 +26,6 @@ class Sensor {
 
     T provideValue() const {
       return _valueProvider();
-    }
-
-    SensorType type() const;
-
-    JsonDocument toJson() {
-      JsonDocument doc;
-      doc["name"] = _name;
-      doc["type"] = observableTypeToStr(type());
-      return doc;
-    };
-
-    String toString() const {
-      String res;
-      res += type();
-      res += _name;
-      return res;
     }
   private:
     const char* _name; // todo copy string

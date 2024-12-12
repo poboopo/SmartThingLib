@@ -92,7 +92,7 @@ class Hook {
     virtual void populateJsonWithCustomValues(JsonDocument &doc) const {};
 };
 
-#if ENABLE_SENSORS
+#if ENABLE_NUMBER_SENSORS
 class SensorHook: public Hook<NUMBER_SENSOR_TYPE> {
   public:
     SensorHook(HookType type): Hook<NUMBER_SENSOR_TYPE>(type), _threshold(0), _previousValue(0) {};
@@ -143,7 +143,7 @@ class SensorHook: public Hook<NUMBER_SENSOR_TYPE> {
 };
 #endif
 
-#if ENABLE_STATES
+#if ENABLE_TEXT_SENSORS
 class StateHook: public Hook<TEXT_SENSOR_TYPE> {
   public:
     StateHook(HookType type): Hook<TEXT_SENSOR_TYPE>(type) {};

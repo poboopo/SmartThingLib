@@ -338,7 +338,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/ObservablesHooks"
+                  "$ref": "#components/schemas/SensorsHooks"
                 }
               }
             }
@@ -411,11 +411,11 @@
         "tags": [
           "Hook"
         ],
-        "description": "Delete observable's hook",
+        "description": "Delete sensor's hook",
         "parameters": [
           {
             "name": "type",
-            "description": "Observable type",
+            "description": "Sensor type",
             "in": "query",
             "required": true,
             "schema": {
@@ -425,7 +425,7 @@
           },
           {
             "name": "name",
-            "description": "Observable name",
+            "description": "Sensor name",
             "in": "query",
             "required": true,
             "schema": {
@@ -459,17 +459,17 @@
         }
       }
     },
-    "/hooks/by/observable": {
+    "/hooks/by/sensor": {
       "get": {
         "tags": [
           "Hook"
         ],
-        "description": "Get hooks for observable object (sensor or state)",
+        "description": "Get hooks for sensor object (sensor or state)",
         "parameters": [
           {
             "name": "type",
             "in": "query",
-            "description": "Observable type",
+            "description": "Sensor type",
             "example": "sensor/state",
             "required": true,
             "schema": {
@@ -479,7 +479,7 @@
           {
             "name": "name",
             "in": "query",
-            "description": "Observable name",
+            "description": "Sensor name",
             "required": true,
             "schema": {
               "type": "string"
@@ -523,7 +523,7 @@
           {
             "name": "type",
             "in": "query",
-            "description": "Observable type",
+            "description": "Sensor type",
             "example": "sensor/state",
             "required": true,
             "schema": {
@@ -533,7 +533,7 @@
           {
             "name": "name",
             "in": "query",
-            "description": "Observable name",
+            "description": "Sensor name",
             "required": true,
             "schema": {
               "type": "string"
@@ -808,28 +808,28 @@
         }
       },
       "HooksList": {
-        "description": "Observable's object hooks",
+        "description": "Sensor's object hooks",
         "type": "array",
         "items": {
           "$ref": "#components/schemas/Hook"
         }
       },
-      "ObservablesHooks": {
+      "SensorsHooks": {
         "description": "List of all device hooks",
         "type": "array",
         "items": {
           "type": "object",
           "properties": {
-            "observable": {
-              "description": "Observable object info (sensor or device state)",
+            "sensor": {
+              "description": "Sensor object info (sensor or device state)",
               "type": "object",
               "properties": {
                 "name": {
-                  "description": "Observable's name",
+                  "description": "Sensor's name",
                   "type": "string"
                 },
                 "type": {
-                  "description": "Observable's type",
+                  "description": "Sensor's type",
                   "type": "string",
                   "example": "sensor/state"
                 }
@@ -845,12 +845,12 @@
         "description": "Create hook body",
         "type": "object",
         "required": [
-          "observable",
+          "sensor",
           "hook"
         ],
         "properties": {
-          "observable": {
-            "description": "Observable info",
+          "sensor": {
+            "description": "Sensor info",
             "type": "object",
             "required": [
               "type",
@@ -858,12 +858,12 @@
             ],
             "properties": {
               "type": {
-                "description": "Observable type",
+                "description": "Sensor type",
                 "type": "string",
                 "example": "sensor/state"
               },
               "name": {
-                "description": "Observable name",
+                "description": "Sensor name",
                 "type": "string"
               }
             }

@@ -11,7 +11,7 @@
 #include "net/rest/handlers/WiFiRequestHandler.h"
 #include "net/rest/handlers/SettingsRequestHandler.h"
 #include "net/rest/handlers/DangerRequestHandler.h"
-#include "net/rest/handlers/ObservablesRestHandler.h"
+#include "net/rest/handlers/SensorsRequestHandler.h"
 #include "net/rest/WebPageAssets.h"
 
 const char * const _WEB_SERVER_TAG = "web_server";
@@ -75,8 +75,8 @@ void RestControllerClass::setupHandler() {
   _server.addHandler(new SettingsRequestHandler());
   _server.addHandler(new DangerRequestHandler());
   // todo add guard macros
-  #if ENABLE_SENSORS || ENABLE_STATES
-  _server.addHandler(new ObservablesRequestHandler());
+  #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
+  _server.addHandler(new SensorsRequestHandler());
   #endif
   #if ENABLE_ACTIONS
   _server.addHandler(new ActionRequestHandler());
@@ -114,7 +114,7 @@ void RestControllerClass::setupHandler() {
     doc["web"] = ENABLE_WEB_PAGE == 1;
     doc["actions"] = ENABLE_ACTIONS == 1;
     doc["actionsScheduler"] = ENABLE_ACTIONS_SCHEDULER == 1;
-    doc["sensors"] = ENABLE_SENSORS == 1 || ENABLE_STATES == 1;
+    doc["sensors"] = ENABLE_NUMBER_SENSORS == 1 || ENABLE_TEXT_SENSORS == 1;
     doc["hooks"] = ENABLE_HOOKS == 1;
     doc["logger"] = ENABLE_LOGGER == 1;
     
@@ -140,9 +140,9 @@ void RestControllerClass::setupHandler() {
     obj["maxAlloc"] = ESP.getMaxAllocHeap();
     #endif
 
-    #if ENABLE_SENSORS || ENABLE_STATES || ENABLE_HOOKS
+    #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS || ENABLE_HOOKS
     JsonObject counts = doc["counts"].to<JsonObject>();
-    #if ENABLE_SENSORS || ENABLE_STATES
+    #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
     counts["sensors"] = SensorsManager.getSensorsCount();
     #endif
     #if ENABLE_HOOKS

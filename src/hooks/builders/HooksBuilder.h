@@ -13,7 +13,7 @@
 
 const char * const _HOOKS_BUILDER_TAG = "hooks_factory";
 
-#ifdef ENABLE_ACTIONS
+#if ENABLE_ACTIONS
   const char * const TEMPLATES_JSON = "{\"default\":%s,\"%s\":%s,\"%s\":%s,\"%s\":%s}";
   const char * const ACTION_HOOK_TEMPLATE = "{\"action\":{\"required\":true,\"values\":{%s}}}";
   const size_t TEMPLATE_JSON_LENGTH = 24;

@@ -43,11 +43,11 @@ bool SensorsManagerClass::addAnalogSensor(const char* name, uint8_t pin) {
 size_t SensorsManagerClass::getSensorsCount() {
   size_t result = 0;
   
-  #ifdef ENABLE_NUMBER_SENSORS
+  #if ENABLE_NUMBER_SENSORS
     result += getList<NUMBER_SENSOR_TYPE>()->size();
   #endif
   
-  #ifdef ENABLE_TEXT_SENSORS
+  #if ENABLE_TEXT_SENSORS
     result += getList<TEXT_SENSOR_TYPE>()->size();
   #endif
 

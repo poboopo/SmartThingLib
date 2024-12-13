@@ -192,7 +192,7 @@ class HooksBuilder {
       st_log_debug(_HOOKS_BUILDER_TAG, "trigger=%d", doc[_triggerHookField].as<int>());
       st_log_debug(_HOOKS_BUILDER_TAG, "threshold=%d", doc[_thresholdHookField].as<int>());
       hook->setTriggerValue(doc[_triggerHookField]);
-      ((SensorHook *) hook)->setThreshold(doc[_thresholdHookField]);
+      ((NumberSensorHook *) hook)->setThreshold(doc[_thresholdHookField]);
     }
     #endif
 
@@ -239,7 +239,7 @@ class HooksBuilder {
 
       tmp = buff.toInt();
       st_log_debug(_HOOKS_BUILDER_TAG, "threshold=%d", tmp);
-      ((SensorHook *) hook)->setThreshold(tmp);
+      ((NumberSensorHook *) hook)->setThreshold(tmp);
     }
     #endif
 

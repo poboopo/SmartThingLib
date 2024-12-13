@@ -10,7 +10,14 @@
 #include "sensors/Sensor.h"
 
 #define CHECK_HOOK_DATA_TYPE typename std::enable_if<std::is_same<T, NUMBER_SENSOR_TYPE>::value || std::is_same<T, TEXT_SENSOR_TYPE>::value>::type* = nullptr
-#define SELECT_HOOK_BASE_CLASS std::conditional<std::is_same<T, NUMBER_SENSOR_TYPE>::value, SensorHook, StateHook>::type
+
+#if ENABLE_NUMBER_SENSORS && ENABLE_TEXT_SENSORS
+#define SELECT_HOOK_BASE_CLASS std::conditional<std::is_same<T, NUMBER_SENSOR_TYPE>::value, NumberSensorHook, TextSensorHook>::type
+  #elif ENABLE_NUMBER_SENSORS
+#define SELECT_HOOK_BASE_CLASS NumberSensorHook
+#elif ENABLE_TEXT_SENSORS
+  #define SELECT_HOOK_BASE_CLASS TextSensorHook
+#endif
 
 template <typename T>
 class Hook {
@@ -93,9 +100,9 @@ class Hook {
 };
 
 #if ENABLE_NUMBER_SENSORS
-class SensorHook: public Hook<NUMBER_SENSOR_TYPE> {
+class NumberSensorHook: public Hook<NUMBER_SENSOR_TYPE> {
   public:
-    SensorHook(HookType type): Hook<NUMBER_SENSOR_TYPE>(type), _threshold(0), _previousValue(0) {};
+    NumberSensorHook(HookType type): Hook<NUMBER_SENSOR_TYPE>(type), _threshold(0), _previousValue(0) {};
     bool accept(NUMBER_SENSOR_TYPE &value) {
       if (_threshold != 0 && abs(value - _previousValue) < _threshold) {
         return false;
@@ -144,9 +151,9 @@ class SensorHook: public Hook<NUMBER_SENSOR_TYPE> {
 #endif
 
 #if ENABLE_TEXT_SENSORS
-class StateHook: public Hook<TEXT_SENSOR_TYPE> {
+class TextSensorHook: public Hook<TEXT_SENSOR_TYPE> {
   public:
-    StateHook(HookType type): Hook<TEXT_SENSOR_TYPE>(type) {};
+    TextSensorHook(HookType type): Hook<TEXT_SENSOR_TYPE>(type) {};
     bool accept(TEXT_SENSOR_TYPE &value) {
       if (!_triggerEnabled) {
         return true;

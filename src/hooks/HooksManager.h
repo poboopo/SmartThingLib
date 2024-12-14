@@ -33,11 +33,11 @@ class HooksManagerClass {
 
  private:
   #if ENABLE_NUMBER_SENSORS 
-  List<Watcher<NUMBER_SENSOR_TYPE>> _sensorsWatchers;
+  List<Watcher<NUMBER_SENSOR_DATA_TYPE>> _sensorsWatchers;
   #endif
 
   #if ENABLE_TEXT_SENSORS
-  List<Watcher<TEXT_SENSOR_TYPE>> _statesWatchers;
+  List<Watcher<TEXT_SENSOR_DATA_TYPE>> _statesWatchers;
   #endif
 
   int _hooksCount = 0;

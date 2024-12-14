@@ -9,10 +9,10 @@
 #include "hooks/impls/HookConstans.h"
 #include "sensors/Sensor.h"
 
-#define CHECK_HOOK_DATA_TYPE typename std::enable_if<std::is_same<T, NUMBER_SENSOR_TYPE>::value || std::is_same<T, TEXT_SENSOR_TYPE>::value>::type* = nullptr
+#define CHECK_HOOK_DATA_TYPE typename std::enable_if<std::is_same<T, NUMBER_SENSOR_DATA_TYPE>::value || std::is_same<T, TEXT_SENSOR_DATA_TYPE>::value>::type* = nullptr
 
 #if ENABLE_NUMBER_SENSORS && ENABLE_TEXT_SENSORS
-#define SELECT_HOOK_BASE_CLASS std::conditional<std::is_same<T, NUMBER_SENSOR_TYPE>::value, NumberSensorHook, TextSensorHook>::type
+#define SELECT_HOOK_BASE_CLASS std::conditional<std::is_same<T, NUMBER_SENSOR_DATA_TYPE>::value, NumberSensorHook, TextSensorHook>::type
   #elif ENABLE_NUMBER_SENSORS
 #define SELECT_HOOK_BASE_CLASS NumberSensorHook
 #elif ENABLE_TEXT_SENSORS
@@ -21,7 +21,7 @@
 
 template <typename T>
 class Hook {
-  static_assert(std::is_same<T, NUMBER_SENSOR_TYPE>::value || std::is_same<T, TEXT_SENSOR_TYPE>::value);
+  static_assert(std::is_same<T, NUMBER_SENSOR_DATA_TYPE>::value || std::is_same<T, TEXT_SENSOR_DATA_TYPE>::value);
 
   public:
     Hook(HookType type, int id = -1, bool triggerEnabled = false, CompareType compare = EQ, bool readOnly = true)
@@ -100,10 +100,10 @@ class Hook {
 };
 
 #if ENABLE_NUMBER_SENSORS
-class NumberSensorHook: public Hook<NUMBER_SENSOR_TYPE> {
+class NumberSensorHook: public Hook<NUMBER_SENSOR_DATA_TYPE> {
   public:
-    NumberSensorHook(HookType type): Hook<NUMBER_SENSOR_TYPE>(type), _threshold(0), _previousValue(0) {};
-    bool accept(NUMBER_SENSOR_TYPE &value) {
+    NumberSensorHook(HookType type): Hook<NUMBER_SENSOR_DATA_TYPE>(type), _threshold(0), _previousValue(0) {};
+    bool accept(NUMBER_SENSOR_DATA_TYPE &value) {
       if (_threshold != 0 && abs(value - _previousValue) < _threshold) {
         return false;
       }
@@ -127,12 +127,12 @@ class NumberSensorHook: public Hook<NUMBER_SENSOR_TYPE> {
       }
     }
 
-    void setThreshold(NUMBER_SENSOR_TYPE threshold) {
+    void setThreshold(NUMBER_SENSOR_DATA_TYPE threshold) {
       _threshold = threshold;
     }
   private:
-    NUMBER_SENSOR_TYPE _threshold;
-    NUMBER_SENSOR_TYPE _previousValue;
+    NUMBER_SENSOR_DATA_TYPE _threshold;
+    NUMBER_SENSOR_DATA_TYPE _previousValue;
 
   protected:
     void addTypeSpecificValues(JsonDocument &doc) const {
@@ -151,10 +151,10 @@ class NumberSensorHook: public Hook<NUMBER_SENSOR_TYPE> {
 #endif
 
 #if ENABLE_TEXT_SENSORS
-class TextSensorHook: public Hook<TEXT_SENSOR_TYPE> {
+class TextSensorHook: public Hook<TEXT_SENSOR_DATA_TYPE> {
   public:
-    TextSensorHook(HookType type): Hook<TEXT_SENSOR_TYPE>(type) {};
-    bool accept(TEXT_SENSOR_TYPE &value) {
+    TextSensorHook(HookType type): Hook<TEXT_SENSOR_DATA_TYPE>(type) {};
+    bool accept(TEXT_SENSOR_DATA_TYPE &value) {
       if (!_triggerEnabled) {
         return true;
       }
@@ -168,7 +168,7 @@ class TextSensorHook: public Hook<TEXT_SENSOR_TYPE> {
       }
     }
   protected:
-    TEXT_SENSOR_TYPE triggerString() {
+    TEXT_SENSOR_DATA_TYPE triggerString() {
       String copy = _triggerValue;
       copy.replace(";", "|;");
       return _triggerValue;

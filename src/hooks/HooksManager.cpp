@@ -28,12 +28,12 @@ int HooksManagerClass::addHook(const char * sensorName, const char * data) {
 
   #if ENABLE_TEXT_SENSORS
   if (type == TEXT_SENSOR) {
-    return HooksManager.addHook<TEXT_SENSOR_TYPE>(SensorsManager.getSensor<TEXT_SENSOR_TYPE>(sensorName), data);
+    return HooksManager.addHook<TEXT_SENSOR_DATA_TYPE>(SensorsManager.getSensor<TEXT_SENSOR_DATA_TYPE>(sensorName), data);
   }
   #endif
   #if ENABLE_NUMBER_SENSORS 
   if (type == NUMBER_SENSOR) {
-    return HooksManager.addHook<NUMBER_SENSOR_TYPE>(SensorsManager.getSensor<NUMBER_SENSOR_TYPE>(sensorName), data);
+    return HooksManager.addHook<NUMBER_SENSOR_DATA_TYPE>(SensorsManager.getSensor<NUMBER_SENSOR_DATA_TYPE>(sensorName), data);
   }
   #endif
   
@@ -130,12 +130,12 @@ bool HooksManagerClass::deleteHook(const char * name, int id) {
 
   #if ENABLE_NUMBER_SENSORS
   if (type == NUMBER_SENSOR) {
-    return deleteHook<NUMBER_SENSOR_TYPE>(name, id);
+    return deleteHook<NUMBER_SENSOR_DATA_TYPE>(name, id);
   } 
   #endif
   #if ENABLE_TEXT_SENSORS
   if (type == TEXT_SENSOR) {
-    return deleteHook<TEXT_SENSOR_TYPE>(name, id);
+    return deleteHook<TEXT_SENSOR_DATA_TYPE>(name, id);
   }
   #endif
 
@@ -190,12 +190,12 @@ bool HooksManagerClass::updateHook(JsonDocument doc) {
 
   #if ENABLE_NUMBER_SENSORS
     if (type == NUMBER_SENSOR) {
-      return updateHook<NUMBER_SENSOR_TYPE>(sensor, hookObject);
+      return updateHook<NUMBER_SENSOR_DATA_TYPE>(sensor, hookObject);
     }
   #endif
   #if ENABLE_TEXT_SENSORS
     if (type == TEXT_SENSOR) {
-      return updateHook<TEXT_SENSOR_TYPE>(sensor, hookObject);
+      return updateHook<TEXT_SENSOR_DATA_TYPE>(sensor, hookObject);
     }
   #endif
 
@@ -276,12 +276,12 @@ Watcher<T> *HooksManagerClass::getWatcherBySensorName(const char *name) {
 void HooksManagerClass::check() {
   #if ENABLE_NUMBER_SENSORS 
   if (_sensorsWatchers.size() > 0) {
-    checkWatchers<NUMBER_SENSOR_TYPE>();
+    checkWatchers<NUMBER_SENSOR_DATA_TYPE>();
   }
   #endif
   #if ENABLE_TEXT_SENSORS
   if (_statesWatchers.size() > 0) {
-    checkWatchers<TEXT_SENSOR_TYPE>();
+    checkWatchers<TEXT_SENSOR_DATA_TYPE>();
   }
   #endif
 }
@@ -309,12 +309,12 @@ boolean HooksManagerClass::callHook(const char * name, int id, String value) {
 
   #if ENABLE_NUMBER_SENSORS
   if (type == NUMBER_SENSOR) {
-    return callWatcherHook<NUMBER_SENSOR_TYPE>(name, id, emptyValue ? 0 : value.toInt(), emptyValue);
+    return callWatcherHook<NUMBER_SENSOR_DATA_TYPE>(name, id, emptyValue ? 0 : value.toInt(), emptyValue);
   }
   #endif
   #if ENABLE_TEXT_SENSORS
   if (type == TEXT_SENSOR) {
-    return callWatcherHook<TEXT_SENSOR_TYPE>(name, id, value, emptyValue);
+    return callWatcherHook<TEXT_SENSOR_DATA_TYPE>(name, id, value, emptyValue);
   }
   #endif
 
@@ -385,12 +385,12 @@ void HooksManagerClass::loadFromSettings() {
 
     #if ENABLE_NUMBER_SENSORS
     if (type == NUMBER_SENSOR) {
-      failedBuild = loadHooks<NUMBER_SENSOR_TYPE>(SensorsManager.getSensor<NUMBER_SENSOR_TYPE>(name.c_str()), data, &address, dataLength) || failedBuild;
+      failedBuild = loadHooks<NUMBER_SENSOR_DATA_TYPE>(SensorsManager.getSensor<NUMBER_SENSOR_DATA_TYPE>(name.c_str()), data, &address, dataLength) || failedBuild;
     }
     #endif
     #if ENABLE_TEXT_SENSORS
     if (type == TEXT_SENSOR) {
-      failedBuild = loadHooks<TEXT_SENSOR_TYPE>(SensorsManager.getSensor<TEXT_SENSOR_TYPE>(name.c_str()), data, &address, dataLength) || failedBuild;
+      failedBuild = loadHooks<TEXT_SENSOR_DATA_TYPE>(SensorsManager.getSensor<TEXT_SENSOR_DATA_TYPE>(name.c_str()), data, &address, dataLength) || failedBuild;
     }
     #endif
 
@@ -433,7 +433,7 @@ bool HooksManagerClass::saveInSettings() {
   String data = "";
 
   #if ENABLE_TEXT_SENSORS
-  _statesWatchers.forEach([&](Watcher<TEXT_SENSOR_TYPE> *watcher) {
+  _statesWatchers.forEach([&](Watcher<TEXT_SENSOR_DATA_TYPE> *watcher) {
     if (watcher == nullptr) {
       return;
     }
@@ -442,7 +442,7 @@ bool HooksManagerClass::saveInSettings() {
   });
   #endif
   #if ENABLE_NUMBER_SENSORS 
-  _sensorsWatchers.forEach([&](Watcher<NUMBER_SENSOR_TYPE> *watcher) {
+  _sensorsWatchers.forEach([&](Watcher<NUMBER_SENSOR_DATA_TYPE> *watcher) {
     if (watcher == nullptr) {
       return;
     }
@@ -471,12 +471,12 @@ JsonDocument HooksManagerClass::getSensorHooksJson(const char *name) {
 
   #if ENABLE_NUMBER_SENSORS 
   if (type == NUMBER_SENSOR) {
-    return getSensorHooksJson<NUMBER_SENSOR_TYPE>(name);
+    return getSensorHooksJson<NUMBER_SENSOR_DATA_TYPE>(name);
   } 
   #endif
   #if ENABLE_TEXT_SENSORS
   if (type == TEXT_SENSOR) {
-    return getSensorHooksJson<TEXT_SENSOR_TYPE>(name);
+    return getSensorHooksJson<TEXT_SENSOR_DATA_TYPE>(name);
   }
   #endif
 
@@ -500,14 +500,14 @@ JsonDocument HooksManagerClass::getSensorHooksJson(const char *name) {
 
 #if ENABLE_TEXT_SENSORS
   template <>
-  List<Watcher<TEXT_SENSOR_TYPE>> *HooksManagerClass::getWatchersList() {
+  List<Watcher<TEXT_SENSOR_DATA_TYPE>> *HooksManagerClass::getWatchersList() {
     return &_statesWatchers;
   }
 #endif
 
 #if ENABLE_NUMBER_SENSORS
   template <>
-  List<Watcher<NUMBER_SENSOR_TYPE>> *HooksManagerClass::getWatchersList() {
+  List<Watcher<NUMBER_SENSOR_DATA_TYPE>> *HooksManagerClass::getWatchersList() {
     return &_sensorsWatchers;
   }
 #endif

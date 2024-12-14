@@ -6,8 +6,10 @@
 #include <ArduinoJson.h>
 #include <functional>
 
-#define NUMBER_SENSOR_TYPE int
-#define TEXT_SENSOR_TYPE String
+#ifndef NUMBER_SENSOR_DATA_TYPE
+  #define NUMBER_SENSOR_DATA_TYPE int
+#endif
+#define TEXT_SENSOR_DATA_TYPE String
 
 const char * const _state = "state";
 const char * const _sensor = "sensor";

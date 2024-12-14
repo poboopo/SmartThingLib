@@ -33,15 +33,15 @@ inline const char * sensorTypeToStr(SensorType type) {
 class SensorsManagerClass {
   public:
     #if ENABLE_NUMBER_SENSORS
-      bool addSensor(const char * name, typename Sensor<NUMBER_SENSOR_TYPE>::ValueProvider valueProvider) {
-        return addSensor<NUMBER_SENSOR_TYPE>(name, valueProvider);
+      bool addSensor(const char * name, typename Sensor<NUMBER_SENSOR_DATA_TYPE>::ValueProvider valueProvider) {
+        return addSensor<NUMBER_SENSOR_DATA_TYPE>(name, valueProvider);
       }
       bool addDigitalSensor(const char* name, uint8_t pin, uint8_t mode = INPUT_PULLUP);
       bool addAnalogSensor(const char* name, uint8_t pin);
     #endif
     #if ENABLE_TEXT_SENSORS
-      bool addSensor(const char * name, typename Sensor<TEXT_SENSOR_TYPE>::ValueProvider valueProvider) {
-        return addSensor<TEXT_SENSOR_TYPE>(name, valueProvider);
+      bool addSensor(const char * name, typename Sensor<TEXT_SENSOR_DATA_TYPE>::ValueProvider valueProvider) {
+        return addSensor<TEXT_SENSOR_DATA_TYPE>(name, valueProvider);
       }
     #endif
 
@@ -55,11 +55,11 @@ class SensorsManagerClass {
     )  {
       bool exists = false;
       #if ENABLE_NUMBER_SENSORS
-        exists = getSensor<NUMBER_SENSOR_TYPE>(name) != nullptr;
+        exists = getSensor<NUMBER_SENSOR_DATA_TYPE>(name) != nullptr;
       #endif
 
       #if ENABLE_TEXT_SENSORS
-        exists = exists || getSensor<TEXT_SENSOR_TYPE>(name) != nullptr;
+        exists = exists || getSensor<TEXT_SENSOR_DATA_TYPE>(name) != nullptr;
       #endif
 
       if (exists) {
@@ -92,12 +92,12 @@ class SensorsManagerClass {
     }
     SensorType getSensorType(const char * name) {
       #if ENABLE_NUMBER_SENSORS
-      if (getSensor<NUMBER_SENSOR_TYPE>(name) != nullptr) {
+      if (getSensor<NUMBER_SENSOR_DATA_TYPE>(name) != nullptr) {
         return NUMBER_SENSOR;
       }
       #endif
       #if ENABLE_TEXT_SENSORS
-      if (getSensor<TEXT_SENSOR_TYPE>(name) != nullptr) {
+      if (getSensor<TEXT_SENSOR_DATA_TYPE>(name) != nullptr) {
         return TEXT_SENSOR;
       }
       #endif
@@ -105,11 +105,11 @@ class SensorsManagerClass {
     }
   private:
     #if ENABLE_NUMBER_SENSORS
-      List<Sensor<NUMBER_SENSOR_TYPE>> _sensorsList;
+      List<Sensor<NUMBER_SENSOR_DATA_TYPE>> _sensorsList;
     #endif
 
     #if ENABLE_TEXT_SENSORS
-      List<Sensor<TEXT_SENSOR_TYPE>> _deviceStatesList;
+      List<Sensor<TEXT_SENSOR_DATA_TYPE>> _deviceStatesList;
     #endif
 
     template<typename T>

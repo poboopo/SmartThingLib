@@ -13,6 +13,23 @@
 
 const char * const _SENSORS_MANAGER_TAG = "sensors-manager";
 
+enum SensorType {
+  UNKNOWN_SENSOR,
+  NUMBER_SENSOR,
+  TEXT_SENSOR
+};
+
+inline const char * sensorTypeToStr(SensorType type) {
+  switch (type) {
+    case NUMBER_SENSOR:
+      return "number";
+    case TEXT_SENSOR:
+      return "text";
+    default:
+      return "unknown";
+  }
+}
+
 class SensorsManagerClass {
   public:
     #if ENABLE_NUMBER_SENSORS
@@ -65,9 +82,26 @@ class SensorsManagerClass {
 
     template<typename T>
     const Sensor<T> * getSensor(const char * name) {
+      if (name == nullptr || strlen(name) == 0) {
+        return nullptr;
+      }
+
       return getList<T>()->findValue([&](Sensor<T> * current) {
           return strcmp(current->name(), name) == 0;
       });
+    }
+    SensorType getSensorType(const char * name) {
+      #if ENABLE_NUMBER_SENSORS
+      if (getSensor<NUMBER_SENSOR_TYPE>(name) != nullptr) {
+        return NUMBER_SENSOR;
+      }
+      #endif
+      #if ENABLE_TEXT_SENSORS
+      if (getSensor<TEXT_SENSOR_TYPE>(name) != nullptr) {
+        return TEXT_SENSOR;
+      }
+      #endif
+      return UNKNOWN_SENSOR;
     }
   private:
     #if ENABLE_NUMBER_SENSORS

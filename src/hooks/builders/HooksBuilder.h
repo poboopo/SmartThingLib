@@ -22,8 +22,9 @@ const char * const _HOOKS_BUILDER_TAG = "hooks_factory";
   const char * const TEMPLATES_JSON = "{\"default\":%s,\"%s\":%s,\"%s\":%s}";
   const size_t TEMPLATE_JSON_LENGTH = 20;
 #endif
-const char * const DEFAULT_NUMBER_HOOKS_TEMPLATES_JSON = "{\"threshold\":{\"required\":false},\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}";
-const char * const DEFAULT_TEXT_HOOKS_TEMPLATES_JSON = "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}";
+// todo merge common fields
+const char * const DEFAULT_NUMBER_HOOKS_TEMPLATES_JSON = "{\"triggerEnabled\":{\"required\":false,\"type\":\"checkbox\"},\"trigger\":{\"required\":false,\"type\":\"number\"},\"threshold\":{\"required\":false,\"type\":\"number\"},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}";
+const char * const DEFAULT_TEXT_HOOKS_TEMPLATES_JSON = "{\"triggerEnabled\":{\"required\":false,\"type\":\"checkbox\"},\"trigger\":{\"required\":false,\"type\":\"text\"},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}";
 const char * const HTTP_HOOK_TEMPLATE = "{\"url\":{\"required\":true},\"payload\":{\"required\":false},\"method\":{\"required\":true,\"values\":{\"1\":\"GET\",\"2\":\"POST\",\"3\":\"PUT\",\"4\":\"PATCH\",\"5\":\"DELETE\"}}}";
 const char * const NOTIFICATION_HOOK_TEMPLATE = "{\"message\":{\"required\":true},\"ntfType\":{\"values\":{\"1\":\"info\",\"2\":\"warning\",\"3\":\"error\"}}}";
 
@@ -131,7 +132,12 @@ class HooksBuilder {
     }
 
     static String getTemplates(const char * name) {
-      const char * defTemp = getDefaultTemplate(name);
+      SensorType type = SensorsManager.getSensorType(name);
+      if (type == UNKNOWN_SENSOR) {
+        return "{}";
+      }
+
+      const char * defTemp = getDefaultTemplate(type);
 
       size_t nameLen = strlen(_httpHookType) + strlen(_notificationHookType);
       size_t tempLen = strlen(defTemp) + strlen(HTTP_HOOK_TEMPLATE) + strlen(NOTIFICATION_HOOK_TEMPLATE);
@@ -251,15 +257,15 @@ class HooksBuilder {
     }
     #endif
 
-    static const char * getDefaultTemplate(const char * name) {
+    static const char * getDefaultTemplate(SensorType type) {
       #if ENABLE_NUMBER_SENSORS
-      if (SensorsManager.getSensor<NUMBER_SENSOR_TYPE>(name) != nullptr) {
+      if (type == NUMBER_SENSOR) {
         return DEFAULT_NUMBER_HOOKS_TEMPLATES_JSON;
       }
       #endif
 
       #if ENABLE_TEXT_SENSORS
-      if (SensorsManager.getSensor<TEXT_SENSOR_TYPE>(name) != nullptr) {
+      if (type == TEXT_SENSOR) {
         return DEFAULT_TEXT_HOOKS_TEMPLATES_JSON;
       }
       #endif

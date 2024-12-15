@@ -307,6 +307,35 @@
       }
     },
     "/hooks": {
+      "get": {
+        "tags": [
+          "Hook"
+        ],
+        "description": "Get hooks for sensor",
+        "parameters": [
+          {
+            "name": "sensor",
+            "in": "query",
+            "description": "Sensor name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of hooks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/HooksList"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "Hook"
@@ -404,37 +433,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/hooks/by/sensor": {
-      "get": {
-        "tags": [
-          "Hook"
-        ],
-        "description": "Get hooks for sensor object (sensor or state)",
-        "parameters": [
-          {
-            "name": "sensor",
-            "in": "query",
-            "description": "Sensor name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of hooks",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#components/schemas/HooksList"
                 }
               }
             }

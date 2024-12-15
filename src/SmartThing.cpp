@@ -37,13 +37,13 @@
 const char * const _SMART_THING_TAG = "smart_thing";
 #ifdef ARDUINO_ARCH_ESP32
 const char * const beaconTemplate = "%s;%s;%s;%s;esp32;%s";
-const size_t beaconExtraSize = 9;
+const size_t beaconExtraSize = 10;
 #endif
 #ifdef ARDUINO_ARCH_ESP8266
 const char * const beaconTemplate = "%s;%s;%s;%s;esp8266;%s";
-const int beaconExtraSize = 11;
+const int beaconExtraSize = 12;
 #endif
-const size_t versionLen = strlen(SMART_THING_VERSION);
+const size_t stVersionLength = strlen(SMART_THING_VERSION);
 
 SmartThingClass SmartThing;
 
@@ -364,13 +364,21 @@ void SmartThingClass::updateBroadCastMessage() {
   if (_broadcastMessage != nullptr) {
     free(_broadcastMessage);
   }
-  size_t size = strlen(_ip) + strlen(_type) + strlen(_name) + versionLen + beaconExtraSize + 1;
-  _broadcastMessage = (char *) malloc(size);
+  String version = "";
   #ifdef __VERSION
-    sprintf(_broadcastMessage, beaconTemplate, _ip, _type, _name, SMART_THING_VERSION, String(__VERSION).c_str());
-  #else
-    sprintf(_broadcastMessage, beaconTemplate, _ip, _type, _name, SMART_THING_VERSION, "");
+  version = String(__VERSION);
   #endif
+
+  size_t size =
+    strlen(_ip) + 
+    strlen(_type) + 
+    strlen(_name) + 
+    stVersionLength + 
+    version.length() + 
+    beaconExtraSize + 1;
+
+  _broadcastMessage = (char *) malloc(size);
+  sprintf(_broadcastMessage, beaconTemplate, _ip, _type, _name, SMART_THING_VERSION, version.c_str());
 }
 
 #ifdef ARDUINO_ARCH_ESP32

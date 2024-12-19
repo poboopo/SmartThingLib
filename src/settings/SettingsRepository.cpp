@@ -513,7 +513,7 @@ bool SettingsRepositoryClass::saveConfig() {
       String value = entry->value();
       value.replace(";", "|;");
 
-      char buff[strlen(entry->name() + value.length() + 3)];
+      char buff[strlen(entry->name()) + value.length() + 3];
       sprintf(
         buff,
         "%s;%s%s",

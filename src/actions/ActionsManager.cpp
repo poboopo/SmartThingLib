@@ -38,7 +38,7 @@ ActionResult ActionsManagerClass::call(const char* name) {
     st_log_error(_ACTIONS_TAG, "Can't find action with name %s", name);
     return ActionResult(false, "Failed to find action");
   }
-  return action->handler();
+  return action->call();
 };
 
 const Action * ActionsManagerClass::get(const char* name) const {
@@ -54,9 +54,9 @@ void ActionsManagerClass::loadFromSettings() {
   }
 
   forEach([&](Action * action) {
-    if (config[action->name].is<const char*>()) {
-      unsigned long callDelay = config[action->name];
-      action->callDelay = callDelay;
+    if (config[action->name()].is<const char*>()) {
+      unsigned long callDelay = config[action->name()];
+      action->setCallDelay(callDelay);
     }
   });
 }
@@ -70,13 +70,13 @@ bool ActionsManagerClass::updateActionSchedule(const char * name, unsigned long 
   } else {
     JsonDocument config = SettingsRepository.getActions();
     if (newDelay == 0) {
-      config.remove(action->name);
+      config.remove(action->name());
     } else {
-      config[action->name] = newDelay;
+      config[action->name()] = newDelay;
     }
     SettingsRepository.setActions(config);
 
-    action->callDelay = newDelay;
+    action->setCallDelay(newDelay);
     st_log_info(_ACTIONS_TAG, "Action %s delay was update to %lu", name, newDelay);
     return true;
   }
@@ -85,10 +85,10 @@ bool ActionsManagerClass::updateActionSchedule(const char * name, unsigned long 
 void ActionsManagerClass::scheduled() {
   unsigned long current = millis();
   forEach([&](Action * action) {
-    if (action->callDelay > 0 && current - action->lastCall > action->callDelay) {
-      st_log_debug(_ACTIONS_TAG, "Scheduled call of %s", action->name);
-      action->handler();
-      action->lastCall = current;
+    if (action->callDelay() > 0 && current - action->lastCall() > action->callDelay()) {
+      st_log_debug(_ACTIONS_TAG, "Scheduled call of %s", action->name());
+      action->call();
+      action->setLastCall(current);
     }
   });
 }
@@ -106,12 +106,12 @@ JsonDocument ActionsManagerClass::toJson() {
   #endif
   forEach([&](Action* current) {
     JsonDocument action;
-    action[ACTIONS_JSON_NAME] = current->name;
-    action[ACTIONS_JSON_CAPTION] = current->caption;
+    action[ACTIONS_JSON_NAME] = current->name();
+    action[ACTIONS_JSON_CAPTION] = current->caption();
 
     #if ENABLE_ACTIONS_SCHEDULER
-    action[ACTIONS_JSON_DELAY] = current->callDelay;
-    action[ACTIONS_JSON_LAST_CALL] = current->callDelay > 0 ? currentMillis - current->lastCall : 0;
+    action[ACTIONS_JSON_DELAY] = current->callDelay();
+    action[ACTIONS_JSON_LAST_CALL] = current->callDelay() > 0 ? currentMillis - current->lastCall() : 0;
     #endif
 
     doc.add(action);
@@ -120,7 +120,7 @@ JsonDocument ActionsManagerClass::toJson() {
 };
 
 Action* ActionsManagerClass::findAction(const char* name) const {
-  return findValue([&](Action* current) { return strcmp(current->name, name) == 0; });
+  return findValue([&](Action* current) { return strcmp(current->name(), name) == 0; });
 }
 
 #endif

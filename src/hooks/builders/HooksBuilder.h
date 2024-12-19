@@ -148,12 +148,12 @@ class HooksBuilder {
 
         if (actionCount > 0) {
           ActionsManager.forEachAction([&](Action* action, int index) {
-            char data[strlen(action->name) + strlen(action->caption) + 6];
+            char data[strlen(action->name()) + strlen(action->caption()) + 6];
             sprintf(
               data,
               "\"%s\":\"%s\"%s",
-              action->name,
-              action->caption,
+              action->name(),
+              action->caption(),
               index == actionCount - 1 ? "" : ","
             );
             actionsBuff += String(data);

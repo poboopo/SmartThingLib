@@ -65,7 +65,7 @@ class ActionHook : public SELECT_HOOK_BASE_CLASS {
         st_log_error(_ACTION_HOOK_TAG, "Can't find action %s", name);
         return false;
       }
-      _action = action->name;
+      _action = action->name();
       return true;
     }
 };

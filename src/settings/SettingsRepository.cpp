@@ -359,8 +359,8 @@ JsonDocument SettingsRepositoryClass::getConfigInfoJson() {
   return _configEntriesList.toJson();
 }
 
-bool SettingsRepositoryClass::addConfigEntry(const char* name, const char* caption, ConfigEntryType type) {
-  return _configEntriesList.add(name, caption, type);
+bool SettingsRepositoryClass::addConfigEntry(const char* name, ConfigEntryType type) {
+  return _configEntriesList.add(name, type);
 }
 
 #if ENABLE_HOOKS

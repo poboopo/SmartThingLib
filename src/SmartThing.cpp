@@ -114,7 +114,7 @@ bool SmartThingClass::init(const char * type) {
   #endif
 
   #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
-  SettingsRepository.addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)");
+  SettingsRepository.addConfigEntry(LOGGER_ADDRESS_CONFIG);
     #if ENABLE_TEXT_SENSORS
     SensorsManager.addSensor("logger", []() {
       return LOGGER.isConnected() ? "connected" : "disconnected";
@@ -130,7 +130,7 @@ bool SmartThingClass::init(const char * type) {
 
   #if ENABLE_HOOKS
   // For notifications
-  SettingsRepository.addConfigEntry(GATEWAY_CONFIG, "Gateway address (ip:port)");
+  SettingsRepository.addConfigEntry(GATEWAY_CONFIG);
 
   st_log_debug(_SMART_THING_TAG, "Loading hooks from settings...");
   HooksManager.loadFromSettings();

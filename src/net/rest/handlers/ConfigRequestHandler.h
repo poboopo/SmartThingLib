@@ -35,11 +35,11 @@ class ConfigRequestHandler : public RequestHandler {
         // jest'
         // hard typization required only over rest, that's why
         list->forEach([obj](ConfigEntry * entry) {
-          if (entry->type != CONFIG_STRING && obj[entry->name].is<const char*>()) {
-            if (entry->type == CONFIG_INTEGER) {
-              obj[entry->name] = obj[entry->name].as<int>();
-            } else if (entry->type == CONFIG_BOOLEAN) {
-              obj[entry->name] = obj[entry->name].as<String>().equals("true");
+          if (entry->type() != CONFIG_STRING && obj[entry->name()].is<const char*>()) {
+            if (entry->type() == CONFIG_INTEGER) {
+              obj[entry->name()] = obj[entry->name()].as<int>();
+            } else if (entry->type() == CONFIG_BOOLEAN) {
+              obj[entry->name()] = obj[entry->name()].as<String>().equals("true");
             }
           }
         });

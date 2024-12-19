@@ -14,50 +14,62 @@ enum ConfigEntryType {
   CONFIG_BOOLEAN
 };
 
-struct ConfigEntry {
-  ConfigEntry(const char* n, const char* c, ConfigEntryType t)
-      : name(n), caption(c), type(t){};
-  const char* name;
-  const char* caption;
-  ConfigEntryType type;
+class ConfigEntry {
+  public:
+    ConfigEntry(const char* name, ConfigEntryType t)
+        : _type(t) {
+      _name = (char*) malloc(strlen(name) + 1);
+      strcpy(_name, name);
+    };
+    ~ConfigEntry() {
+      free(_name);
+    }
+
+    const char * name() const {
+      return _name;
+    }
+
+    ConfigEntryType type() const {
+      return _type;
+    }
+
+  private:
+    char* _name;
+    ConfigEntryType _type;
 };
 
 class ConfigEntriesList : public List<ConfigEntry> {
  public:
-  bool add(const char* name, const char* caption, ConfigEntryType type) {
+  bool add(const char* name, ConfigEntryType type) {
     if (findConfigEntry(name) != nullptr) {
       st_log_warning(_CONFIG_ENTRIES_LIST_TAG, "Config entry %s already exists!", name);
       return false;
     }
-    ConfigEntry* entry = new ConfigEntry(name, caption, type);
+    ConfigEntry* entry = new ConfigEntry(name, type);
     if (append(entry) > -1) {
-      st_log_debug(_CONFIG_ENTRIES_LIST_TAG, "Added new config entry - %s:%s",
-                   name, caption);
+      st_log_debug(_CONFIG_ENTRIES_LIST_TAG, "Added new config entry - %s", name);
       return true;
     } else {
       if (entry != nullptr) {
         delete entry;
       }
-      st_log_error(_CONFIG_ENTRIES_LIST_TAG,
-                   "Failed to add new config entry - %s:%s", name, caption);
+      st_log_error(_CONFIG_ENTRIES_LIST_TAG, "Failed to add new config entry - %s", name);
       return false;
     }
   };
   JsonDocument toJson() {
     JsonDocument doc;
     forEach([&](ConfigEntry* current) {
-      JsonObject obj = doc[current->name].to<JsonObject>();
-      obj["caption"] = current->caption;
-      switch (current->type) {
-        case CONFIG_STRING:
-          obj["type"] = "string";
-          break;
+      JsonObject obj = doc[current->name()].to<JsonObject>();
+      switch (current->type()) {
         case CONFIG_INTEGER:
           obj["type"] = "number";
           break;
         case CONFIG_BOOLEAN:
           obj["type"] = "boolean";
           break;
+        default:
+          obj["type"] = "string";
       }
     });
     return doc;
@@ -68,7 +80,7 @@ class ConfigEntriesList : public List<ConfigEntry> {
       return nullptr;
     }
     return findValue(
-        [&](ConfigEntry* current) { return strcmp(current->name, name) == 0; });
+        [&](ConfigEntry* current) { return strcmp(current->name(), name) == 0; });
   };
 };
 

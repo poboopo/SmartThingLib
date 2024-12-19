@@ -20,7 +20,13 @@ class Sensor {
     typedef std::function<T(void)> ValueProvider;
 
     Sensor(const char * name, std::function<T(void)> valueProvider): 
-      _name(name), _valueProvider(valueProvider) {};
+      _valueProvider(valueProvider) {
+        _name = (char *) malloc(strlen(name) + 1);
+        strcpy(_name, name);
+      };
+    ~Sensor() {
+      free(_name);
+    }
 
     const char * name() const {
       return _name;
@@ -30,7 +36,7 @@ class Sensor {
       return _valueProvider();
     }
   private:
-    const char* _name; // todo copy string
+    char* _name; // todo copy string
     ValueProvider _valueProvider;
 };
 

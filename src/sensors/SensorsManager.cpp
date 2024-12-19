@@ -5,19 +5,14 @@ SensorsManagerClass SensorsManager;
 
 #if ENABLE_NUMBER_SENSORS
 template<>
-List<Sensor<NUMBER_SENSOR_DATA_TYPE>> * SensorsManagerClass::getList() {
-  return &_sensorsList;
-}
-#endif
-
-#if ENABLE_TEXT_SENSORS
-template<>
 List<Sensor<TEXT_SENSOR_DATA_TYPE>> * SensorsManagerClass::getList() {
   return &_deviceStatesList;
 }
-#endif
 
-#if ENABLE_NUMBER_SENSORS
+template<>
+List<Sensor<NUMBER_SENSOR_DATA_TYPE>> * SensorsManagerClass::getList() {
+  return &_sensorsList;
+}
 
 bool SensorsManagerClass::addDigitalSensor(const char* name, uint8_t pin, uint8_t mode) {
   pinMode(pin, mode);

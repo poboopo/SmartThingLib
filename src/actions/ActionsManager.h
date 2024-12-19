@@ -4,6 +4,7 @@
 #include "Features.h"
 #if ENABLE_ACTIONS
 
+#include <Arduino.h>
 #include <ArduinoJson.h>
 #include <functional>
 
@@ -29,21 +30,72 @@ struct ActionResult {
 
 typedef std::function<ActionResult(void)> ActionHandler;
 
-struct Action {
-  Action(const char* n, const char* c, ActionHandler h)
-  #if ENABLE_ACTIONS_SCHEDULER
-    : name(n), caption(c), handler(h), callDelay(0), lastCall(0) {};
-  #else
-    : name(n), caption(c), handler(h) {};
-  #endif
-  const char* name;
-  const char* caption;
-  ActionHandler handler;
+class Action {
+  public:
+    Action(const char* name, const char* caption, ActionHandler h)
+    #if ENABLE_ACTIONS_SCHEDULER
+      : _handler(h), _callDelay(0), _lastCall(0)
+    #else
+      : _handler(h)
+    #endif
+    {
+      _name = (char *) malloc(strlen(name) + 1);
+      strcpy(_name, name);
 
-  #if ENABLE_ACTIONS_SCHEDULER
-  unsigned long callDelay;
-  unsigned long lastCall;
-  #endif
+      if (strcmp(name, caption) == 0) {
+        _caption = _name;
+      } else {
+        _caption = (char *) malloc(strlen(caption) + 1);
+        strcpy(_caption, caption);
+      }
+    };
+
+    ~Action() {
+      if (_name != _caption) {
+        free(_caption);
+      }
+      free(_name);
+    };
+
+    const char * name() const {
+      return _name;
+    }
+
+    const char * caption() const {
+      return _caption;
+    }
+
+    ActionResult call() const {
+      return _handler();
+    }
+
+    #if ENABLE_ACTIONS_SCHEDULER
+      unsigned long callDelay() const {
+        return _callDelay;
+      }
+
+      unsigned long lastCall() const {
+        return _lastCall;
+      }
+
+      void setCallDelay(unsigned long callDelay) {
+        _callDelay = callDelay;
+      }
+
+      void setLastCall(unsigned long lastCall) {
+        _lastCall = lastCall;
+      }
+    #endif
+
+  private:
+    char* _name;
+    char* _caption;
+    ActionHandler _handler;
+
+    #if ENABLE_ACTIONS_SCHEDULER
+    unsigned long _callDelay;
+    unsigned long _lastCall;
+    #endif
 };
 
 class ActionsManagerClass : protected List<Action> {

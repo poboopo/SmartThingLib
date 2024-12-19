@@ -98,33 +98,7 @@
         }
       }
     },
-    "/config/info": {
-      "get": {
-        "tags": [
-          "Configuration"
-        ],
-        "description": "Get device configuration fields",
-        "responses": {
-          "200": {
-            "description": "Device condifguration fields",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "example": {
-                    "config_key": {
-                      "caption": "Some caption",
-                      "type": "value type"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/config/values": {
+    "/config": {
       "get": {
         "tags": [
           "Configuration"
@@ -132,7 +106,7 @@
         "description": "Get device configuration",
         "responses": {
           "200": {
-            "description": "Device configuration",
+            "description": "Device configuration values",
             "content": {
               "application/json": {
                 "schema": {
@@ -625,9 +599,7 @@
         "description": "Device configuration",
         "type": "object",
         "example": {
-          "entry1": "value1",
-          "entry2": 123,
-          "entry3": false
+          "entry_name": "string_value"
         }
       },
       "Actions": {

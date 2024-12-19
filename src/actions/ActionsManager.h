@@ -98,16 +98,17 @@ class Action {
     #endif
 };
 
-class ActionsManagerClass : protected List<Action> {
+class ActionsManagerClass {
  public:
   size_t count();
 
-  bool add(const char* actionName, const char* caption, ActionHandler handler);
+  bool add(const char* name, const char* caption, ActionHandler handler);
+  bool remove(const char* name);
 
   ActionResult call(const char* name);
 
   const Action * get(const char* name) const;
-  void forEachAction(ForEachIndexFunction forFunc);
+  void forEachAction(List<Action>::ForEachIndexFunction forFunc);
 
   #if ENABLE_ACTIONS_SCHEDULER
   void loadFromSettings();
@@ -120,6 +121,8 @@ class ActionsManagerClass : protected List<Action> {
   JsonDocument toJson();
 
  private:
+  List<Action> _actions;
+
   Action* findAction(const char* name) const;
 };
 

@@ -13,9 +13,8 @@
 #endif
 
 // replaces keys in string with config values
+// not optimal impl, but it ok for now
 inline String replaceValues(const char * input, String &value) {
-  JsonDocument conf = SettingsRepository.getConfig();
-
   String result = "";
   String key = "";
   bool opened = false;
@@ -31,8 +30,8 @@ inline String replaceValues(const char * input, String &value) {
       if (input[i] == '}') {
         if (key.equals(VALUE_DYNAMIC_PARAM)) {
           result += value;
-        } else if (conf[key].is<const char*>()) {
-          result += conf[key].as<String>();
+        } else {
+          result += SettingsRepository.getConfigValue(key.c_str());
         }
         opened = false;
         key.clear();

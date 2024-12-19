@@ -69,13 +69,13 @@ class SensorsManagerClass {
 
       Sensor<T> * sensor = new Sensor<T>(name, valueProvider);
       if (getList<T>()->append(sensor) > -1) {
-        st_log_debug(_SENSORS_MANAGER_TAG, "Added new device state %s", name);
+        st_log_debug(_SENSORS_MANAGER_TAG, "Added new device sensor %s", name);
         return true;
       } else {
         if (sensor != nullptr) {
           delete sensor;
         }
-        st_log_error(_SENSORS_MANAGER_TAG, "Dailed to add new device state %s", name);
+        st_log_error(_SENSORS_MANAGER_TAG, "Failed to add new device sensor %s", name);
         return false;
       }
     }

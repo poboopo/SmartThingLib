@@ -141,10 +141,9 @@ class NumberSensorHook: public Hook<NUMBER_SENSOR_DATA_TYPE> {
 
     String triggerString() {
       int size = snprintf(NULL, 0, "%d:%d", _triggerValue, _threshold);
-      char * buff = (char *) malloc(size + 1);
+      char buff[size + 1];
       sprintf(buff, "%d_%d", _triggerValue, _threshold);
       String tmp = buff;
-      free(buff);
       return tmp;
     }
 };

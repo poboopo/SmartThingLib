@@ -58,6 +58,44 @@ bool SmartThingClass::wifiConnected() {
   return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
 }
 
+void SmartThingClass::preInit() {
+  #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
+    SettingsRepository.addConfigEntry(LOGGER_ADDRESS_CONFIG);
+    #if ENABLE_TEXT_SENSORS
+      SensorsManager.addSensor("logger", []() {
+        return LOGGER.isConnected() ? "connected" : "disconnected";
+      });
+    #endif
+  #endif
+
+  #if ENABLE_TEXT_SENSORS
+    SensorsManager.addSensor("wifi", [this]() {
+      return wifiConnected() ? "connected" : "disconnected";
+    });
+  #endif
+
+  #if ENABLE_HOOKS
+    // For notifications
+    SettingsRepository.addConfigEntry(GATEWAY_CONFIG);
+  #endif
+
+  SettingsRepository.loadConfigValues();
+  st_log_debug(_SMART_THING_TAG, "Config values loaded");
+
+  #if ENABLE_HOOKS
+    st_log_debug(_SMART_THING_TAG, "Loading hooks from settings...");
+    HooksManager.loadFromSettings();
+    st_log_debug(_SMART_THING_TAG, "Hooks loaded, making first check");
+    HooksManager.check();
+    st_log_debug(_SMART_THING_TAG, "Hooks first check finished");
+  #endif
+
+  #if ENABLE_ACTIONS_SCHEDULER
+    st_log_debug(_SMART_THING_TAG, "Loading actions schedule config from settings");
+    ActionsManager.loadFromSettings();
+  #endif
+}
+
 bool SmartThingClass::init(const char * type, const char * name) {
   if (name == nullptr) {
     st_log_error(_SMART_THING_TAG, "Name can't be nullptr");
@@ -77,6 +115,8 @@ bool SmartThingClass::init(const char * type) {
     st_log_error(_SMART_THING_TAG, "Device type is missing!");
     return false;
   }
+
+  preInit();
 
   _type = (char *) malloc(strlen(type) + 1);
   strcpy(_type, type);
@@ -113,43 +153,12 @@ bool SmartThingClass::init(const char * type) {
   st_log_debug(_SMART_THING_TAG, "Loop task created");
   #endif
 
-  #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
-  SettingsRepository.addConfigEntry(LOGGER_ADDRESS_CONFIG);
-    #if ENABLE_TEXT_SENSORS
-    SensorsManager.addSensor("logger", []() {
-      return LOGGER.isConnected() ? "connected" : "disconnected";
-    });
-    #endif
-  #endif
-
-  #if ENABLE_TEXT_SENSORS
-  SensorsManager.addSensor("wifi", [this]() {
-    return wifiConnected() ? "connected" : "disconnected";
-  });
-  #endif
-
-  #if ENABLE_HOOKS
-  // For notifications
-  SettingsRepository.addConfigEntry(GATEWAY_CONFIG);
-
-  st_log_debug(_SMART_THING_TAG, "Loading hooks from settings...");
-  HooksManager.loadFromSettings();
-  st_log_debug(_SMART_THING_TAG, "Hooks loaded, making first check");
-  HooksManager.check();
-  st_log_debug(_SMART_THING_TAG, "Hooks first check finished");
-  #endif
-
-  #if ENABLE_ACTIONS_SCHEDULER
-  st_log_debug(_SMART_THING_TAG, "Loading actions schedule config from settings");
-  ActionsManager.loadFromSettings();
-  #endif
-
   connectToWifi();
 
   if (wifiConnected()) {
     st_log_info(_SMART_THING_TAG, "WiFi connected, local ip %s, hostname %s", _ip, _name);
     delay(1000);
-    LOGGER.init(SettingsRepository.getConfig()[LOGGER_ADDRESS_CONFIG], _name);
+    LOGGER.init(SettingsRepository.getConfigValue(LOGGER_ADDRESS_CONFIG), _name);
 
     #ifdef ARDUINO_ARCH_ESP32
     if (_beaconUdp.beginMulticast(MULTICAST_GROUP, MULTICAST_PORT)) {

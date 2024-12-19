@@ -5,7 +5,6 @@
 #include <WiFiUdp.h>
 
 #include "hooks/HooksManager.h"
-#include "settings/ConfigEntriesList.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
 #include "settings/SettingsRepository.h"
@@ -58,6 +57,8 @@ class SmartThingClass {
   char * _broadcastMessage;
   WiFiUDP _beaconUdp;
   
+  void preInit();
+
   #ifdef ARDUINO_ARCH_ESP32
   TaskHandle_t _loopTaskHandle = NULL;
   #endif

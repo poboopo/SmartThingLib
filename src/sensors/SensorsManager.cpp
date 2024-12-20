@@ -3,12 +3,14 @@
 
 SensorsManagerClass SensorsManager;
 
-#if ENABLE_NUMBER_SENSORS
+#if ENABLE_TEXT_SENSORS
 template<>
 List<Sensor<TEXT_SENSOR_DATA_TYPE>> * SensorsManagerClass::getList() {
   return &_deviceStatesList;
 }
+#endif
 
+#if ENABLE_NUMBER_SENSORS
 template<>
 List<Sensor<NUMBER_SENSOR_DATA_TYPE>> * SensorsManagerClass::getList() {
   return &_sensorsList;

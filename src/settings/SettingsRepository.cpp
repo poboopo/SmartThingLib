@@ -418,7 +418,7 @@ String SettingsRepositoryClass::getConfigJson() {
       current->value(),
       index == lastIndex ? "" : "," 
     );
-    result += buff;
+    result += String(buff);
   });
 
   result += "}";
@@ -522,7 +522,7 @@ bool SettingsRepositoryClass::saveConfig() {
         index == lastIndex ? "" : ";"
       );
 
-      data += buff;
+      data += String(buff);
     }
   });
 

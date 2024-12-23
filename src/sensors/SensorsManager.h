@@ -85,7 +85,6 @@ class SensorsManagerClass {
       if (name == nullptr || strlen(name) == 0) {
         return nullptr;
       }
-
       return getList<T>()->findValue([&](Sensor<T> * current) {
           return strcmp(current->name(), name) == 0;
       });

@@ -77,7 +77,7 @@ class BetterLogger {
       return;
     }
     _fullAddr = fullAddr;
-    warning(_LOGGER_TAG, "Server log address was updated to %s", fullAddr.c_str());
+    warning(_LOGGER_TAG, "Server log address was updated to %s", fullAddr.isEmpty() ? "[none]" : fullAddr.c_str());
     parseAddressAndConnect();
     #endif
   }

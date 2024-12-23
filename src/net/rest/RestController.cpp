@@ -69,7 +69,7 @@ void RestControllerClass::reload() {
 }
 
 void RestControllerClass::setupHandler() {
-  _server.addHandler(new ConfigRequestHandler(&_configUpdatedHandler));
+  _server.addHandler(new ConfigRequestHandler());
   _server.addHandler(new WiFiRequesthandler());
   _server.addHandler(new InfoRequestHandler());
   _server.addHandler(new SettingsRequestHandler());

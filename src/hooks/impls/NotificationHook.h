@@ -152,7 +152,7 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
     }
 
     void sendRequest() {
-      String gtwIp = SettingsRepository.getConfig()[GATEWAY_CONFIG].as<String>();
+      String gtwIp = SettingsRepository.getConfigValue(GATEWAY_CONFIG);
       if (gtwIp.isEmpty()) {
         st_log_debug(_NOTIFICATION_HOOK_TAG, "Gateway ip is missing!");
         return;

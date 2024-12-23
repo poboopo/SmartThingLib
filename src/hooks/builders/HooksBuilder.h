@@ -13,7 +13,7 @@
 
 const char * const _HOOKS_BUILDER_TAG = "hooks_factory";
 
-#ifdef ENABLE_ACTIONS
+#if ENABLE_ACTIONS
   const char * const TEMPLATES_JSON = "{\"default\":%s,\"%s\":%s,\"%s\":%s,\"%s\":%s}";
   const char * const ACTION_HOOK_TEMPLATE = "{\"action\":{\"required\":true,\"values\":{%s}}}";
   const size_t TEMPLATE_JSON_LENGTH = 24;
@@ -22,8 +22,9 @@ const char * const _HOOKS_BUILDER_TAG = "hooks_factory";
   const char * const TEMPLATES_JSON = "{\"default\":%s,\"%s\":%s,\"%s\":%s}";
   const size_t TEMPLATE_JSON_LENGTH = 20;
 #endif
-const char * const DEFAULT_NUMBER_HOOKS_TEMPLATES_JSON = "{\"threshold\":{\"required\":false},\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}";
-const char * const DEFAULT_TEXT_HOOKS_TEMPLATES_JSON = "{\"trigger\":{\"required\":false},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}";
+// todo merge common fields
+const char * const DEFAULT_NUMBER_HOOKS_TEMPLATES_JSON = "{\"triggerEnabled\":{\"required\":false,\"type\":\"checkbox\"},\"trigger\":{\"required\":false,\"type\":\"number\"},\"threshold\":{\"required\":false,\"type\":\"number\"},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}";
+const char * const DEFAULT_TEXT_HOOKS_TEMPLATES_JSON = "{\"triggerEnabled\":{\"required\":false,\"type\":\"checkbox\"},\"trigger\":{\"required\":false,\"type\":\"text\"},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}";
 const char * const HTTP_HOOK_TEMPLATE = "{\"url\":{\"required\":true},\"payload\":{\"required\":false},\"method\":{\"required\":true,\"values\":{\"1\":\"GET\",\"2\":\"POST\",\"3\":\"PUT\",\"4\":\"PATCH\",\"5\":\"DELETE\"}}}";
 const char * const NOTIFICATION_HOOK_TEMPLATE = "{\"message\":{\"required\":true},\"ntfType\":{\"values\":{\"1\":\"info\",\"2\":\"warning\",\"3\":\"error\"}}}";
 
@@ -131,7 +132,12 @@ class HooksBuilder {
     }
 
     static String getTemplates(const char * name) {
-      const char * defTemp = getDefaultTemplate(name);
+      SensorType type = SensorsManager.getSensorType(name);
+      if (type == UNKNOWN_SENSOR) {
+        return "{}";
+      }
+
+      const char * defTemp = getDefaultTemplate(type);
 
       size_t nameLen = strlen(_httpHookType) + strlen(_notificationHookType);
       size_t tempLen = strlen(defTemp) + strlen(HTTP_HOOK_TEMPLATE) + strlen(NOTIFICATION_HOOK_TEMPLATE);
@@ -142,12 +148,12 @@ class HooksBuilder {
 
         if (actionCount > 0) {
           ActionsManager.forEachAction([&](Action* action, int index) {
-            char data[strlen(action->name) + strlen(action->caption) + 6];
+            char data[strlen(action->name()) + strlen(action->caption()) + 6];
             sprintf(
               data,
               "\"%s\":\"%s\"%s",
-              action->name,
-              action->caption,
+              action->name(),
+              action->caption(),
               index == actionCount - 1 ? "" : ","
             );
             actionsBuff += String(data);
@@ -188,16 +194,16 @@ class HooksBuilder {
     }
   
     #if ENABLE_NUMBER_SENSORS
-    static void parseTrigger(Hook<NUMBER_SENSOR_TYPE> * hook, JsonDocument &doc) {
+    static void parseTrigger(Hook<NUMBER_SENSOR_DATA_TYPE> * hook, JsonDocument &doc) {
       st_log_debug(_HOOKS_BUILDER_TAG, "trigger=%d", doc[_triggerHookField].as<int>());
       st_log_debug(_HOOKS_BUILDER_TAG, "threshold=%d", doc[_thresholdHookField].as<int>());
       hook->setTriggerValue(doc[_triggerHookField]);
-      ((SensorHook *) hook)->setThreshold(doc[_thresholdHookField]);
+      ((NumberSensorHook *) hook)->setThreshold(doc[_thresholdHookField]);
     }
     #endif
 
     #if ENABLE_TEXT_SENSORS
-    static void parseTrigger(Hook<TEXT_SENSOR_TYPE> * hook, JsonDocument &doc) {
+    static void parseTrigger(Hook<TEXT_SENSOR_DATA_TYPE> * hook, JsonDocument &doc) {
       st_log_debug(_HOOKS_BUILDER_TAG, "trigger=%s", doc[_triggerHookField].as<String>().c_str());
       hook->setTriggerValue(doc[_triggerHookField]);
     }
@@ -222,7 +228,7 @@ class HooksBuilder {
     }
 
     #if ENABLE_NUMBER_SENSORS
-    static void parseTrigger(Hook<NUMBER_SENSOR_TYPE> * hook, String trigger) {
+    static void parseTrigger(Hook<NUMBER_SENSOR_DATA_TYPE> * hook, String trigger) {
       String buff;
       int tmp;
 
@@ -239,27 +245,27 @@ class HooksBuilder {
 
       tmp = buff.toInt();
       st_log_debug(_HOOKS_BUILDER_TAG, "threshold=%d", tmp);
-      ((SensorHook *) hook)->setThreshold(tmp);
+      ((NumberSensorHook *) hook)->setThreshold(tmp);
     }
     #endif
 
     #if ENABLE_TEXT_SENSORS
-    static void parseTrigger(Hook<TEXT_SENSOR_TYPE> * hook, String &trigger) {
+    static void parseTrigger(Hook<TEXT_SENSOR_DATA_TYPE> * hook, String &trigger) {
       trigger.replace("|;", ";");
       st_log_debug(_HOOKS_BUILDER_TAG, "trigger=%s", trigger.c_str());
       hook->setTriggerValue(trigger.c_str());
     }
     #endif
 
-    static const char * getDefaultTemplate(const char * name) {
+    static const char * getDefaultTemplate(SensorType type) {
       #if ENABLE_NUMBER_SENSORS
-      if (SensorsManager.getSensor<NUMBER_SENSOR_TYPE>(name) != nullptr) {
+      if (type == NUMBER_SENSOR) {
         return DEFAULT_NUMBER_HOOKS_TEMPLATES_JSON;
       }
       #endif
 
       #if ENABLE_TEXT_SENSORS
-      if (SensorsManager.getSensor<TEXT_SENSOR_TYPE>(name) != nullptr) {
+      if (type == TEXT_SENSOR) {
         return DEFAULT_TEXT_HOOKS_TEMPLATES_JSON;
       }
       #endif

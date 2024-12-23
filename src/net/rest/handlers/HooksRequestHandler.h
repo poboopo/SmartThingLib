@@ -46,22 +46,6 @@ class HooksRequestHandler : public RequestHandler {
           return request->beginResponse(200, CONTENT_TYPE_JSON, response);
         }
 
-        if (request->url().equals("/hooks/by/sensor")) {
-          String sensor = request->arg(_hooksSensorNameArg);
-
-          if (sensor.isEmpty()) {
-            return request->beginResponse(
-                400, CONTENT_TYPE_JSON,
-                buildErrorJson("Sensor type or sensor args are missing!"));
-          }
-
-          st_log_debug(_HOOKS_RQ_TAG, "Searching hooks for sensor %s", sensor.c_str());
-          JsonDocument doc = HooksManager.getSensorHooksJson(sensor.c_str());
-          String response;
-          serializeJson(doc, response);
-          return request->beginResponse(200, CONTENT_TYPE_JSON, response);
-        }
-
         if (request->url().equals("/hooks/test")) {
           String sensor = request->arg(_hooksSensorNameArg);
           String id = request->arg(_hookIdArg);
@@ -79,7 +63,22 @@ class HooksRequestHandler : public RequestHandler {
           }
         }
       }
+
       if (request->url().equals(_hooksPath)) {
+        if (request->method() == HTTP_GET) {
+          String sensor = request->arg(_hooksSensorNameArg);
+
+          if (sensor.isEmpty()) {
+            return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Sensor arg are missing!"));
+          }
+
+          st_log_debug(_HOOKS_RQ_TAG, "Searching hooks for sensor %s", sensor.c_str());
+          JsonDocument doc = HooksManager.getSensorHooksJson(sensor.c_str());
+          String response;
+          serializeJson(doc, response);
+          return request->beginResponse(200, CONTENT_TYPE_JSON, response);
+        }
+
         // todo switch
         if (request->method() == HTTP_POST) {
           if (_body.isEmpty()) {
@@ -126,6 +125,7 @@ class HooksRequestHandler : public RequestHandler {
                                       "additional information."));
           }
         }
+
         if (request->method() == HTTP_DELETE) {
           String sensor = request->arg(_hooksSensorNameArg);
           String id = request->arg(_hookIdArg);

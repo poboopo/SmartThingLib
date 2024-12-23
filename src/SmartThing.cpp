@@ -37,13 +37,13 @@
 const char * const _SMART_THING_TAG = "smart_thing";
 #ifdef ARDUINO_ARCH_ESP32
 const char * const beaconTemplate = "%s;%s;%s;%s;esp32;%s";
-const size_t beaconExtraSize = 9;
+const size_t beaconExtraSize = 10;
 #endif
 #ifdef ARDUINO_ARCH_ESP8266
 const char * const beaconTemplate = "%s;%s;%s;%s;esp8266;%s";
-const int beaconExtraSize = 11;
+const int beaconExtraSize = 12;
 #endif
-const size_t versionLen = strlen(SMART_THING_VERSION);
+const size_t stVersionLength = strlen(SMART_THING_VERSION);
 
 SmartThingClass SmartThing;
 
@@ -56,6 +56,44 @@ SmartThingClass::~SmartThingClass() {
 
 bool SmartThingClass::wifiConnected() {
   return WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP;
+}
+
+void SmartThingClass::preInit() {
+  #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
+    SettingsRepository.addConfigEntry(LOGGER_ADDRESS_CONFIG);
+    #if ENABLE_TEXT_SENSORS
+      SensorsManager.addSensor("logger", []() {
+        return LOGGER.isConnected() ? "connected" : "disconnected";
+      });
+    #endif
+  #endif
+
+  #if ENABLE_TEXT_SENSORS
+    SensorsManager.addSensor("wifi", [this]() {
+      return wifiConnected() ? "connected" : "disconnected";
+    });
+  #endif
+
+  #if ENABLE_HOOKS
+    // For notifications
+    SettingsRepository.addConfigEntry(GATEWAY_CONFIG);
+  #endif
+
+  SettingsRepository.loadConfigValues();
+  st_log_debug(_SMART_THING_TAG, "Config values loaded");
+
+  #if ENABLE_HOOKS
+    st_log_debug(_SMART_THING_TAG, "Loading hooks from settings...");
+    HooksManager.loadFromSettings();
+    st_log_debug(_SMART_THING_TAG, "Hooks loaded, making first check");
+    HooksManager.check();
+    st_log_debug(_SMART_THING_TAG, "Hooks first check finished");
+  #endif
+
+  #if ENABLE_ACTIONS_SCHEDULER
+    st_log_debug(_SMART_THING_TAG, "Loading actions schedule config from settings");
+    ActionsManager.loadFromSettings();
+  #endif
 }
 
 bool SmartThingClass::init(const char * type, const char * name) {
@@ -77,6 +115,8 @@ bool SmartThingClass::init(const char * type) {
     st_log_error(_SMART_THING_TAG, "Device type is missing!");
     return false;
   }
+
+  preInit();
 
   _type = (char *) malloc(strlen(type) + 1);
   strcpy(_type, type);
@@ -113,43 +153,12 @@ bool SmartThingClass::init(const char * type) {
   st_log_debug(_SMART_THING_TAG, "Loop task created");
   #endif
 
-  #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
-  SettingsRepository.addConfigEntry(LOGGER_ADDRESS_CONFIG, "Logger address (ip:port)");
-    #if ENABLE_TEXT_SENSORS
-    SensorsManager.addSensor("logger", []() {
-      return LOGGER.isConnected() ? "connected" : "disconnected";
-    });
-    #endif
-  #endif
-
-  #if ENABLE_TEXT_SENSORS
-  SensorsManager.addSensor("wifi", [this]() {
-    return wifiConnected() ? "connected" : "disconnected";
-  });
-  #endif
-
-  #if ENABLE_HOOKS
-  // For notifications
-  SettingsRepository.addConfigEntry(GATEWAY_CONFIG, "Gateway address (ip:port)");
-
-  st_log_debug(_SMART_THING_TAG, "Loading hooks from settings...");
-  HooksManager.loadFromSettings();
-  st_log_debug(_SMART_THING_TAG, "Hooks loaded, making first check");
-  HooksManager.check();
-  st_log_debug(_SMART_THING_TAG, "Hooks first check finished");
-  #endif
-
-  #if ENABLE_ACTIONS_SCHEDULER
-  st_log_debug(_SMART_THING_TAG, "Loading actions schedule config from settings");
-  ActionsManager.loadFromSettings();
-  #endif
-
   connectToWifi();
 
   if (wifiConnected()) {
     st_log_info(_SMART_THING_TAG, "WiFi connected, local ip %s, hostname %s", _ip, _name);
     delay(1000);
-    LOGGER.init(SettingsRepository.getConfig()[LOGGER_ADDRESS_CONFIG], _name);
+    LOGGER.init(SettingsRepository.getConfigValue(LOGGER_ADDRESS_CONFIG), _name);
 
     #ifdef ARDUINO_ARCH_ESP32
     if (_beaconUdp.beginMulticast(MULTICAST_GROUP, MULTICAST_PORT)) {
@@ -364,13 +373,21 @@ void SmartThingClass::updateBroadCastMessage() {
   if (_broadcastMessage != nullptr) {
     free(_broadcastMessage);
   }
-  size_t size = strlen(_ip) + strlen(_type) + strlen(_name) + versionLen + beaconExtraSize + 1;
-  _broadcastMessage = (char *) malloc(size);
+  String version = "";
   #ifdef __VERSION
-    sprintf(_broadcastMessage, beaconTemplate, _ip, _type, _name, SMART_THING_VERSION, String(__VERSION).c_str());
-  #else
-    sprintf(_broadcastMessage, beaconTemplate, _ip, _type, _name, SMART_THING_VERSION, "");
+  version = String(__VERSION);
   #endif
+
+  size_t size =
+    strlen(_ip) + 
+    strlen(_type) + 
+    strlen(_name) + 
+    stVersionLength + 
+    version.length() + 
+    beaconExtraSize + 1;
+
+  _broadcastMessage = (char *) malloc(size);
+  sprintf(_broadcastMessage, beaconTemplate, _ip, _type, _name, SMART_THING_VERSION, version.c_str());
 }
 
 #ifdef ARDUINO_ARCH_ESP32

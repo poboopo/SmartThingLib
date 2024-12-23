@@ -1,17 +1,13 @@
 name: Validate
 
 on:
-  push:
-    branches: [ "master", "develop" ]
   pull_request:
-    branches: [ "master", "develop" ]
-  workflow_run:
-    workflows:
-      - Update web header
-    types:
-      - completed
     branches:
       - master
+  push:
+    branches:
+      - master
+      - 'feature/**'
 
 jobs:
   build-esp32:

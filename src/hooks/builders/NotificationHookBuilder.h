@@ -9,7 +9,7 @@ class NotificationHookBuilder {
   public:
     template <typename T>
     static Hook<T>* build(JsonDocument doc) {
-      return build<T>(notificationTypeFromStr(doc[_nftHookField]), doc[_messageHookField]);
+      return build<T>(static_cast<NotificationType>(doc[_nftHookField].as<int>()), doc[_messageHookField]);
     }
 
     template <typename T>
@@ -20,7 +20,7 @@ class NotificationHookBuilder {
     template <typename T>
     static Hook<T> * build(NotificationType type, String message) {
       if (type < NOTIFICATION_INFO || type > NOTIFICATION_ERROR) {
-        st_log_error(_NOTIFICATION_HOOK_BUILDER_TAG, "Unknown notification type!");
+        st_log_error(_NOTIFICATION_HOOK_BUILDER_TAG, "Unknown notification type! (type=%d)", type);
         return nullptr;
       }
 

@@ -51,7 +51,6 @@ bool ActionsManagerClass::remove(const char* name) {
 }
 
 ActionResult ActionsManagerClass::call(const char* name) {
-  st_log_debug(_ACTIONS_TAG, "Trying to call action %s", name);
   const Action* action = findAction(name);
   if (action == nullptr) {
     st_log_error(_ACTIONS_TAG, "Can't find action with name %s", name);

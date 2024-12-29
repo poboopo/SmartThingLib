@@ -89,7 +89,7 @@ class HttpHook : public SELECT_HOOK_BASE_CLASS {
 
     void call(T &value) {
       _currentValue = value;
-      if (WiFi.isConnected() || WiFi.getMode() == WIFI_MODE_AP) {
+      if (SmartThing.wifiConnected()) {
         createRequestTask();
       } else {
         st_log_error(_HTTP_HOOK_TAG, "WiFi not connected!");

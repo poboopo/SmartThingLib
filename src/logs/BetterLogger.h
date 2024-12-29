@@ -50,8 +50,7 @@ class BetterLogger {
     #endif
   }
 
-  void init(String fullAddr, const char name[]) {
-    _name = name;
+  void connect(String fullAddr) {
     #if LOGGER_TYPE != SERIAL_LOGGER
     _fullAddr = fullAddr;
 

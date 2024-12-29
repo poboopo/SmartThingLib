@@ -11,10 +11,16 @@
 #define GATEWAY_CONFIG "gtw"
 #define MAX_CONFIG_ENTRY_NAME_LENGTH 10
 
+enum StWiFiMode {
+  ST_WIFI_STA = 1,
+  ST_WIFI_AP = 2,
+  ST_WIFI_STA_TO_AP = 5
+};
+
 struct WiFiConfig {
   String ssid;
   String password;
-  uint8_t mode;
+  StWiFiMode mode;
 };
 
 class ConfigEntry {

@@ -32,8 +32,9 @@ class WiFiRequesthandler : public RequestHandler {
       settings["mode"] = config.mode;
 
       JsonObject modes = jsonDoc["modes"].to<JsonObject>();
-      modes[String(WIFI_MODE_STA)] = "Connect to existing point";
-      modes[String(WIFI_MODE_AP)] = "Create access point";
+      modes[String(ST_WIFI_STA)] = "Connect to existing point";
+      modes[String(ST_WIFI_AP)] = "Create access point";
+      modes[String(ST_WIFI_STA_TO_AP)] = "Create AP if can't connect to STA";
 
       String response;
       serializeJson(jsonDoc, response);
@@ -61,13 +62,13 @@ class WiFiRequesthandler : public RequestHandler {
             buildErrorJson("Bad password (it should be blank or contains at least 8 symbols)"));
       }
       int mode = jsonDoc["mode"].as<int>();
-      if (mode != WIFI_MODE_AP && mode != WIFI_MODE_STA) {
+      if (mode < ST_WIFI_STA || mode > ST_WIFI_STA_TO_AP) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Unkown wifi mode"));
       }
       WiFiConfig config;
       config.ssid = ssid;
       config.password = password;
-      config.mode = mode;
+      config.mode = static_cast<StWiFiMode>(mode);
       
       if (SettingsRepository.setWiFi(config)) {
         return request->beginResponse(200);

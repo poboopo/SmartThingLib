@@ -53,9 +53,6 @@ int HooksManagerClass::addHook(const Sensor<T> * sensor, const char * data) {
     return -1;
   }
 
-  st_log_info(_HOOKS_MANAGER_TAG, "Trying to build hook for %s", sensor->name());
-  st_log_debug(_HOOKS_MANAGER_TAG, "Hook string: %s", data);
-  
   int id = -1;
   Hook<T> * hook = HooksBuilder::build<T>(data);
   if (hook != nullptr) {

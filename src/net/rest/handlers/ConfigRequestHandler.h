@@ -32,7 +32,7 @@ class ConfigRequestHandler : public RequestHandler {
 
       if (request->method() == HTTP_POST) {
         JsonDocument jsonDoc;
-        DeserializationError error = deserializeJson(jsonDoc, _body);
+        deserializeJson(jsonDoc, _body);
         SettingsRepository.setConfig(jsonDoc);
         return request->beginResponse(200);
       }

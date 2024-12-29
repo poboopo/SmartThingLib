@@ -281,7 +281,7 @@ WiFiConfig SettingsRepositoryClass::getWiFi() {
       escaped = false;
     }
   }
-  settings.mode = buff.toInt();
+  settings.mode = static_cast<StWiFiMode>(buff.toInt());
   return settings;
 }
 
@@ -427,7 +427,7 @@ String SettingsRepositoryClass::getConfigJson() {
 
 
 const char * SettingsRepositoryClass::getConfigValue(const char * name) const {
-  if (name == nullptr) {
+  if (name == nullptr || strlen(name) == 0) {
     return "";
   }
 
@@ -571,6 +571,10 @@ void SettingsRepositoryClass::loadConfigValues() {
     }
   }
   setConfigValueWithoutSave(key.c_str(), buff.c_str());
+}
+
+void SettingsRepositoryClass::onConfigUpdate(ConfigUpdatedHook hook) {
+  _configUpdatedHook = hook;
 }
 
 void SettingsRepositoryClass::callConfigUpdateHook() {

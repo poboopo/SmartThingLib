@@ -30,9 +30,12 @@ inline String replaceValues(const char * input, String &value) {
       if (input[i] == '}') {
         if (key.equals(VALUE_DYNAMIC_PARAM)) {
           result += value;
-        } else {
-          result += SettingsRepository.getConfigValue(key.c_str());
-        }
+        } 
+        #if ENABLE_CONFIG
+          else {
+            result += SettingsRepository.getConfigValue(key.c_str());
+          }
+        #endif
         opened = false;
         key.clear();
       } else {

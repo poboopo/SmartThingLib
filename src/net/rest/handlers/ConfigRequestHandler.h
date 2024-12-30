@@ -1,6 +1,10 @@
 #ifndef CONFIG_RH_H
 #define CONFIG_RH_H
 
+#include "Features.h"
+
+#if ENABLE_CONFIG
+
 #include "SmartThing.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
@@ -61,4 +65,5 @@ class ConfigRequestHandler : public RequestHandler {
   }
 };
 
+#endif
 #endif

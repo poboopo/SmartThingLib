@@ -71,12 +71,11 @@ void RestControllerClass::end() {
 }
 
 void RestControllerClass::setupHandler() {
-  _server.addHandler(new ConfigRequestHandler());
   _server.addHandler(new WiFiRequesthandler());
   _server.addHandler(new InfoRequestHandler());
   _server.addHandler(new SettingsRequestHandler());
   _server.addHandler(new DangerRequestHandler());
-  // todo add guard macros
+
   #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
   _server.addHandler(new SensorsRequestHandler());
   #endif
@@ -85,6 +84,9 @@ void RestControllerClass::setupHandler() {
   #endif
   #if ENABLE_HOOKS
   _server.addHandler(new HooksRequestHandler());
+  #endif
+  #if ENABLE_CONFIG
+    _server.addHandler(new ConfigRequestHandler());
   #endif
 
   _server.on("/health", HTTP_GET, [this](AsyncWebServerRequest * request) {

@@ -48,14 +48,22 @@
   #define ENABLE_ACTIONS_SCHEDULER 0
 #endif
 
-#ifndef ENABLE_LOGGER
-#define ENABLE_LOGGER 1
+#ifndef ENABLE_CONFIG
+  #define ENABLE_CONFIG 0
 #endif
 
-#ifndef LOGGER_TYPE
-#define LOGGER_TYPE TCP_LOGGER
+#ifndef ENABLE_LOGGER
+  #define ENABLE_LOGGER 1
+#endif
+
+#if ENABLE_CONFIG
+  #ifndef LOGGER_TYPE
+    #define LOGGER_TYPE TCP_LOGGER
+  #endif
+#else
+  #define LOGGER_TYPE SERIAL_LOGGER
 #endif
 
 #ifndef LOGGING_LEVEL
-#define LOGGING_LEVEL LOGGING_LEVEL_INFO
+  #define LOGGING_LEVEL LOGGING_LEVEL_INFO
 #endif

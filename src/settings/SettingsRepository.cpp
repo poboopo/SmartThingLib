@@ -172,6 +172,7 @@ int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
   }
 }
 
+// todo deprecated
 JsonDocument SettingsRepositoryClass::stringToObject(String& data) {
   JsonDocument doc;
   doc.to<JsonObject>();
@@ -366,6 +367,7 @@ JsonDocument SettingsRepositoryClass::getActions() {
 }
 #endif
 
+#if ENABLE_CONFIG
 bool SettingsRepositoryClass::addConfigEntry(const char* name) {
   if (name == nullptr) {
     return false;
@@ -584,6 +586,7 @@ void SettingsRepositoryClass::callConfigUpdateHook() {
   #endif
   _configUpdatedHook();
 }
+#endif
 
 String SettingsRepositoryClass::exportSettings() {
   String result = "";

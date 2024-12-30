@@ -1,6 +1,11 @@
 #ifndef NOTIFICATION_HOOK_H
 #define NOTIFICATIONS_HOOK_H
 
+#include "Features.h"
+
+// todo this hook requires rework
+// if config not enabled - use internal
+
 #ifdef ARDUINO_ARCH_ESP32
 #include <HTTPClient.h>
 #endif

@@ -73,8 +73,13 @@ inline NotificationType notificationTypeFromStr(const char * type, NotificationT
 template<typename T, CHECK_HOOK_DATA_TYPE>
 class NotificationHook : public SELECT_HOOK_BASE_CLASS {
   public:
+    #if ENABLE_CONFIG
     NotificationHook(NotificationType notificationType, const char * message)
       : SELECT_HOOK_BASE_CLASS(NOTIFICATION_HOOK), _message(message), _notificationType(notificationType) {};
+    #else
+    NotificationHook(NotificationType notificationType, const char * message, const char * gatewayUrl)
+      : SELECT_HOOK_BASE_CLASS(NOTIFICATION_HOOK), _message(message), _notificationType(notificationType), _gateway(gatewayUrl) {};
+    #endif
     virtual ~NotificationHook() {};
 
     void call(T &value) {
@@ -104,15 +109,27 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
     bool _sending = false;
 
   protected:
-  // todo add gateway url
-    String customValuesString() {
-      String tmp = _message;
-      tmp.replace(";", "|;");
-      char buff[2 + tmp.length()];
-      sprintf(buff, "%d%s", _notificationType, tmp.c_str());
-      tmp = buff;
-      return tmp;
-    }
+    #if ENABLE_CONFIG
+      String customValuesString() {
+        String tmp = _message;
+        tmp.replace(";", "|;");
+        char buff[2 + tmp.length()];
+        sprintf(buff, "%d%s", _notificationType, tmp.c_str());
+        tmp = buff;
+        return tmp;
+      }
+    #else
+      String customValuesString() {
+        String tmp = _message;
+        String tmp1 = _gateway;
+        tmp.replace(";", "|;");
+        tmp1.replace(";", "|;");
+        char buff[tmp.length() + tmp1.length() + 3];
+        sprintf(buff, "%d%s;%s", _notificationType, tmp.c_str(), tmp1.c_str());
+        tmp = buff;
+        return tmp;
+      }
+    #endif
 
     void populateJsonWithCustomValues(JsonDocument &doc) const {
       doc[_messageHookField] = _message.c_str();
@@ -196,7 +213,7 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
       serializeJson(doc, payload);
 
       String url = _gateway.startsWith("http") ? _gateway : "http://" + _gateway;
-      url = url + "/api/notification"
+      url = url + "/api/notification";
 
       st_log_debug(_NOTIFICATION_HOOK_TAG, "Sending notification to [%s]:%s", url.c_str(), payload.c_str());
 

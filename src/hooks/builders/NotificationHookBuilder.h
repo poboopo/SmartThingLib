@@ -17,6 +17,7 @@ class NotificationHookBuilder {
       return build<T>(static_cast<NotificationType>(data[0] - '0'), data + 1);
     }
 
+// todo pass gateway url
     template <typename T>
     static Hook<T> * build(NotificationType type, String message) {
       if (type < NOTIFICATION_INFO || type > NOTIFICATION_ERROR) {

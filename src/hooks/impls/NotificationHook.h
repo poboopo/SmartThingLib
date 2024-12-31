@@ -104,6 +104,7 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
     bool _sending = false;
 
   protected:
+  // todo add gateway url
     String customValuesString() {
       String tmp = _message;
       tmp.replace(";", "|;");

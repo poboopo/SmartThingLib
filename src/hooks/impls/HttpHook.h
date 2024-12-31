@@ -80,7 +80,7 @@ class HttpHook : public SELECT_HOOK_BASE_CLASS {
   public:
     HttpHook(const char *url, RequestMethod method, const char * payload)
         : SELECT_HOOK_BASE_CLASS(HTTP_HOOK), _url(url), _method(method), _payload(payload) {
-      fixUrl();
+      _url.trim();
       if (method == UNKOWN_METHOD) {
         method = GET_METHOD;
       } 
@@ -139,9 +139,8 @@ class HttpHook : public SELECT_HOOK_BASE_CLASS {
     void updateCustom(JsonDocument &doc) {
       if (doc[_urlHookField].is<const char*>()) {
         _url = doc[_urlHookField].as<String>();
-        fixUrl();
-        st_log_debug(_HTTP_HOOK_TAG, "Hook's url was updated to %s",
-                    _url.c_str());
+        _url.trim();
+        st_log_debug(_HTTP_HOOK_TAG, "Hook's url was updated to %s", _url.c_str());
       }
 
       if (doc[_methodHookField].is<JsonVariant>()) {
@@ -194,17 +193,21 @@ class HttpHook : public SELECT_HOOK_BASE_CLASS {
     String urlResolved = replaceValues(_url.c_str(), valueStr);
     String payloadResolved = replaceValues(_payload.c_str(), valueStr);
 
+    if (!urlResolved.startsWith("http")) {
+      urlResolved = "http://" + urlResolved;
+    }
+
     st_log_debug(_HTTP_HOOK_TAG, "Resolved url and payload: %s, %s", urlResolved.c_str(), payloadResolved.c_str());
     st_log_debug(_HTTP_HOOK_TAG, "Sending request [%s] %s :: %s", requestMethodToStr(_method), urlResolved.c_str(), payloadResolved.c_str());
 
     HTTPClient client;
     client.setTimeout(2000);
     #ifdef ARDUINO_ARCH_ESP32
-    client.begin("http://" + urlResolved);
+    client.begin(urlResolved);
     #endif
     #ifdef ARDUINO_ARCH_ESP8266
     WiFiClient wifiClient; // todo global var?
-    client.begin(wifiClient, "http://" + urlResolved);
+    client.begin(wifiClient, urlResolved);
     #endif
     if (!payloadResolved.isEmpty()) {
       client.addHeader("Content-Type", "application/json");
@@ -213,13 +216,6 @@ class HttpHook : public SELECT_HOOK_BASE_CLASS {
     client.end();
 
     st_log_info(_HTTP_HOOK_TAG, "Request %s finished with code %d", urlResolved.c_str(), _lastResponseCode);
-  }
-
-  void fixUrl() {
-    _url.trim();
-    if (_url.startsWith("http://")) {
-      _url.remove(0, 7);
-    }
   }
 };
 #endif

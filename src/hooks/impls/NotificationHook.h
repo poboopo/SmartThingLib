@@ -23,6 +23,9 @@
 const char * const _NOTIFICATION_HOOK_TAG = "notification_hook";
 const char * const _messageHookField = "message";
 const char * const _nftHookField =  "notificationType";
+#if !(ENABLE_CONFIG)
+  const char * const _gatewayHookField =  "gatewayUrl";
+#endif
 
 const char * const _notificationInfoStr = "info";
 const char * const _notificationWarningStr = "warning";
@@ -113,11 +116,14 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
     void populateJsonWithCustomValues(JsonDocument &doc) const {
       doc[_messageHookField] = _message.c_str();
       doc[_nftHookField] = _notificationType;
+      #if !(ENABLE_CONFIG)
+        doc[_gatewayHookField] = _gateway;
+      #endif
     }
 
     void updateCustom(JsonDocument &doc) {
       if (doc[_messageHookField].is<const char*>()) {
-        _message = doc[_messageHookField].as<String>();
+        _message = doc[_messageHookField].as<const char*>();
       }
       if (doc[_nftHookField].is<JsonVariant>()) {
         int type = doc[_nftHookField].as<int>();
@@ -127,12 +133,18 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
           _notificationType = static_cast<NotificationType>(type);
         }
       }
+      if (doc[_gatewayHookField].is<const char*>()) {
+        _gateway = doc[_gatewayHookField].as<const char*>();
+      }
     }
     
   private:
-    String _message;
-    NotificationType _notificationType; // todo enum
+    String _message; // todo char array
+    NotificationType _notificationType;
     T _currentValue;
+    #if !(ENABLE_CONFIG)
+    String _gateway; // todo char array
+    #endif
 
     void createRequestTask() {
       if (_sending) {
@@ -157,15 +169,18 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
     }
 
     void sendRequest() {
-      String gtwIp = SettingsRepository.getConfigValue(GATEWAY_CONFIG);
-      if (gtwIp.isEmpty()) {
-        st_log_debug(_NOTIFICATION_HOOK_TAG, "Gateway ip is missing!");
+      #if ENABLE_CONFIG
+        String _gateway = SettingsRepository.getConfigValue(GATEWAY_CONFIG);
+      #endif  
+      if (_gateway.isEmpty()) {
+        st_log_error(_NOTIFICATION_HOOK_TAG, "Gateway ip is missing!");
         return;
       }
 
       String valueStr = String(_currentValue);
       String messageResolved = replaceValues(_message.c_str(), valueStr);
 
+      // todo just srptinf
       JsonDocument doc;
       JsonObject from = doc["device"].to<JsonObject>();
       from["name"] = SmartThing.getName();
@@ -178,24 +193,27 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
 
       String payload;
       serializeJson(doc, payload);
-      String url = "http://" + gtwIp + "/api/notification";
+
+      String url = _gateway.startsWith("http") ? _gateway : "http://" + _gateway;
+      url = url + "/api/notification"
+
       st_log_debug(_NOTIFICATION_HOOK_TAG, "Sending notification to [%s]:%s", url.c_str(), payload.c_str());
 
       HTTPClient client;
       client.setTimeout(2000);
       #ifdef ARDUINO_ARCH_ESP32
-      client.begin(url);
+        client.begin(url);
       #endif
       #ifdef ARDUINO_ARCH_ESP8266
-      WiFiClient wifiClient; // todo global var?
-      client.begin(wifiClient, url);
+        WiFiClient wifiClient; // todo global var?
+        client.begin(wifiClient, url);
       #endif
+
       client.addHeader("Content-Type", "application/json");
       int code = client.sendRequest("POST", payload.c_str());
       client.end();
 
       st_log_debug(_NOTIFICATION_HOOK_TAG, "Notification send request finished with code %d", code);
     }
-
 };
 #endif

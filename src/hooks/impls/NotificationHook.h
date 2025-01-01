@@ -151,9 +151,11 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
           _notificationType = static_cast<NotificationType>(type);
         }
       }
-      if (doc[_gatewayHookField].is<const char*>()) {
-        _gateway = doc[_gatewayHookField].as<const char*>();
-      }
+      #if !(ENABLE_CONFIG)
+        if (doc[_gatewayHookField].is<const char*>()) {
+          _gateway = doc[_gatewayHookField].as<const char*>();
+        }
+      #endif
     }
     
   private:

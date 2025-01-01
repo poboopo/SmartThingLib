@@ -48,7 +48,7 @@ class NotificationHookBuilder {
         return build<T>(
           static_cast<NotificationType>(data[0] - '0'),
           tmp.substring(1, index),
-          tmp.substring(index)
+          tmp.substring(index + 1)
         );
       #endif
     }

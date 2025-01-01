@@ -49,7 +49,7 @@
 #endif
 
 #ifndef ENABLE_CONFIG
-  #define ENABLE_CONFIG 0
+  #define ENABLE_CONFIG 1
 #endif
 
 #ifndef ENABLE_LOGGER

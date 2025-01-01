@@ -13,7 +13,6 @@
 #define SENSORS_RQ_PATH "/sensors"
 const char * const _SENSORS_RQ_TAG = "sensors-handler";
 
-// todo rename?
 class SensorsRequestHandler : public AsyncWebHandler {
  public:
   SensorsRequestHandler(){};
@@ -52,9 +51,9 @@ class SensorsRequestHandler : public AsyncWebHandler {
     }
 
     #if ENABLE_WEB_PAGE
-    if (request->url().equals("/sensors/script.js")) {
-      return request->beginResponse(200, "text/javascript", SCRIPT_SENSORS_TAB);
-    }
+      if (request->url().equals("/sensors/script.js")) {
+        return request->beginResponse(200, "text/javascript", SCRIPT_SENSORS_TAB);
+      }
     #endif
 
     return nullptr;

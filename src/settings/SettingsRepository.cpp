@@ -25,6 +25,7 @@ bool eepromBegin() {
 }
 #endif
 
+// todo remove unused parttions when feature disabled
 enum DataIndex {
   WIFI_INDEX,
   NAME_INDEX,

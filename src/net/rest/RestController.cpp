@@ -120,6 +120,7 @@ void RestControllerClass::setupHandler() {
     doc["actionsScheduler"] = ENABLE_ACTIONS_SCHEDULER == 1;
     doc["sensors"] = ENABLE_NUMBER_SENSORS == 1 || ENABLE_TEXT_SENSORS == 1;
     doc["hooks"] = ENABLE_HOOKS == 1;
+    doc["config"] = ENABLE_CONFIG == 1; 
     doc["logger"] = ENABLE_LOGGER == 1;
     
     String response;

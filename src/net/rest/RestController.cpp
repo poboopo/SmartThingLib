@@ -12,7 +12,7 @@
 #include "net/rest/handlers/SettingsRequestHandler.h"
 #include "net/rest/handlers/DangerRequestHandler.h"
 #include "net/rest/handlers/SensorsRequestHandler.h"
-#include "net/rest/WebPageAssets.h"
+#include "net/rest/handlers/AssetsRequestHandler.h"
 
 const char * const _WEB_SERVER_TAG = "web_server";
 
@@ -71,6 +71,7 @@ void RestControllerClass::end() {
 }
 
 void RestControllerClass::setupHandler() {
+  _server.addHandler(new AssetsRequestHandler());
   _server.addHandler(new WiFiRequesthandler());
   _server.addHandler(new InfoRequestHandler());
   _server.addHandler(new SettingsRequestHandler());
@@ -90,30 +91,10 @@ void RestControllerClass::setupHandler() {
   #endif
 
   _server.on("/health", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    st_log_request(_WEB_SERVER_TAG, request->methodToString(), "/health", "");
     request->send(200, "text/plain", "I am alive!!! :)");
   });
 
-  _server.on("/", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    st_log_request(_WEB_SERVER_TAG, request->methodToString(), "/", "");
-    request->send_P(200, "text/html", WEB_PAGE_MAIN);
-  });
-
-  #if ENABLE_WEB_PAGE 
-  _server.on("/assets/styles.css", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    request->send_P(200, "text/css", STYLE_PAGE_MAIN);
-  });
-  _server.on("/assets/script.js", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    request->send_P(200, "text/javascript", SCRIPT_PAGE_MAIN);
-  });
-  #else
-  _server.on("/minimal/script.js", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    request->send_P(200, "text/javascript", SCRIPT_PAGE_MAIN);
-  });
-  #endif
-
   _server.on("/features", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    st_log_request(_WEB_SERVER_TAG, request->methodToString(), "/features", "");
     JsonDocument doc;
     doc["web"] = ENABLE_WEB_PAGE == 1;
     doc["actions"] = ENABLE_ACTIONS == 1;
@@ -131,7 +112,6 @@ void RestControllerClass::setupHandler() {
   });
 
   _server.on("/metrics", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    st_log_request(_WEB_SERVER_TAG, request->methodToString(), request->url().c_str(), "");
     JsonDocument doc;
     doc["uptime"] = millis();
 
@@ -140,19 +120,19 @@ void RestControllerClass::setupHandler() {
     doc["resetReason"] = resetReasonAsString();
 
     #ifdef ARDUINO_ARCH_ESP32
-    obj["size"] = ESP.getHeapSize();
-    obj["minFree"] = ESP.getMinFreeHeap();
-    obj["maxAlloc"] = ESP.getMaxAllocHeap();
+      obj["size"] = ESP.getHeapSize();
+      obj["minFree"] = ESP.getMinFreeHeap();
+      obj["maxAlloc"] = ESP.getMaxAllocHeap();
     #endif
 
     #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS || ENABLE_HOOKS
-    JsonObject counts = doc["counts"].to<JsonObject>();
-    #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
-    counts["sensors"] = SensorsManager.getSensorsCount();
-    #endif
-    #if ENABLE_HOOKS
-    counts["hooks"] = HooksManager.getTotalHooksCount();
-    #endif
+      JsonObject counts = doc["counts"].to<JsonObject>();
+      #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
+        counts["sensors"] = SensorsManager.getSensorsCount();
+      #endif
+      #if ENABLE_HOOKS
+        counts["hooks"] = HooksManager.getTotalHooksCount();
+      #endif
     #endif
 
     String response;

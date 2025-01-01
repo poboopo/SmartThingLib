@@ -11,7 +11,6 @@
 #include "logs/BetterLogger.h"
 #include "net/rest/handlers/HandlerUtils.h"
 #include "net/rest/handlers/RequestHandler.h"
-#include "net/rest/WebPageAssets.h"
 
 const char * const _hooksSensorNameArg = "sensor";
 const char * const _hookIdArg = "id";
@@ -30,11 +29,6 @@ class HooksRequestHandler : public RequestHandler {
     };
     AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
       if (request->method() == HTTP_GET) {
-        #if ENABLE_WEB_PAGE
-        if (request->url().equals("/hooks/script.js")) {
-          return request->beginResponse(200, CONTENT_TYPE_JS, SCRIPT_HOOKS_TAB);
-        }
-        #endif
         if (request->url().equals("/hooks/templates")) {
           String sensor = request->arg(_hooksSensorNameArg);
           if (sensor.isEmpty()) {

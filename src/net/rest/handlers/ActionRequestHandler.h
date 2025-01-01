@@ -9,7 +9,6 @@
 #include "logs/BetterLogger.h"
 #include "net/rest/handlers/HandlerUtils.h"
 #include "net/rest/handlers/RequestHandler.h"
-#include "net/rest/WebPageAssets.h"
 #include "actions/ActionsManager.h"
 
 #define ACTION_RQ_PATH "/actions"
@@ -27,12 +26,6 @@ class ActionRequestHandler : public RequestHandler {
 
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_GET) {
-      #if ENABLE_WEB_PAGE
-      if (request->url().equals("/actions/script.js")) {
-        return request->beginResponse(200, CONTENT_TYPE_JS, SCRIPT_ACTIONS_TAB);
-      }
-      #endif
-
       if (request->url().equals("/actions/info")) {
         JsonDocument doc = ActionsManager.toJson();
         String response;

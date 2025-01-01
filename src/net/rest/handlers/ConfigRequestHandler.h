@@ -11,7 +11,6 @@
 #include "net/rest/handlers/HandlerUtils.h"
 #include "settings/SettingsRepository.h"
 #include "net/rest/handlers/RequestHandler.h"
-#include "net/rest/WebPageAssets.h"
 
 #define CONFIG_PATH "/config"
 const char * const _CONFIG_LOG_TAG = "config_handler";
@@ -60,11 +59,6 @@ class ConfigRequestHandler : public RequestHandler {
       return request->beginResponse(200);
     }
 
-    #if ENABLE_WEB_PAGE
-      if (request->method() == HTTP_GET && request->url().equals("/config/script.js")) {
-        return request->beginResponse(200, "text/javascript", SCRIPT_CONFIG_TAB);
-      }
-    #endif
     return nullptr;
   }
 };

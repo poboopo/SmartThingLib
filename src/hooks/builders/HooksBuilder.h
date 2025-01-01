@@ -22,11 +22,16 @@ const char * const _HOOKS_BUILDER_TAG = "hooks_factory";
   const char * const TEMPLATES_JSON = "{\"default\":%s,\"%s\":%s,\"%s\":%s}";
   const size_t TEMPLATE_JSON_LENGTH = 20;
 #endif
-// todo merge common fields
+
+// todo merge common templates
 const char * const DEFAULT_NUMBER_HOOKS_TEMPLATES_JSON = "{\"triggerEnabled\":{\"required\":false,\"type\":\"checkbox\"},\"trigger\":{\"required\":false,\"type\":\"number\"},\"threshold\":{\"required\":false,\"type\":\"number\"},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\",\"gte\",\"lte\"],\"default\":\"eq\"}}";
 const char * const DEFAULT_TEXT_HOOKS_TEMPLATES_JSON = "{\"triggerEnabled\":{\"required\":false,\"type\":\"checkbox\"},\"trigger\":{\"required\":false,\"type\":\"text\"},\"compareType\":{\"required\":true,\"values\":[\"eq\",\"neq\"],\"default\":\"eq\"}}";
 const char * const HTTP_HOOK_TEMPLATE = "{\"url\":{\"required\":true},\"payload\":{\"required\":false},\"method\":{\"required\":true,\"values\":{\"1\":\"GET\",\"2\":\"POST\",\"3\":\"PUT\",\"4\":\"PATCH\",\"5\":\"DELETE\"}}}";
-const char * const NOTIFICATION_HOOK_TEMPLATE = "{\"message\":{\"required\":true},\"notificationType\":{\"values\":{\"1\":\"info\",\"2\":\"warning\",\"3\":\"error\"}}}";
+#if ENABLE_CONFIG
+  const char * const NOTIFICATION_HOOK_TEMPLATE = "{\"message\":{\"required\":true},\"notificationType\":{\"values\":{\"1\":\"info\",\"2\":\"warning\",\"3\":\"error\"}}}";
+#else
+  const char * const NOTIFICATION_HOOK_TEMPLATE = "{\"gatewayUrl\":{\"required\":true},\"message\":{\"required\":true},\"notificationType\":{\"values\":{\"1\":\"info\",\"2\":\"warning\",\"3\":\"error\"}}}";
+#endif
 
 class HooksBuilder {
   public:

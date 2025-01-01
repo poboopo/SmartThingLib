@@ -77,13 +77,15 @@ void SmartThingClass::preInit() {
     });
   #endif
 
-  #if ENABLE_HOOKS
-    // For notifications
-    SettingsRepository.addConfigEntry(GATEWAY_CONFIG);
-  #endif
+  #if ENABLE_CONFIG
+    #if ENABLE_HOOKS
+      // For notifications
+      SettingsRepository.addConfigEntry(GATEWAY_CONFIG);
+    #endif
 
-  SettingsRepository.loadConfigValues();
-  st_log_debug(_SMART_THING_TAG, "Config values loaded");
+    SettingsRepository.loadConfigValues();
+    st_log_debug(_SMART_THING_TAG, "Config values loaded");
+  #endif
 
   #if ENABLE_HOOKS
     st_log_debug(_SMART_THING_TAG, "Loading hooks from settings...");
@@ -321,7 +323,9 @@ void SmartThingClass::onWifiConnected() {
   st_log_debug(_SMART_THING_TAG, "WiFi connected, setting up related resources");
   _disconnectHandled = false;
   
-  LOGGER.connect(SettingsRepository.getConfigValue(LOGGER_ADDRESS_CONFIG));
+  #if ENABLE_CONFIG
+    LOGGER.connect(SettingsRepository.getConfigValue(LOGGER_ADDRESS_CONFIG));
+  #endif
 
   String ip;
   WiFiMode_t mode = WiFi.getMode();

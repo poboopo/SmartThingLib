@@ -4,6 +4,7 @@
 #include <ArduinoJson.h>
 #include <functional>
 
+#include "Features.h"
 #include "logs/BetterLogger.h"
 #include "utils/List.h"
 
@@ -23,6 +24,7 @@ struct WiFiConfig {
   StWiFiMode mode;
 };
 
+#if ENABLE_CONFIG
 class ConfigEntry {
   public:
     ConfigEntry(const char* name)
@@ -62,6 +64,7 @@ class ConfigEntry {
 };
 
 typedef std::function<void(void)> ConfigUpdatedHook;
+#endif
 
 class SettingsRepositoryClass {
  public:
@@ -75,24 +78,26 @@ class SettingsRepositoryClass {
   bool setWiFi(WiFiConfig settings);
   bool dropWiFi();
 
-  void loadConfigValues();
-  bool addConfigEntry(const char* name);
-  const char * getConfigValue(const char * name) const;
-  bool setConfigValue(const char * name, const char * value);
-  bool setConfig(JsonDocument conf);
-  bool dropConfig();
-  String getConfigJson();
-  void onConfigUpdate(ConfigUpdatedHook hook);
+  #if ENABLE_CONFIG
+    void loadConfigValues();
+    bool addConfigEntry(const char* name);
+    const char * getConfigValue(const char * name) const;
+    bool setConfigValue(const char * name, const char * value);
+    bool setConfig(JsonDocument conf);
+    bool dropConfig();
+    String getConfigJson();
+    void onConfigUpdate(ConfigUpdatedHook hook);
+  #endif
 
   #if ENABLE_HOOKS
-  String getHooks();
-  bool setHooks(String &data);
-  bool dropHooks();
+    String getHooks();
+    bool setHooks(String &data);
+    bool dropHooks();
   #endif
 
   #if ENABLE_ACTIONS_SCHEDULER
-  bool setActions(JsonDocument conf);
-  JsonDocument getActions();
+    bool setActions(JsonDocument conf);
+    JsonDocument getActions();
   #endif
 
   String exportSettings();
@@ -100,12 +105,14 @@ class SettingsRepositoryClass {
   
   void clear();
  private:
-  List<ConfigEntry> _config;
-  ConfigUpdatedHook _configUpdatedHook = [](){};
+  #if ENABLE_CONFIG
+    List<ConfigEntry> _config;
+    ConfigUpdatedHook _configUpdatedHook = [](){};
   
-  bool saveConfig();
-  bool setConfigValueWithoutSave(const char * name, const char * value);
-  void callConfigUpdateHook();
+    bool saveConfig();
+    bool setConfigValueWithoutSave(const char * name, const char * value);
+    void callConfigUpdateHook();
+  #endif
 
   void read(uint16_t address, char * buff, uint16_t length);
   void write(uint16_t address, const char * buff, uint16_t length);

@@ -1,12 +1,17 @@
 #ifndef CONFIG_RH_H
 #define CONFIG_RH_H
 
+#include "Features.h"
+
+#if ENABLE_CONFIG
+
 #include "SmartThing.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
 #include "net/rest/handlers/HandlerUtils.h"
 #include "settings/SettingsRepository.h"
 #include "net/rest/handlers/RequestHandler.h"
+#include "net/rest/WebPageAssets.h"
 
 #define CONFIG_PATH "/config"
 const char * const _CONFIG_LOG_TAG = "config_handler";
@@ -23,8 +28,7 @@ class ConfigRequestHandler : public RequestHandler {
   }
 
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
-    String url = request->url();
-    if (url.equals(CONFIG_PATH)) {
+    if (request->url().equals(CONFIG_PATH)) {
       if (request->method() == HTTP_GET) {
         String response = SettingsRepository.getConfigJson();
         return request->beginResponse(200, CONTENT_TYPE_JSON, response);
@@ -51,14 +55,19 @@ class ConfigRequestHandler : public RequestHandler {
       }
     }
     
-    if (request->method() == HTTP_DELETE) {
-      if (request->url().equals("/config/delete/all")) {
-        SettingsRepository.dropConfig();
-        return request->beginResponse(200);
-      }
+    if (request->method() == HTTP_DELETE && request->url().equals("/config/delete/all")) {
+      SettingsRepository.dropConfig();
+      return request->beginResponse(200);
     }
+
+    #if ENABLE_WEB_PAGE
+      if (request->method() == HTTP_GET && request->url().equals("/config/script.js")) {
+        return request->beginResponse(200, "text/javascript", SCRIPT_CONFIG_TAB);
+      }
+    #endif
     return nullptr;
   }
 };
 
+#endif
 #endif

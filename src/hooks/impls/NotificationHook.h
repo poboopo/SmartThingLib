@@ -31,6 +31,9 @@ const char * const _notificationInfoStr = "info";
 const char * const _notificationWarningStr = "warning";
 const char * const _notificationErrorStr = "error";
 
+const char * const _bodyTemplate = "{\"device\":{\"name\":\"%s\",\"type\":\"%s\",\"ip\":\"%s\"},\"notification\":{\"message\":\"%s\",\"type\":\"%s\"}}";
+const size_t _bodyTemplateLength = 80;
+
 enum NotificationType {
   NOTIFICATION_UNKNOWN,
   NOTIFICATION_INFO,
@@ -199,25 +202,30 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
 
       String valueStr = String(_currentValue);
       String messageResolved = replaceValues(_message.c_str(), valueStr);
+      const char * type = notificationTypeToStr(_notificationType);
 
-      // todo just srptinf
-      JsonDocument doc;
-      JsonObject from = doc["device"].to<JsonObject>();
-      from["name"] = SmartThing.getName();
-      from["type"] = SmartThing.getType();
-      from["ip"] = SmartThing.getIp();
+      size_t size = _bodyTemplateLength +
+        strlen(SmartThing.getName()) + 
+        strlen(SmartThing.getType()) + 
+        strlen(SmartThing.getIp()) + 
+        messageResolved.length() +
+        strlen(type) + 1;
 
-      JsonObject notification = doc["notification"].to<JsonObject>();
-      notification["message"] = messageResolved;
-      notification["type"] = notificationTypeToStr(_notificationType);
-
-      String payload;
-      serializeJson(doc, payload);
+      char payload[size];
+      sprintf(
+        payload,
+        _bodyTemplate,
+        SmartThing.getName(),
+        SmartThing.getType(),
+        SmartThing.getIp(),
+        messageResolved.c_str(),
+        type
+      );
 
       String url = _gateway.startsWith("http") ? _gateway : "http://" + _gateway;
       url = url + "/api/notification";
 
-      st_log_debug(_NOTIFICATION_HOOK_TAG, "Sending notification to [%s]:%s", url.c_str(), payload.c_str());
+      st_log_debug(_NOTIFICATION_HOOK_TAG, "Sending notification to [%s]:%s", url.c_str(), payload);
 
       HTTPClient client;
       client.setTimeout(2000);
@@ -230,7 +238,7 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
       #endif
 
       client.addHeader("Content-Type", "application/json");
-      int code = client.sendRequest("POST", payload.c_str());
+      int code = client.sendRequest("POST", payload);
       client.end();
 
       st_log_debug(_NOTIFICATION_HOOK_TAG, "Notification send request finished with code %d", code);

@@ -18,7 +18,6 @@ const char * const _hooksPath = "/hooks";
 
 const char * const _HOOKS_RQ_TAG = "hooks_handler";
 
-// todo split to methods
 class HooksRequestHandler : public RequestHandler {
   public:
     HooksRequestHandler(){};

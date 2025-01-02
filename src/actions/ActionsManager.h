@@ -19,6 +19,7 @@ const char * const ACTIONS_JSON_LAST_CALL = "lastCall";
 const char * const ACTIONS_JSON_DELAY = "callDelay";
 #endif
 
+// todo copy message and free on deestroy
 struct ActionResult {
   ActionResult(){};
   ActionResult(bool successful) : successful(successful){};

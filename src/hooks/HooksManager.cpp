@@ -141,23 +141,28 @@ bool HooksManagerClass::deleteHook(const char * name, int id) {
 template <typename T>
 bool HooksManagerClass::deleteHook(const char *name, int id) {
   st_log_warning(_HOOKS_MANAGER_TAG, "Trying to delete sensor [%s]'s hook id=%d", name, id);
-  auto watcher = getWatcherBySensorName<T>(name);
-  if (watcher == getWatchersList<T>()->end()) {
+  auto it = getWatcherBySensorName<T>(name);
+  if (it == getWatchersList<T>()->end()) {
+    return false;
+  }
+  
+  Watcher<T> * watcher = *it;
+  if (!watcher->removeHook(id)) {
     return false;
   }
 
   _hooksCount--;
   st_log_warning(_HOOKS_MANAGER_TAG,
                  "Hook № %d of sensor [%s] was deleted", id, name);
-  if ((*watcher)->haveHooks()) {
+  if (watcher->haveHooks()) {
     return true;
   }
   st_log_debug(_HOOKS_MANAGER_TAG,
                "No hooks left for sensor [%s], removing watcher!",
                name);
 
-  delete *watcher;
-  getWatchersList<T>()->erase(watcher);
+  delete watcher;
+  getWatchersList<T>()->erase(it);
 
   st_log_warning(_HOOKS_MANAGER_TAG, "Watcher for sensor [%s] removed!", name);
   return true;
@@ -180,7 +185,6 @@ bool HooksManagerClass::updateHook(JsonDocument doc) {
     st_log_error(_HOOKS_MANAGER_TAG, "Hook id property is missing!");
     return false;
   }
-
 
   #if ENABLE_NUMBER_SENSORS
     if (type == NUMBER_SENSOR) {
@@ -255,7 +259,7 @@ Hook<T> *HooksManagerClass::getHookFromWatcher(const char *name, int id) {
 
 template <typename T>
 typename std::list<Watcher<T>*>::iterator HooksManagerClass::getWatcherBySensorName(const char *name) {
-  std::list<Watcher<T>*> * list;
+  std::list<Watcher<T>*> * list = getWatchersList<T>();
   return std::find_if(list->begin(), list->end(), [name](const Watcher<T> * watcher) {
     return strcmp(watcher->getSensor()->name(), name) == 0;
   });

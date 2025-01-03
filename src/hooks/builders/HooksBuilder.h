@@ -148,22 +148,7 @@ class HooksBuilder {
       size_t tempLen = strlen(defTemp) + strlen(HTTP_HOOK_TEMPLATE) + strlen(NOTIFICATION_HOOK_TEMPLATE);
       
       #if ENABLE_ACTIONS
-        int actionCount = ActionsManager.count();
-        String actionsBuff;
-
-        if (actionCount > 0) {
-          ActionsManager.forEachAction([&](Action* action, int index) {
-            char data[strlen(action->name()) + strlen(action->caption()) + 6];
-            sprintf(
-              data,
-              "\"%s\":\"%s\"%s",
-              action->name(),
-              action->caption(),
-              index == actionCount - 1 ? "" : ","
-            );
-            actionsBuff += String(data);
-          });
-        }
+        String actionsBuff = ActionsManager.getActionsInfoForHook();
 
         size_t actionTempLen = actionsBuff.length() + ACTION_HOOK_TEMPLATE_LENGTH;
         char actionTemp[actionTempLen + 1];

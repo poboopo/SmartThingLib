@@ -25,7 +25,7 @@ class ActionHook : public SELECT_HOOK_BASE_CLASS {
       if (_action == nullptr) {
         return;
       }
-      // replace ${value} in _action?
+      // todo replace {v} in _action?
       st_log_debug(_ACTION_HOOK_TAG, "Calling action  %s", _action);
       ActionsManager.call(_action);
     }
@@ -53,19 +53,20 @@ class ActionHook : public SELECT_HOOK_BASE_CLASS {
     }
 
   private:
-    const char * _action;
+    char * _action;
 
     bool updateAction(const char * name) {
-      if (name == nullptr) {
+      if (name == nullptr || strlen(name) == 0) {
         st_log_error(_ACTION_HOOK_TAG, "Action name missing!");
         return false;
       }
-      const Action * action = ActionsManager.get(name);
-      if (action == nullptr) {
-        st_log_error(_ACTION_HOOK_TAG, "Can't find action %s", name);
-        return false;
+      
+      if (_action != nullptr) {
+        free(_action);
       }
-      _action = action->name();
+      _action = (char *) malloc(strlen(name) + 1);
+      strcpy(_action, name);
+
       return true;
     }
 };

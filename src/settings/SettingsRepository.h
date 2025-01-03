@@ -3,6 +3,7 @@
 
 #include <ArduinoJson.h>
 #include <functional>
+#include <list>
 
 #include "Features.h"
 #include "logs/BetterLogger.h"
@@ -81,7 +82,7 @@ class SettingsRepositoryClass {
   #if ENABLE_CONFIG
     void loadConfigValues();
     bool addConfigEntry(const char* name);
-    const char * getConfigValue(const char * name) const;
+    const char * getConfigValue(const char * name);
     bool setConfigValue(const char * name, const char * value);
     bool setConfig(JsonDocument conf);
     bool dropConfig();
@@ -106,12 +107,13 @@ class SettingsRepositoryClass {
   void clear();
  private:
   #if ENABLE_CONFIG
-    List<ConfigEntry> _config;
+    std::list<ConfigEntry*> _config;
     ConfigUpdatedHook _configUpdatedHook = [](){};
   
     bool saveConfig();
     bool setConfigValueWithoutSave(const char * name, const char * value);
     void callConfigUpdateHook();
+    std::list<ConfigEntry*>::iterator findConfigEntry(const char * name);
   #endif
 
   void read(uint16_t address, char * buff, uint16_t length);

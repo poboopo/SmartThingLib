@@ -6,6 +6,7 @@
 
 #include <ArduinoJson.h>
 #include <functional>
+#include <list>
 
 #include "hooks/impls/Hook.h"
 #include "hooks/impls/LambdaHook.h"
@@ -33,11 +34,11 @@ class HooksManagerClass {
 
  private:
   #if ENABLE_NUMBER_SENSORS 
-  List<Watcher<NUMBER_SENSOR_DATA_TYPE>> _sensorsWatchers;
+  std::list<Watcher<NUMBER_SENSOR_DATA_TYPE>*> _sensorsWatchers;
   #endif
 
   #if ENABLE_TEXT_SENSORS
-  List<Watcher<TEXT_SENSOR_DATA_TYPE>> _statesWatchers;
+  std::list<Watcher<TEXT_SENSOR_DATA_TYPE>*> _statesWatchers;
   #endif
 
   int _hooksCount = 0;
@@ -52,10 +53,7 @@ class HooksManagerClass {
   int addHook(const Sensor<T>* obj, Hook<T>* hook);
 
   template <typename T>
-  Watcher<T>* getWatcher(const Sensor<T>* sensor);
-
-  template <typename T>
-  Watcher<T>* getWatcherBySensorName(const char* name);
+  typename std::list<Watcher<T>*>::iterator getWatcherBySensorName(const char* name);
 
   template <typename T>
   Hook<T>* getHookFromWatcher(const char* name, int id);
@@ -80,7 +78,7 @@ class HooksManagerClass {
       const Sensor<T>* obj);
 
   template <typename T>
-  List<Watcher<T>>* getWatchersList();
+  std::list<Watcher<T>*>* getWatchersList();
 };
 
 extern HooksManagerClass HooksManager;

@@ -151,7 +151,7 @@ class Watcher {
     return doc;
   }
 
-  const Sensor<T> *getSensor() {
+  const Sensor<T> *getSensor() const {
     return _sensor;
   };
 

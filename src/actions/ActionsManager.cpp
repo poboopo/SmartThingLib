@@ -7,8 +7,8 @@
 const char * const _ACTIONS_TAG = "actions_manager";
 
 #if ENABLE_ACTIONS_SCHEDULER
-  const char * const _actionJsonTemplate = "{\"name\":\"%s\",\"caption\":\"%s\",\"callDelay\":\"%lu\",\"lastCall\":\"%lu\"}%s";
-  const size_t _actionJsonTemplateSize = 54;
+  const char * const _actionJsonTemplate = "{\"name\":\"%s\",\"caption\":\"%s\",\"callDelay\":%lu,\"lastCall\":%lu}%s";
+  const size_t _actionJsonTemplateSize = 50;
 #else
   const char * const _actionJsonTemplate = "{\"name\":\"%s\",\"caption\":\"%s\"}%s";
   const size_t _actionJsonTemplateSize = 25;

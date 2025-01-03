@@ -13,6 +13,11 @@
 
 #define ACTION_RQ_PATH "/actions"
 
+const char * const _fieldName = "name";
+#if ENABLE_ACTIONS_SCHEDULER
+const char * const _fieldDelay = "callDelay";
+#endif
+
 class ActionRequestHandler : public RequestHandler {
  public:
   ActionRequestHandler(){};
@@ -27,14 +32,11 @@ class ActionRequestHandler : public RequestHandler {
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_GET) {
       if (request->url().equals("/actions/info")) {
-        JsonDocument doc = ActionsManager.toJson();
-        String response;
-        serializeJson(doc, response);
-        return request->beginResponse(200, CONTENT_TYPE_JSON, response);
+        return request->beginResponse(200, CONTENT_TYPE_JSON, ActionsManager.toJson());
       }
 
       if (request->url().equals("/actions/call")) {
-        String action = request->arg(ACTIONS_JSON_NAME);
+        String action = request->arg(_fieldName);
         if (action.isEmpty()) {
           return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Parameter action is missing!"));
         }
@@ -59,12 +61,12 @@ class ActionRequestHandler : public RequestHandler {
       }
       JsonDocument doc;
       deserializeJson(doc, _body);
-      if (!doc[ACTIONS_JSON_NAME].is<JsonVariant>() || !doc[ACTIONS_JSON_DELAY].is<JsonVariant>()) {
+      if (!doc[_fieldName].is<JsonVariant>() || !doc[_fieldDelay].is<JsonVariant>()) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Name and callDelay params reuqired in body"));
       }
       
-      const char * name = doc[ACTIONS_JSON_NAME];
-      unsigned long newDelay = doc[ACTIONS_JSON_DELAY];
+      const char * name = doc[_fieldName];
+      unsigned long newDelay = doc[_fieldDelay];
       if (ActionsManager.updateActionSchedule(name, newDelay)) {
         return request->beginResponse(200);
       } else {

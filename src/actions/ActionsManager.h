@@ -5,19 +5,11 @@
 #if ENABLE_ACTIONS
 
 #include <Arduino.h>
-#include <ArduinoJson.h>
 #include <functional>
 
 #include "utils/List.h"
 #include "logs/BetterLogger.h"
 #include "settings/SettingsRepository.h"
-
-const char * const ACTIONS_JSON_NAME = "name";
-const char * const ACTIONS_JSON_CAPTION = "caption";
-#if ENABLE_ACTIONS_SCHEDULER
-const char * const ACTIONS_JSON_LAST_CALL = "lastCall";
-const char * const ACTIONS_JSON_DELAY = "callDelay";
-#endif
 
 // todo copy message and free on deestroy
 struct ActionResult {
@@ -119,7 +111,7 @@ class ActionsManagerClass {
   void scheduled();
   #endif
 
-  JsonDocument toJson();
+  String toJson();
 
  private:
   List<Action> _actions;

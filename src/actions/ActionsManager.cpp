@@ -2,7 +2,17 @@
 
 #if ENABLE_ACTIONS
 
+#include <ArduinoJson.h>
+
 const char * const _ACTIONS_TAG = "actions_manager";
+
+#if ENABLE_ACTIONS_SCHEDULER
+  const char * const _actionJsonTemplate = "{\"name\":\"%s\",\"caption\":\"%s\",\"callDelay\":\"%lu\",\"lastCall\":\"%lu\"}%s";
+  const size_t _actionJsonTemplateSize = 54;
+#else
+  const char * const _actionJsonTemplate = "{\"name\":\"%s\",\"caption\":\"%s\"}%s";
+  const size_t _actionJsonTemplateSize = 25;
+#endif
 
 ActionsManagerClass ActionsManager;
 
@@ -116,25 +126,47 @@ void ActionsManagerClass::forEachAction(List<Action>::ForEachIndexFunction forFu
   _actions.forEach(forFunc);
 }
 
-JsonDocument ActionsManagerClass::toJson() {
-  JsonDocument doc;
-  doc.to<JsonArray>();
-  #if ENABLE_ACTIONS_SCHEDULER
+String ActionsManagerClass::toJson() {
   unsigned long currentMillis = millis();
-  #endif
-  _actions.forEach([&](Action* current) {
-    JsonDocument action;
-    action[ACTIONS_JSON_NAME] = current->name();
-    action[ACTIONS_JSON_CAPTION] = current->caption();
+  String result = "[";
+  int lastIndex = _actions.size() - 1;
+  _actions.forEach([&](Action* current, int index) {
+    size_t size = _actionJsonTemplateSize +
+      strlen(current->name()) + 
+      strlen(current->caption()) + 1;
 
     #if ENABLE_ACTIONS_SCHEDULER
-    action[ACTIONS_JSON_DELAY] = current->callDelay();
-    action[ACTIONS_JSON_LAST_CALL] = current->callDelay() > 0 ? currentMillis - current->lastCall() : 0;
+      unsigned long lastCall = current->callDelay() > 0 ? currentMillis - current->lastCall() : 0;
+      size += snprintf(NULL, 0, "%d%d", current->callDelay(), lastCall);
     #endif
 
-    doc.add(action);
+    char buff[size];
+    
+    #if ENABLE_ACTIONS_SCHEDULER
+      sprintf(
+        buff,
+        _actionJsonTemplate,
+        current->name(),
+        current->caption(),
+        current->callDelay(),
+        lastCall,
+        index == lastIndex ? "" : ","
+      );
+    #else
+      sprintf(
+        buff,
+        _actionJsonTemplate,
+        current->name(),
+        current->caption(),
+        index == lastIndex ? "" : ","
+      );
+    #endif
+    result += String(buff);
   });
-  return doc;
+
+  result += "]";
+
+  return result;
 };
 
 Action* ActionsManagerClass::findAction(const char* name) const {

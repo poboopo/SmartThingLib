@@ -6,8 +6,8 @@
 
 #include <Arduino.h>
 #include <functional>
+#include <list>
 
-#include "utils/List.h"
 #include "logs/BetterLogger.h"
 #include "settings/SettingsRepository.h"
 
@@ -100,8 +100,7 @@ class ActionsManagerClass {
 
   ActionResult call(const char* name);
 
-  const Action * get(const char* name) const;
-  void forEachAction(List<Action>::ForEachIndexFunction forFunc);
+  String getActionsInfoForHook();
 
   #if ENABLE_ACTIONS_SCHEDULER
   void loadFromSettings();
@@ -114,9 +113,9 @@ class ActionsManagerClass {
   String toJson();
 
  private:
-  List<Action> _actions;
+  std::list<Action*> _actions;
 
-  Action* findAction(const char* name) const;
+  std::list<Action*>::iterator findAction(const char* name);
 };
 
 extern ActionsManagerClass ActionsManager;

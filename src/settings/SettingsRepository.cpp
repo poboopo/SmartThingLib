@@ -369,6 +369,12 @@ JsonDocument SettingsRepositoryClass::getActions() {
 #endif
 
 #if ENABLE_CONFIG
+std::list<ConfigEntry*>::iterator SettingsRepositoryClass::findConfigEntry(const char * name) {
+  return std::find_if(_config.begin(), _config.end(), [name](const ConfigEntry * entry) {
+    return strcmp(entry->name(), name) == 0;
+  });
+}
+
 bool SettingsRepositoryClass::addConfigEntry(const char* name) {
   if (name == nullptr) {
     return false;
@@ -378,72 +384,55 @@ bool SettingsRepositoryClass::addConfigEntry(const char* name) {
     st_log_warning(_SETTINGS_MANAGER_TAG, "Config entry name is too long! Max length = %d", MAX_CONFIG_ENTRY_NAME_LENGTH);
     return false;
   }
-  
-  char fixedName[len + 1];
-  for (int i = 0; i < len; i++) {
-    if (name[i] == ' ' || name[i] == ';') {
-      fixedName[i] = '-';
-    } else {
-      fixedName[i] = name[i];
-    }
-  }
-  fixedName[len] = '\0';
 
-  ConfigEntry * existing = _config.findValue([&](ConfigEntry* current) { return strcmp(current->name(), fixedName) == 0; });
-  if (existing != nullptr) {
+  String fixedName = name;
+  fixedName.replace(" ", "-");
+  fixedName.replace(";", "-");
+
+  auto it = findConfigEntry(fixedName.c_str());
+  if (it != _config.end()) {
     st_log_warning(_SETTINGS_MANAGER_TAG, "Config entry %s already exists!", fixedName);
     return false;
   }
 
-  ConfigEntry* entry = new ConfigEntry(fixedName);
-  if (_config.append(entry) > -1) {
-    st_log_debug(_SETTINGS_MANAGER_TAG, "Added new config entry - %s", fixedName);
-    return true;
-  } else {
-    if (entry != nullptr) {
-      delete entry;
-    }
-    st_log_error(_SETTINGS_MANAGER_TAG, "Failed to add new config entry - %s", fixedName);
-    return false;
-  }
+  _config.push_back(new ConfigEntry(fixedName.c_str()));
+  st_log_debug(_SETTINGS_MANAGER_TAG, "Added new config entry - %s", fixedName);
+  return true;
 }
 
 String SettingsRepositoryClass::getConfigJson() {
   String result = "{";
-  int lastIndex = _config.size() - 1;
 
-  _config.forEach([&](ConfigEntry * current, int index) {
+  for (auto it = _config.begin(); it != _config.end(); ++it) {
+    ConfigEntry * current = *it;
     char buff[strlen(current->name()) + strlen(current->value()) + 7];
     sprintf(
       buff,
       "\"%s\":\"%s\"%s",
       current->name(),
       current->value(),
-      index == lastIndex ? "" : "," 
+      it == std::prev(_config.end()) ? "" : "," 
     );
     result += String(buff);
-  });
+  }
 
   result += "}";
   return result;
 }
 
 
-const char * SettingsRepositoryClass::getConfigValue(const char * name) const {
+const char * SettingsRepositoryClass::getConfigValue(const char * name) {
   if (name == nullptr || strlen(name) == 0) {
     return "";
   }
 
-  ConfigEntry * entry = _config.findValue([name](ConfigEntry * current) {
-    return strcmp(current->name(), name) == 0;
-  });
-
-  if (entry == nullptr) {
+  auto it = findConfigEntry(name);
+  if (it == _config.end()) {
     st_log_warning(_SETTINGS_MANAGER_TAG, _errorConfigEntryNotFound, name);
     return "";
   }
 
-  return entry->value();
+  return (*it)->value();
 }
 
 bool SettingsRepositoryClass::setConfigValueWithoutSave(const char * name, const char * value) {
@@ -451,16 +440,14 @@ bool SettingsRepositoryClass::setConfigValueWithoutSave(const char * name, const
     return false;
   }
 
-  ConfigEntry * entry = _config.findValue([name](ConfigEntry * current) {
-    return strcmp(current->name(), name) == 0;
-  });
-
-  if (entry == nullptr) {
+  auto it = findConfigEntry(name);
+  if (it == _config.end()) {
     st_log_warning(_SETTINGS_MANAGER_TAG, _errorConfigEntryNotFound, name);
     return false;
   }
 
-  entry->setValue(value);
+
+  (*it)->setValue(value);
   return true;
 }
 
@@ -476,15 +463,17 @@ bool SettingsRepositoryClass::setConfig(JsonDocument conf) {
     st_log_error(_SETTINGS_MANAGER_TAG, "No config entries were added");
     return false;
   }
-  
-  _config.forEach([conf](ConfigEntry * current) {
+
+  for (auto it = _config.begin(); it != _config.end(); ++it) {
+    ConfigEntry * current = *it;
+
     if (conf[current->name()].is<String>()) {
       String value = conf[current->name()].as<String>();
       current->setValue(value.isEmpty() ? nullptr : value.c_str());
     } else {
       current->setValue(nullptr);
     }
-  });
+  }
   
   return saveConfig();
 }
@@ -492,7 +481,10 @@ bool SettingsRepositoryClass::setConfig(JsonDocument conf) {
 bool SettingsRepositoryClass::dropConfig() {
   bool res = false;
   if (writeData(CONFIG_INDEX, "") == 0) {
-    _config.forEach([](ConfigEntry * current) {current->setValue(nullptr);});
+    for (auto it = _config.begin(); it != _config.end(); ++it) {
+      (*it)->setValue(nullptr);
+    }
+
     st_log_warning(_SETTINGS_MANAGER_TAG, "Config droped");
     callConfigUpdateHook();
     res = true;
@@ -510,8 +502,10 @@ bool SettingsRepositoryClass::saveConfig() {
 
   // todo probably can be optimized
   String data;
-  int lastIndex = _config.size() - 1;
-  _config.forEach([&](ConfigEntry * entry, int index) {
+
+  for (auto it = _config.begin(); it != _config.end(); ++it) {
+    ConfigEntry * entry = *it;
+
     if (entry->value() != nullptr && strlen(entry->value()) > 0) {
       String value = entry->value();
       value.replace(";", "|;");
@@ -522,12 +516,12 @@ bool SettingsRepositoryClass::saveConfig() {
         "%s;%s%s",
         entry->name(),
         value.c_str(),
-        index == lastIndex ? "" : ";"
+        it == std::prev(_config.end()) ? "" : ";"
       );
 
       data += String(buff);
     }
-  });
+  }
 
   if (writeData(CONFIG_INDEX, data.c_str()) >= 0) {
     res = true;

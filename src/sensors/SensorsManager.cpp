@@ -5,14 +5,14 @@ SensorsManagerClass SensorsManager;
 
 #if ENABLE_TEXT_SENSORS
 template<>
-List<Sensor<TEXT_SENSOR_DATA_TYPE>> * SensorsManagerClass::getList() {
+std::list<Sensor<TEXT_SENSOR_DATA_TYPE>*> * SensorsManagerClass::getList() {
   return &_deviceStatesList;
 }
 #endif
 
 #if ENABLE_NUMBER_SENSORS
 template<>
-List<Sensor<NUMBER_SENSOR_DATA_TYPE>> * SensorsManagerClass::getList() {
+std::list<Sensor<NUMBER_SENSOR_DATA_TYPE>*> * SensorsManagerClass::getList() {
   return &_sensorsList;
 }
 
@@ -51,6 +51,7 @@ size_t SensorsManagerClass::getSensorsCount() {
   return result;
 }
 
+// todo remove arduino json
 JsonDocument SensorsManagerClass::getSensorsInfo() {
   JsonDocument doc;
   
@@ -58,15 +59,15 @@ JsonDocument SensorsManagerClass::getSensorsInfo() {
   JsonObject object = doc.as<JsonObject>();
 
   #if ENABLE_NUMBER_SENSORS
-    _sensorsList.forEach([&](Sensor<NUMBER_SENSOR_DATA_TYPE> * obj) {
-      object[obj->name()] = obj->provideValue();
-    });
+    for (auto it = _sensorsList.begin(); it != _sensorsList.end(); ++it) {
+      object[(*it)->name()] = (*it)->provideValue();
+    }
   #endif
 
   #if ENABLE_TEXT_SENSORS
-  _deviceStatesList.forEach([&](Sensor<TEXT_SENSOR_DATA_TYPE> * obj) {
-    object[obj->name()] = obj->provideValue();
-  });
+    for (auto it = _deviceStatesList.begin(); it != _deviceStatesList.end(); ++it) {
+      object[(*it)->name()] = (*it)->provideValue();
+    }
   #endif
 
   return doc;

@@ -3,10 +3,10 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <list>
 
 #include "Features.h"
 #include "sensors/Sensor.h"
-#include "utils/List.h"
 #include "logs/BetterLogger.h"
 
 #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
@@ -55,11 +55,11 @@ class SensorsManagerClass {
     )  {
       bool exists = false;
       #if ENABLE_NUMBER_SENSORS
-        exists = getSensor<NUMBER_SENSOR_DATA_TYPE>(name) != nullptr;
+        exists = getSensorIterator<NUMBER_SENSOR_DATA_TYPE>(name) != _sensorsList.end();
       #endif
 
       #if ENABLE_TEXT_SENSORS
-        exists = exists || getSensor<TEXT_SENSOR_DATA_TYPE>(name) != nullptr;
+        exists = exists || getSensorIterator<TEXT_SENSOR_DATA_TYPE>(name) != _deviceStatesList.end();
       #endif
 
       if (exists) {
@@ -67,52 +67,57 @@ class SensorsManagerClass {
         return false;
       }
 
-      Sensor<T> * sensor = new Sensor<T>(name, valueProvider);
-      if (getList<T>()->append(sensor) > -1) {
-        st_log_debug(_SENSORS_MANAGER_TAG, "Added new device sensor %s", name);
-        return true;
-      } else {
-        if (sensor != nullptr) {
-          delete sensor;
-        }
-        st_log_error(_SENSORS_MANAGER_TAG, "Failed to add new device sensor %s", name);
-        return false;
-      }
+      getList<T>()->push_back(new Sensor<T>(name, valueProvider));
+      st_log_debug(_SENSORS_MANAGER_TAG, "Added new device sensor %s", name);
+      return true;
     }
 
     template<typename T>
     const Sensor<T> * getSensor(const char * name) {
-      if (name == nullptr || strlen(name) == 0) {
+      auto it = getSensorIterator<T>(name);
+      if (it == getList<T>()->end()) {
         return nullptr;
       }
-      return getList<T>()->findValue([&](Sensor<T> * current) {
-          return strcmp(current->name(), name) == 0;
-      });
+      return *it;
     }
+    
     SensorType getSensorType(const char * name) {
       #if ENABLE_NUMBER_SENSORS
-      if (getSensor<NUMBER_SENSOR_DATA_TYPE>(name) != nullptr) {
-        return NUMBER_SENSOR;
-      }
+        if (getSensorIterator<NUMBER_SENSOR_DATA_TYPE>(name) != _sensorsList.end()) {
+          return NUMBER_SENSOR;
+        }
       #endif
       #if ENABLE_TEXT_SENSORS
-      if (getSensor<TEXT_SENSOR_DATA_TYPE>(name) != nullptr) {
-        return TEXT_SENSOR;
-      }
+        if (getSensorIterator<TEXT_SENSOR_DATA_TYPE>(name) != _deviceStatesList.end()) {
+          return TEXT_SENSOR;
+        }
       #endif
       return UNKNOWN_SENSOR;
     }
   private:
     #if ENABLE_NUMBER_SENSORS
-      List<Sensor<NUMBER_SENSOR_DATA_TYPE>> _sensorsList;
+      std::list<Sensor<NUMBER_SENSOR_DATA_TYPE>*> _sensorsList;
     #endif
 
     #if ENABLE_TEXT_SENSORS
-      List<Sensor<TEXT_SENSOR_DATA_TYPE>> _deviceStatesList;
+      std::list<Sensor<TEXT_SENSOR_DATA_TYPE>*> _deviceStatesList;
     #endif
 
     template<typename T>
-    List<Sensor<T>> * getList();
+    std::list<Sensor<T>*> * getList();
+
+    template<typename T>
+    typename std::list<Sensor<T>*>::iterator getSensorIterator(const char * name) {
+      auto list = getList<T>();
+      if (name == nullptr || strlen(name) == 0) {
+        return list->end();
+      }
+
+      return std::find_if(list->begin(), list->end(), [name](const Sensor<T> * sensor) {
+          return strcmp(sensor->name(), name) == 0;
+      });
+    }
+
   };
 
 extern SensorsManagerClass SensorsManager;

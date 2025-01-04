@@ -12,7 +12,6 @@
 #include "hooks/impls/Hook.h"
 #include "sensors/Sensor.h"
 #include "logs/BetterLogger.h"
-#include "utils/List.h"
 
 const char * const _WATCHER_TAG = "watcher";
 

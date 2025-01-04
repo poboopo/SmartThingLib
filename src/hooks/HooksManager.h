@@ -12,7 +12,6 @@
 #include "hooks/impls/LambdaHook.h"
 #include "hooks/watcher/Watcher.h"
 #include "sensors/Sensor.h"
-#include "utils/List.h"
 
 class HooksManagerClass {
  public:

@@ -197,7 +197,7 @@ class HttpHook : public SELECT_HOOK_BASE_CLASS {
       urlResolved = "http://" + urlResolved;
     }
 
-    st_log_debug(_HTTP_HOOK_TAG, "Resolved url and payload: %s, %s", urlResolved.c_str(), payloadResolved.c_str());
+    st_log_debug(_HTTP_HOOK_TAG, "Resolved url and payload: %s :: %s", urlResolved.c_str(), payloadResolved.c_str());
     st_log_debug(_HTTP_HOOK_TAG, "Sending request [%s] %s :: %s", requestMethodToStr(_method), urlResolved.c_str(), payloadResolved.c_str());
 
     HTTPClient client;

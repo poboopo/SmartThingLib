@@ -7,7 +7,6 @@
 
 #include "Features.h"
 #include "logs/BetterLogger.h"
-#include "utils/List.h"
 
 #define LOGGER_ADDRESS_CONFIG "laddr"
 #define GATEWAY_CONFIG "gtw"

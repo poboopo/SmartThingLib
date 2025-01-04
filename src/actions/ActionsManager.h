@@ -8,7 +8,6 @@
 #include <functional>
 #include <list>
 
-#include "utils/List.h"
 #include "logs/BetterLogger.h"
 #include "settings/SettingsRepository.h"
 

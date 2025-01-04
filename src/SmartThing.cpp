@@ -1,4 +1,5 @@
 #include "SmartThing.h"
+#include "settings/SettingsRepository.h"
 
 #ifdef ARDUINO_ARCH_ESP32
 #include <mdns.h>
@@ -63,7 +64,7 @@ bool SmartThingClass::wifiConnected() {
 
 void SmartThingClass::preInit() {
   #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
-    SettingsRepository.addConfigEntry(LOGGER_ADDRESS_CONFIG);
+    ConfigManager.addConfigEntry(LOGGER_ADDRESS_CONFIG);
     #if ENABLE_TEXT_SENSORS
       SensorsManager.addSensor("logger", []() {
         return LOGGER.isConnected() ? "connected" : "disconnected";
@@ -80,10 +81,10 @@ void SmartThingClass::preInit() {
   #if ENABLE_CONFIG
     #if ENABLE_HOOKS
       // For notifications
-      SettingsRepository.addConfigEntry(GATEWAY_CONFIG);
+      ConfigManager.addConfigEntry(GATEWAY_CONFIG);
     #endif
 
-    SettingsRepository.loadConfigValues();
+    ConfigManager.loadConfigValues();
     st_log_debug(_SMART_THING_TAG, "Config values loaded");
   #endif
 
@@ -324,7 +325,7 @@ void SmartThingClass::onWifiConnected() {
   _disconnectHandled = false;
   
   #if ENABLE_CONFIG
-    LOGGER.connect(SettingsRepository.getConfigValue(LOGGER_ADDRESS_CONFIG));
+    LOGGER.connect(ConfigManager.getConfigValue(LOGGER_ADDRESS_CONFIG));
   #endif
 
   String ip;

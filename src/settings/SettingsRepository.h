@@ -8,10 +8,6 @@
 #include "Features.h"
 #include "logs/BetterLogger.h"
 
-#define LOGGER_ADDRESS_CONFIG "laddr"
-#define GATEWAY_CONFIG "gtw"
-#define MAX_CONFIG_ENTRY_NAME_LENGTH 10
-
 enum StWiFiMode {
   ST_WIFI_STA = 1,
   ST_WIFI_AP = 2,
@@ -24,48 +20,6 @@ struct WiFiConfig {
   StWiFiMode mode;
 };
 
-#if ENABLE_CONFIG
-class ConfigEntry {
-  public:
-    ConfigEntry(const char* name)
-        : _value(nullptr) {
-      _name = (char*) malloc(strlen(name) + 1);
-      strcpy(_name, name);
-    };
-    ~ConfigEntry() {
-      free(_name);
-      if (_value != nullptr) {
-        free(_value);
-      }
-    }
-
-    const char * name() const {
-      return _name;
-    }
-    const char * value() const {
-      return _value == nullptr ? "" : _value;
-    }
-
-    void setValue(const char * value) {
-      if (_value != nullptr) {
-        free(_value);
-        _value = nullptr;
-      }
-
-      if (value != nullptr && strlen(value) > 0) {
-        _value = (char*) malloc(strlen(value) + 1);
-        strcpy(_value, value);
-      }
-    }
-
-  private:
-    char* _name;
-    char* _value;
-};
-
-typedef std::function<void(void)> ConfigUpdatedHook;
-#endif
-
 class SettingsRepositoryClass {
  public:
   SettingsRepositoryClass();
@@ -75,28 +29,21 @@ class SettingsRepositoryClass {
   bool setName(String name);
 
   WiFiConfig getWiFi();
-  bool setWiFi(WiFiConfig settings);
+  bool setWiFi(WiFiConfig &settings);
   bool dropWiFi();
 
   #if ENABLE_CONFIG
-    void loadConfigValues();
-    bool addConfigEntry(const char* name);
-    const char * getConfigValue(const char * name);
-    bool setConfigValue(const char * name, const char * value);
-    bool setConfig(JsonDocument conf);
-    bool dropConfig();
-    String getConfigJson();
-    void onConfigUpdate(ConfigUpdatedHook hook);
+    String getConfig();
+    bool setConfig(const String &config);
   #endif
 
   #if ENABLE_HOOKS
     String getHooks();
-    bool setHooks(String &data);
-    bool dropHooks();
+    bool setHooks(const String &data);
   #endif
 
   #if ENABLE_ACTIONS_SCHEDULER
-    bool setActions(JsonDocument conf);
+    bool setActions(const JsonDocument &conf);
     JsonDocument getActions();
   #endif
 
@@ -105,16 +52,6 @@ class SettingsRepositoryClass {
   
   void clear();
  private:
-  #if ENABLE_CONFIG
-    std::list<ConfigEntry*> _config;
-    ConfigUpdatedHook _configUpdatedHook = [](){};
-  
-    bool saveConfig();
-    bool setConfigValueWithoutSave(const char * name, const char * value);
-    void callConfigUpdateHook();
-    std::list<ConfigEntry*>::iterator findConfigEntry(const char * name);
-  #endif
-
   void read(uint16_t address, char * buff, uint16_t length);
   void write(uint16_t address, const char * buff, uint16_t length);
 

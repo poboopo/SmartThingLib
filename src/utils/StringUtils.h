@@ -2,7 +2,7 @@
 #define STRING_UTILS_H
 
 #include <Arduino.h>
-#include "settings/SettingsRepository.h"
+#include "config/ConfigManager.h"
 #include "logs/BetterLogger.h"
 
 #ifdef ARDUINO_ARCH_ESP32
@@ -44,7 +44,7 @@ inline String replaceValues(const char * input, String &value) {
         } 
         #if ENABLE_CONFIG
           else {
-            result += SettingsRepository.getConfigValue(key.c_str());
+            result += ConfigManager.getConfigValue(key.c_str());
           }
         #endif
         opened = false;

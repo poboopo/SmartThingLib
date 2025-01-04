@@ -10,8 +10,6 @@
 #define LENGTH_PARTITION_SIZE 3
 #define DATA_OFFSET 15
 
-const char * const _errorConfigEntryNotFound = "Config entry with name %s not found";
-
 #ifdef ARDUINO_ARCH_ESP32
 bool eepromBegin() {
   return EEPROM.begin(EEPROM_LOAD_SIZE);
@@ -287,7 +285,7 @@ WiFiConfig SettingsRepositoryClass::getWiFi() {
   return settings;
 }
 
-bool SettingsRepositoryClass::setWiFi(WiFiConfig settings) {
+bool SettingsRepositoryClass::setWiFi(WiFiConfig &settings) {
   settings.ssid.replace(";", "|;");
   settings.password.replace(";", "|;");
 
@@ -321,8 +319,26 @@ bool SettingsRepositoryClass::dropWiFi() {
   return res;
 }
 
+
+#if ENABLE_CONFIG
+String SettingsRepositoryClass::getConfig() {
+  return readData(CONFIG_INDEX, "");
+}
+
+bool SettingsRepositoryClass::setConfig(const String &config) {
+  bool res = false;
+  if (writeData(CONFIG_INDEX, config.c_str()) >= 0) {
+    st_log_debug(_SETTINGS_MANAGER_TAG, "Config data updated");
+    res = true;
+  } else {
+    st_log_error(_SETTINGS_MANAGER_TAG, "Failed to update config data");
+  }
+  return res;
+}
+#endif
+
 #if ENABLE_HOOKS
-bool SettingsRepositoryClass::setHooks(String &data) {
+bool SettingsRepositoryClass::setHooks(const String &data) {
   bool res = false;
   if (writeData(HOOKS_INDEX, data.c_str()) >= 0) {
     st_log_debug(_SETTINGS_MANAGER_TAG, "Hooks data updated");
@@ -336,25 +352,14 @@ bool SettingsRepositoryClass::setHooks(String &data) {
 String SettingsRepositoryClass::getHooks() {
   return readData(HOOKS_INDEX, "");
 }
-
-bool SettingsRepositoryClass::dropHooks() {
-  bool res = false;
-  if (writeData(CONFIG_INDEX, "")) {
-    st_log_debug(_SETTINGS_MANAGER_TAG, "Hooks dropped");
-    res = true;
-  } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, "Failed to drop hooks");
-  }
-  return res;
-}
 #endif
 
 #if ENABLE_ACTIONS_SCHEDULER
-bool SettingsRepositoryClass::setActions(JsonDocument conf) {
+bool SettingsRepositoryClass::setActions(const JsonDocument &conf) {
   String data = objectToString(conf);
   bool res = false;
   if (writeData(ACTIONS_INDEX, data.c_str()) >= 0) {
-    st_log_debug(_SETTINGS_MANAGER_TAG, "Actions config updated to %s", data.c_str());
+    st_log_debug(_SETTINGS_MANAGER_TAG, "Actions config updated to");
     res = true;
   } else {
     st_log_error(_SETTINGS_MANAGER_TAG, "Actions config update failed");
@@ -365,221 +370,6 @@ bool SettingsRepositoryClass::setActions(JsonDocument conf) {
 JsonDocument SettingsRepositoryClass::getActions() {
   String data = readData(ACTIONS_INDEX);
   return stringToObject(data);
-}
-#endif
-
-#if ENABLE_CONFIG
-std::list<ConfigEntry*>::iterator SettingsRepositoryClass::findConfigEntry(const char * name) {
-  return std::find_if(_config.begin(), _config.end(), [name](const ConfigEntry * entry) {
-    return strcmp(entry->name(), name) == 0;
-  });
-}
-
-bool SettingsRepositoryClass::addConfigEntry(const char* name) {
-  if (name == nullptr) {
-    return false;
-  }
-  size_t len = strlen(name);
-  if (len == 0 || len > MAX_CONFIG_ENTRY_NAME_LENGTH) {
-    st_log_warning(_SETTINGS_MANAGER_TAG, "Config entry name is too long! Max length = %d", MAX_CONFIG_ENTRY_NAME_LENGTH);
-    return false;
-  }
-
-  String fixedName = name;
-  fixedName.replace(" ", "-");
-  fixedName.replace(";", "-");
-
-  auto it = findConfigEntry(fixedName.c_str());
-  if (it != _config.end()) {
-    st_log_warning(_SETTINGS_MANAGER_TAG, "Config entry %s already exists!", fixedName);
-    return false;
-  }
-
-  _config.push_back(new ConfigEntry(fixedName.c_str()));
-  st_log_debug(_SETTINGS_MANAGER_TAG, "Added new config entry - %s", fixedName);
-  return true;
-}
-
-String SettingsRepositoryClass::getConfigJson() {
-  String result = "{";
-
-  for (auto it = _config.begin(); it != _config.end(); ++it) {
-    ConfigEntry * current = *it;
-    char buff[strlen(current->name()) + strlen(current->value()) + 7];
-    sprintf(
-      buff,
-      "\"%s\":\"%s\"%s",
-      current->name(),
-      current->value(),
-      it == std::prev(_config.end()) ? "" : "," 
-    );
-    result += String(buff);
-  }
-
-  result += "}";
-  return result;
-}
-
-
-const char * SettingsRepositoryClass::getConfigValue(const char * name) {
-  if (name == nullptr || strlen(name) == 0) {
-    return "";
-  }
-
-  auto it = findConfigEntry(name);
-  if (it == _config.end()) {
-    st_log_warning(_SETTINGS_MANAGER_TAG, _errorConfigEntryNotFound, name);
-    return "";
-  }
-
-  return (*it)->value();
-}
-
-bool SettingsRepositoryClass::setConfigValueWithoutSave(const char * name, const char * value) {
-  if (name == nullptr) {
-    return false;
-  }
-
-  auto it = findConfigEntry(name);
-  if (it == _config.end()) {
-    st_log_warning(_SETTINGS_MANAGER_TAG, _errorConfigEntryNotFound, name);
-    return false;
-  }
-
-
-  (*it)->setValue(value);
-  return true;
-}
-
-bool SettingsRepositoryClass::setConfigValue(const char * name, const char * value) {
-  if (setConfigValueWithoutSave(name, value)) {
-    return saveConfig();
-  }
-  return false;
-}
-
-bool SettingsRepositoryClass::setConfig(JsonDocument conf) {
-  if (_config.size() == 0) {
-    st_log_error(_SETTINGS_MANAGER_TAG, "No config entries were added");
-    return false;
-  }
-
-  for (auto it = _config.begin(); it != _config.end(); ++it) {
-    ConfigEntry * current = *it;
-
-    if (conf[current->name()].is<String>()) {
-      String value = conf[current->name()].as<String>();
-      current->setValue(value.isEmpty() ? nullptr : value.c_str());
-    } else {
-      current->setValue(nullptr);
-    }
-  }
-  
-  return saveConfig();
-}
-
-bool SettingsRepositoryClass::dropConfig() {
-  bool res = false;
-  if (writeData(CONFIG_INDEX, "") == 0) {
-    for (auto it = _config.begin(); it != _config.end(); ++it) {
-      (*it)->setValue(nullptr);
-    }
-
-    st_log_warning(_SETTINGS_MANAGER_TAG, "Config droped");
-    callConfigUpdateHook();
-    res = true;
-  } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, "Configuration drop failed");
-  }
-  return res;
-}
-
-bool SettingsRepositoryClass::saveConfig() {
-  bool res = false;
-  if (_config.size() == 0) {
-    return res;
-  }
-
-  // todo probably can be optimized
-  String data;
-
-  for (auto it = _config.begin(); it != _config.end(); ++it) {
-    ConfigEntry * entry = *it;
-
-    if (entry->value() != nullptr && strlen(entry->value()) > 0) {
-      String value = entry->value();
-      value.replace(";", "|;");
-
-      char buff[strlen(entry->name()) + value.length() + 3];
-      sprintf(
-        buff,
-        "%s;%s%s",
-        entry->name(),
-        value.c_str(),
-        it == std::prev(_config.end()) ? "" : ";"
-      );
-
-      data += String(buff);
-    }
-  }
-
-  if (writeData(CONFIG_INDEX, data.c_str()) >= 0) {
-    res = true;
-    st_log_debug(_SETTINGS_MANAGER_TAG, "Configuration updated");
-    callConfigUpdateHook();
-  } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, "Configuration update failed");
-  }
-  return res;
-}
-
-void SettingsRepositoryClass::loadConfigValues() {
-  String data = readData(CONFIG_INDEX);
-
-  if (data.isEmpty()) {
-    return;
-  }
-
-  String buff, key;
-  char tmp;
-  bool escaped = false, buildKey = true;
-  for (uint8_t i = 0; i < data.length(); i++) {
-    tmp = data.charAt(i);
-
-    if (!escaped && tmp == '|') {
-      escaped = true;
-    } else if (!escaped && tmp == ';') {
-      if (buildKey) {
-        key = buff;
-        buff.clear();
-        buildKey = false;
-      } else {
-        setConfigValueWithoutSave(key.c_str(), buff.c_str());
-        key.clear();
-        buff.clear();
-        buildKey = true;
-      }
-    } else {
-      if (escaped && tmp != ';') {
-        buff += '|';
-      }
-      buff += tmp;
-      escaped = false;
-    }
-  }
-  setConfigValueWithoutSave(key.c_str(), buff.c_str());
-}
-
-void SettingsRepositoryClass::onConfigUpdate(ConfigUpdatedHook hook) {
-  _configUpdatedHook = hook;
-}
-
-void SettingsRepositoryClass::callConfigUpdateHook() {
-  st_log_debug(_SETTINGS_MANAGER_TAG, "Config updated, calling hooks");
-  #if ENABLE_LOGGER
-    LOGGER.updateAddress(SettingsRepository.getConfigValue(LOGGER_ADDRESS_CONFIG));
-  #endif
-  _configUpdatedHook();
 }
 #endif
 

@@ -17,7 +17,7 @@
 
 #include "SmartThing.h"
 #include "hooks/impls/Hook.h"
-#include "settings/SettingsRepository.h"
+#include "config/ConfigManager.h"
 #include "utils/StringUtils.h"
 
 const char * const _NOTIFICATION_HOOK_TAG = "notification_hook";
@@ -193,7 +193,7 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
 
     void sendRequest() {
       #if ENABLE_CONFIG
-        String _gateway = SettingsRepository.getConfigValue(GATEWAY_CONFIG);
+        String _gateway = ConfigManager.getConfigValue(GATEWAY_CONFIG);
       #endif  
       if (_gateway.isEmpty()) {
         st_log_error(_NOTIFICATION_HOOK_TAG, "Gateway ip is missing!");

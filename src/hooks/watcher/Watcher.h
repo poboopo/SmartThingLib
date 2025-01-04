@@ -147,7 +147,6 @@ class Watcher {
     return doc;
   }
 
-  // todo remove aduino json usage
   JsonDocument getSensorHooksJson() {
     JsonDocument doc;
     doc.to<JsonArray>();

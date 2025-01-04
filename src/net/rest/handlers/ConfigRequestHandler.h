@@ -7,9 +7,9 @@
 
 #include "SmartThing.h"
 #include "logs/BetterLogger.h"
+#include "config/ConfigManager.h"
 #include "net/rest/RestController.h"
 #include "net/rest/handlers/HandlerUtils.h"
-#include "settings/SettingsRepository.h"
 #include "net/rest/handlers/RequestHandler.h"
 
 #define CONFIG_PATH "/config"
@@ -29,14 +29,14 @@ class ConfigRequestHandler : public RequestHandler {
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->url().equals(CONFIG_PATH)) {
       if (request->method() == HTTP_GET) {
-        String response = SettingsRepository.getConfigJson();
+        String response = ConfigManager.getConfigJson();
         return request->beginResponse(200, CONTENT_TYPE_JSON, response);
       }
 
       if (request->method() == HTTP_POST) {
         JsonDocument jsonDoc;
         deserializeJson(jsonDoc, _body);
-        SettingsRepository.setConfig(jsonDoc);
+        ConfigManager.setConfig(jsonDoc);
         return request->beginResponse(200);
       }
 
@@ -46,7 +46,7 @@ class ConfigRequestHandler : public RequestHandler {
           return request->beginResponse(400, "content/json", buildErrorJson("Config name is missing"));
         }
 
-        if (SettingsRepository.setConfigValue(name.c_str(), nullptr)) {
+        if (ConfigManager.setConfigValue(name.c_str(), nullptr)) {
           return request->beginResponse(200);
         } else {
           return request->beginResponse(404, "content/json", buildErrorJson("No such config entry"));
@@ -55,7 +55,7 @@ class ConfigRequestHandler : public RequestHandler {
     }
     
     if (request->method() == HTTP_DELETE && request->url().equals("/config/delete/all")) {
-      SettingsRepository.dropConfig();
+      ConfigManager.dropConfig();
       return request->beginResponse(200);
     }
 

@@ -7,7 +7,7 @@
 #include "hooks/HooksManager.h"
 #include "logs/BetterLogger.h"
 #include "net/rest/RestController.h"
-#include "settings/SettingsRepository.h"
+#include "config/ConfigManager.h"
 #include "actions/ActionsManager.h"
 #include "sensors/SensorsManager.h"
 #include "Features.h"

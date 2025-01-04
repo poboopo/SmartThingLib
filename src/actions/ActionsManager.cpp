@@ -4,6 +4,9 @@
 
 #include <ArduinoJson.h>
 
+#include "logs/BetterLogger.h"
+#include "settings/SettingsRepository.h"
+
 const char * const _ACTIONS_TAG = "actions_manager";
 
 #if ENABLE_ACTIONS_SCHEDULER

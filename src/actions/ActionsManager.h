@@ -8,9 +8,6 @@
 #include <functional>
 #include <list>
 
-#include "logs/BetterLogger.h"
-#include "settings/SettingsRepository.h"
-
 // todo copy message and free on deestroy
 struct ActionResult {
   ActionResult(){};

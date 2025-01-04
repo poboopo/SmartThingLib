@@ -67,8 +67,7 @@ void ActionsManagerClass::loadFromSettings() {
     return;
   }
 
-  std::list<Action*>::iterator it;
-  for (it = _actions.begin(); it != _actions.end(); ++it) {
+  for (auto it = _actions.begin(); it != _actions.end(); ++it) {
     Action * action = *it;
     if (config[action->name()].is<const char*>()) {
       unsigned long callDelay = config[action->name()];
@@ -102,8 +101,7 @@ bool ActionsManagerClass::updateActionSchedule(const char * name, unsigned long 
 void ActionsManagerClass::scheduled() {
   unsigned long current = millis();
 
-  std::list<Action*>::iterator it;
-  for (it = _actions.begin(); it != _actions.end(); ++it) {
+  for (auto it = _actions.begin(); it != _actions.end(); ++it) {
     Action * action = *it;
     if (action->callDelay() > 0 && current - action->lastCall() > action->callDelay()) {
       st_log_debug(_ACTIONS_TAG, "Scheduled call of %s", action->name());
@@ -116,8 +114,7 @@ void ActionsManagerClass::scheduled() {
 
 String ActionsManagerClass::getActionsInfoForHook() {
   String result;
-  std::list<Action*>::iterator it;
-  for (it = _actions.begin(); it != _actions.end(); ++it) {
+  for (auto it = _actions.begin(); it != _actions.end(); ++it) {
     Action * action = *it;
 
     char data[strlen(action->name()) + strlen(action->caption()) + 6];
@@ -139,8 +136,7 @@ String ActionsManagerClass::toJson() {
   int lastIndex = _actions.size() - 1;
 
 
-  std::list<Action*>::iterator it;
-  for (it = _actions.begin(); it != _actions.end(); ++it) {
+  for (auto it = _actions.begin(); it != _actions.end(); ++it) {
     Action * action = *it;
 
     size_t size = _actionJsonTemplateSize +

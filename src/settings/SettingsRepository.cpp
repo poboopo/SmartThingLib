@@ -403,8 +403,7 @@ bool SettingsRepositoryClass::addConfigEntry(const char* name) {
 String SettingsRepositoryClass::getConfigJson() {
   String result = "{";
 
-  std::list<ConfigEntry*>::iterator it;
-  for (it = _config.begin(); it != _config.end(); ++it) {
+  for (auto it = _config.begin(); it != _config.end(); ++it) {
     ConfigEntry * current = *it;
     char buff[strlen(current->name()) + strlen(current->value()) + 7];
     sprintf(

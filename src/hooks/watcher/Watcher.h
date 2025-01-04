@@ -37,8 +37,7 @@ class Watcher {
     if (_hooks.size() == 0) {
       return;
     }
-    typename std::list<Hook<T>*>::iterator it;
-    for (it = _hooks.begin(); it != _hooks.end(); ++it) {
+    for (auto it = _hooks.begin(); it != _hooks.end(); ++it) {
       Hook<T> *current = *it;
       if (current != nullptr && current->accept(value)) {
         st_log_debug(
@@ -126,8 +125,7 @@ class Watcher {
 
     String result = _sensor->name();
 
-    typename std::list<Hook<T>*>::iterator it;
-    for (it = _hooks.begin(); it != _hooks.end(); ++it) {
+    for (auto it = _hooks.begin(); it != _hooks.end(); ++it) {
       if ((*it)->isReadonly()) {
         continue;
       }
@@ -158,8 +156,7 @@ class Watcher {
       return doc;
     }
 
-    typename std::list<Hook<T>*>::iterator it;
-    for (it = _hooks.begin(); it != _hooks.end(); ++it) {
+    for (auto it = _hooks.begin(); it != _hooks.end(); ++it) {
       if ((*it)->isReadonly()) {
         continue;
       }

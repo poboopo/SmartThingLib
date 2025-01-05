@@ -171,6 +171,17 @@ int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
   }
 }
 
+bool SettingsRepositoryClass::setData(uint8_t index, const char * data, const char * name, size_t expectedLength) {
+  bool res = false;
+  if (writeData(index, data) >= expectedLength) {
+    st_log_debug(_SETTINGS_MANAGER_TAG, "Data [%s] updated", name);
+    res = true;
+  } else {
+    st_log_error(_SETTINGS_MANAGER_TAG, "Failed to update [%s] data", name);
+  }
+  return res;
+}
+
 // todo deprecated
 JsonDocument SettingsRepositoryClass::stringToObject(String& data) {
   JsonDocument doc;
@@ -240,13 +251,7 @@ bool SettingsRepositoryClass::setName(String name) {
     st_log_error(_SETTINGS_MANAGER_TAG, "Name is too big! Max name length=%d", DEVICE_NAME_LENGTH_MAX);
     return false;
   }
-  
-  if (writeData(NAME_INDEX, name.c_str()) >= 0) {
-    return true;
-  } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, "Name update failed");
-    return false;
-  }
+  return setData(NAME_INDEX, name.c_str(), "name");
 }
 
 WiFiConfig SettingsRepositoryClass::getWiFi() {
@@ -298,73 +303,33 @@ bool SettingsRepositoryClass::setWiFi(WiFiConfig &settings) {
     settings.mode
   );
 
-  bool res = false;
-  if (writeData(WIFI_INDEX, buff) > 0) {
-    st_log_debug(_SETTINGS_MANAGER_TAG, "WiFi config updated: %s", buff);
-    res = true;
-  } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, "WiFi config update failed");
-  }
-  return res;
+  return setData(WIFI_INDEX, buff, "wifi", 1);
 }
-
-bool SettingsRepositoryClass::dropWiFi() {
-  bool res = false;
-  if (writeData(WIFI_INDEX, "") == 0) {
-    st_log_warning(_SETTINGS_MANAGER_TAG, "WiFi config droped");
-    res = true;
-  } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, "WiFi conig drop failed");
-  }
-  return res;
-}
-
 
 #if ENABLE_CONFIG
 String SettingsRepositoryClass::getConfig() {
-  return readData(CONFIG_INDEX, "");
+  return readData(CONFIG_INDEX);
 }
 
 bool SettingsRepositoryClass::setConfig(const String &config) {
-  bool res = false;
-  if (writeData(CONFIG_INDEX, config.c_str()) >= 0) {
-    st_log_debug(_SETTINGS_MANAGER_TAG, "Config data updated");
-    res = true;
-  } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, "Failed to update config data");
-  }
-  return res;
+  return setData(CONFIG_INDEX, config.c_str(), "config");
 }
 #endif
 
 #if ENABLE_HOOKS
 bool SettingsRepositoryClass::setHooks(const String &data) {
-  bool res = false;
-  if (writeData(HOOKS_INDEX, data.c_str()) >= 0) {
-    st_log_debug(_SETTINGS_MANAGER_TAG, "Hooks data updated");
-    res = true;
-  } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, "Failed to update hooks data");
-  }
-  return res;
+  return setData(HOOKS_INDEX, data.c_str(), "hooks");
 }
 
 String SettingsRepositoryClass::getHooks() {
-  return readData(HOOKS_INDEX, "");
+  return readData(HOOKS_INDEX);
 }
 #endif
 
 #if ENABLE_ACTIONS_SCHEDULER
 bool SettingsRepositoryClass::setActions(const JsonDocument &conf) {
   String data = objectToString(conf);
-  bool res = false;
-  if (writeData(ACTIONS_INDEX, data.c_str()) >= 0) {
-    st_log_debug(_SETTINGS_MANAGER_TAG, "Actions config updated to");
-    res = true;
-  } else {
-    st_log_error(_SETTINGS_MANAGER_TAG, "Actions config update failed");
-  }
-  return res;
+  return setData(ACTIONS_INDEX, data.c_str(), "actions");
 }
 
 JsonDocument SettingsRepositoryClass::getActions() {

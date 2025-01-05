@@ -30,7 +30,6 @@ class SettingsRepositoryClass {
 
   WiFiConfig getWiFi();
   bool setWiFi(WiFiConfig &settings);
-  bool dropWiFi();
 
   #if ENABLE_CONFIG
     String getConfig();
@@ -60,6 +59,11 @@ class SettingsRepositoryClass {
 
   String readData(uint8_t index, const char * defaultValue = "");
   int writeData(uint8_t index, const char * data);
+  /*
+  Helper method for writeData
+  Checks writes data length, prints messages
+  */
+  bool setData(uint8_t index, const char * data, const char * name, size_t expectedLength = 0);
 
   JsonDocument stringToObject(String& data);
   String objectToString(JsonDocument doc);

@@ -52,6 +52,10 @@
   #define ENABLE_CONFIG 1
 #endif
 
+#ifndef ENABLE_OTA
+  #define ENABLE_OTA 1
+#endif
+
 #ifndef ENABLE_LOGGER
   #define ENABLE_LOGGER 1
 #endif

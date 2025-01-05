@@ -1,24 +1,29 @@
 #include "SmartThing.h"
 #include "settings/SettingsRepository.h"
 
+#include <ArduinoOTA.h>
 #ifdef ARDUINO_ARCH_ESP32
-#include <mdns.h>
+  #include <mdns.h>
 #endif
 
 #ifndef SMART_THING_LOOP_TASK_DELAY
-#define SMART_THING_LOOP_TASK_DELAY 100  // ms
+  #define SMART_THING_LOOP_TASK_DELAY 100  // ms
 #endif
 
 #ifndef SMART_THING_HOOKS_CHECK_DELAY
-#define SMART_THING_HOOKS_CHECK_DELAY 500 // ms
+  #define SMART_THING_HOOKS_CHECK_DELAY 500 // ms
 #endif
 
 #ifndef SMART_THING_BEACON_SEND_DELAY
-#define SMART_THING_BEACON_SEND_DELAY 2000 //ms
+  #define SMART_THING_BEACON_SEND_DELAY 2000 //ms
 #endif
 
 #ifndef SMART_THING_ACTIONS_SCHEDULE_DELAY
-#define SMART_THING_ACTIONS_SCHEDULE_DELAY 200 //ms
+  #define SMART_THING_ACTIONS_SCHEDULE_DELAY 200 //ms
+#endif
+
+#ifndef SMART_THING_OTA_CHECK_DELAY
+  #define SMART_THING_OTA_CHECK_DELAY 300 //ms
 #endif
 
 #ifndef WIPE_PIN
@@ -187,6 +192,13 @@ void SmartThingClass::loop() {
     if (_lastActionsCheck == 0 || current - _lastActionsCheck > SMART_THING_ACTIONS_SCHEDULE_DELAY) {
       ActionsManager.scheduled();
       _lastActionsCheck = current;
+    }
+  #endif
+
+  #if ENABLE_OTA
+    if ((_lastOtaCheck == 0 || current - _lastOtaCheck > SMART_THING_OTA_CHECK_DELAY) && wifiConnected()) {
+      ArduinoOTA.handle();
+      _lastOtaCheck = current;
     }
   #endif
 }
@@ -365,6 +377,12 @@ void SmartThingClass::onWifiConnected() {
   #endif
 
   RestController.begin();
+  st_log_info(_SMART_THING_TAG, "Web service started");
+
+  #if ENABLE_OTA
+    ArduinoOTA.begin();
+    st_log_debug(_SMART_THING_TAG, "Ota service started");
+  #endif
 
   st_log_info(_SMART_THING_TAG, "WiFi connected, local ip %s, hostname %s", _ip, _name);
 }
@@ -390,6 +408,12 @@ void SmartThingClass::onWifiDisconnected() {
   #endif
 
   RestController.end();
+  st_log_info(_SMART_THING_TAG, "Web service stopped");
+
+  #if ENABLE_OTA
+    ArduinoOTA.end();
+    st_log_debug(_SMART_THING_TAG, "Ota service stoped");
+  #endif
 
   _disconnectHandled = true;
 }

@@ -61,13 +61,11 @@ void RestControllerClass::begin() {
   setupHandler();
   _server.begin();
   _setupFinished = true;
-  st_log_info(_WEB_SERVER_TAG, "Web service started");
 }
 
 void RestControllerClass::end() {
   _setupFinished = false;
   _server.end();
-  st_log_info(_WEB_SERVER_TAG, "Web service stopped");
 }
 
 void RestControllerClass::setupHandler() {

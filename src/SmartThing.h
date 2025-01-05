@@ -52,6 +52,10 @@ class SmartThingClass {
     unsigned long _lastActionsCheck = 0;
   #endif
 
+  #if ENABLE_OTA
+    unsigned long _lastOtaCheck = 0;
+  #endif
+
   char * _ip = nullptr;
   char * _name = nullptr;
   char * _type = nullptr;

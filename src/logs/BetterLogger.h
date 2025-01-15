@@ -12,6 +12,7 @@
 #endif
 
 #if ENABLE_LOGGER && (LOGGING_LEVEL == LOGGING_LEVEL_DEBUG)
+// log debug message
 #define st_log_debug(tag, format, ...) LOGGER.debug(tag, format, ##__VA_ARGS__)
 #define st_log_request(tag, method, uri, body) LOGGER.logRequest(tag, method, uri, body)
 #else
@@ -20,18 +21,21 @@
 #endif
 
 #if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_INFO)
+// log info message
 #define st_log_info(tag, format, ...) LOGGER.info(tag, format, ##__VA_ARGS__)
 #else
 #define st_log_info(tag, format, ...)
 #endif
 
 #if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_WARN)
+// log warning message
 #define st_log_warning(tag, format, ...) LOGGER.warning(tag, format, ##__VA_ARGS__)
 #else
 #define st_log_warning(tag, format, ...)
 #endif
 
 #if ENABLE_LOGGER && (LOGGING_LEVEL <= LOGGING_LEVEL_ERROR)
+// log error message
 #define st_log_error(tag, format, ...) LOGGER.error(tag, format, ##__VA_ARGS__)
 #else
 #define st_log_error(tag, format, ...)

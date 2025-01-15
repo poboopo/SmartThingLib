@@ -29,10 +29,26 @@ class SmartThingClass {
   SmartThingClass();
   ~SmartThingClass();
 
+  /*
+    Library initialization
+    @param type device type
+    @returns true on success
+  */
   bool init(const char * type);
+  /*
+    Library initialization
+    @param type device type
+    @param name device name
+    @returns true on success
+  */
   bool init(const char * type, const char * name);
 
-  void loop();
+  #ifdef ARDUINO_ARCH_ESP8266
+    /*
+      Main loop method
+    */
+    void loop();
+  #endif
 
   void updateDeviceName(String name);
   const char * getType();
@@ -66,6 +82,7 @@ class SmartThingClass {
   
   #ifdef ARDUINO_ARCH_ESP32
     TaskHandle_t _loopTaskHandle = NULL;
+    void loop();
     void asyncLoop();
   #endif
 

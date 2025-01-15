@@ -126,7 +126,7 @@ void RestControllerClass::setupHandler() {
     #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS || ENABLE_HOOKS
       JsonObject counts = doc["counts"].to<JsonObject>();
       #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
-        counts["sensors"] = SensorsManager.getSensorsCount();
+        counts["sensors"] = SensorsManager.count();
       #endif
       #if ENABLE_HOOKS
         counts["hooks"] = HooksManager.getTotalHooksCount();

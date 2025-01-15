@@ -59,14 +59,35 @@ class ConfigManagerClass {
     ConfigManagerClass();
     ~ConfigManagerClass();
 
-    void loadConfigValues();
+    /*
+      Add config entry
+      @param name unique system name
+      @returns true if added
+    */
     bool addConfigEntry(const char* name);
+    /*
+      Get config value
+      @param name system name
+      @returns config value
+    */
     const char * getConfigValue(const char * name);
+    /*
+      Set config value
+      @param name system name
+      @param value new config value
+      @returns true if value updated
+    */
     bool setConfigValue(const char * name, const char * value);
+    /*
+      Add config update handler
+      @param handler lambda with handler logic
+    */
+    void onConfigUpdate(ConfigUpdatedHook handler);
+
+    void loadConfigValues();
     bool setConfig(JsonDocument conf);
     bool dropConfig();
     String getConfigJson();
-    void onConfigUpdate(ConfigUpdatedHook hook);
   private:
     std::list<ConfigEntry*> _config;
     ConfigUpdatedHook _configUpdatedHook = [](){};

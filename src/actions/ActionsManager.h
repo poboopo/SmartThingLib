@@ -84,27 +84,41 @@ class Action {
     #endif
 };
 
+// Manager for device actions configuration
 class ActionsManagerClass {
  public:
-  size_t count();
-
+  /*
+    Add action
+    @param name system action name. This name will be used to call action over api.
+    @param caption action caption for UI.
+    @param handler lambda with action's logic.
+    @returns true if action added.
+  */
   bool add(const char* name, const char* caption, ActionHandler handler);
+
+  /*
+    Remove action
+    @param name system action name.
+    @returns true if action removed.
+  */
   bool remove(const char* name);
 
+  /*
+    Call previously added action.
+    @param name system action name.
+    @returns result code ActionResultCode (1 - success, -1 or 0 - failure)
+  */
   ActionResultCode call(const char* name);
 
-  String getActionsInfoForHook();
-
   #if ENABLE_ACTIONS_SCHEDULER
-  void loadFromSettings();
-
-  bool updateActionSchedule(const char * name, unsigned long newDelay);
-
-  void scheduled();
+    void loadFromSettings();
+    bool updateActionSchedule(const char * name, unsigned long newDelay);
+    void scheduled();
   #endif
 
+  String getActionsInfoForHook();
   String toJson();
-
+  size_t count();
  private:
   std::list<Action*> _actions;
 

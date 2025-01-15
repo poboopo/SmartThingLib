@@ -52,14 +52,14 @@ bool ActionsManagerClass::remove(const char* name) {
   return true;
 }
 
-ActionResult ActionsManagerClass::call(const char* name) {
+ActionResultCode ActionsManagerClass::call(const char* name) {
   auto action = findAction(name);
   if (action == _actions.end()) {
     st_log_error(_ACTIONS_TAG, "Can't find action with name %s", name);
-    return ActionResult(false, "Failed to find action");
+    return ACTION_RESULT_NOT_FOUND;
   }
-  st_log_debug(_ACTIONS_TAG, "Calling action name=%s", name);
-  return (*action)->call();
+  st_log_info(_ACTIONS_TAG, "Calling action name=%s", name);
+  return (*action)->call() ? ACTION_RESULT_SUCCESS : ACTION_RESULT_ERROR;
 };
 
 #if ENABLE_ACTIONS_SCHEDULER

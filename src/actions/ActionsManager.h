@@ -8,17 +8,13 @@
 #include <functional>
 #include <list>
 
-// todo copy message and free on deestroy
-struct ActionResult {
-  ActionResult(){};
-  ActionResult(bool successful) : successful(successful){};
-  ActionResult(bool successful, const char* message)
-      : successful(successful), message(message){};
-  bool successful = false;
-  const char* message = nullptr;
+enum ActionResultCode {
+  ACTION_RESULT_NOT_FOUND = -1,
+  ACTION_RESULT_ERROR = 0,
+  ACTION_RESULT_SUCCESS = 1,
 };
 
-typedef std::function<ActionResult(void)> ActionHandler;
+typedef std::function<bool(void)> ActionHandler;
 
 class Action {
   public:
@@ -55,7 +51,7 @@ class Action {
       return _caption;
     }
 
-    ActionResult call() const {
+    bool call() const {
       return _handler();
     }
 
@@ -95,7 +91,7 @@ class ActionsManagerClass {
   bool add(const char* name, const char* caption, ActionHandler handler);
   bool remove(const char* name);
 
-  ActionResult call(const char* name);
+  ActionResultCode call(const char* name);
 
   String getActionsInfoForHook();
 

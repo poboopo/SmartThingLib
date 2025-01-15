@@ -66,7 +66,6 @@ class SmartThingClass {
   
   #ifdef ARDUINO_ARCH_ESP32
     TaskHandle_t _loopTaskHandle = NULL;
-    void setDnsName();
     void asyncLoop();
   #endif
 

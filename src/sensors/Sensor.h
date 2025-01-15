@@ -8,7 +8,7 @@
 
 // todo move to sensor manager
 #ifndef NUMBER_SENSOR_DATA_TYPE
-  #define NUMBER_SENSOR_DATA_TYPE int
+  #define NUMBER_SENSOR_DATA_TYPE long
 #endif
 #define TEXT_SENSOR_DATA_TYPE String
 
@@ -37,7 +37,7 @@ class Sensor {
       return _valueProvider();
     }
   private:
-    char* _name; // todo copy string
+    char* _name;
     ValueProvider _valueProvider;
 };
 

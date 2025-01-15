@@ -2,9 +2,6 @@
 #include "settings/SettingsRepository.h"
 
 #include <ArduinoOTA.h>
-#ifdef ARDUINO_ARCH_ESP32
-  #include <mdns.h>
-#endif
 
 #ifndef SMART_THING_LOOP_TASK_DELAY
   #define SMART_THING_LOOP_TASK_DELAY 100  // ms
@@ -362,14 +359,6 @@ void SmartThingClass::onWifiConnected() {
     } else {
       st_log_error(_SMART_THING_TAG, "Failed to create beacon udp");
     }
-    esp_err_t errInit = mdns_init();
-    if (errInit != ESP_OK) {
-      st_log_error(_SMART_THING_TAG, "Failed to init mdns! (code=%s)", esp_err_to_name(errInit));
-    } else {
-      // todo smh mdns not working after first hostname set
-      mdns_hostname_set("");
-      setDnsName();
-    }
   #endif
 
   #ifdef ARDUINO_ARCH_ESP8266
@@ -402,10 +391,7 @@ void SmartThingClass::onWifiDisconnected() {
     _ip = nullptr;
   }
 
-  #ifdef ARDUINO_ARCH_ESP32
-    _beaconUdp.stop();
-    mdns_free();
-  #endif
+  _beaconUdp.stop();
 
   RestController.end();
   st_log_info(_SMART_THING_TAG, "Web service stopped");
@@ -464,10 +450,6 @@ void SmartThingClass::updateDeviceName(String name) {
   #if ENABLE_LOGGER
   LOGGER.updateName(_name);
   #endif
-
-  #ifdef ARDUINO_ARCH_ESP32
-  setDnsName();
-  #endif
   
   st_log_info(_SMART_THING_TAG, "New device name %s", name.c_str());
 }
@@ -496,20 +478,6 @@ void SmartThingClass::updateBroadCastMessage() {
   _broadcastMessage = (char *) malloc(size);
   sprintf(_broadcastMessage, beaconTemplate, _ip, _type, _name, SMART_THING_VERSION, version.c_str());
 }
-
-#ifdef ARDUINO_ARCH_ESP32
-  void SmartThingClass::setDnsName() {
-    // todo add hostname exists check
-    char hostname[strlen(_name) + 5];
-    sprintf(hostname, "%s-st", _name);
-    esp_err_t err = mdns_hostname_set(hostname);
-    if (err != ESP_OK) {
-      st_log_error(_SMART_THING_TAG, "Failed to set mdns hostname! (code=%s)", esp_err_to_name(err));
-    } else {
-      st_log_info(_SMART_THING_TAG, "New mdns hostname: %s", hostname);
-    }
-  }
-#endif
 
 const char * SmartThingClass::getType() { 
   return _type; 

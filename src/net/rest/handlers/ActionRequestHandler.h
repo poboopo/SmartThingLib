@@ -41,15 +41,15 @@ class ActionRequestHandler : public RequestHandler {
           return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Parameter action is missing!"));
         }
 
-        ActionResult result = ActionsManager.call(action.c_str());
-        if (result.successful) {
-          return request->beginResponse(200);
-        } else {
-          if (result.message != nullptr) {
-            return request->beginResponse(500, CONTENT_TYPE_JSON, buildErrorJson(result.message));
-          } else {
-            return request->beginResponse(500);
-          }
+        ActionResultCode result = ActionsManager.call(action.c_str());
+        switch (result) {
+          case ACTION_RESULT_SUCCESS:
+            return request->beginResponse(200);
+          case ACTION_RESULT_ERROR:
+            return request->beginResponse(500, CONTENT_TYPE_JSON, buildErrorJson("Failed to execute action"));
+          case ACTION_RESULT_NOT_FOUND:
+          default:
+            return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Failed to find action with given name"));
         }
       }
     }

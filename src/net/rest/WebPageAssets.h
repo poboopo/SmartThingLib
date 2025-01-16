@@ -4,9 +4,9 @@
 
 /*
   Build version: 0.0.0
-  Build date: 2025-01-16T15:21:37.763Z
+  Build date: 2025-01-16T16:24:49.284Z
   Build branch: master
-  Build commit: 29547542ebab0f595d1eea00510160cf2756e115
+  Build commit: 64163d0cc533eb6e8f937e22c617610ac4cbbe71
 */
 
 #include "Features.h"
@@ -62,7 +62,7 @@
       <label>SSID</label>
       <input id="ssid" type="text"/>
       <label>Password</label>
-      <input id="password" type="text"/>
+      <input id="password" type="password"/>
       <label>Mode</label>
       <select id="mode"></select>
     </div>

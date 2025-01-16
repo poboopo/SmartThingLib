@@ -74,12 +74,6 @@ void SmartThingClass::preInit() {
     #endif
   #endif
 
-  #if ENABLE_TEXT_SENSORS
-    SensorsManager.addSensor("wifi", [this]() {
-      return wifiConnected() ? "connected" : "disconnected";
-    });
-  #endif
-
   #if ENABLE_CONFIG
     #if ENABLE_HOOKS
       // For notifications

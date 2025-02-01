@@ -17,7 +17,7 @@ std::list<ConfigEntry*>::iterator ConfigManagerClass::findConfigEntry(const char
   });
 }
 
-bool ConfigManagerClass::addConfigEntry(const char* name) {
+bool ConfigManagerClass::add(const char* name) {
   if (name == nullptr) {
     return false;
   }
@@ -63,7 +63,7 @@ String ConfigManagerClass::getConfigJson() {
 }
 
 
-const char * ConfigManagerClass::getConfigValue(const char * name) {
+const char * ConfigManagerClass::get(const char * name) {
   if (name == nullptr || strlen(name) == 0) {
     return "";
   }
@@ -93,7 +93,7 @@ bool ConfigManagerClass::setConfigValueWithoutSave(const char * name, const char
   return true;
 }
 
-bool ConfigManagerClass::setConfigValue(const char * name, const char * value) {
+bool ConfigManagerClass::set(const char * name, const char * value) {
   if (setConfigValueWithoutSave(name, value)) {
     return saveConfig();
   }
@@ -166,7 +166,7 @@ bool ConfigManagerClass::saveConfig() {
     }
   }
 
-  if (SettingsRepository.setConfig(data) >= 0) {
+  if (SettingsRepository.setConfig(data)) {
     res = true;
     st_log_debug(_CONFIG_MANAGER_TAG, "Configuration updated");
     callConfigUpdateHook();
@@ -220,7 +220,7 @@ void ConfigManagerClass::onConfigUpdate(ConfigUpdatedHook hook) {
 void ConfigManagerClass::callConfigUpdateHook() {
   st_log_debug(_CONFIG_MANAGER_TAG, "Config updated, calling hooks");
   #if ENABLE_LOGGER
-    LOGGER.updateAddress(ConfigManager.getConfigValue(LOGGER_ADDRESS_CONFIG));
+    LOGGER.updateAddress(ConfigManager.get(LOGGER_ADDRESS_CONFIG));
   #endif
   _configUpdatedHook();
 }

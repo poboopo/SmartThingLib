@@ -39,8 +39,8 @@ class SensorsManagerClass {
         @param valueProvider lambda with logic for calculating sensor value
         @return true if sensor added
       */
-      bool addSensor(const char * name, typename Sensor<NUMBER_SENSOR_DATA_TYPE>::ValueProvider valueProvider) {
-        return addSensor<NUMBER_SENSOR_DATA_TYPE>(name, valueProvider);
+      bool add(const char * name, typename Sensor<NUMBER_SENSOR_DATA_TYPE>::ValueProvider valueProvider) {
+        return add<NUMBER_SENSOR_DATA_TYPE>(name, valueProvider);
       }
 
       /*
@@ -50,14 +50,14 @@ class SensorsManagerClass {
         @param mode pin mode
         @returns true if sensor added
       */
-      bool addDigitalSensor(const char* name, uint8_t pin, uint8_t mode = INPUT_PULLUP);
+      bool addDigital(const char* name, uint8_t pin, uint8_t mode = INPUT_PULLUP);
       /*
         Add analog sensor (uses analogRead)
         @param name unique sensor system name
         @param pin analog sensor pin
         @returns true if sensor added
       */
-      bool addAnalogSensor(const char* name, uint8_t pin);
+      bool addAnalog(const char* name, uint8_t pin);
     #endif
     #if ENABLE_TEXT_SENSORS
       /*
@@ -66,8 +66,8 @@ class SensorsManagerClass {
         @param valueProvider lambda with logic for calculating sensor value
         @return true if sensor added
       */
-      bool addSensor(const char * name, typename Sensor<TEXT_SENSOR_DATA_TYPE>::ValueProvider valueProvider) {
-        return addSensor<TEXT_SENSOR_DATA_TYPE>(name, valueProvider);
+      bool add(const char * name, typename Sensor<TEXT_SENSOR_DATA_TYPE>::ValueProvider valueProvider) {
+        return add<TEXT_SENSOR_DATA_TYPE>(name, valueProvider);
       }
     #endif
 
@@ -106,7 +106,7 @@ class SensorsManagerClass {
     #endif
 
     template<typename T>
-    bool addSensor(
+    bool add(
       const char* name,
       typename Sensor<T>::ValueProvider valueProvider
     )  {

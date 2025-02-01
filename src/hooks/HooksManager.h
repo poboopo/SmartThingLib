@@ -17,13 +17,13 @@ class HooksManagerClass {
  public:
   void loadFromSettings();
 
-  int addHook(const char * sensorName, const char * data);
+  int add(const char * sensorName, const char * data);
 
-  bool deleteHook(const char* name, int id);
-  bool updateHook(JsonDocument doc);
+  bool remove(const char* name, int id);
+  bool update(JsonDocument doc);
 
   void check();
-  boolean callHook(const char * name, int id, String value);
+  boolean call(const char * name, int id, String value);
 
   JsonDocument getSensorHooksJson(const char* name);
 
@@ -46,10 +46,10 @@ class HooksManagerClass {
   bool loadHooks(const Sensor<T> * sensor, const char * data, int * address, int length);
 
   template<typename T>
-  int addHook(const Sensor<T> * sensor, const char * data);
+  int add(const Sensor<T> * sensor, const char * data);
 
   template <typename T>
-  int addHook(const Sensor<T>* obj, Hook<T>* hook);
+  int add(const Sensor<T>* obj, Hook<T>* hook);
 
   template <typename T>
   typename std::list<Watcher<T>*>::iterator getWatcherBySensorName(const char* name);
@@ -61,10 +61,10 @@ class HooksManagerClass {
   JsonDocument getSensorHooksJson(const char* name);
 
   template <typename T>
-  bool deleteHook(const char* name, int id);
+  bool remove(const char* name, int id);
 
   template <typename T>
-  bool updateHook(const char* name, JsonDocument &hookObject);
+  bool update(const char* name, JsonDocument &hookObject);
 
   template <typename T>
   void checkWatchers();

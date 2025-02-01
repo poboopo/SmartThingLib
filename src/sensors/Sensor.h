@@ -8,7 +8,7 @@
 
 // todo move to sensor manager
 #ifndef NUMBER_SENSOR_DATA_TYPE
-  #define NUMBER_SENSOR_DATA_TYPE long
+  #define NUMBER_SENSOR_DATA_TYPE int
 #endif
 #define TEXT_SENSOR_DATA_TYPE String
 

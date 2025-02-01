@@ -46,7 +46,7 @@ class ConfigRequestHandler : public RequestHandler {
           return request->beginResponse(400, "content/json", buildErrorJson("Config name is missing"));
         }
 
-        if (ConfigManager.setConfigValue(name.c_str(), nullptr)) {
+        if (ConfigManager.set(name.c_str(), nullptr)) {
           return request->beginResponse(200);
         } else {
           return request->beginResponse(404, "content/json", buildErrorJson("No such config entry"));

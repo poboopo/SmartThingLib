@@ -49,7 +49,7 @@ class HooksRequestHandler : public RequestHandler {
                         buildErrorJson("Type, sensor or id args are missing!"));
           }
           st_log_info(_HOOKS_RQ_TAG, "Making test hook call for sensor %s, id = %s (value = %s)", sensor.c_str(), id.c_str(), value.isEmpty() ? "none" : value.c_str());
-          if (HooksManager.callHook(sensor.c_str(), id.toInt(), value)) {
+          if (HooksManager.call(sensor.c_str(), id.toInt(), value)) {
             return request->beginResponse(200);
           } else {
             return request->beginResponse(500);
@@ -90,7 +90,7 @@ class HooksRequestHandler : public RequestHandler {
             return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Parameters sensor type or sensor are missing!"));
           }
 
-          int id = HooksManager.addHook(sensor, doc["hook"].as<String>().c_str());
+          int id = HooksManager.add(sensor, doc["hook"].as<String>().c_str());
 
           if (id >= 0) {
             HooksManager.saveInSettings();
@@ -109,7 +109,7 @@ class HooksRequestHandler : public RequestHandler {
 
           JsonDocument doc;
           deserializeJson(doc, _body);
-          if (HooksManager.updateHook(doc)) {
+          if (HooksManager.update(doc)) {
             HooksManager.saveInSettings();
             return request->beginResponse(200);
           } else {
@@ -127,7 +127,7 @@ class HooksRequestHandler : public RequestHandler {
             return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Sensor sensor or id args are missing!"));
           }
 
-          if (HooksManager.deleteHook(sensor.c_str(), id.toInt())) {
+          if (HooksManager.remove(sensor.c_str(), id.toInt())) {
             HooksManager.saveInSettings();
             return request->beginResponse(200);
           } else {

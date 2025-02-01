@@ -173,7 +173,7 @@ int SettingsRepositoryClass::writeData(uint8_t index, const char * data) {
 
 bool SettingsRepositoryClass::setData(uint8_t index, const char * data, const char * name, size_t expectedLength) {
   bool res = false;
-  if (writeData(index, data) >= expectedLength) {
+  if (writeData(index, data) >= (int) expectedLength) {
     st_log_debug(_SETTINGS_MANAGER_TAG, "Data [%s] updated", name);
     res = true;
   } else {

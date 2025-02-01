@@ -25,6 +25,15 @@
   #define ENABLE_ACTIONS 1
 #endif
 
+#if ENABLE_ACTIONS
+  // Enable action call scheduler
+  #ifndef ENABLE_ACTIONS_SCHEDULER
+    #define ENABLE_ACTIONS_SCHEDULER 1
+  #endif
+#else
+  #define ENABLE_ACTIONS_SCHEDULER 0
+#endif
+
 // Enable number sensors
 #ifndef ENABLE_NUMBER_SENSORS
   #define ENABLE_NUMBER_SENSORS 1
@@ -42,15 +51,6 @@
   #endif
 #else
   #define ENABLE_HOOKS 0
-#endif
-
-#if ENABLE_ACTIONS
-  // Enable action call scheduler
-  #ifndef ENABLE_ACTIONS_SCHEDULER
-    #define ENABLE_ACTIONS_SCHEDULER 1
-  #endif
-#else
-  #define ENABLE_ACTIONS_SCHEDULER 0
 #endif
 
 // Enable configuration

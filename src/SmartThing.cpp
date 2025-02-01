@@ -66,9 +66,9 @@ bool SmartThingClass::wifiConnected() {
 
 void SmartThingClass::preInit() {
   #if ENABLE_LOGGER && LOGGER_TYPE != SERIAL_LOGGER
-    ConfigManager.addConfigEntry(LOGGER_ADDRESS_CONFIG);
+    ConfigManager.add(LOGGER_ADDRESS_CONFIG);
     #if ENABLE_TEXT_SENSORS
-      SensorsManager.addSensor("logger", []() {
+      SensorsManager.add("logger", []() {
         return LOGGER.isConnected() ? "connected" : "disconnected";
       });
     #endif
@@ -77,7 +77,7 @@ void SmartThingClass::preInit() {
   #if ENABLE_CONFIG
     #if ENABLE_HOOKS
       // For notifications
-      ConfigManager.addConfigEntry(GATEWAY_CONFIG);
+      ConfigManager.add(GATEWAY_CONFIG);
     #endif
 
     ConfigManager.loadConfigValues();
@@ -328,7 +328,7 @@ void SmartThingClass::onWifiConnected() {
   _disconnectHandled = false;
   
   #if ENABLE_CONFIG
-    LOGGER.connect(ConfigManager.getConfigValue(LOGGER_ADDRESS_CONFIG));
+    LOGGER.connect(ConfigManager.get(LOGGER_ADDRESS_CONFIG));
   #endif
 
   String ip;

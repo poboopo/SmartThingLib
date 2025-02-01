@@ -44,7 +44,7 @@ inline String replaceValues(const char * input, String &value) {
         } 
         #if ENABLE_CONFIG
           else {
-            result += ConfigManager.getConfigValue(key.c_str());
+            result += ConfigManager.get(key.c_str());
           }
         #endif
         opened = false;

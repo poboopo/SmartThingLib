@@ -65,7 +65,7 @@ class Watcher {
     return *it;
   }
    
-  bool addHook(Hook<T> *hook) {
+  bool add(Hook<T> *hook) {
     if (hook == nullptr) {
       st_log_error(_WATCHER_TAG, "Hook is missing!");
       return false;

@@ -1,3 +1,7 @@
+#include "Features.h"
+
+#if ENABLE_ENABLE_TEXT_SENSORS || ENABLE_NUMBER_SENSORS
+
 #include "sensors/SensorsManager.h"
 #include "logs/BetterLogger.h"
 
@@ -16,9 +20,9 @@ std::list<Sensor<NUMBER_SENSOR_DATA_TYPE>*> * SensorsManagerClass::getList() {
   return &_sensorsList;
 }
 
-bool SensorsManagerClass::addDigitalSensor(const char* name, uint8_t pin, uint8_t mode) {
+bool SensorsManagerClass::addDigital(const char* name, uint8_t pin, uint8_t mode) {
   pinMode(pin, mode);
-  return addSensor<NUMBER_SENSOR_DATA_TYPE>(name, [pin]() {
+  return add<NUMBER_SENSOR_DATA_TYPE>(name, [pin]() {
     if (pin > 0) {
       return digitalRead(pin);
     }
@@ -26,8 +30,8 @@ bool SensorsManagerClass::addDigitalSensor(const char* name, uint8_t pin, uint8_
   });
 }
 
-bool SensorsManagerClass::addAnalogSensor(const char* name, uint8_t pin) {
-  return addSensor<NUMBER_SENSOR_DATA_TYPE>(name, [pin]() {
+bool SensorsManagerClass::addAnalog(const char* name, uint8_t pin) {
+  return add<NUMBER_SENSOR_DATA_TYPE>(name, [pin]() {
     if (pin > 0) {
       return (int)analogRead(pin);
     }
@@ -72,3 +76,5 @@ JsonDocument SensorsManagerClass::getSensorsInfo() {
 
   return doc;
 }
+
+#endif

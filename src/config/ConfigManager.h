@@ -64,20 +64,20 @@ class ConfigManagerClass {
       @param name unique system name
       @returns true if added
     */
-    bool addConfigEntry(const char* name);
+    bool add(const char* name);
     /*
       Get config value
       @param name system name
       @returns config value
     */
-    const char * getConfigValue(const char * name);
+    const char * get(const char * name);
     /*
       Set config value
       @param name system name
       @param value new config value
       @returns true if value updated
     */
-    bool setConfigValue(const char * name, const char * value);
+    bool set(const char * name, const char * value);
     /*
       Add config update handler
       @param handler lambda with handler logic

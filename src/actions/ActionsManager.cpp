@@ -136,8 +136,6 @@ String ActionsManagerClass::getActionsInfoForHook() {
 String ActionsManagerClass::toJson() {
   unsigned long currentMillis = millis();
   String result = "[";
-  int lastIndex = _actions.size() - 1;
-
 
   for (auto it = _actions.begin(); it != _actions.end(); ++it) {
     Action * action = *it;
@@ -148,7 +146,7 @@ String ActionsManagerClass::toJson() {
 
     #if ENABLE_ACTIONS_SCHEDULER
       unsigned long lastCall = action->callDelay() > 0 ? currentMillis - action->lastCall() : 0;
-      size += snprintf(NULL, 0, "%d%d", action->callDelay(), lastCall);
+      size += snprintf(NULL, 0, "%lu%lu", action->callDelay(), lastCall);
     #endif
 
     char buff[size];

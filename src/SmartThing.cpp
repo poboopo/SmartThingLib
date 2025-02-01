@@ -458,7 +458,7 @@ void SmartThingClass::updateBroadCastMessage() {
   }
   String version = "";
   #ifdef __VERSION
-    version = String(__VERSION);
+    version = __VERSION;
   #endif
 
   size_t size =

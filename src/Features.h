@@ -79,3 +79,11 @@
 #ifndef LOGGING_LEVEL
   #define LOGGING_LEVEL LOGGING_LEVEL_INFO
 #endif
+
+#ifndef ENABLE_ASYNC_LOOP
+  #define ENABLE_ASYNC_LOOP 1
+#endif
+
+#ifdef ARDUINO_ARCH_ESP8266
+  #define ENABLE_ASYNC_LOOP 0
+#endif

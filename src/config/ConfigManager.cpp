@@ -77,6 +77,23 @@ const char * ConfigManagerClass::get(const char * name) {
   return (*it)->value();
 }
 
+
+int ConfigManagerClass::getInt(const char * name) {
+  const char * value = get("brightness");
+  if (value == nullptr || strlen(value) == 0) {
+    return 0;
+  }
+  return atoi(value);
+}
+
+bool ConfigManagerClass::getBool(const char * name) {
+  const char * value = get("brightness");
+  if (value == nullptr || strlen(value) == 0) {
+    return false;
+  }
+  return strcmp(value, "true") || strcmp(value, "1");
+}
+
 bool ConfigManagerClass::setConfigValueWithoutSave(const char * name, const char * value) {
   if (name == nullptr) {
     return false;

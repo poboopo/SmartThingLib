@@ -4,7 +4,7 @@
 #include <ArduinoOTA.h>
 
 #ifndef SMART_THING_LOOP_TASK_DELAY
-  #define SMART_THING_LOOP_TASK_DELAY 100  // ms
+  #define SMART_THING_LOOP_TASK_DELAY 50  // ms
 #endif
 
 #ifndef SMART_THING_HOOKS_CHECK_DELAY
@@ -147,11 +147,11 @@ bool SmartThingClass::init(const char * type) {
   delay(50);
   handleWipeSettings();
 
-  #ifdef ARDUINO_ARCH_ESP32
-  st_log_debug(_SMART_THING_TAG, "Creating loop task");
-  xTaskCreate([](void* o) { static_cast<SmartThingClass*>(o)->asyncLoop(); },
-              _SMART_THING_TAG, 50000, this, 1, &_loopTaskHandle);
-  st_log_debug(_SMART_THING_TAG, "Loop task created");
+  #if ENABLE_ASYNC_LOOP
+    st_log_debug(_SMART_THING_TAG, "Creating loop task");
+    xTaskCreate([](void* o) { static_cast<SmartThingClass*>(o)->asyncLoop(); },
+                _SMART_THING_TAG, 50000, this, 1, &_loopTaskHandle);
+    st_log_debug(_SMART_THING_TAG, "Loop task created");
   #endif
 
   setupWiFi();
@@ -194,14 +194,14 @@ void SmartThingClass::loop() {
   #endif
 }
 
-#ifdef ARDUINO_ARCH_ESP32
-void SmartThingClass::asyncLoop() {
-  const TickType_t xDelay = SMART_THING_LOOP_TASK_DELAY / portTICK_PERIOD_MS;
-  while (true) {
-    loop();
-    vTaskDelay(xDelay);
+#if ENABLE_ASYNC_LOOP
+  void SmartThingClass::asyncLoop() {
+    const TickType_t xDelay = SMART_THING_LOOP_TASK_DELAY / portTICK_PERIOD_MS;
+    while (true) {
+      loop();
+      vTaskDelay(xDelay);
+    }
   }
-}
 #endif
 
 void SmartThingClass::sendBeacon() {

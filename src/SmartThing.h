@@ -43,7 +43,7 @@ class SmartThingClass {
   */
   bool init(const char * type, const char * name);
 
-  #ifdef ARDUINO_ARCH_ESP8266
+  #if !ENABLE_ASYNC_LOOP
     /*
       Main loop method
     */
@@ -80,7 +80,7 @@ class SmartThingClass {
 
   bool _disconnectHandled = false;
   
-  #ifdef ARDUINO_ARCH_ESP32
+  #if ENABLE_ASYNC_LOOP
     TaskHandle_t _loopTaskHandle = NULL;
     void loop();
     void asyncLoop();

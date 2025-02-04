@@ -71,8 +71,8 @@ class ConfigManagerClass {
       @returns config value
     */
     const char * get(const char * name);
-    int getInt(const char * name);
-    bool getBool(const char * name);
+    int getInt(const char * name, int defaultValue = 0);
+    bool getBool(const char * name, bool defaultValue = false);
     /*
       Set config value
       @param name system name

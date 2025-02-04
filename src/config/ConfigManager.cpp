@@ -78,18 +78,18 @@ const char * ConfigManagerClass::get(const char * name) {
 }
 
 
-int ConfigManagerClass::getInt(const char * name) {
-  const char * value = get("brightness");
+int ConfigManagerClass::getInt(const char * name, int defaultValue) {
+  const char * value = get(name);
   if (value == nullptr || strlen(value) == 0) {
-    return 0;
+    return defaultValue;
   }
   return atoi(value);
 }
 
-bool ConfigManagerClass::getBool(const char * name) {
-  const char * value = get("brightness");
+bool ConfigManagerClass::getBool(const char * name, bool defaultValue) {
+  const char * value = get(name);
   if (value == nullptr || strlen(value) == 0) {
-    return false;
+    return defaultValue;
   }
   return strcmp(value, "true") || strcmp(value, "1");
 }

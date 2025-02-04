@@ -75,7 +75,7 @@ void RestControllerClass::setupHandler() {
   _server.addHandler(new SettingsRequestHandler());
   _server.addHandler(new DangerRequestHandler());
 
-  #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
+  #if defined(ENABLE_NUMBER_SENSORS) && ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
   _server.addHandler(new SensorsRequestHandler());
   #endif
   #if ENABLE_ACTIONS
@@ -123,9 +123,9 @@ void RestControllerClass::setupHandler() {
       obj["maxAlloc"] = ESP.getMaxAllocHeap();
     #endif
 
-    #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS || ENABLE_HOOKS
+    #if defined(ENABLE_NUMBER_SENSORS) && ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS || ENABLE_HOOKS
       JsonObject counts = doc["counts"].to<JsonObject>();
-      #if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
+      #if defined(ENABLE_NUMBER_SENSORS) && ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
         counts["sensors"] = SensorsManager.count();
       #endif
       #if ENABLE_HOOKS

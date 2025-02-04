@@ -1,6 +1,6 @@
 #include "Features.h"
 
-#if ENABLE_ENABLE_TEXT_SENSORS || ENABLE_NUMBER_SENSORS
+#if defined(ENABLE_NUMBER_SENSORS) && ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
 
 #include "sensors/SensorsManager.h"
 #include "logs/BetterLogger.h"

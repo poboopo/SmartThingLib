@@ -9,7 +9,7 @@
 #include "sensors/Sensor.h"
 #include "logs/BetterLogger.h"
 
-#if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
+#if defined(ENABLE_NUMBER_SENSORS) && ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
 
 const char * const _SENSORS_MANAGER_TAG = "sensors-manager";
 

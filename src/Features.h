@@ -44,7 +44,7 @@
   #define ENABLE_TEXT_SENSORS 1
 #endif
 
-#if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
+#if defined(ENABLE_NUMBER_SENSORS) && ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
   // Enable hooks for sensors
   #ifndef ENABLE_HOOKS
     #define ENABLE_HOOKS 1

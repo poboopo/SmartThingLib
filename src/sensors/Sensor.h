@@ -37,7 +37,7 @@ class Sensor {
       return _valueProvider();
     }
   private:
-    char* _name; // todo copy string
+    char* _name;
     ValueProvider _valueProvider;
 };
 

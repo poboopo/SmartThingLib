@@ -2,7 +2,7 @@
 #define STRING_UTILS_H
 
 #include <Arduino.h>
-#include "settings/SettingsRepository.h"
+#include "config/ConfigManager.h"
 #include "logs/BetterLogger.h"
 
 #ifdef ARDUINO_ARCH_ESP32
@@ -12,6 +12,17 @@
 #define VALUE_DYNAMIC_PARAM "{v}"
 #endif
 
+inline bool trimUrl(String &url) {
+  url.trim();
+  if (url.startsWith("https://")) {
+    url.remove(0, 8);
+    return true;
+  }
+  if (url.startsWith("http://")) {
+    url.remove(0, 7);
+  }
+  return false;
+}
 // replaces keys in string with config values
 // not optimal impl, but it ok for now
 inline String replaceValues(const char * input, String &value) {
@@ -30,9 +41,12 @@ inline String replaceValues(const char * input, String &value) {
       if (input[i] == '}') {
         if (key.equals(VALUE_DYNAMIC_PARAM)) {
           result += value;
-        } else {
-          result += SettingsRepository.getConfigValue(key.c_str());
-        }
+        } 
+        #if ENABLE_CONFIG
+          else {
+            result += ConfigManager.get(key.c_str());
+          }
+        #endif
         opened = false;
         key.clear();
       } else {

@@ -7,11 +7,11 @@
 
 #include <ArduinoJson.h>
 #include <functional>
+#include <list>
 
 #include "hooks/impls/Hook.h"
 #include "sensors/Sensor.h"
 #include "logs/BetterLogger.h"
-#include "utils/List.h"
 
 const char * const _WATCHER_TAG = "watcher";
 
@@ -36,7 +36,8 @@ class Watcher {
     if (_hooks.size() == 0) {
       return;
     }
-    _hooks.forEach([&, this](Hook<T> *current) {
+    for (auto it = _hooks.begin(); it != _hooks.end(); ++it) {
+      Hook<T> *current = *it;
       if (current != nullptr && current->accept(value)) {
         st_log_debug(
           _WATCHER_TAG,
@@ -46,19 +47,25 @@ class Watcher {
         );
         current->call(value);
       }
-    });
+    }
   }
  
   Hook<T> *getHookById(int id) {
     if (id < 0) {
       return nullptr;
     }
-    return _hooks.findValue([&](Hook<T> *hook) {
+
+    auto it = std::find_if(_hooks.begin(), _hooks.end(), [id](const Hook<T> * hook) {
       return hook->getId() == id;
     });
+
+    if (it == _hooks.end()) {
+      return nullptr;
+    }
+    return *it;
   }
    
-  bool addHook(Hook<T> *hook) {
+  bool add(Hook<T> *hook) {
     if (hook == nullptr) {
       st_log_error(_WATCHER_TAG, "Hook is missing!");
       return false;
@@ -78,7 +85,7 @@ class Watcher {
       return false;
     }
 
-    _hooks.append(hook);
+    _hooks.push_back(hook);
     return true;
   }
    
@@ -87,23 +94,27 @@ class Watcher {
       st_log_error(_WATCHER_TAG, "Failed to remove hook - id negative!");
       return false;
     }
-    Hook<T> *hook = getHookById(id);
-    if (hook == nullptr) {
+
+    auto it = std::find_if(_hooks.begin(), _hooks.end(), [id](const Hook<T> * hook) {
+      return hook->getId() == id;
+    });
+    if (it == _hooks.end()) {
       st_log_error(_WATCHER_TAG,
                   "Failed to remove hook - can't find hook with id %d",
                   id);
       return false;
     }
+
+    Hook<T> *hook = *it;
     if (hook->isReadonly()) {
       st_log_error(_WATCHER_TAG, "This hook is readonly!");
       return false;
     }
-    if (_hooks.remove(hook)) {
-      delete hook;
-      return true;
-    }
-    st_log_error(_WATCHER_TAG, "Failed to remove hook from list");
-    return false;
+
+    delete hook;
+    _hooks.erase(it);
+    st_log_warning(_WATCHER_TAG, "Hook %d removed", id);
+    return true;
   }
  
   String toString() {
@@ -113,14 +124,14 @@ class Watcher {
 
     String result = _sensor->name();
 
-    _hooks.forEach([&](Hook<T> * hook) {
-      if (hook == nullptr || hook->isReadonly()) {
-        return;
+    for (auto it = _hooks.begin(); it != _hooks.end(); ++it) {
+      if ((*it)->isReadonly()) {
+        continue;
       }
 
       result += "\t";
-      result += hook->toString();
-    });
+      result += (*it)->toString();
+    }
 
     return result;
   }
@@ -135,23 +146,26 @@ class Watcher {
     doc["hooks"] = hooks;
     return doc;
   }
+
   JsonDocument getSensorHooksJson() {
     JsonDocument doc;
     doc.to<JsonArray>();
     if (_hooks.size() == 0) {
-      st_log_debug(_WATCHER_TAG, "No hook's, creating empty array");
       return doc;
     }
-    _hooks.forEach([&](Hook<T> *current) {
-      if (current == nullptr && current->isReadonly()) {
-        return;
+
+    for (auto it = _hooks.begin(); it != _hooks.end(); ++it) {
+      if ((*it)->isReadonly()) {
+        continue;
       }
-      doc.add(current->toJson());
-    });
+
+      doc.add((*it)->toJson());
+    }
+
     return doc;
   }
 
-  const Sensor<T> *getSensor() {
+  const Sensor<T> *getSensor() const {
     return _sensor;
   };
 
@@ -162,7 +176,7 @@ class Watcher {
  protected:
   const Sensor<T> *_sensor;
   T _oldValue;
-  List<Hook<T>> _hooks;
+  std::list<Hook<T>*> _hooks;
 
  private:
   int _hookIdSequence;

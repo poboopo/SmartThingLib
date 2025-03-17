@@ -40,7 +40,7 @@ class RequestHandler : public AsyncWebHandler {
     }
 
     void handleBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-      for(size_t i=0; i<len; i++){
+      for(size_t i = 0; i < len; i++){
         _body += (char) data[i];
       }
     }

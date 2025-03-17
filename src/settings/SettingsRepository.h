@@ -3,59 +3,22 @@
 
 #include <ArduinoJson.h>
 #include <functional>
+#include <list>
 
+#include "Features.h"
 #include "logs/BetterLogger.h"
-#include "utils/List.h"
 
-#define LOGGER_ADDRESS_CONFIG "laddr"
-#define GATEWAY_CONFIG "gtw"
-#define MAX_CONFIG_ENTRY_NAME_LENGTH 10
+enum StWiFiMode {
+  ST_WIFI_STA = 1,
+  ST_WIFI_AP = 2,
+  ST_WIFI_STA_TO_AP = 5
+};
 
 struct WiFiConfig {
   String ssid;
   String password;
-  uint8_t mode;
+  StWiFiMode mode;
 };
-
-class ConfigEntry {
-  public:
-    ConfigEntry(const char* name)
-        : _value(nullptr) {
-      _name = (char*) malloc(strlen(name) + 1);
-      strcpy(_name, name);
-    };
-    ~ConfigEntry() {
-      free(_name);
-      if (_value != nullptr) {
-        free(_value);
-      }
-    }
-
-    const char * name() const {
-      return _name;
-    }
-    const char * value() const {
-      return _value == nullptr ? "" : _value;
-    }
-
-    void setValue(const char * value) {
-      if (_value != nullptr) {
-        free(_value);
-        _value = nullptr;
-      }
-
-      if (value != nullptr && strlen(value) > 0) {
-        _value = (char*) malloc(strlen(value) + 1);
-        strcpy(_value, value);
-      }
-    }
-
-  private:
-    char* _name;
-    char* _value;
-};
-
-typedef std::function<void(void)> ConfigUpdatedHook;
 
 class SettingsRepositoryClass {
  public:
@@ -66,27 +29,21 @@ class SettingsRepositoryClass {
   bool setName(String name);
 
   WiFiConfig getWiFi();
-  bool setWiFi(WiFiConfig settings);
-  bool dropWiFi();
+  bool setWiFi(WiFiConfig &settings);
 
-  void loadConfigValues();
-  bool addConfigEntry(const char* name);
-  const char * getConfigValue(const char * name) const;
-  bool setConfigValue(const char * name, const char * value);
-  bool setConfig(JsonDocument conf);
-  bool dropConfig();
-  String getConfigJson();
-  void onConfigUpdate(ConfigUpdatedHook hook);
+  #if ENABLE_CONFIG
+    String getConfig();
+    bool setConfig(const String &config);
+  #endif
 
   #if ENABLE_HOOKS
-  String getHooks();
-  bool setHooks(String &data);
-  bool dropHooks();
+    String getHooks();
+    bool setHooks(const String &data);
   #endif
 
   #if ENABLE_ACTIONS_SCHEDULER
-  bool setActions(JsonDocument conf);
-  JsonDocument getActions();
+    bool setActions(const JsonDocument &conf);
+    JsonDocument getActions();
   #endif
 
   String exportSettings();
@@ -94,13 +51,6 @@ class SettingsRepositoryClass {
   
   void clear();
  private:
-  List<ConfigEntry> _config;
-  ConfigUpdatedHook _configUpdatedHook = [](){};
-  
-  bool saveConfig();
-  bool setConfigValueWithoutSave(const char * name, const char * value);
-  void callConfigUpdateHook();
-
   void read(uint16_t address, char * buff, uint16_t length);
   void write(uint16_t address, const char * buff, uint16_t length);
 
@@ -109,6 +59,11 @@ class SettingsRepositoryClass {
 
   String readData(uint8_t index, const char * defaultValue = "");
   int writeData(uint8_t index, const char * data);
+  /*
+  Helper method for writeData
+  Checks writes data length, prints messages
+  */
+  bool setData(uint8_t index, const char * data, const char * name, size_t expectedLength = 0);
 
   JsonDocument stringToObject(String& data);
   String objectToString(JsonDocument doc);

@@ -3,17 +3,15 @@
 
 #include "Features.h"
 
-#if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
+#if defined(ENABLE_NUMBER_SENSORS) && ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
 
 #include <ESPAsyncWebServer.h>
 #include "sensors/SensorsManager.h"
 #include "logs/BetterLogger.h"
-#include "net/rest/WebPageAssets.h"
 
 #define SENSORS_RQ_PATH "/sensors"
 const char * const _SENSORS_RQ_TAG = "sensors-handler";
 
-// todo rename?
 class SensorsRequestHandler : public AsyncWebHandler {
  public:
   SensorsRequestHandler(){};
@@ -35,10 +33,13 @@ class SensorsRequestHandler : public AsyncWebHandler {
     }
 
     AsyncWebServerResponse * asyncResponse = processRequest(request);
-    if (asyncResponse != nullptr) {
-      asyncResponse->addHeader("Access-Control-Allow-Origin", "*");
-      request->send(asyncResponse);
+    if (asyncResponse == nullptr) {
+      st_log_error(_REQUEST_HANDLER_TAG, "Response = nullptr! Sending 404 response");
+      asyncResponse = request->beginResponse(404);
     }
+
+    asyncResponse->addHeader("Access-Control-Allow-Origin", "*");
+    request->send(asyncResponse);
   };
  private:
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
@@ -50,12 +51,6 @@ class SensorsRequestHandler : public AsyncWebHandler {
       serializeJson(data, response);
       return request->beginResponse(200, "application/json", response);
     }
-
-    #if ENABLE_WEB_PAGE
-    if (request->url().equals("/sensors/script.js")) {
-      return request->beginResponse(200, "text/javascript", SCRIPT_SENSORS_TAB);
-    }
-    #endif
 
     return nullptr;
   }

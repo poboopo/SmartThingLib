@@ -2,7 +2,20 @@
 
 #if ENABLE_ACTIONS
 
+#include <ArduinoJson.h>
+
+#include "logs/BetterLogger.h"
+#include "settings/SettingsRepository.h"
+
 const char * const _ACTIONS_TAG = "actions_manager";
+
+#if ENABLE_ACTIONS_SCHEDULER
+  const char * const _actionJsonTemplate = "{\"name\":\"%s\",\"caption\":\"%s\",\"callDelay\":%lu,\"lastCall\":%lu}%s";
+  const size_t _actionJsonTemplateSize = 50;
+#else
+  const char * const _actionJsonTemplate = "{\"name\":\"%s\",\"caption\":\"%s\"}%s";
+  const size_t _actionJsonTemplateSize = 25;
+#endif
 
 ActionsManagerClass ActionsManager;
 
@@ -11,58 +24,43 @@ size_t ActionsManagerClass::count() {
 }
 
 bool ActionsManagerClass::add(const char* name, const char* caption, ActionHandler handler) {
-  if (findAction(name) != nullptr) {
+  if (findAction(name) != _actions.end()) {
     st_log_warning(_ACTIONS_TAG,
-                    "Handler for action %s already exists! Skipping...",
+                    "Action with name %s already exists!:",
                     name);
     return false;
   }
 
-  Action* action = new Action(name, caption, handler);
-  if (_actions.append(action) > -1) {
-    st_log_debug(_ACTIONS_TAG, "Added new action handler - %s:%s",
-                  name, caption);
-    return true;
-  } else {
-    if (action != nullptr) {
-      delete action;
-    }
-    st_log_error(_ACTIONS_TAG, "Failed to add new action handler - %s:%s", name, caption);
-    return false;
-  }
+  Action * action = new Action(name, caption, handler);
+  _actions.push_back(action);
+  st_log_debug(_ACTIONS_TAG, "Added new action handler - %s:%s", action->name(), action->caption());
+  return true;
 };
 
 bool ActionsManagerClass::remove(const char* name) {
-  Action * action = findAction(name);
-  if (action == nullptr) {
+  auto action = findAction(name);
+  if (action == _actions.end()) {
     st_log_warning(_ACTIONS_TAG, "There is no action with name %s", name);
     return false;
   }
 
-  if (!_actions.remove(action)) {
-    st_log_error(_ACTIONS_TAG, "Failed to remove action from list");
-    return false;
-  }
-  
-  delete action;
-  action == nullptr;
-  st_log_warning(_ACTIONS_TAG, "Action deleted");
+  delete *action;
+  *action = nullptr;
+  _actions.erase(action);
+
+  st_log_warning(_ACTIONS_TAG, "Action %s removed", name);
   return true;
 }
 
-ActionResult ActionsManagerClass::call(const char* name) {
-  st_log_debug(_ACTIONS_TAG, "Trying to call action %s", name);
-  const Action* action = findAction(name);
-  if (action == nullptr) {
+ActionResultCode ActionsManagerClass::call(const char* name) {
+  auto action = findAction(name);
+  if (action == _actions.end()) {
     st_log_error(_ACTIONS_TAG, "Can't find action with name %s", name);
-    return ActionResult(false, "Failed to find action");
+    return ACTION_RESULT_NOT_FOUND;
   }
-  return action->call();
+  st_log_info(_ACTIONS_TAG, "Calling action name=%s", name);
+  return (*action)->call() ? ACTION_RESULT_SUCCESS : ACTION_RESULT_ERROR;
 };
-
-const Action * ActionsManagerClass::get(const char* name) const {
-  return findAction(name);
-}
 
 #if ENABLE_ACTIONS_SCHEDULER
 void ActionsManagerClass::loadFromSettings() {
@@ -72,21 +70,23 @@ void ActionsManagerClass::loadFromSettings() {
     return;
   }
 
-  _actions.forEach([&](Action * action) {
+  for (auto it = _actions.begin(); it != _actions.end(); ++it) {
+    Action * action = *it;
     if (config[action->name()].is<const char*>()) {
       unsigned long callDelay = config[action->name()];
       action->setCallDelay(callDelay);
     }
-  });
+  }
 }
 
 bool ActionsManagerClass::updateActionSchedule(const char * name, unsigned long newDelay) {
   st_log_debug(_ACTIONS_TAG, "Trying to update action %s delay", name);
-  Action* action = findAction(name);
-  if (action == nullptr) {
+  auto it = findAction(name);
+  if (it == _actions.end()) {
     st_log_error(_ACTIONS_TAG, "Can't find action with name %s", name);
     return false;
   } else {
+    Action *action = *it;
     JsonDocument config = SettingsRepository.getActions();
     if (newDelay == 0) {
       config.remove(action->name());
@@ -103,43 +103,86 @@ bool ActionsManagerClass::updateActionSchedule(const char * name, unsigned long 
 
 void ActionsManagerClass::scheduled() {
   unsigned long current = millis();
-  _actions.forEach([&](Action * action) {
+
+  for (auto it = _actions.begin(); it != _actions.end(); ++it) {
+    Action * action = *it;
     if (action->callDelay() > 0 && current - action->lastCall() > action->callDelay()) {
       st_log_debug(_ACTIONS_TAG, "Scheduled call of %s", action->name());
       action->call();
       action->setLastCall(current);
     }
-  });
+  }
 }
 #endif
 
-void ActionsManagerClass::forEachAction(List<Action>::ForEachIndexFunction forFunc) {
-  _actions.forEach(forFunc);
+String ActionsManagerClass::getActionsInfoForHook() {
+  String result;
+  for (auto it = _actions.begin(); it != _actions.end(); ++it) {
+    Action * action = *it;
+
+    char data[strlen(action->name()) + strlen(action->caption()) + 6];
+    sprintf(
+      data,
+      "\"%s\":\"%s\"%s",
+      action->name(),
+      action->caption(),
+      it == std::prev(_actions.end()) ? "" : ","
+    );
+    result += String(data);
+  }
+  return result;
 }
 
-JsonDocument ActionsManagerClass::toJson() {
-  JsonDocument doc;
-  doc.to<JsonArray>();
-  #if ENABLE_ACTIONS_SCHEDULER
+String ActionsManagerClass::toJson() {
   unsigned long currentMillis = millis();
-  #endif
-  _actions.forEach([&](Action* current) {
-    JsonDocument action;
-    action[ACTIONS_JSON_NAME] = current->name();
-    action[ACTIONS_JSON_CAPTION] = current->caption();
+  String result = "[";
+
+  for (auto it = _actions.begin(); it != _actions.end(); ++it) {
+    Action * action = *it;
+
+    size_t size = _actionJsonTemplateSize +
+      strlen(action->name()) + 
+      strlen(action->caption()) + 1;
 
     #if ENABLE_ACTIONS_SCHEDULER
-    action[ACTIONS_JSON_DELAY] = current->callDelay();
-    action[ACTIONS_JSON_LAST_CALL] = current->callDelay() > 0 ? currentMillis - current->lastCall() : 0;
+      unsigned long lastCall = action->callDelay() > 0 ? currentMillis - action->lastCall() : 0;
+      size += snprintf(NULL, 0, "%lu%lu", action->callDelay(), lastCall);
     #endif
 
-    doc.add(action);
-  });
-  return doc;
+    char buff[size];
+    bool isLast = it == std::prev(_actions.end());
+    
+    #if ENABLE_ACTIONS_SCHEDULER
+      sprintf(
+        buff,
+        _actionJsonTemplate,
+        action->name(),
+        action->caption(),
+        action->callDelay(),
+        lastCall,
+        isLast ? "" : ","
+      );
+    #else
+      sprintf(
+        buff,
+        _actionJsonTemplate,
+        action->name(),
+        action->caption(),
+        isLast ? "" : ","
+      );
+    #endif
+    result += String(buff);
+  }
+
+  result += "]";
+
+  return result;
 };
 
-Action* ActionsManagerClass::findAction(const char* name) const {
-  return _actions.findValue([&](Action* current) { return strcmp(current->name(), name) == 0; });
+std::list<Action*>::iterator ActionsManagerClass::findAction(const char* name) {
+  return std::find_if(_actions.begin(), _actions.end(), [name](const Action * action) {
+    return strcmp(action->name(), name) == 0;
+  });
 }
 
 #endif

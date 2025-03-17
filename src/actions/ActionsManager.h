@@ -5,30 +5,16 @@
 #if ENABLE_ACTIONS
 
 #include <Arduino.h>
-#include <ArduinoJson.h>
 #include <functional>
+#include <list>
 
-#include "utils/List.h"
-#include "logs/BetterLogger.h"
-#include "settings/SettingsRepository.h"
-
-const char * const ACTIONS_JSON_NAME = "name";
-const char * const ACTIONS_JSON_CAPTION = "caption";
-#if ENABLE_ACTIONS_SCHEDULER
-const char * const ACTIONS_JSON_LAST_CALL = "lastCall";
-const char * const ACTIONS_JSON_DELAY = "callDelay";
-#endif
-
-struct ActionResult {
-  ActionResult(){};
-  ActionResult(bool successful) : successful(successful){};
-  ActionResult(bool successful, const char* message)
-      : successful(successful), message(message){};
-  bool successful = false;
-  const char* message = nullptr;
+enum ActionResultCode {
+  ACTION_RESULT_NOT_FOUND = -1,
+  ACTION_RESULT_ERROR = 0,
+  ACTION_RESULT_SUCCESS = 1,
 };
 
-typedef std::function<ActionResult(void)> ActionHandler;
+typedef std::function<bool(void)> ActionHandler;
 
 class Action {
   public:
@@ -65,7 +51,7 @@ class Action {
       return _caption;
     }
 
-    ActionResult call() const {
+    bool call() const {
       return _handler();
     }
 
@@ -98,32 +84,45 @@ class Action {
     #endif
 };
 
+// Manager for device actions configuration
 class ActionsManagerClass {
  public:
-  size_t count();
-
+  /*
+    Add action
+    @param name system action name. This name will be used to call action over api.
+    @param caption action caption for UI.
+    @param handler lambda with action's logic.
+    @returns true if action added.
+  */
   bool add(const char* name, const char* caption, ActionHandler handler);
+
+  /*
+    Remove action
+    @param name system action name.
+    @returns true if action removed.
+  */
   bool remove(const char* name);
 
-  ActionResult call(const char* name);
-
-  const Action * get(const char* name) const;
-  void forEachAction(List<Action>::ForEachIndexFunction forFunc);
+  /*
+    Call previously added action.
+    @param name system action name.
+    @returns result code ActionResultCode (1 - success, -1 or 0 - failure)
+  */
+  ActionResultCode call(const char* name);
 
   #if ENABLE_ACTIONS_SCHEDULER
-  void loadFromSettings();
-
-  bool updateActionSchedule(const char * name, unsigned long newDelay);
-
-  void scheduled();
+    void loadFromSettings();
+    bool updateActionSchedule(const char * name, unsigned long newDelay);
+    void scheduled();
   #endif
 
-  JsonDocument toJson();
-
+  String getActionsInfoForHook();
+  String toJson();
+  size_t count();
  private:
-  List<Action> _actions;
+  std::list<Action*> _actions;
 
-  Action* findAction(const char* name) const;
+  std::list<Action*>::iterator findAction(const char* name);
 };
 
 extern ActionsManagerClass ActionsManager;

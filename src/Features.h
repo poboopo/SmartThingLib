@@ -20,27 +20,13 @@
   #endif
 #endif
 
+// Enable actions
 #ifndef ENABLE_ACTIONS
   #define ENABLE_ACTIONS 1
 #endif
 
-#ifndef ENABLE_NUMBER_SENSORS
-  #define ENABLE_NUMBER_SENSORS 1
-#endif
-
-#ifndef ENABLE_TEXT_SENSORS
-  #define ENABLE_TEXT_SENSORS 1
-#endif
-
-#if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
-  #ifndef ENABLE_HOOKS
-    #define ENABLE_HOOKS 1
-  #endif
-#else
-  #define ENABLE_HOOKS 0
-#endif
-
 #if ENABLE_ACTIONS
+  // Enable action call scheduler
   #ifndef ENABLE_ACTIONS_SCHEDULER
     #define ENABLE_ACTIONS_SCHEDULER 1
   #endif
@@ -48,14 +34,56 @@
   #define ENABLE_ACTIONS_SCHEDULER 0
 #endif
 
-#ifndef ENABLE_LOGGER
-#define ENABLE_LOGGER 1
+// Enable number sensors
+#ifndef ENABLE_NUMBER_SENSORS
+  #define ENABLE_NUMBER_SENSORS 1
 #endif
 
-#ifndef LOGGER_TYPE
-#define LOGGER_TYPE TCP_LOGGER
+// Enable text sensors
+#ifndef ENABLE_TEXT_SENSORS
+  #define ENABLE_TEXT_SENSORS 1
+#endif
+
+#if defined(ENABLE_NUMBER_SENSORS) && ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
+  // Enable hooks for sensors
+  #ifndef ENABLE_HOOKS
+    #define ENABLE_HOOKS 1
+  #endif
+#else
+  #define ENABLE_HOOKS 0
+#endif
+
+// Enable configuration
+#ifndef ENABLE_CONFIG
+  #define ENABLE_CONFIG 1
+#endif
+
+// Enable ArduinoOTA
+#ifndef ENABLE_OTA
+  #define ENABLE_OTA 1
+#endif
+
+// Enable logger
+#ifndef ENABLE_LOGGER
+  #define ENABLE_LOGGER 1
+#endif
+
+#if ENABLE_CONFIG
+  #ifndef LOGGER_TYPE
+    #define LOGGER_TYPE TCP_LOGGER
+  #endif
+#else
+  #define LOGGER_TYPE SERIAL_LOGGER
 #endif
 
 #ifndef LOGGING_LEVEL
-#define LOGGING_LEVEL LOGGING_LEVEL_INFO
+  #define LOGGING_LEVEL LOGGING_LEVEL_INFO
+#endif
+
+#ifndef ENABLE_ASYNC_LOOP
+  #define ENABLE_ASYNC_LOOP 1
+#endif
+
+#ifdef ARDUINO_ARCH_ESP8266
+  #define ENABLE_ASYNC_LOOP 0
 #endif

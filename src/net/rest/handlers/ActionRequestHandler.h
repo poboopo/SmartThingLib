@@ -9,10 +9,14 @@
 #include "logs/BetterLogger.h"
 #include "net/rest/handlers/HandlerUtils.h"
 #include "net/rest/handlers/RequestHandler.h"
-#include "net/rest/WebPageAssets.h"
 #include "actions/ActionsManager.h"
 
 #define ACTION_RQ_PATH "/actions"
+
+const char * const _fieldName = "name";
+#if ENABLE_ACTIONS_SCHEDULER
+const char * const _fieldDelay = "callDelay";
+#endif
 
 class ActionRequestHandler : public RequestHandler {
  public:
@@ -27,34 +31,25 @@ class ActionRequestHandler : public RequestHandler {
 
   AsyncWebServerResponse * processRequest(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_GET) {
-      #if ENABLE_WEB_PAGE
-      if (request->url().equals("/actions/script.js")) {
-        return request->beginResponse(200, CONTENT_TYPE_JS, SCRIPT_ACTIONS_TAB);
-      }
-      #endif
-
       if (request->url().equals("/actions/info")) {
-        JsonDocument doc = ActionsManager.toJson();
-        String response;
-        serializeJson(doc, response);
-        return request->beginResponse(200, CONTENT_TYPE_JSON, response);
+        return request->beginResponse(200, CONTENT_TYPE_JSON, ActionsManager.toJson());
       }
 
       if (request->url().equals("/actions/call")) {
-        String action = request->arg(ACTIONS_JSON_NAME);
+        String action = request->arg(_fieldName);
         if (action.isEmpty()) {
           return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Parameter action is missing!"));
         }
 
-        ActionResult result = ActionsManager.call(action.c_str());
-        if (result.successful) {
-          return request->beginResponse(200);
-        } else {
-          if (result.message != nullptr) {
-            return request->beginResponse(500, CONTENT_TYPE_JSON, buildErrorJson(result.message));
-          } else {
-            return request->beginResponse(500);
-          }
+        ActionResultCode result = ActionsManager.call(action.c_str());
+        switch (result) {
+          case ACTION_RESULT_SUCCESS:
+            return request->beginResponse(200);
+          case ACTION_RESULT_ERROR:
+            return request->beginResponse(500, CONTENT_TYPE_JSON, buildErrorJson("Failed to execute action"));
+          case ACTION_RESULT_NOT_FOUND:
+          default:
+            return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Failed to find action with given name"));
         }
       }
     }
@@ -66,12 +61,12 @@ class ActionRequestHandler : public RequestHandler {
       }
       JsonDocument doc;
       deserializeJson(doc, _body);
-      if (!doc[ACTIONS_JSON_NAME].is<JsonVariant>() || !doc[ACTIONS_JSON_DELAY].is<JsonVariant>()) {
+      if (!doc[_fieldName].is<JsonVariant>() || !doc[_fieldDelay].is<JsonVariant>()) {
         return request->beginResponse(400, CONTENT_TYPE_JSON, buildErrorJson("Name and callDelay params reuqired in body"));
       }
       
-      const char * name = doc[ACTIONS_JSON_NAME];
-      unsigned long newDelay = doc[ACTIONS_JSON_DELAY];
+      const char * name = doc[_fieldName];
+      unsigned long newDelay = doc[_fieldDelay];
       if (ActionsManager.updateActionSchedule(name, newDelay)) {
         return request->beginResponse(200);
       } else {

@@ -71,7 +71,7 @@ class Hook {
       return tmp;
     }
 
-    virtual JsonDocument toJson() const {
+    JsonDocument toJson() const {
       JsonDocument doc;
       doc[_idHookField] = _id;
       doc[_readonlyHookField] = _readonly;

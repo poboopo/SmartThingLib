@@ -3,13 +3,13 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <list>
 
 #include "Features.h"
 #include "sensors/Sensor.h"
-#include "utils/List.h"
 #include "logs/BetterLogger.h"
 
-#if ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
+#if defined(ENABLE_NUMBER_SENSORS) && ENABLE_NUMBER_SENSORS || ENABLE_TEXT_SENSORS
 
 const char * const _SENSORS_MANAGER_TAG = "sensors-manager";
 
@@ -33,33 +33,90 @@ inline const char * sensorTypeToStr(SensorType type) {
 class SensorsManagerClass {
   public:
     #if ENABLE_NUMBER_SENSORS
-      bool addSensor(const char * name, typename Sensor<NUMBER_SENSOR_DATA_TYPE>::ValueProvider valueProvider) {
-        return addSensor<NUMBER_SENSOR_DATA_TYPE>(name, valueProvider);
+      /*
+        Add number sensor
+        @param name unique sensor system name
+        @param valueProvider lambda with logic for calculating sensor value
+        @return true if sensor added
+      */
+      bool add(const char * name, typename Sensor<NUMBER_SENSOR_DATA_TYPE>::ValueProvider valueProvider) {
+        return add<NUMBER_SENSOR_DATA_TYPE>(name, valueProvider);
       }
-      bool addDigitalSensor(const char* name, uint8_t pin, uint8_t mode = INPUT_PULLUP);
-      bool addAnalogSensor(const char* name, uint8_t pin);
+
+      /*
+        Add digital sensor (uses digitalRead)
+        @param name unique sensor system name
+        @param pin digital sensor pin
+        @param mode pin mode
+        @returns true if sensor added
+      */
+      bool addDigital(const char* name, uint8_t pin, uint8_t mode = INPUT_PULLUP);
+      /*
+        Add analog sensor (uses analogRead)
+        @param name unique sensor system name
+        @param pin analog sensor pin
+        @returns true if sensor added
+      */
+      bool addAnalog(const char* name, uint8_t pin);
     #endif
     #if ENABLE_TEXT_SENSORS
-      bool addSensor(const char * name, typename Sensor<TEXT_SENSOR_DATA_TYPE>::ValueProvider valueProvider) {
-        return addSensor<TEXT_SENSOR_DATA_TYPE>(name, valueProvider);
+      /*
+        Add text sensor
+        @param name unique unique sensor system name
+        @param valueProvider lambda with logic for calculating sensor value
+        @return true if sensor added
+      */
+      bool add(const char * name, typename Sensor<TEXT_SENSOR_DATA_TYPE>::ValueProvider valueProvider) {
+        return add<TEXT_SENSOR_DATA_TYPE>(name, valueProvider);
       }
     #endif
 
-    size_t getSensorsCount();
+    size_t count();
     JsonDocument getSensorsInfo();
 
     template<typename T>
-    bool addSensor(
+    const Sensor<T> * getSensor(const char * name) {
+      auto it = getSensorIterator<T>(name);
+      if (it == getList<T>()->end()) {
+        return nullptr;
+      }
+      return *it;
+    }
+    
+    SensorType getSensorType(const char * name) {
+      #if ENABLE_NUMBER_SENSORS
+        if (getSensorIterator<NUMBER_SENSOR_DATA_TYPE>(name) != _sensorsList.end()) {
+          return NUMBER_SENSOR;
+        }
+      #endif
+      #if ENABLE_TEXT_SENSORS
+        if (getSensorIterator<TEXT_SENSOR_DATA_TYPE>(name) != _deviceStatesList.end()) {
+          return TEXT_SENSOR;
+        }
+      #endif
+      return UNKNOWN_SENSOR;
+    }
+  private:
+    #if ENABLE_NUMBER_SENSORS
+      std::list<Sensor<NUMBER_SENSOR_DATA_TYPE>*> _sensorsList;
+    #endif
+
+    #if ENABLE_TEXT_SENSORS
+      std::list<Sensor<TEXT_SENSOR_DATA_TYPE>*> _deviceStatesList;
+    #endif
+
+    template<typename T>
+    bool add(
       const char* name,
       typename Sensor<T>::ValueProvider valueProvider
     )  {
       bool exists = false;
       #if ENABLE_NUMBER_SENSORS
-        exists = getSensor<NUMBER_SENSOR_DATA_TYPE>(name) != nullptr;
+        exists = getSensorIterator<NUMBER_SENSOR_DATA_TYPE>(name) != _sensorsList.end();
       #endif
 
       #if ENABLE_TEXT_SENSORS
-        exists = exists || getSensor<TEXT_SENSOR_DATA_TYPE>(name) != nullptr;
+        exists = exists || getSensorIterator<TEXT_SENSOR_DATA_TYPE>(name) != _deviceStatesList.end();
       #endif
 
       if (exists) {
@@ -67,52 +124,26 @@ class SensorsManagerClass {
         return false;
       }
 
-      Sensor<T> * sensor = new Sensor<T>(name, valueProvider);
-      if (getList<T>()->append(sensor) > -1) {
-        st_log_debug(_SENSORS_MANAGER_TAG, "Added new device sensor %s", name);
-        return true;
-      } else {
-        if (sensor != nullptr) {
-          delete sensor;
-        }
-        st_log_error(_SENSORS_MANAGER_TAG, "Failed to add new device sensor %s", name);
-        return false;
-      }
+      getList<T>()->push_back(new Sensor<T>(name, valueProvider));
+      st_log_debug(_SENSORS_MANAGER_TAG, "Added new device sensor %s", name);
+      return true;
     }
 
     template<typename T>
-    const Sensor<T> * getSensor(const char * name) {
+    std::list<Sensor<T>*> * getList();
+
+    template<typename T>
+    typename std::list<Sensor<T>*>::iterator getSensorIterator(const char * name) {
+      auto list = getList<T>();
       if (name == nullptr || strlen(name) == 0) {
-        return nullptr;
+        return list->end();
       }
-      return getList<T>()->findValue([&](Sensor<T> * current) {
-          return strcmp(current->name(), name) == 0;
+
+      return std::find_if(list->begin(), list->end(), [name](const Sensor<T> * sensor) {
+          return strcmp(sensor->name(), name) == 0;
       });
     }
-    SensorType getSensorType(const char * name) {
-      #if ENABLE_NUMBER_SENSORS
-      if (getSensor<NUMBER_SENSOR_DATA_TYPE>(name) != nullptr) {
-        return NUMBER_SENSOR;
-      }
-      #endif
-      #if ENABLE_TEXT_SENSORS
-      if (getSensor<TEXT_SENSOR_DATA_TYPE>(name) != nullptr) {
-        return TEXT_SENSOR;
-      }
-      #endif
-      return UNKNOWN_SENSOR;
-    }
-  private:
-    #if ENABLE_NUMBER_SENSORS
-      List<Sensor<NUMBER_SENSOR_DATA_TYPE>> _sensorsList;
-    #endif
 
-    #if ENABLE_TEXT_SENSORS
-      List<Sensor<TEXT_SENSOR_DATA_TYPE>> _deviceStatesList;
-    #endif
-
-    template<typename T>
-    List<Sensor<T>> * getList();
   };
 
 extern SensorsManagerClass SensorsManager;

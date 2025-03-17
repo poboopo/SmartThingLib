@@ -19,7 +19,7 @@
 
 HooksManagerClass HooksManager;
 
-int HooksManagerClass::addHook(const char * sensorName, const char * data) {
+int HooksManagerClass::add(const char * sensorName, const char * data) {
   SensorType type = SensorsManager.getSensorType(sensorName);
   if (type == UNKNOWN_SENSOR) {
     st_log_error(_HOOKS_MANAGER_TAG, _errorNoSuchSensor);
@@ -28,12 +28,12 @@ int HooksManagerClass::addHook(const char * sensorName, const char * data) {
 
   #if ENABLE_TEXT_SENSORS
   if (type == TEXT_SENSOR) {
-    return HooksManager.addHook<TEXT_SENSOR_DATA_TYPE>(SensorsManager.getSensor<TEXT_SENSOR_DATA_TYPE>(sensorName), data);
+    return HooksManager.add<TEXT_SENSOR_DATA_TYPE>(SensorsManager.getSensor<TEXT_SENSOR_DATA_TYPE>(sensorName), data);
   }
   #endif
   #if ENABLE_NUMBER_SENSORS 
   if (type == NUMBER_SENSOR) {
-    return HooksManager.addHook<NUMBER_SENSOR_DATA_TYPE>(SensorsManager.getSensor<NUMBER_SENSOR_DATA_TYPE>(sensorName), data);
+    return HooksManager.add<NUMBER_SENSOR_DATA_TYPE>(SensorsManager.getSensor<NUMBER_SENSOR_DATA_TYPE>(sensorName), data);
   }
   #endif
   
@@ -42,7 +42,7 @@ int HooksManagerClass::addHook(const char * sensorName, const char * data) {
 }
 
 template<typename T>
-int HooksManagerClass::addHook(const Sensor<T> * sensor, const char * data) {
+int HooksManagerClass::add(const Sensor<T> * sensor, const char * data) {
   if (sensor == nullptr) {
     st_log_error(_HOOKS_MANAGER_TAG, _errorSensorObjectMissing);
     return -1;
@@ -53,13 +53,10 @@ int HooksManagerClass::addHook(const Sensor<T> * sensor, const char * data) {
     return -1;
   }
 
-  st_log_info(_HOOKS_MANAGER_TAG, "Trying to build hook for %s", sensor->name());
-  st_log_debug(_HOOKS_MANAGER_TAG, "Hook string: %s", data);
-  
   int id = -1;
   Hook<T> * hook = HooksBuilder::build<T>(data);
   if (hook != nullptr) {
-    id = addHook<T>(sensor, hook);
+    id = add<T>(sensor, hook);
   }
   
   if (id == -1) {
@@ -74,7 +71,7 @@ int HooksManagerClass::addHook(const Sensor<T> * sensor, const char * data) {
 }
 
 template <typename T>
-int HooksManagerClass::addHook(const Sensor<T> *sensor, Hook<T> *hook) {
+int HooksManagerClass::add(const Sensor<T> *sensor, Hook<T> *hook) {
   if (sensor == nullptr) {
     st_log_error(_HOOKS_MANAGER_TAG, _errorSensorObjectMissing);
     return -1;
@@ -90,7 +87,7 @@ int HooksManagerClass::addHook(const Sensor<T> *sensor, Hook<T> *hook) {
     return -1;
   }
 
-  if (!watcher->addHook(hook)) {
+  if (!watcher->add(hook)) {
     st_log_error(_HOOKS_MANAGER_TAG, "Failed to add hook in watcher");
     return -1;
   }
@@ -107,21 +104,19 @@ Watcher<T> *HooksManagerClass::getWatcherOrCreate(const Sensor<T> *sensor) {
     return nullptr;
   }
 
-  Watcher<T> *watcher = getWatcher<T>(sensor);
-  if (watcher == nullptr) {
+  auto it = getWatcherBySensorName<T>(sensor->name());
+  if (it == getWatchersList<T>()->end()) {
     st_log_debug(_HOOKS_MANAGER_TAG, "Creating new watcher for sensor %s", sensor->name());
-    watcher = new Watcher<T>(sensor);
-    if (getWatchersList<T>()->append(watcher) < 0) {
-      st_log_error(_HOOKS_MANAGER_TAG, "Failed to append new watcher in list for %s", sensor->name());
-      delete watcher;
-      return nullptr;
-    }
+    Watcher<T> *watcher = new Watcher<T>(sensor);
+    getWatchersList<T>()->push_back(watcher);
     st_log_debug(_HOOKS_MANAGER_TAG, "Added new watcher for sensor %s", sensor->name());
+    return watcher;
+  } else {
+    return *it;
   }
-  return watcher;
 }
 
-bool HooksManagerClass::deleteHook(const char * name, int id) {
+bool HooksManagerClass::remove(const char * name, int id) {
   SensorType type = SensorsManager.getSensorType(name);
   if (type == UNKNOWN_SENSOR) {
     st_log_error(_HOOKS_MANAGER_TAG, _errorNoSuchSensor);
@@ -130,12 +125,12 @@ bool HooksManagerClass::deleteHook(const char * name, int id) {
 
   #if ENABLE_NUMBER_SENSORS
   if (type == NUMBER_SENSOR) {
-    return deleteHook<NUMBER_SENSOR_DATA_TYPE>(name, id);
+    return remove<NUMBER_SENSOR_DATA_TYPE>(name, id);
   } 
   #endif
   #if ENABLE_TEXT_SENSORS
   if (type == TEXT_SENSOR) {
-    return deleteHook<TEXT_SENSOR_DATA_TYPE>(name, id);
+    return remove<TEXT_SENSOR_DATA_TYPE>(name, id);
   }
   #endif
 
@@ -144,10 +139,15 @@ bool HooksManagerClass::deleteHook(const char * name, int id) {
 }
 
 template <typename T>
-bool HooksManagerClass::deleteHook(const char *name, int id) {
+bool HooksManagerClass::remove(const char *name, int id) {
   st_log_warning(_HOOKS_MANAGER_TAG, "Trying to delete sensor [%s]'s hook id=%d", name, id);
-  Watcher<T> *watcher = getWatcherBySensorName<T>(name);
-  if (watcher == nullptr || !watcher->removeHook(id)) {
+  auto it = getWatcherBySensorName<T>(name);
+  if (it == getWatchersList<T>()->end()) {
+    return false;
+  }
+  
+  Watcher<T> * watcher = *it;
+  if (!watcher->removeHook(id)) {
     return false;
   }
 
@@ -160,16 +160,15 @@ bool HooksManagerClass::deleteHook(const char *name, int id) {
   st_log_debug(_HOOKS_MANAGER_TAG,
                "No hooks left for sensor [%s], removing watcher!",
                name);
-  if (!getWatchersList<T>()->remove(watcher)) {
-    return false;
-  }
+
   delete watcher;
-  st_log_warning(_HOOKS_MANAGER_TAG, "Watcher for sensor [%s] removed!",
-                 name);
+  getWatchersList<T>()->erase(it);
+
+  st_log_warning(_HOOKS_MANAGER_TAG, "Watcher for sensor [%s] removed!", name);
   return true;
 }
 
-bool HooksManagerClass::updateHook(JsonDocument doc) {
+bool HooksManagerClass::update(JsonDocument doc) {
   const char * sensor = doc["sensor"];
   SensorType type = SensorsManager.getSensorType(sensor);
   if (type == UNKNOWN_SENSOR) {
@@ -187,15 +186,14 @@ bool HooksManagerClass::updateHook(JsonDocument doc) {
     return false;
   }
 
-
   #if ENABLE_NUMBER_SENSORS
     if (type == NUMBER_SENSOR) {
-      return updateHook<NUMBER_SENSOR_DATA_TYPE>(sensor, hookObject);
+      return update<NUMBER_SENSOR_DATA_TYPE>(sensor, hookObject);
     }
   #endif
   #if ENABLE_TEXT_SENSORS
     if (type == TEXT_SENSOR) {
-      return updateHook<TEXT_SENSOR_DATA_TYPE>(sensor, hookObject);
+      return update<TEXT_SENSOR_DATA_TYPE>(sensor, hookObject);
     }
   #endif
 
@@ -204,7 +202,7 @@ bool HooksManagerClass::updateHook(JsonDocument doc) {
 }
 
 template <typename T>
-bool HooksManagerClass::updateHook(const char *name, JsonDocument &hookObject) {
+bool HooksManagerClass::update(const char *name, JsonDocument &hookObject) {
   if (!hookObject[_idHookField].is<JsonVariant>()) {
     st_log_error(_HOOKS_MANAGER_TAG,
                  "Id value in hook object is missing!");
@@ -247,11 +245,11 @@ bool HooksManagerClass::updateHook(const char *name, JsonDocument &hookObject) {
 
 template <typename T>
 Hook<T> *HooksManagerClass::getHookFromWatcher(const char *name, int id) {
-  Watcher<T> *watcher = getWatcherBySensorName<T>(name);
-  if (watcher == nullptr) {
+  auto watcher = getWatcherBySensorName<T>(name);
+  if (watcher == getWatchersList<T>()->end()) {
     return nullptr;
   }
-  Hook<T> *hook = watcher->getHookById(id);
+  Hook<T> *hook = (*watcher)->getHookById(id);
   if (hook == nullptr) {
     st_log_warning(_HOOKS_MANAGER_TAG, "Can't find hook id=%d for sensor [%s]", id, name);
     return nullptr;
@@ -260,16 +258,10 @@ Hook<T> *HooksManagerClass::getHookFromWatcher(const char *name, int id) {
 }
 
 template <typename T>
-Watcher<T> *HooksManagerClass::getWatcher(const Sensor<T> *sensor) {
-  return getWatchersList<T>()->findValue([sensor](Watcher<T> *current) {
-    return current->getSensor() == sensor;
-  });
-}
-
-template <typename T>
-Watcher<T> *HooksManagerClass::getWatcherBySensorName(const char *name) {
-  return getWatchersList<T>()->findValue([name](Watcher<T> *current) {
-    return strcmp(current->getSensor()->name(), name) == 0;
+typename std::list<Watcher<T>*>::iterator HooksManagerClass::getWatcherBySensorName(const char *name) {
+  std::list<Watcher<T>*> * list = getWatchersList<T>();
+  return std::find_if(list->begin(), list->end(), [name](const Watcher<T> * watcher) {
+    return strcmp(watcher->getSensor()->name(), name) == 0;
   });
 }
 
@@ -288,10 +280,13 @@ void HooksManagerClass::check() {
 
 template <typename T>
 void HooksManagerClass::checkWatchers() {
-  getWatchersList<T>()->forEach([](Watcher<T> *current) { current->check(); });
+  std::list<Watcher<T>*> * list = getWatchersList<T>();
+  for (auto it = list->begin(); it != list->end(); ++it) {
+    (*it)->check();
+  }
 }
 
-boolean HooksManagerClass::callHook(const char * name, int id, String value) {
+boolean HooksManagerClass::call(const char * name, int id, String value) {
   SensorType type = SensorsManager.getSensorType(name);
   if (type == UNKNOWN_SENSOR) {
     st_log_error(_HOOKS_MANAGER_TAG, _errorNoSuchSensor);
@@ -324,11 +319,12 @@ boolean HooksManagerClass::callHook(const char * name, int id, String value) {
 
 template <typename T>
 boolean HooksManagerClass::callWatcherHook(const char * name, int id, T value, boolean emptyValue) {
-  Watcher<T> * watcher = getWatcherBySensorName<T>(name);
-  if (watcher == nullptr) {
+  auto it = getWatcherBySensorName<T>(name);
+  if (it == getWatchersList<T>()->end()) {
     st_log_error(_HOOKS_MANAGER_TAG, "Can't find watcher for sensor with name=%s", name);
     return false;
   }
+  Watcher<T> * watcher = *it;
   Hook<T> * hook = watcher->getHookById(id);
   if (hook == nullptr) {
     st_log_error(_HOOKS_MANAGER_TAG, "Can't find hook for sensor %s by id=%d", name, id);
@@ -414,7 +410,7 @@ bool HooksManagerClass::loadHooks(const Sensor<T> * sensor, const char * data, i
 
   for (; (*address) < length; (*address)++) {
     if (data[(*address)] == '\t' || data[(*address)] == '\n') {
-      res = addHook(sensor, buff.c_str()) == -1 || res;
+      res = add(sensor, buff.c_str()) == -1 || res;
       buff.clear();
     } else {
       buff += data[(*address)];
@@ -433,22 +429,18 @@ bool HooksManagerClass::saveInSettings() {
   String data = "";
 
   #if ENABLE_TEXT_SENSORS
-  _statesWatchers.forEach([&](Watcher<TEXT_SENSOR_DATA_TYPE> *watcher) {
-    if (watcher == nullptr) {
-      return;
+    std::list<Watcher<TEXT_SENSOR_DATA_TYPE>*>::iterator itt;
+    for (itt = _statesWatchers.begin(); itt != _statesWatchers.end(); ++itt) {
+      data += (*itt)->toString();
+      data += "\n";
     }
-    data += watcher->toString();
-    data += "\n";
-  });
   #endif
   #if ENABLE_NUMBER_SENSORS 
-  _sensorsWatchers.forEach([&](Watcher<NUMBER_SENSOR_DATA_TYPE> *watcher) {
-    if (watcher == nullptr) {
-      return;
+    std::list<Watcher<NUMBER_SENSOR_DATA_TYPE>*>::iterator itn;
+    for (itn = _sensorsWatchers.begin(); itn != _sensorsWatchers.end(); ++itn) {
+      data += (*itn)->toString();
+      data += "\n";
     }
-    data += watcher->toString();
-    data += "\n";
-  });
   #endif
 
   return SettingsRepository.setHooks(data);
@@ -489,9 +481,9 @@ JsonDocument HooksManagerClass::getSensorHooksJson(const char *name) {
   if (name == nullptr || strlen(name) == 0) {
     st_log_error(_HOOKS_MANAGER_TAG, "Name of sensor is missing!");
   } else {
-    Watcher<T> *watcher = getWatcherBySensorName<T>(name);
-    if (watcher != nullptr) {
-      return watcher->getSensorHooksJson();
+    auto it = getWatcherBySensorName<T>(name);
+    if (it != getWatchersList<T>()->end()) {
+      return (*it)->getSensorHooksJson();
     }
   }
   JsonDocument doc;
@@ -500,14 +492,14 @@ JsonDocument HooksManagerClass::getSensorHooksJson(const char *name) {
 
 #if ENABLE_TEXT_SENSORS
   template <>
-  List<Watcher<TEXT_SENSOR_DATA_TYPE>> *HooksManagerClass::getWatchersList() {
+  std::list<Watcher<TEXT_SENSOR_DATA_TYPE>*> *HooksManagerClass::getWatchersList() {
     return &_statesWatchers;
   }
 #endif
 
 #if ENABLE_NUMBER_SENSORS
   template <>
-  List<Watcher<NUMBER_SENSOR_DATA_TYPE>> *HooksManagerClass::getWatchersList() {
+  std::list<Watcher<NUMBER_SENSOR_DATA_TYPE>*> *HooksManagerClass::getWatchersList() {
     return &_sensorsWatchers;
   }
 #endif

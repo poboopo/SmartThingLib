@@ -11,7 +11,7 @@ class RestControllerClass {
   RestControllerClass();
   ~RestControllerClass();
   void begin();
-  void reload();
+  void end();
 
   AsyncWebServer* getWebServer() { return &_server; };
  private:

@@ -2,10 +2,12 @@
 #ifndef WEB_ASSETS_H
 #define WEB_ASSETS_H
 
+/*
   Build version: 0.0.0
   Build date: 2025-03-17T10:51:17.959Z
   Build branch: master
   Build commit: a65447bc58e62bf71bc79309f769863914e8b7ec
+*/
 
 #include "Features.h"
 

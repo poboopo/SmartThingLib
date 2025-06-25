@@ -12,7 +12,7 @@
 #include "sensors/SensorsManager.h"
 #include "Features.h"
 
-#define SMART_THING_VERSION "0.8"
+#define SMART_THING_VERSION "1.0"
 
 #ifdef ARDUINO_ARCH_ESP32
 #define LED_PIN 2

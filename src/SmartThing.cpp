@@ -147,11 +147,11 @@ bool SmartThingClass::init(const char * type) {
   delay(50);
   handleWipeSettings();
 
-  #if ENABLE_ASYNC_LOOP
-    st_log_debug(_SMART_THING_TAG, "Creating loop task");
-    xTaskCreate([](void* o) { static_cast<SmartThingClass*>(o)->asyncLoop(); },
-                _SMART_THING_TAG, 50000, this, 1, &_loopTaskHandle);
-    st_log_debug(_SMART_THING_TAG, "Loop task created");
+  #ifdef ARDUINO_ARCH_ESP32
+  st_log_debug(_SMART_THING_TAG, "Creating loop task");
+  xTaskCreate([](void* o) { static_cast<SmartThingClass*>(o)->asyncLoop(); },
+              "st-loop", 50000, this, 1, &_loopTaskHandle);
+  st_log_debug(_SMART_THING_TAG, "Loop task created");
   #endif
 
   setupWiFi();

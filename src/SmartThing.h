@@ -13,6 +13,7 @@
 #include "Features.h"
 
 #define SMART_THING_VERSION "1.0"
+#define ST_DEFAULT_NAME "st-device"
 
 #ifdef ARDUINO_ARCH_ESP32
 #define LED_PIN 2
@@ -21,7 +22,6 @@
 #define LED_PIN LED_BUILTIN
 #endif
 
-static const char * ST_DEFAULT_NAME = "st-device";
 static const int DEVICE_NAME_LENGTH_MAX = 16;
 
 class SmartThingClass {

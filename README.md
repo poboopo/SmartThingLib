@@ -1,147 +1,173 @@
 # SmartThingLib
-Библиотека `SmartThingLib` нацелена на значительное ускорение разработки IOT устройств реализуя в себе большую часть базового функционала. Поддерживаемые платформы - `esp32` и `esp8266`. Для создания устройства вам в коде достаточно указать его тип, какие действия оно умеет делать, какой набор датчиков имеет и возможные настройки устройства. Готовое устройство имеет веб интерфейс для управления и настройки.
-Так же реализовано приложение маршрутизатора и облака для управления множеством устройств. Их можно найти [на главной странице проекта SmartThing](https://github.com/poboopo/SmartThingProject).
+The `SmartThingLib` library is designed to significantly accelerate IoT device development by implementing most of the basic functionality. Supported platforms: `esp32` and `esp8266`.
+To create a device, you only need to specify its type, what actions it can perform, what sensors it includes, and the possible configuration settings.
+The finished device comes with a web interface for control and configuration.
 
-## Веб интерфейс устройства
-Информация |  Настройки WiFi
-:-------------------------:|:-------------------------:
-![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/info.png?raw=true)|![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/wifi.png?raw=true)
+A gateway application and cloud platform for managing multiple devices are also implemented. You can find them on the [SmartThing main project page](https://github.com/poboopo/SmartThingProject).
 
-Действия | Сенсоры и их хуки
-:-------------------------:|:-------------------------:
-![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/actions.png?raw=true)|![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/sensors.png?raw=true)
+## Device Web Interface
 
-Настройки | Метрики
-:-------------------------:|:-------------------------:
-![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/settings.png?raw=true)|![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/metrics.png?raw=true)
+|                                      Information                                     |                                     WiFi Settings                                    |
+| :----------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------: |
+| ![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/info.png?raw=true) | ![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/wifi.png?raw=true) |
 
-## Как использовать
-Для работы требуются следующие библиотеки:
+|                                         Actions                                         |                                    Sensors and Hooks                                    |
+| :-------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: |
+| ![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/actions.png?raw=true) | ![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/sensors.png?raw=true) |
+
+|                                         Settings                                         |                                         Metrics                                         |
+| :--------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: |
+| ![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/settings.png?raw=true) | ![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/metrics.png?raw=true) |
+
+## How to Use
+
+The following libraries are required:
 ```
 bblanchon/ArduinoJson@^7.0.4
 esphome/ESPAsyncWebServer-esphome@^3.2.2
 ```
 
-На этапе инциализации устройства необходимости произвести все настройки.
+During device initialization, you need to set up all configurations.
 
-Добавление действия устройства:
+### Adding a Device Action:
 
 ```C++
 /*
-	При добавлении действия необходимо указать:
-	- его системное название
-	- текст для отображения в UI
-	- лямбду с логикой действия, которая возвращает true или false
+    When adding an action, you need to specify:
+    - its system name
+    - the text for displaying in the UI
+    - a lambda with the action logic that returns true or false
 */
 ActionsManager.add("led_on", "Turn led on", []() {
-	digitalWrite(LED_PIN, LOW);
-	return true;
+    digitalWrite(LED_PIN, LOW);
+    return true;
 });
 ```
 
-Поддерживается несколько видов сенсоров. Пример добавления стандартных сенсоров для чтения показаний с digital и analog пинов:
+### Supported Sensor Types:
+
+Example of adding standard sensors to read from digital and analog pins:
 
 ```C++
-// Метод добавляет сенсор с указанным названием, настраивает пин и читает его значение с помощью digitalRead
+// Adds a sensor with the specified name, configures the pin, and reads its value using digitalRead
 SensorsManager.addDigital("button", 12);
-// А этот читает значение с пина с помощью analogRead
+// Reads the value from a pin using analogRead
 SensorsManager.addAnalog("analog", 14);
 ```
 
-Если показатели сенсоров считываются каким либо другим образом, можно их добавить с указанием функции для вычисления их значения. Поддерживаются числовые (`long`) и текстовые (`String`) значения сенсоров:
+If sensor readings come from other logic, you can add them by specifying a function for value calculation. Both numeric (`long`) and text (`String`) values are supported:
 
-```c++
-// Числовой сенсор по умолчанию хранит в себе long
-// Добавление числового сенсора с кастомной логикой вычисления значения
+```C++
+// Numeric sensor (default type: long)
+// Adding a numeric sensor with custom logic
 SensorsManager.add("sensor", []() {
-	return tempSensor.readData();
+    return tempSensor.readData();
 });
-// Текстовый сенсор по умолчанию хранит в себе String
-// Добавление текстового сенсора
+// Text sensor (default type: String)
+// Adding a text sensor
 SensorsManager.add("led", []() {
-	// Пример возможной логики вычисления значения
-	return digitalRead(LED_PIN) == HIGH ? "on" : "off";
+    // Example logic for computing the value
+    return digitalRead(LED_PIN) == HIGH ? "on" : "off";
 });
 ```
 
-Устройству можно добавить настройки, которые будут доступны для изменения пользователю:
+### Adding Configuration Options:
 
 ```C++
-// Для добавления конфигурации необходимо указать уникальное название ключа
+// Add configuration by specifying a unique key name
 ConfigManager.add("test-value");
 
-// Получить его значение в коде, по ключу
+// Get its value in code by key
 ConfigManager.get("test-value");
 
-// Можно добавить слушатель на обновление конфигурации устройства
+// Add a listener for when the device configuration updates
 ConfigManager.onConfigUpdate([]() {
-	st_log_debug("main", "Config updated!");
+    st_log_debug("main", "Config updated!");
 });
 ```
-Значения конфигурации хранятся в виде строк в `EEPROM` памяти устройства и доступны после перезагрузки.
 
-После настройки возможностей устройства необходимо проинициализировать `SmartThing`:
+Configuration values are stored as strings in the device `EEPROM` and persist after reboot.
+
+### Initialize `SmartThing`:
 
 ```C++
-// Необходимо указать тип устройства
+// Specify the device type
 if (!SmartThing.init("lamp")) {
-	// Не удалось инциализировать устройство
-	st_log_error("main", "Failed to init SmartThing!");
-	while(true) {
-		delay(1000);
-	}
+    st_log_error("main", "Failed to init SmartThing!");
+    while(true) {
+        delay(1000);
+    }
 }
 ```
 
-Если используется `esp8266`, то необходимо в главном методе loop добавить вызвов метода `SmartThing.loop()`:
+If using `esp8266`, add a call to `SmartThing.loop()` in the main loop:
 
 ```C++
 void loop() {
-	SmartThing.loop();
-	delay(250);
+    SmartThing.loop();
+    delay(250);
 }
 ```
 
-В случае `esp32` этого делать не надо, loop метод будет вызываться в отдельной асинхронной таске.
+For `esp32`, this is not needed, as the loop method runs in an asynchronous task.
 
-Полный пример прошивки можно посмотреть  [в тестовом репозитории](https://github.com/poboopo/SmartThingLibTest/blob/master/src/main.cpp). 
+A full example of the firmware can be found in the [test repository](https://github.com/poboopo/SmartThingLibTest/blob/master/src/main.cpp).
 
-Для ещё большего упрощения начала разработки устройства был сделан простой конструктор прошивки [`SmartThingBuilder`](https://pobopo.ru/st/builder/). Он позволит создать каркас будущего устройства, где разработчику надо будет только точечно добавить свою логику в нужных местах.
+## First Launch
 
-![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/builder.png?raw=true)
+On first boot, the device will create an access point named `st-device`. Connect to it and navigate to [`http://192.168.1.4/`](http://192.168.1.4/) in your browser — the device control panel will open, where you can configure WiFi. After setup, restart the device.
 
-## Первый запуск
-При первом запуске устройство создаст точку доступа с названием `st-device`. Подключаемся к ней и переходим по адресу [`http://192.168.1.4/`](http://192.168.1.4/) в браузере - откроется панель управления устройством, где можно настроить подключение к `WiFi` сети. После настройки устройство необходимо перезагрузить.
 
-## Дополнительные фичи
-### Хуки и триггеры
-Для сенсоров пользователь может добавлять хуки - некая логика, которая будет вызвана при срабатывании триггера. Триггером является изменение значения сенсора. Можно указать точное триггерное значение, для числовых сенсоров можно указать окно и порог срабатывания. 
-На данный момент реализовано три хука:
-- action - вызовет указанное действие устройства;
-- http - отправит http запрос согласно параметрам;
-- notification - отправит уведомление на маршрутизатор `SmartThingGateway`, про который расскажу чуть позже. Адрес маршрутизатора берется из конфигурации устройства.
+## Additional Features
 
-У хуков http и notification поддерживаются плейсхолдеры в текстовых полях для текущего значения сенсора (`{v}`) и значений из конфигурации (`{ключ}`). Например, нам необходимо отправлять запрос со значением сенсора на некий сервер. В конфигурацию можно добавить поле `server_address`, на которое мы будем потом ссылаться через `{server_address}`. Далее добавить `http` хук с такими настройками:
+### Hooks and Triggers
+
+For sensors, users can add **hooks** — logic that executes when a trigger occurs. A trigger is a change in sensor value.
+You can specify an exact trigger value, a range, or a threshold for numeric sensors.
+
+Currently, three hook types are implemented:
+
+* **action** — executes a specified device action;
+* **http** — sends an HTTP request based on parameters;
+* **notification** — sends a notification to the `SmartThingGateway` (gateway). The gateway address comes from device configuration.
+
+HTTP and notification hooks support placeholders in text fields for:
+
+* current sensor value (`{v}`)
+* configuration values (`{key}`).
+
+Example: if you need to send a request with a sensor value to a server, add a configuration key `server_address` and reference it as `{server_address}`. Then add an `http` hook like this:
 
 ![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/hook.png?raw=true)
 
-Пусть значение сенсора button = 1, а server_address = "192.168.1.2" при вызове хука, тогда `payload` преобразуется в `{"value": "1"}`, а `url` в `http://192.168.1.2/api`. 
+If `button = 1` and `server_address = "192.168.1.2"` when the hook runs, then `payload` becomes `{"value": "1"}` and `url` becomes `http://192.168.1.2/api`.
 
-Для проверки хука можно сделать его тестовый вызов нажатием на пробирку.
+To test a hook, use the test button:
 
 ![](https://github.com/poboopo/SmartThingLib/blob/docs/doc/assets/hook_test.png?raw=true)
 
-### Логирование
-В библиотеке есть своя реализация сетевого логгера - макросы `st_log_error`, `st_log_warning`, `st_log_info` и `st_log_debug`.  По умолчанию используется стандартный сериал, но в настройках устройства можно будет указать `tcp` сервер для получения логов - настройка `laddr`. К нему будет подключаться устройство. Адрес сервера указаывается в формате `ip:port`. В приложении маршрутизатора есть встроенный сервер для сбора логов.
 
-### Фича флаги
-Возможно отключение не используемого функционала с помощью фича флагов на этапе сборки. Это позволит уменьшить размер финальной прошивки. Подробнее про них можно почитать в [FEATURE_FLAGS.md](https://github.com/poboopo/SmartThingLib/blob/master/FEATURE_FLAGS.md). 
+### Logging
 
-## Сброс настроек
-Для сброса настроек перейдите на вкладку `Danger zone` и нажмите кнопку сброса до заводских настроек.
-В случае, если веб интерфейс не доступен по каким либо причинам, замкните `19` или `D4` пин с землей у `esp32` или `esp8266` соотвественно. Через 5 секунд все настройки полностью сбросятся.
+The library has its own network logger with macros:
+`st_log_error`, `st_log_warning`, `st_log_info`, `st_log_debug`.
+By default, logs go to the serial output, but you can specify a TCP server (`laddr`) in device settings. The format is `ip:port`. The gateway application includes a built-in log collection server.
 
-## Примеры
-- [Тестовый проект](https://github.com/poboopo/SmartThingLibTest/blob/master/src/main.cpp)
-- [Метео станция](https://github.com/PavelProjects/meteo_station)
-- [Автоматические жалюзи](https://github.com/PavelProjects/SmarThingtLouver)
+
+### Feature Flags
+
+Unused functionality can be disabled with feature flags during build, reducing firmware size.
+Read more in [FEATURE\_FLAGS.md](https://github.com/poboopo/SmartThingLib/blob/master/FEATURE_FLAGS.md).
+
+
+## Resetting Settings
+
+To reset settings, go to the **Danger zone** tab and click the factory reset button.
+If the web interface is not accessible, short pin `19` (esp32) or `D4` (esp8266) to ground for 5 seconds — all settings will be fully reset.
+
+
+## Examples
+
+* [Test project](https://github.com/poboopo/SmartThingLibTest/blob/master/src/main.cpp)
+* [Weather station](https://github.com/PavelProjects/meteo_station)
+* [Automatic blinds](https://github.com/PavelProjects/SmarThingtLouver)

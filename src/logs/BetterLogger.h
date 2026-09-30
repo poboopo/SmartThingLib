@@ -46,7 +46,9 @@ const char * const _LOGGER_TAG = "logger";
 class BetterLogger {
  public:
   BetterLogger() {
+    #if ENABLE_SERIAL_LOGGER
     Serial.begin(115200);
+    #endif
   };
   ~BetterLogger() { 
     #if LOGGER_TYPE != SERIAL_LOGGER
@@ -96,9 +98,11 @@ class BetterLogger {
       return;
     }
     #endif
+    #if ENABLE_SERIAL_LOGGER
     Serial.printf("[%s][%u][%s]", _name, level, tag);
     Serial.printf(format, args...);
     Serial.println();
+    #endif
   }
   #else
   template <typename... Args>
@@ -237,6 +241,7 @@ class BetterLogger {
     String ip = _fullAddr.substring(0, ind);
     String port = _fullAddr.substring(ind + 1);
     if (ip.isEmpty()) {
+      _fullAddr.clear();
       error(_LOGGER_TAG, "Failed to parse server ip");
       return;
     }
@@ -249,8 +254,10 @@ class BetterLogger {
     disconnect();
     info(_LOGGER_TAG, "Trying to connect to logger server [%s, %s]", ip.c_str(), port.c_str());
     if (connect(ip.c_str(), port.toInt())) {
+      #if ENABLE_SERIAL_LOGGER
       Serial.println();
       Serial.println("Remote logger connected! Serial output disabled while remote logger connected!");
+      #endif
       info(_LOGGER_TAG, "Logger connected!");
     } else {
       _fullAddr.clear();

@@ -9,13 +9,11 @@
 #include "hooks/watcher/Watcher.h"
 #include "settings/SettingsRepository.h"
 
-#if ENABLE_LOGGER
-  const char * const _HOOKS_MANAGER_TAG = "hooks_manager";
+const char * const _HOOKS_MANAGER_TAG = "hooks_manager";
 
-  const char * const _errorSensorNameMissing = "Sensor name is missing";
-  const char * const _errorSensorObjectMissing = "Sensor object is missing";
-  const char * const _errorNoSuchSensor = "No such sensor";
-#endif
+const char * const _errorSensorNameMissing = "Sensor name is missing";
+const char * const _errorSensorObjectMissing = "Sensor object is missing";
+const char * const _errorNoSuchSensor = "No such sensor";
 
 HooksManagerClass HooksManager;
 

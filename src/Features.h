@@ -68,9 +68,17 @@
   #define ENABLE_LOGGER 1
 #endif
 
+#ifndef ENABLE_SERIAL_LOGGER
+  #define ENABLE_SERIAL_LOGGER 1
+#endif
+
 #if ENABLE_CONFIG
-  #ifndef LOGGER_TYPE
-    #define LOGGER_TYPE TCP_LOGGER
+  #ifdef ARDUINO_ARCH_ESP8266
+    #define LOGGER_TYPE SERIAL_LOGGER
+  #else
+    #ifndef LOGGER_TYPE
+      #define LOGGER_TYPE TCP_LOGGER
+    #endif
   #endif
 #else
   #define LOGGER_TYPE SERIAL_LOGGER

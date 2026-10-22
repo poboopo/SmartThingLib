@@ -91,7 +91,7 @@ bool ConfigManagerClass::getBool(const char * name, bool defaultValue) {
   if (value == nullptr || strlen(value) == 0) {
     return defaultValue;
   }
-  return strcmp(value, "true") || strcmp(value, "1");
+  return strcmp(value, "true") == 0 || strcmp(value, "1") == 0;
 }
 
 bool ConfigManagerClass::setConfigValueWithoutSave(const char * name, const char * value) {

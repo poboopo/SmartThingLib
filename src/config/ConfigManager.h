@@ -12,7 +12,7 @@
 
 #define LOGGER_ADDRESS_CONFIG "laddr"
 #define GATEWAY_CONFIG "gtw"
-#define MAX_CONFIG_ENTRY_NAME_LENGTH 10
+#define MAX_CONFIG_ENTRY_NAME_LENGTH 20
 
 class ConfigEntry {
   public:

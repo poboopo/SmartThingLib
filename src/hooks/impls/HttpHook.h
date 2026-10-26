@@ -10,6 +10,7 @@
 #endif
 #include <type_traits>
 
+#include "SmartThing.h"
 #include "hooks/impls/Hook.h"
 #include "logs/BetterLogger.h"
 #include "utils/StringUtils.h"

@@ -241,7 +241,9 @@ class NotificationHook : public SELECT_HOOK_BASE_CLASS {
       int code = client.sendRequest("POST", payload);
       client.end();
 
-      st_log_debug(_NOTIFICATION_HOOK_TAG, "Notification send request finished with code %d", code);
+      if (code) {
+        st_log_debug(_NOTIFICATION_HOOK_TAG, "Notification send request finished with code %d", code);
+      }
     }
 };
 #endif
